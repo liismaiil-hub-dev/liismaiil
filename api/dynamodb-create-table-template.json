@@ -1,0 +1,30 @@
+{
+    "AttributeDefinitions": [
+        {
+            "AttributeName": "organisateur",
+            "AttributeType": "S"
+        },
+        {
+            "AttributeName": "tablet",
+            "AttributeType": "S"
+        }
+    ],
+    "KeySchema": [
+        {
+            "AttributeName": "organisateur",
+            "KeyType": "HASH"
+        },
+        {
+            "AttributeName": "tablet",
+            "KeyType": "RANGE"
+        }
+    ],
+    "ProvisionedThroughput": {
+        "ReadCapacityUnits": 1,
+        "WriteCapacityUnits": 1
+    },
+    "TableName": "liismaiil-hicham",
+    "StreamSpecification": {
+        "StreamEnabled": false
+    }
+}

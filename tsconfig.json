@@ -17,8 +17,32 @@
         "name": "next"
       }
     ],
-    "paths": {
-      "@/*": ["./*"]
+      "baseUrl": ".",
+    "paths": {"@/components/*": [
+        "components/*"
+      ],
+      "@/api/*": [
+        "api/*"
+      ],
+      "@/public/*": [
+        "public/*"
+      ],
+      "@/styles/*": [
+        "styles/*"
+      ],
+      "@/lib/*": [
+        "lib/*"
+      ],
+      "@/layouts/*": [
+        "app/layouts/*"
+      ],
+      "@/graphql/*": [
+        "graphql/*"
+      ],
+      "@/store/*": [
+        "store/*"
+      ]
+      
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

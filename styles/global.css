@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    overflow-x: hidden;
+    }
+   html {
+    font-family: "Quicksand", "sans-serif";
+  }
+  
+}
+
+@layer components {
+  
+  .menu-item {
+    @apply w-full  hover:bg-green-300 text-slate-500 p-2 mx-auto rounded-md text-center dark:bg-gray-700 dark:text-yellow-50;
+  }
+  .sub-menu {
+    @apply p-4  hover:bg-gray-500/20 hover:text-blue-800 transition-colors ease-in-out cursor-pointer;
+  }
+  .div-sub-menu {
+    @apply absolute top-full right-0  whitespace-nowrap bg-green-200/10 w-auto rounded-b-md text-right;
+  }
+  .mobile-menu {
+    @apply rounded-sm w-full;
+  }
+  .mobile-menu-item {
+    @apply flex  p-4 justify-center relative h-full items-center text-blue-900;
+  }
+  .mobile-sub-menu {
+    @apply p-4 items-center justify-center font-bold hover:bg-gray-500/20 hover:text-blue-800 transition-colors ease-in-out cursor-pointer;
+  }
+  .mobile-div-sub-menu {
+    @apply absolute top-full right-[0]  whitespace-nowrap
+                     bg-green-200/10 w-auto rounded-b-md text-right;
+  }
+  a:focus {
+    @apply outline-none;
+  }
+  a:focus-visible {
+    @apply right-2 ring-blue-300 ring-opacity-50;
+  }
+  .btn {
+    @apply cursor-pointer rounded-sm bg-sky-400 py-2 px-4 transition-colors hover:bg-sky-600 hover:shadow-lg text-white tracking-wider w-full;
+  }
+  .input {
+    @apply rounded-r-sm text-sky-800 
+                rounded-md border-white/70 outline-sky-200 bg-white/40;
+  }
+}
