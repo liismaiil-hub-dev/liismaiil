@@ -1,25 +1,31 @@
 'use client'
 import Logo from '@/components/front/Logo';
+import { guestActions } from "@/store/slices/guestSlice";
 import { RootStateType } from '@/store/store';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { FaBars } from 'react-icons/fa';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import GuestModal from './GuestModal';
+import ThemeSelector from "./ThemeSelector";
+
 function Navigation() {
     const [showMenu, setShowMenu] = useState<Boolean>(false)
-    const router = useRouter()
+    const dispatch = useDispatch()
 
     const { guest } = useSelector((state: RootStateType) => state.guest)
+    const { logout } = guestActions
+    const pathname = usePathname()
+    const isRoute = (route: string) => {
 
-    const isRoute = (route) => {
-        return router.pathname.slice(1) == route
+
+        return pathname.split('/')[1] === route
 
     }
     useEffect(() => {
         setShowMenu((showMenu) => !showMenu)
-    }, [router])
+    }, [])
     const [guestConnect, setGuestConnect] = useState(false)
     const SetGuestHandler = () => {
         setGuestConnect((guestConnect) => !guestConnect)
@@ -27,18 +33,23 @@ function Navigation() {
     const CloseModalHandler = () => {
         setGuestConnect(false)
     }
+
+    const handleLogout = () => {
+        dispatch(logout())
+    }
     return (
-        <nav className={`flex bg-blue-50 items-center m-auto w-full z-10 fixed  `} >
-            <main className='flex justify-between items-center gap-4  h-20 ' >
+        <nav className={`container flex  justify-between bg-transparent items-center m-auto w-full z-10 fixed border-2 border-blue-300`} >
+            <section className='sm:hidden md:flex justify-between items-center gap-4  h-20 ' >
                 <Logo />
+
                 <FaBars onClick={() => {
                     setShowMenu((showMenu) => !showMenu)
 
                 }}
-                    className='sm:flex hidden absolute top-1 right-2
+                    className='sm:flex md:hidden absolute top-1 right-2
                      hover:text-3xl text-2xl hover:text-lime-600 cursor-pointer' />
-            </main>
-            <main className={`hidden sm:flex relative my-auto flex-1 justify-start cursor-pointer items-center`} >
+            </section>
+            <section className={`hidden sm:flex relative my-auto flex-1 justify-start cursor-pointer items-center`} >
                 <div className={` hidden ${showMenu && 'sm:flex'} bg-lime-600/50 rounded-md  
                 flex-col font-mont items-center absolute top-[38px] left-0 w-full`} >
                     <div className={` ${isRoute('') && 'bg-green-200/10 text-blue-500'} 
@@ -76,54 +87,66 @@ function Navigation() {
                     </div>
                     <div className={` ${isRoute('api/auth') && 'bg-green-200/10 text-blue-500'} 
                     mobile-menu-item mobile-sub-menu mobile-menu`} >
-                        {user ? <Link key={`logout`} href='/api/auth/logout'> Logout </Link> :
-                            <Link key={`login`} href='/api/auth/login'> Login </Link>}
+                        {(typeof guest !== 'undefined' && guest.token !== "") ? <Link onClick={handleLogout}
+                            key={`logout`} href='/'> Logout </Link> :
+                            <Link key={`login`} href='/signIn'> Login </Link>}
+
+
+
                     </div>
                 </div>
-            </main>
-            <main className='sm:hidden flex  flex-1 justify-end items-center ' >
-                <div className={` ${isRoute('') && 'bg-green-200/10 text-blue-500'} 
+            </section>
+
+            <section className=' flex  justify-end items-center gap-4 text-gray-300' >
+                <div className={` ${isRoute('/') && 'bg-green-600 text-blue-50'} 
                 menu-item sub-menu group` } >
                     <Link key={`home`} href='/' > Home </Link>
 
-                    <div className='div-sub-menu  hidden group-hover:block' >
-                        <div className='sub-menu ' onClick={SetGuestHandler}>
+                    <section className='div-sub-menu  hidden group-hover:block' >
+                        <button className='sub-menu ' onClick={SetGuestHandler}>
                             <span>
                                 guest
                             </span>
-                        </div>
-                        <div className='sub-menu'>
+                        </button>
+                        <button className='sub-menu'>
                             <span>  liismaiil
                             </span>
-                        </div>
-                    </div>
+                        </button>
+                    </section>
                 </div>
 
-                <div className={`${isRoute('space') && 'bg-green-200/10 text-blue-500'}
-                 menu-item sub-menu`} >
+                <div className={`${isRoute('space') && 'bg-green-200/10 text-blue-500'}`} >
                     <Link key={`space`} href='/space'> Space </Link>
                 </div>
-                <div className={` ${isRoute('tablets') && 'bg-green-200/10 text-blue-500'} 
-              menu-item sub-menu`} >
-                    <Link key={`tablets`} href='/tablets'> Tablets </Link>
+                <div className={` ${isRoute('sprints') && 'bg-green-200/10 text-blue-500'} 
+              `} >
+                    <Link key={`tablets`} href='/sprints'> Sprints </Link>
                 </div>
                 <div className={`  ${isRoute('guests') && 'bg-green-200/10 text-blue-500'} 
-                menu-item sub-menu`} >
+                `} >
                     <Link key={`guests`} href='/guests'>Guests </Link>
                 </div>
+                <div className={`  ${isRoute('guests') && 'bg-green-200/10 text-blue-500'} 
+               `} >
+                    <Link key={`guests`} href='/guests'>Hosts </Link>
+                </div>
                 <div className={`  ${isRoute('domain') && 'bg-green-200/10 text-blue-500'} 
-               menu-item sub-menu`} >
+               `} >
                     <Link key={`domain`} href='/domain'> Domain </Link>
                 </div>
                 <div className={` ${isRoute('api/auth') && 'bg-green-200/10 text-blue-500'} 
-               menu-item sub-menu`} >
-                    {user ? <Link key={`logout`} href='/api/auth/logout'> Logout </Link> :
-                        <Link key={`login`} href='/api/auth/login'> Login </Link>}
+               `} >
+                    {(typeof guest !== 'undefined' && guest.token !== "") ? <Link onClick={handleLogout}
+                        key={`logout`} href='/'> Logout </Link> :
+                        <Link key={`login`} href='/signIn'> Login </Link>}
+                </div>
+                <div className="relative flex basis-0 justify-end gap-6 sm:gap-8 md:flex-grow">
+                    <ThemeSelector className="relative z-10" />
                 </div>
                 {
                     guestConnect && <GuestModal handleModalClose={() => CloseModalHandler()} />
                 }
-            </main >
+            </section >
         </nav >
 
     )

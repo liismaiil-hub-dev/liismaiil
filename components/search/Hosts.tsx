@@ -1,13 +1,13 @@
-import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
-import slug from 'slug'
-import { CoordsType, ViewerTypeData } from '@/api/viewer/viewer.types'
-import _ from 'lodash'
-import { dmSans, roboto400 } from '@/styles/fonts'
-import { useRouter } from 'next/router'
-import { searchActions } from '@/store/slices/searchSlice'
-import { useDispatch, useSelector } from 'react-redux'
-import { RootStateType } from '@/store/store'
+'use client'
+import { CoordsType } from '@/api/graphql/viewer/viewer.types'
 import { menuActions } from '@/store/slices/menuSlice'
+import { searchActions } from '@/store/slices/searchSlice'
+import { RootStateType } from '@/store/store'
+import { dmSans } from '@/styles/fonts'
+import { useRouter } from 'next/router'
+import React, { useEffect, useRef } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import slug from 'slug'
 type CountryCityCoords = {
     country: string,
     addressGeo: string,
@@ -26,7 +26,7 @@ type CountryCityCoords = {
        console.log({ searchFilter })
        setOrganisationsFront(searchFilter) */
 // -----------------------------COMPONENT-------------------------//
-export default function Hosts({hosts}) {
+export default function Hosts({ hosts }) {
     const { push } = useRouter()
     const dispatch = useDispatch()
     //const { organisationsContext } = useSelector((state: RootStateType) => state.viewer)
@@ -120,6 +120,7 @@ export default function Hosts({hosts}) {
         dispatch(setHosts({ hosts: ['liismaiil'] }))
         dispatch(setCountries({ countries: ['DZ', 'MA', 'FR'] }))
 
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     console.log({ hostsContext })

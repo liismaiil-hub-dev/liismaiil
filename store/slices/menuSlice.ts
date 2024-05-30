@@ -1,6 +1,6 @@
 // types
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import { MenuProps } from 'types/menu';
+
 export type MenuProps = {
   selectedItem: [string],
   selectedID?: string,

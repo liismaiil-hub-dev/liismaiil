@@ -1,6 +1,6 @@
 // third-party
-import { AyahTabletType, GridInput, SprintStateProps, SprintType, StageType } from '@/api/sprint/sprint.types';
 import { createSlice, current, PayloadAction } from '@reduxjs/toolkit';
+import { AyahTabletType, GridInput, SprintStateProps, SprintType, StageType } from 'app/api/sprint/sprint.types';
 import * as _ from 'lodash';
 const initialState: SprintStateProps = {
   sprints: [],

@@ -18,23 +18,28 @@
       }
     ],
       "baseUrl": ".",
-    "paths": {"@/components/*": [
+    "paths": {
+      "@/components/*": [
         "components/*"
       ],
       "@/api/*": [
-        "api/*"
+        "app/api/*"
       ],
       "@/public/*": [
         "public/*"
+      ],
+      "@/actions/*": [
+        "actions/*"
+      ],
+
+      "@/utils/*": [
+        "utils/*"
       ],
       "@/styles/*": [
         "styles/*"
       ],
       "@/lib/*": [
         "lib/*"
-      ],
-      "@/layouts/*": [
-        "app/layouts/*"
       ],
       "@/graphql/*": [
         "graphql/*"

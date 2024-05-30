@@ -1,0 +1,13 @@
+{
+    "theme_color": "#f69435",
+    "background_color": "#8dbb7c",
+    "display": "browser",
+    "scope": "/",
+    "start_url": "/",
+    "name": "liismaiil-hub",
+    "short_name": "liismaiil-hub",
+    "description": "tool ",
+    "icons": {
+        "name": "liismLogo.svg"
+    }
+}

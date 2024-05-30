@@ -1,8 +1,8 @@
 'use client'
 import { useEffect, useState } from 'react'
 
-import { GuestType } from '@/api/sprint/sprint.types'
 import { FLAG_FILES } from '@/store/constants/flagArray'
+import { GuestType } from 'app/api/sprint/sprint.types'
 export default function Guests({ guests }: { guests: GuestType[] }) {
     const [guest, setGuest] = useState('')
     useEffect(() => {

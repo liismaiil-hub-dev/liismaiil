@@ -1,11 +1,10 @@
-import React, { ReactElement, useEffect, useRef, useState } from 'react'
+import { ReactElement, useRef, useState } from 'react'
 
-import { ViewerTypeData } from '@/api/viewer/viewer.types'
-import _ from 'lodash'
-import { dmSans, dmSerif } from '@/styles/fonts'
+import { ViewerTypeData } from '@/api/graphql/viewer/viewer.types'
+import { dmSans } from '@/styles/fonts'
 import { useRouter } from 'next/router'
 export default function Organisations({ organisations }: { organisations: ViewerTypeData[] }): ReactElement {
-const router = useRouter()
+    const router = useRouter()
     const [organisationsFront, setOrganisationsFront] = useState(organisations)
 
     const countryRef = useRef('')

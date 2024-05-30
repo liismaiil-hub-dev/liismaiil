@@ -1,0 +1,119 @@
+[
+    {
+        "_id": "63305094d4735c8b0231f6a9",
+        "login": "chams import export",
+        "email": "kazdhicham@gmail.com",
+        "stripe_account_id": "acct_1MT5DtQNufbQjKoS",
+        "phone": "02992882",
+        "bio": "shop of vegetable , dates, seeds and  olives in marseille",
+        "status": "ADMIN",
+        "website": "http://localhost:3001/",
+        "instagram": "@liismaiil",
+        "organisation": null,
+        "addressGeo": "12430, Jakarta, Indonesia",
+        "createdAt": "\"2022-09-25T14:59:00.723Z\"",
+        "coords": {
+            "lat": -6.288078,
+            "long": 106.796865
+        },
+        "avatar": "https://res.cloudinary.com/liismaiil/image/upload/v1684173819/lami1a/viewer/1684173818811.jpg",
+        "updatedAt": "\"2023-12-20T17:33:26.055Z\"",
+        "uid": "O6cKgXEsuPNAuzCMTGeblWW9sWI3",
+        "continent": "",
+        "country": "FR",
+        "guests": [
+            {
+                "token": "111",
+                "collaboratorId": "O6cKgXEsuPNAuzCMTGeblWW9sWI3",
+                "enrollmentStatus": "GUEST",
+                "stages": [
+                    ""
+                ],
+                "price": 10,
+                "flag": "",
+                "startDate": "",
+                "endDate": ""
+            }
+        ],
+        "city": "marseille",
+        "state": "france"
+    },
+    {
+        "_id": "635ff0126777c676aed98a95",
+        "login": "li_ismaiil",
+        "email": "li.1ismai3il@gmail.com",
+        "stripe_account_id": null,
+        "phone": "0699307223",
+        "bio": "ma nouvelle bio encore",
+        "status": "LIIS",
+        "website": "http://localhost:3001/635ff0126777c676aed98a95",
+        "instagram": "",
+        "organisation": null,
+        "addressGeo": "Calle Tenerife 121, 35600 Puerto del Rosario, Canary Islands, Spain",
+        "createdAt": "\"2022-10-31T16:56:02.978Z\"",
+        "coords": {
+            "lat": 28.506796,
+            "long": -13.873371
+        },
+        "avatar": "https://res.cloudinary.com/liismaiil/image/upload/v1667317256/lami1a/avatar/1667317255932.jpg",
+        "updatedAt": "\"2023-07-03T19:59:49.530Z\"",
+        "uid": "A9uBtvmASrbJnt7GIyYKnja5at52",
+        "continent": "",
+        "country": "SP",
+        "guests": [
+            {
+                "token": "111",
+                "collaboratorId": "A9uBtvmASrbJnt7GIyYKnja5at52",
+                "enrollmentStatus": "GUEST",
+                "stages": [
+                    ""
+                ],
+                "price": 10,
+                "flag": "",
+                "startDate": "",
+                "endDate": ""
+            }
+        ],
+        "city": "",
+        "state": ""
+    },
+    {
+        "_id": "64ca833de8cadc208fa4b394",
+        "login": "organisateurs marseille",
+        "email": "hicham.horsjeux@gmail.com",
+        "stripe_account_id": null,
+        "phone": "0699307223",
+        "bio": "library shared books organisator",
+        "status": "ORGA",
+        "website": "http://localhost:3001/64ca833de8cadc208fa4b394",
+        "instagram": "",
+        "organisation": null,
+        "addressGeo": "Royal Thai Embassy, Molesworth Street, Wellington, Wellington 6011, New Zealand",
+        "createdAt": "\"2023-08-02T18:24:29.145Z\"",
+        "coords": {
+            "lat": -41.275199,
+            "long": 174.778244
+        },
+        "avatar": "https://res.cloudinary.com/liismaiil/image/upload/v1695915072/lami1a/viewer/1695915071990.jpg",
+        "updatedAt": "\"2024-03-07T16:48:10.524Z\"",
+        "uid": "3jtczfl93BWlud2t3Q44KdC0EVJ3",
+        "continent": "",
+        "country": "DZ",
+        "guests": [
+            {
+                "token": "111",
+                "collaboratorId": "3jtczfl93BWlud2t3Q44KdC0EVJ3",
+                "enrollmentStatus": "GUEST",
+                "stages": [
+                    ""
+                ],
+                "price": 10,
+                "flag": "",
+                "startDate": "",
+                "endDate": ""
+            }
+        ],
+        "city": "tizi ouzou",
+        "state": "Algeria"
+    }
+]

@@ -1,24 +1,39 @@
-import { configureStore, combineReducers, applyMiddleware } from '@reduxjs/toolkit'
-import guestReducer, { GuestStateType } from '@/store/slices/guestSlice'
-import viewerReducer, { ViewerStateType } from '@/store/slices/viewerSlice'
-import lessonReducer, { LessonStateType } from '@/store/slices/lessonSlice'
-import coursReducer, { CoursStateType } from '@/store/slices/coursSlice'
+import coursReducer from '@/store/slices/coursSlice'
+import guestReducer from '@/store/slices/guestSlice'
+import lessonReducer from '@/store/slices/lessonSlice'
+
 import searchReducer from '@/store/slices/searchSlice'
 import sprintReducer from '@/store/slices/sprintSlice'
-import menuReducer from '@/store/slices/menuSlice'
-import storage from 'redux-persist/lib/storage';
+import viewerReducer from '@/store/slices/viewerSlice'
+import { combineReducers, configureStore } from '@reduxjs/toolkit'
+import logger from 'redux-logger'
 import {
-  persistStore,
-  persistReducer,
   FLUSH,
-  REHYDRATE,
   PAUSE,
   PERSIST,
+  persistReducer,
+  persistStore,
   PURGE,
   REGISTER,
+  REHYDRATE,
 } from 'redux-persist'
-import logger from 'redux-logger'
+import createWebStorage from "redux-persist/lib/storage/createWebStorage"
 
+const createNoopStorage = () => {
+  return {
+    getItem(_key) {
+      return Promise.resolve(null);
+    },
+    setItem(_key, value) {
+      return Promise.resolve(value);
+    },
+    removeItem(_key) {
+      return Promise.resolve();
+    },
+  };
+};
+
+const storage = typeof window !== "undefined" ? createWebStorage("local") : createNoopStorage();
 const persistConfig = {
   key: 'root',
   version: 1,
@@ -31,13 +46,11 @@ const rootReducer = combineReducers({
   cours: coursReducer,
   sprint: sprintReducer,
   search: searchReducer,
-  menu: menuReducer,
-})
+ })
 const persistedRootReducer = persistReducer(persistConfig, rootReducer)
 
 export const store = configureStore({
   reducer: persistedRootReducer,
-  //enhancers: [composedEnhancers],
   devTools: process.env.NODE_ENV !== 'production',
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

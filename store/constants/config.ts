@@ -1,4 +1,4 @@
-import { APP_ENV } from "@/api/host/host.types";
+
 import { loadEnvConfig } from '@next/env';
 
 const projectDir = process.cwd()

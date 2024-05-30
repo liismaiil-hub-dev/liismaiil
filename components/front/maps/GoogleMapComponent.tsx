@@ -80,6 +80,7 @@ useEffect(() => {
         }
     }
     console.log({coordsState, places})
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         }, [organisationsContext])
 
 function apiIsLoaded(map, maps, places){

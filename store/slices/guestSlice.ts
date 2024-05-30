@@ -1,14 +1,15 @@
 
-import { CoordsType, HostType, SprintGuest, } from '@/api/__sprint/sprint.types';
+import { CoordsType, GuestType } from '@/api/graphql/sprint/sprint.types';
+import { PROFILE_STATUS_ENUM, ViewerTypeData } from '@/api/graphql/viewer/viewer.types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 
 
 export type GuestStateType = {
-  guest: SprintGuest,
-  host: HostType,
-  guests: SprintGuest[],
-  hosts: HostType[],
+  guest: GuestType,
+  host: ViewerTypeData,
+  guests: GuestType[],
+  hosts: ViewerTypeData[],
   time: string,
 
   token: string,
@@ -19,32 +20,38 @@ export type GuestStateType = {
 
 export const initialGuestState: GuestStateType = {
   host: {
-    token: '', flag: '',
+    flagToken: { token: '', flag: '' },
     uid: '',
     cha3bi: 0,
     coords: {
       long: 0,
       lat: 0
-    }
+    },
+    _id: '',
+    login: '',
+    email: '',
+    status: PROFILE_STATUS_ENUM.ORGA
   },
   hosts: [{
-    token: '', flag: '',
+    flagToken: { token: '', flag: '' },
     uid: '',
     cha3bi: 0,
     coords: {
       long: 0,
       lat: 0
-    }
+    },
+    _id: '',
+    login: '',
+    email: '',
+    status: PROFILE_STATUS_ENUM.ORGA
   }],
   guest: {
-    token: '', flag: '',
-    uid: '',
-    time: ''
+    token: '', collaboratorId: '', enrollmentStatus: PROFILE_STATUS_ENUM.GUEST, stages: [''], price: -1,
+    flag: '', startDate: '', endDate: '',
   },
   guests: [{
-    token: '', flag: '',
-    uid: '',
-    time: ''
+    token: '', collaboratorId: '', enrollmentStatus: PROFILE_STATUS_ENUM.GUEST, stages: [''], price: -1,
+    flag: '', startDate: '', endDate: '',
   }],
   token: '',
   flag: '',
@@ -63,13 +70,8 @@ const guestSlice = createSlice({
 
       state.guest = action.payload.guest
     },
-    connectGuest(state, action: PayloadAction<{ guest: { token: string, host: string } }>) {
 
-      state.host = action.payload.guest.host
-      state.token = action.payload.guest.token
-    },
-
-    setGuests(state, action: PayloadAction<{ guests: SprintGuest[] }>) {
+    setGuests(state, action: PayloadAction<{ guests: GuestType[] }>) {
       state.guests = action.payload.guests
     },
     setTime(state, action: PayloadAction<{ time: string }>) {

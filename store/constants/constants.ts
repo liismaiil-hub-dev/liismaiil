@@ -8,12 +8,12 @@ export const THEMES = {
   INDIGO: "INDIGO",
 };
 
-export const ROUTES = {
-  USER: "USER",
-  PROFILE: "PROFILE",
-  COLL: "COLL",
-  ADMIN: "ADMIN",
-};
+export enum APP_ENV {
+  BOX = "BOX",
+  WEB = 'WEB',
+  LOCAL = 'LOCAL',
+
+}
 // theme constant
 export const gridSpacing = 1;
 export const drawerWidth = 260;

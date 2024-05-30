@@ -1,8 +1,7 @@
 
-import React from 'react'
-import GridLayout from '@/components/Layout/GridLayout'
-import { useSelector } from 'react-redux'
+
 import { RootStateType } from '@/store/store'
+import { useSelector } from 'react-redux'
 
 
 export default function Grids() {
@@ -18,7 +17,4 @@ export default function Grids() {
 
 
   )
-}
-Grids.getLayout = function getLayout(page, pageProps) {
-  return (<GridLayout {...pageProps} title=' liismaiil tablets dashboard '> {page}</GridLayout>)
 }

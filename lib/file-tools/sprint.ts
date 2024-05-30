@@ -1,5 +1,5 @@
+import { SprintType as Sprint } from "app/api/sprint/sprint.types";
 import { join } from "path";
-import { SprintType as Sprint } from "@/api/sprint/sprint.types";
 import { getAllItems, getDir, getFileNames, getItemInPath, markdownToHtml } from "./md";
 
 const SPRINTS_DIR = getDir("/sprints/portfolios");
@@ -34,8 +34,7 @@ const getSprintBySlugWithMarkdown = async (slug: string): Promise<Sprint> => {
   return sprint;
 }
 
-export { 
-  getSprints, 
-  getSprintBySlugWithMarkdown, 
-  getSprintBySlugs 
+export {
+  getSprintBySlugs, getSprintBySlugWithMarkdown, getSprints
 };
+

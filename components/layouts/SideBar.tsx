@@ -1,6 +1,6 @@
-import { SprintType, StageType } from '@/api/sprint/sprint.types';
 import { sprintActions } from '@/store/slices/sprintSlice';
 import { RootStateType } from '@/store/store';
+import { SprintType, StageType } from 'app/api/sprint/sprint.types';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';

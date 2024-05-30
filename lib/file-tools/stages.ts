@@ -1,5 +1,5 @@
 
-import { StageType } from "@/api/sprint/sprint.types";
+import { StageType } from "app/api/sprint/sprint.types";
 import { join } from "path";
 import { getAllItems, getDir, getFileNames, getItemInPath, markdownToHtml } from "./md";
 
