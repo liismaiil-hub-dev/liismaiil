@@ -104,3 +104,10 @@ export const GET_STATS = gql`
     }
   }
 `;
+export const GET_GRIDS_BY_NB = gql`
+  query GetGridsByNb($input: GetGridByNbInput) {
+    getGridsByNb(input: $input) {
+      
+    }
+  }
+`;

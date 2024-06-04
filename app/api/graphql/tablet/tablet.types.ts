@@ -1,4 +1,3 @@
-import { Collection } from 'mongodb';
 import { AyahInterface } from '../coran/coran.types';
 
 export enum ProgressStatus {
@@ -36,7 +35,7 @@ export type TabletTypeData = {
   createdAt?: string;
   updatedAt?: string;
 };
-export type TabletGridsTypeData = {
+export type GridTypeData = {
   id?: string;
   author: string;
   grid: number;

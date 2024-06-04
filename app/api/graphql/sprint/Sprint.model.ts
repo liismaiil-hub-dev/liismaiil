@@ -1,4 +1,4 @@
-import { SprintType } from 'app/api/sprint/sprint.types';
+import { SprintType } from '@/api/graphql/sprint/sprint.types';
 import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 

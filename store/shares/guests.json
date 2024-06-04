@@ -1,46 +1,57 @@
 [
   {
-    "host": "O6cKgXEsuPNAuzCMTGeblWW9sWI3",
-    "tokenId": "222"
+    "collaboratorId": "O6cKgXEsuPNAuzCMTGeblWW9sWI3",
+    "tokenId": "222",
+    "flag": "pf.png"
   },
   {
-    "host": "O6cKgXEsuPNAuzCMTGeblWW9sWI3",
-    "tokenId": "444"
+    "collaboratorId": "O6cKgXEsuPNAuzCMTGeblWW9sWI3",
+    "tokenId": "444",
+    "flag": "cg.png"
   },
   {
-    "host": "O6cKgXEsuPNAuzCMTGeblWW9sWI3",
-    "tokenId": "777"
+    "collaboratorId": "O6cKgXEsuPNAuzCMTGeblWW9sWI3",
+    "tokenId": "777",
+    "flag": "ki.png"
   },
   {
-    "host": "O6cKgXEsuPNAuzCMTGeblWW9sWI3",
-    "tokenId": "999"
+    "collaboratorId": "O6cKgXEsuPNAuzCMTGeblWW9sWI3",
+    "tokenId": "999",
+    "flag": "eu.png"
   },
   {
-    "host": "O6cKgXEsuPNAuzCMTGeblWW9sWI3",
-    "tokenId": "333"
+    "collaboratorId": "O6cKgXEsuPNAuzCMTGeblWW9sWI3",
+    "tokenId": "333",
+    "flag": "st.png"
   },
   {
-    "host": "O6cKgXEsuPNAuzCMTGeblWW9sWI3",
-    "tokenId": "3333"
+    "collaboratorId": "O6cKgXEsuPNAuzCMTGeblWW9sWI3",
+    "tokenId": "3333",
+    "flag": "mf.png"
   },
   {
-    "host": "O6cKgXEsuPNAuzCMTGeblWW9sWI3",
-    "tokenId": "555"
+    "collaboratorId": "O6cKgXEsuPNAuzCMTGeblWW9sWI3",
+    "tokenId": "555",
+    "flag": "ai.png"
   },
   {
-    "host": "O6cKgXEsuPNAuzCMTGeblWW9sWI3",
-    "tokenId": "7777"
+    "collaboratorId": "O6cKgXEsuPNAuzCMTGeblWW9sWI3",
+    "tokenId": "7777",
+    "flag": "pn.png"
   },
   {
-    "host": "O6cKgXEsuPNAuzCMTGeblWW9sWI3",
-    "tokenId": "33333"
+    "collaboratorId": "O6cKgXEsuPNAuzCMTGeblWW9sWI3",
+    "tokenId": "33333",
+    "flag": "an.png"
   },
   {
-    "host": "O6cKgXEsuPNAuzCMTGeblWW9sWI3",
-    "tokenId": "44444"
+    "collaboratorId": "O6cKgXEsuPNAuzCMTGeblWW9sWI3",
+    "tokenId": "44444",
+    "flag": "tw.png"
   },
   {
-    "host": "O6cKgXEsuPNAuzCMTGeblWW9sWI3",
-    "tokenId": "8888"
+    "collaboratorId": "O6cKgXEsuPNAuzCMTGeblWW9sWI3",
+    "tokenId": "8888",
+    "flag": "sj.png"
   }
 ]

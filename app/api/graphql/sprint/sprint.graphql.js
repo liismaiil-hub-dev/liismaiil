@@ -8,6 +8,20 @@ type SprintType {
   author:String
   stages: [StageType]
 }
+type GridType {
+    author: String
+    grid: Int
+    group: [Int]
+    title: String
+    description: String
+    souraNb: Int
+    arabName: String
+    souraName: String
+    tabletWords: [WordsCommentType]
+    ayahs:[[AyahTemplateType]]
+    createdAt:DateTime
+    updatedAt:DateTime
+}
 
 type SprintComment {
       id: Int
@@ -76,6 +90,11 @@ input GridsByMenuInput {
   author:String
   menu:String
 }
+
+input GetGridsByNbInput {
+  author:String
+  souraNb:Int
+}
 input GridInput {
   arabName: String
   author: String!
@@ -110,6 +129,10 @@ type GridsPlusOutput{
   success:Boolean
   grids:[PlusType]!
   } 
+type GetGridsByNbOutput{
+  success:Boolean
+  grids:[GridType]!
+  } 
 type SuccessMessageOutput {
   success: Boolean
   message:String
@@ -117,6 +140,7 @@ type SuccessMessageOutput {
 
 type Query {
     getGrids(author:String): GridsOutput
+    getGridsByNb(input:GetGridsByNbInput): GetGridsByNbOutput
     getGridsPlus(author:String): GridsPlusOutput
     sprints(author:String): [SprintType]
     guests(author:String): [GuestType]

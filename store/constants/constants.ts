@@ -7,12 +7,25 @@ export const THEMES = {
   GREEN: "GREEN",
   INDIGO: "INDIGO",
 };
+export const COOKIE_NAME = 'liismaiil-token'
 
 export enum APP_ENV {
   BOX = "BOX",
   WEB = 'WEB',
   LOCAL = 'LOCAL',
 
+}
+export enum GRIDS_TLD {
+  TIWAL = "TIWAL",
+  MIIN= 'MIIN',
+  MATHANI = 'MATHANI',
+  MOFASAL = 'MOFASAL',
+}
+export enum GRIDS_NAME {
+  TIWAL = "Tiwal",
+  MIIN = 'Miin',
+  MATHANI = 'Mathani',
+  MOFASAL = 'Mofasal',
 }
 // theme constant
 export const gridSpacing = 1;

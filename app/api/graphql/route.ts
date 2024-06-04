@@ -3,6 +3,7 @@ import { ApolloServer } from "@apollo/server";
 import { startServerAndCreateNextHandler } from "@as-integrations/next";
 import { NextRequest } from "next/server";
 
+import GridModel from "@/api/graphql/sprint/Grid.model";
 import GuestModel from "@/api/graphql/sprint/Guest.model";
 import { sprintDefs } from "@/api/graphql/sprint/sprint.graphql.js";
 import SprintModel from "@/api/graphql/sprint/Sprint.model";
@@ -134,7 +135,7 @@ const handler = startServerAndCreateNextHandler<NextRequest>(apolloServer, {
       ViewerModel,
       GuestModel,
       SprintModel,
-
+      GridModel,
       req,
       res,
       mongoose,

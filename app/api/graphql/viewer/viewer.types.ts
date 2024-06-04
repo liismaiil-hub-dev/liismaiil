@@ -1,12 +1,8 @@
 import { GuestType } from "../sprint/sprint.types";
-
-
-
 type ImageType = {
   public_id:string,
   url:string
 }
-
 export type ViewerTypeData = {
   _id: string;
   login: string;

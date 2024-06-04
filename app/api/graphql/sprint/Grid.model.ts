@@ -1,7 +1,7 @@
-import { GridsInput } from 'app/api/sprint/sprint.types';
+import { GridTypeData } from '@/api/graphql/sprint/sprint.types';
 import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
-export const gridSchema = new Schema<GridsInput>(
+export const gridSchema = new Schema<GridTypeData>(
   {
     title: String,
     souraNb: Number,
@@ -37,4 +37,4 @@ export const gridSchema = new Schema<GridsInput>(
 
 //gridSchema.index({ title: 1 }, { unique: true });
 
-export default mongoose.models.Grid || mongoose.model<GridsInput>('Grid', gridSchema);
+export default mongoose.models.Grid || mongoose.model<GridTypeData>('Grid', gridSchema);

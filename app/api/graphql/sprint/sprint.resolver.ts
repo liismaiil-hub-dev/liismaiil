@@ -1,8 +1,9 @@
-import { Firestore } from '@google-cloud/firestore';
 import {
   AddGridsOutput,
+  GetGridsByNbInput,
   GridInput,
   GridType,
+  GridTypeData,
   SECTION_MENU,
   SprintInput,
   SprintType
@@ -18,7 +19,32 @@ const getGrids = async (
     const grids = await GridModel.find({ author }).sort({ souraNb: 1 }).lean().exec();
     if (typeof grids !== 'undefined' && grids.length > 0) {
       const souraName = await grids.map((gr: GridType) => gr.arabName)
+
       return { success: true, grids: _lodash.uniq(souraName) }
+    } else {
+      return { success: false, grids: [] };
+    }
+  } catch (error: unknown) {
+    throw error;
+  }
+};
+const getGridsByNb = async (
+  _: undefined,
+  { input }: { input: GetGridsByNbInput },
+  { GridModel, _lodash }: { GridModel: any, _lodash: { filter: (arg: [GridTypeData]) => [GridTypeData] } }
+): Promise<{ success: boolean, grids: Array<GridTypeData> } | undefined> => {
+
+  const { author, souraNb } = input
+
+  try {
+    const grids = await GridModel.find({ author }).sort({ souraNb: 1 }).lean().exec();
+    console.log({ author, souraNb, grids });
+
+    if (typeof grids !== 'undefined' && grids.length > 0) {
+      const _grids = await _lodash.filter(grids, (grid: GridTypeData) => grid.souraNb === souraNb)
+      console.log(_grids)
+
+      return { success: true, grids: _grids }
     } else {
       return { success: false, grids: [] };
     }
@@ -39,7 +65,7 @@ const getGridsPlus = async (
 
 
   try {
-    const grids = await GridModel.find({ author }).sort({ souraNb: 1 }).lean().exec();
+    const grids = await GridModel.find({ author: "3jtczfl93BWlud2t3Q44KdC0EVJ3" }).sort({ souraNb: 1 }).lean().exec();
     if (typeof grids !== 'undefined' && grids.length > 0) {
       const gridsId = await grids.map((gr: GridType) => {
         return { arabName: gr.arabName, nb: gr.souraNb }
@@ -406,6 +432,7 @@ const removeSprint = async (
 const SprintResolver = {
   Query: {
     getGrids,
+    getGridsByNb,
     getGridsPlus,
     sprints,
     guests,

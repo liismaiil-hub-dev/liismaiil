@@ -15,13 +15,13 @@ type Tablet {
 }
 type TabletGrid {
     author: String
-    title: String
-    description: String
     grid: Int
     group: [Int]
+    title: String
+    description: String
     souraNb: Int
-    souraName: String
     arabName: String
+    souraName: String
     tabletWords: [WordsCommentType]
     ayahs:[[AyahTemplateType]]
     createdAt:DateTime

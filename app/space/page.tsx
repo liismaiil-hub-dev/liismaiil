@@ -1,44 +1,39 @@
-'use client'
-import { SprintType } from '@/api/graphql/sprint/sprint.types'
+'use server'
+import Spaces from "@/components/space/Spaces";
+import { APP_ENV } from '@/store/constants/constants';
+import { readdir } from 'node:fs/promises';
+import path from 'path';
 
-
-import { APP_ENV } from '@/store/constants/constants'
-import { toast } from 'react-toastify'
-
-type AyahWithIndex = {
-  id: number;
-  order: number;
-  text: string;
-  juz: number;
-  slice?: string;
-  _id?: string;
-}
-const getTitles = async () => {
+const getTitles = async (): Promise => {
+  'use server'
   if (process.env.APP_ENV === APP_ENV.BOX) {
+    const stagesDirName = path.join(process.cwd(), '/store/shares/stages')
     try {
-      const allSprints: SprintType[] = [];
-      const ftch = await fetch('/api/download-sprints', {
-        method: 'GET', cache: 'force-cache'
-      })
-      const sprintsTitles = await ftch.json();
-      const titlesFromJson = sprintsTitles.map(ttle => ttle?.split('.').shift())
-      return titlesFromJson
+      const files = await readdir(stagesDirName);
+      console.log({ files })
+      return files
     } catch (err) {
-      toast.warning(`cant get sprint file title please verify 
-         sprint files in the box repo
-         ` )
+      console.error(err);
+      return []
     }
+
+  } else {
+
   }
 }
-export default function Space() {
+export default async function SpacePage() {
 
-  
+  const titles = await getTitles()
+  console.log({ titles });
 
-  return (<div id="spacePage" className="flex flex-col justify-start items-center w-full   h-full " >
-    <div className="flex flex-col justify-start items-center  w-full overflow-visible" >
-      space
-    </div >
-  </div >
+
+  return (<section id="space-page" className="flex border 
+  border-violet-600  justify-start items-center w-full h-full" >
+
+    <Spaces spaces={titles} />
+
+
+  </section>
   )
 }
 

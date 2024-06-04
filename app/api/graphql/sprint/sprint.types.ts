@@ -55,7 +55,30 @@ export type SprintComment = {
   comment: string;
   token: string;
 };
+//^ space
+export type GetGridsByNbInput = {
+  author: string;
+  souraNb: number;
 
+};
+export type GridTypeData = {
+  id?: string;
+  author: string;
+  grid: number;
+  group: [number];
+  title: string;
+  description: string;
+  souraNb: number;
+  arabName: string;
+  souraName: string;
+  tabletWords?: [WordsCommentType];
+  ayahs: [AyahTabletType][];
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+
+//space $ 
 export type SprintInput = {
   title: string;
   description?: string;
@@ -134,11 +157,11 @@ export type GridInput = {
   updatedAt?: string;
 };
 export type GuestType = {
-  token: string;
+  tokenId: string;
   flag: string;
-  price: number;
+  price?: number;
   collaboratorId: string;
-  enrollmentStatus: string;
+  enrollmentStatus?: string;
   startDate: string;
   endDate: string;
   stages?: [string];

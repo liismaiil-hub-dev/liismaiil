@@ -1,6 +1,6 @@
 'use server'
-import { signin, signup } from '@/utils/authTools'
-import { COOKIE_NAME } from '@/utils/constants'
+import { signin, signup } from '@/lib/authTools'
+import { COOKIE_NAME } from '@/store/constants/constants'
 import { cookies } from 'next/headers'
 import { z } from 'zod'
 
@@ -12,7 +12,7 @@ const authSchema = z.object({
 
 export const registerGuest = async (prevState: any, formData: FormData) => {
   const data = authSchema.parse({
-    host: formData.get('host'),
+    collaboratorId: formData.get('host'),
     tokenId: formData.get('tokenId'),
     country: formData.get('country'),
   })
@@ -35,7 +35,7 @@ export const registerGuest = async (prevState: any, formData: FormData) => {
 
 export const signinGuest = async (prevState: any, formData: FormData) => {
   const data = authSchema.parse({
-    host: formData.get('host'),
+    collaboratorId: formData.get('host'),
     tokenId: formData.get('tokenId'),
     country: formData.get('country'),
   })

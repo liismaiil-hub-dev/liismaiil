@@ -20,7 +20,7 @@ type CountryCityCoords = {
 }
 
 // -----------------------------COMPONENT-------------------------//
-function SearchHost() {
+function SearchHost({ organisations }: { organisations:ViewerTypeData[] }) {
     const dispatch = useDispatch()
 
     useSelector((state: RootStateType) => state.viewer)
@@ -106,7 +106,7 @@ function SearchHost() {
             <label htmlFor="host">Choose  host:</label>
             <select name="host" id="host" onChange={(e) => handleHostChange(e)}>
                 <option value="">--choose a host--</option>
-                {organisationsContext?.map((host: ViewerTypeData) => <option ref={hostRef} key={`${slug(host.login)}`}
+                {typeof organisations!== 'undefined' && organisations?.map((host: ViewerTypeData) => <option ref={hostRef} key={`${slug(host.login)}`}
                     value={`${slug(host.login)}`} >{host.login}</option>)}
 
             </select>

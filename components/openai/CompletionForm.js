@@ -36,8 +36,6 @@ export default function CompletionFormComponent() {
 
   return (
     <div className="flex  flex-col" >
-       
-   
         <h3>As a question ?</h3>
         <form onSubmit={onSubmit}>
           <input

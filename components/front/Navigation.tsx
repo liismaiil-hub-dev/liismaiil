@@ -38,81 +38,65 @@ function Navigation() {
         dispatch(logout())
     }
     return (
-        <nav className={`container flex  justify-between bg-transparent items-center m-auto w-full z-10 fixed border-2 border-blue-300`} >
-            <section className='sm:hidden md:flex justify-between items-center gap-4  h-20 ' >
+        <nav className={`container  flex  justify-between bg-transparent 
+        items-center mx-auto w-full z-10 relative border-2 border-blue-300`} >
+            <section className='hidden md:flex justify-center items-center h-20 ' >
                 <Logo />
-
-                <FaBars onClick={() => {
-                    setShowMenu((showMenu) => !showMenu)
-
-                }}
-                    className='sm:flex md:hidden absolute top-1 right-2
-                     hover:text-3xl text-2xl hover:text-lime-600 cursor-pointer' />
             </section>
-            <section className={`hidden sm:flex relative my-auto flex-1 justify-start cursor-pointer items-center`} >
+            <section className='flex md:hidden justify-center items-center  ml-3 space-x-3  h-20 ' >
+
+                <div className=' text-2xl font-semibold p-3 bg-blue-500
+                 rounded-full hover:bg-blue-300 hover:text-blue-600 cursor-pointer ' >
+
+                    <FaBars onClick={() => { setShowMenu((showMenu) => !showMenu) }} />
+                </div>
+
+            </section>
+            {/* moble nav  */}
+            <section className={`md:hidden flex bg-green-300 flex-col justify-start cursor-pointer items-center`} >
                 <div className={` hidden ${showMenu && 'sm:flex'} bg-lime-600/50 rounded-md  
                 flex-col font-mont items-center absolute top-[38px] left-0 w-full`} >
-                    <div className={` ${isRoute('') && 'bg-green-200/10 text-blue-500'} 
-                    mobile-menu-item mobile-sub-menu mobile-menu group`} >
+                    <div className={` ${isRoute('/') && 'bg-green-200/10 text-blue-500'} 
+                menu-item sub-menu group` } >
                         <Link key={`home`} href='/' > Home </Link>
-
-                        <div className='div-sub-menu  hidden group-hover:block' >
-                            <div className='sub-menu ' onClick={SetGuestHandler}>
-                                <span>
-                                    guest
-                                </span>
-                            </div>
-                            <div className='sub-menu'>
-                                <span>  liismaiil
-                                </span>
-                            </div>
-                        </div>
                     </div>
 
-                    <div className={`${isRoute('space') && 'bg-green-200/10 text-blue-500'}
-                    mobile-menu-item mobile-sub-menu mobile-menu`} >
+                    <div className={`${isRoute('space') && 'bg-green-200/10 text-blue-500'}`} >
                         <Link key={`space`} href='/space'> Space </Link>
                     </div>
-                    <div className={` ${isRoute('tablets') && 'bg-green-200/10 text-blue-500'} 
-                    mobile-menu-item mobile-sub-menu mobile-menu` } >
-                        <Link key={`tablets`} href='/tablets'> Tablets </Link>
+                    <div className={` ${isRoute('sprints') && 'bg-green-200/10 text-blue-500'} 
+              `} >
+                        <Link key={`tablets`} href='/sprints'> Sprints </Link>
                     </div>
                     <div className={`  ${isRoute('guests') && 'bg-green-200/10 text-blue-500'} 
-                    mobile-menu-item mobile-sub-menu mobile-menu`} >
+                `} >
                         <Link key={`guests`} href='/guests'>Guests </Link>
                     </div>
+                    <div className={`  ${isRoute('guests') && 'bg-green-200/10 text-blue-500'} 
+               `} >
+                        <Link key={`guests`} href='/guests'>Hosts </Link>
+                    </div>
                     <div className={`  ${isRoute('domain') && 'bg-green-200/10 text-blue-500'} 
-                    mobile-menu-item mobile-sub-menu mobile-menu`} >
+               `} >
                         <Link key={`domain`} href='/domain'> Domain </Link>
                     </div>
-                    <div className={` ${isRoute('api/auth') && 'bg-green-200/10 text-blue-500'} 
-                    mobile-menu-item mobile-sub-menu mobile-menu`} >
+                    <div className={` text-green-200/10 bg-text-blue-500 rounded-full'} 
+               `} >
                         {(typeof guest !== 'undefined' && guest.token !== "") ? <Link onClick={handleLogout}
-                            key={`logout`} href='/'> Logout </Link> :
-                            <Link key={`login`} href='/signIn'> Login </Link>}
-
-
-
+                            key={`logout`} href='/'> Sign out </Link> :
+                            <Link key={`login`} href='/signIn'> Sign in </Link>}
+                    </div>
+                    <div className="relative flex basis-0 justify-end gap-6 sm:gap-8 md:flex-grow">
+                        <ThemeSelector className="relative z-10" />
                     </div>
                 </div>
             </section>
+            {/* laptop nav  */}
 
-            <section className=' flex  justify-end items-center gap-4 text-gray-300' >
-                <div className={` ${isRoute('/') && 'bg-green-600 text-blue-50'} 
-                menu-item sub-menu group` } >
+            <section className='hidden md:flex  justify-end items-center space-x-3 text-gray-400' >
+                <div className={` ${isRoute('/') && 'bg-green-200/10 text-blue-500'} `} >
                     <Link key={`home`} href='/' > Home </Link>
 
-                    <section className='div-sub-menu  hidden group-hover:block' >
-                        <button className='sub-menu ' onClick={SetGuestHandler}>
-                            <span>
-                                guest
-                            </span>
-                        </button>
-                        <button className='sub-menu'>
-                            <span>  liismaiil
-                            </span>
-                        </button>
-                    </section>
                 </div>
 
                 <div className={`${isRoute('space') && 'bg-green-200/10 text-blue-500'}`} >
@@ -134,11 +118,10 @@ function Navigation() {
                `} >
                     <Link key={`domain`} href='/domain'> Domain </Link>
                 </div>
-                <div className={` ${isRoute('api/auth') && 'bg-green-200/10 text-blue-500'} 
-               `} >
-                    {(typeof guest !== 'undefined' && guest.token !== "") ? <Link onClick={handleLogout}
-                        key={`logout`} href='/'> Logout </Link> :
-                        <Link key={`login`} href='/signIn'> Login </Link>}
+                <div className='text-green-100 font-semibold p-3 bg-blue-500 rounded-full hover:bg-blue-300 hover:text-blue-600' >
+                    {(typeof guest !== 'undefined' && guest.token !== "") ? <Link className='text-green-100 font-semibold p-3 bg-blue-500 rounded-md'
+                        onClick={handleLogout} href='/'> Sign out </Link> :
+                        <Link key={`login`} href='/signIn'> Sign in </Link>}
                 </div>
                 <div className="relative flex basis-0 justify-end gap-6 sm:gap-8 md:flex-grow">
                     <ThemeSelector className="relative z-10" />

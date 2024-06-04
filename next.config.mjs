@@ -33,11 +33,16 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   images: {
-    domains: [
-      "via.placeholder.com",
-      "res.cloudinary.com",
- 
-    ],
+   remotePatterns: [ {
+        protocol: 'https',
+        hostname: '**.via.placeholder.com',
+        port: '',
+      },{
+        protocol: 'https',
+        hostname: '**.res.cloudinary.com',
+        port: '',
+      },
+      ],
   }
   
 };

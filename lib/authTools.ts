@@ -6,8 +6,10 @@ import organisations from '@/store/shares/organisations.json'
 import jwt from 'jsonwebtoken'
 import _ from 'lodash'
 import 'server-only'
-import slug from 'slug'
-
+export type GuestRegistrd = {
+  host: string,
+  tokenId: string
+}
 const SECRET = process.env.NEXT_PUBLIC_JWT_SECRET!
 
 export const createTokenForGuest = (tokenId: string) => {
@@ -15,14 +17,11 @@ export const createTokenForGuest = (tokenId: string) => {
   return token
 }
 
-export const getGuestFromToken = async (guest: {
-  host: string
-  tokenId: string,
-  token: string
-}) => {
-  const payload = jwt.verify(guest.token, SECRET) as { id: string }
+export const getGuestFromToken = async (token: string) => {
+  const payload = jwt.verify(token, SECRET) as { id: string }
 
-  const _guest = _.findIndex(organisations!, function (o: ViewerTypeData) { return slug(o.login) === guest.host });
+  console.log({ payload });
+  const _guest = _.findIndex(guestsRegistred!, function (o: GuestRegistrd) { return o.tokenId === payload.id });
 
   return _guest
 }
