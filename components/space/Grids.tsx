@@ -1,10 +1,12 @@
 'use client'
 
+import { GET_GRIDS_BY_NB } from "@/graphql/sprint/queries";
 import { GRIDS_NAME, GRIDS_TLD } from "@/store/constants/constants";
-import { Accordion, AccordionItem, Button } from "@nextui-org/react";
-import { useEffect, useState } from "react";
-import {useQuery} from "@apollo/client";
-import {GET_GRIDS_BY_NB} from "@/graphql/sprint/queries";
+import { sprintActions } from "@/store/slices/sprintSlice";
+import { useLazyQuery } from "@apollo/client";
+import { Accordion, AccordionItem, Button, ScrollShadow } from "@nextui-org/react";
+import { useEffect, useMemo, useState } from "react";
+import { useDispatch } from "react-redux";
 
 type GridMenu = {
   souraName: string;
@@ -90,64 +92,81 @@ const MofasalAccordion = ({ grids, handleSelectedGrid }: {
     </section>
   )
 }
+//             _____COMPONENT_____________
+
 const Grids = ({ grids }: { grids: GridMenu[] }) => {
-  useEffect(() => {
-    console.log({ grids });
 
-  }, [grids]);
+  const dispatch = useDispatch()
 
-
-  const newTiwal: GridMenu[] = grids.filter((gr: GridMenu) => {
-    return gr.souraNb <= 7
-  })
-
-  // sprints = await GridModel.find({ author}).where('souraNb').gt(7).lte(18).sort({souraNb:1}).lean().exec();
-  const newMiin = grids.filter((gr: GridMenu) => {
-    return gr.souraNb > 7 && gr.souraNb <= 18;
-  })
-
-
-  const newMathani = grids.filter((gr: GridMenu) => {
-    return gr.souraNb > 18 && gr.souraNb <= 50;
-  });
-
-  const newMofasal = grids.filter((gr: GridMenu) => {
-    return gr.souraNb > 50;
-  });
+  const [GetGridsByNb, { data: dataGetGridsByNb, loading: loadingGetGridsByNb, error: errorGetGridsByNb }] = useLazyQuery(GET_GRIDS_BY_NB)
 
   const [selectedKeys, setSelectedKeys] = useState(new Set([GRIDS_TLD.TIWAL]));
   const [selectedGrid, setSelectedGrid] = useState(0);
 
+  const { setSpaceGrids } = sprintActions
+
+  // creating chunks 
+  const newTiwal: GridMenu[] = useMemo(() => grids.filter((gr: GridMenu) => {
+    return gr.souraNb <= 7
+  }), [grids])
+  const newMiin = useMemo(() => grids.filter((gr: GridMenu) => {
+    return gr.souraNb > 7 && gr.souraNb <= 18;
+  }), [grids])
+
+
+  const newMathani = useMemo(() => grids.filter((gr: GridMenu) => {
+    return gr.souraNb > 18 && gr.souraNb <= 50;
+  }), [grids])
+
+  const newMofasal = useMemo(() => grids.filter((gr: GridMenu) => {
+    return gr.souraNb > 50;
+  }), [grids])
+
+  useEffect(() => {
+    if (dataGetGridsByNb && dataGetGridsByNb.getGridsByNb && dataGetGridsByNb.getGridsByNb.success && dataGetGridsByNb.getGridsByNb.grids.length > 0) {
+      dispatch(setSpaceGrids({ grids: dataGetGridsByNb.getGridsByNb.grids }))
+      /*    try {
+           const blob = new Blob([JSON.stringify(dataGetGridsByNb.getGridsByNb.grids)], { type: "text/json" });
+           const link = document.createElement("a");
+           const filename = `${dataGetGridsByNb.getGridsByNb.grids[0].souraName}.json`
+   
+           link.download = filename;
+           link.href = window.URL.createObjectURL(blob);
+           link.dataset.downloadurl = ["text/json", link.download, link.href].join("_");
+   
+           const evt = new MouseEvent("click", {
+             view: window,
+             bubbles: true,
+             cancelable: true,
+           });
+   
+           link.dispatchEvent(evt);
+           link.remove()
+         } catch (error) {
+   
+         } */
+    } else if (errorGetGridsByNb || !dataGetGridsByNb?.getGridsByNb.success) {
+      console.log({ errorGetGridsByNb });
+
+    }
+
+  }, [dataGetGridsByNb, loadingGetGridsByNb, errorGetGridsByNb]);
 
   const selectedGridHandler = (arg: number) => {
-    try {
-      
-      const blob = new Blob([JSON.stringify()], { type: "text/json" });
-      const link = document.createElement("a");
-      const filename = `${stages[0].title}-stage-${input.title}-sprint.json`
-  
-      link.download = filename;
-      link.href = window.URL.createObjectURL(blob);
-      link.dataset.downloadurl = ["text/json", link.download, link.href].join("_");
-  
-      const evt = new MouseEvent("click", {
-        view: window,
-        bubbles: true,
-        cancelable: true,
-      });
-  
-      link.dispatchEvent(evt);
-      link.remove()
-    } catch (error) {
-      
-    }
-setSelectedGrid(arg)
+    setSelectedGrid(arg)
+    GetGridsByNb({
+      variables: {
+        input: {
+          souraNb: arg,
+          author: "3jtczfl93BWlud2t3Q44KdC0EVJ3"
+        }
+      }
+    })
+
   }
   const selectedKeyHandler = (arg: number) => {
     setSelectedGrid(arg)
   }
-
-  const defaultContent = " ut aliquip ex ea commodo consequat."
   return (
     <section className="flex flex-col text-blue-800 justify-start items-center w-full h-full">
       <Accordion
@@ -160,25 +179,30 @@ setSelectedGrid(arg)
         </AccordionItem>
         <AccordionItem key={`${GRIDS_TLD.MIIN}`} aria-label={`souar ${GRIDS_NAME[GRIDS_TLD.MIIN]}`} title={`${GRIDS_NAME[GRIDS_TLD.MIIN]}`}>
           <MiinAccordion grids={newMiin} selectedKeys={selectedKeys} handleSelectedGrid={(arg) => selectedGridHandler(arg)} />
-
         </AccordionItem>
         <AccordionItem key={`${GRIDS_TLD.MATHANI}`} aria-label={`souar ${GRIDS_NAME[GRIDS_TLD.MATHANI]}`} title={`${GRIDS_NAME[GRIDS_TLD.MATHANI]}`}>
           <MathaniAccordion grids={newMathani} selectedKeys={selectedKeys} handleSelectedGrid={(arg) => selectedGridHandler(arg)} />
         </AccordionItem>
         <AccordionItem key={`${GRIDS_TLD.MOFASAL}`} aria-label={`souar ${GRIDS_NAME[GRIDS_TLD.MOFASAL]}`} title={`${GRIDS_NAME[GRIDS_TLD.MOFASAL]}`}>
-          <MofasalAccordion grids={newMofasal} selectedKeys={selectedKeys} handleSelectedGrid={(arg) => selectedGridHandler(arg)} />
+          <ScrollShadow className=" h-[calc(100vh-20rem)]">
+            <MofasalAccordion grids={newMofasal} selectedKeys={selectedKeys}
+              handleSelectedGrid={(arg) => selectedGridHandler(arg)} />
+          </ScrollShadow>
+
         </AccordionItem>
       </Accordion >
 
-      {/* <Accordion>
-        {grids.map((grd) => {
-          return 
-        }
-        )}
-         <AccordionMiin />
-        <AccordionTiwal />
-          <AccordionMathani />
-          <AccordionMofasal /> 
+      {/* import React from "react";
+import {ScrollShadow} from "@nextui-org/react";
+import {Content} from "./Content";
+
+export default function App() {
+  return (
+    <ScrollShadow className="w-[300px] h-[400px]">
+      <Content />
+  );
+}
+
       */}
     </section>)
 

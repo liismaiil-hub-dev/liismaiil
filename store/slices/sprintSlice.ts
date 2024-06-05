@@ -1,6 +1,6 @@
 // third-party
+import { AyahTabletType, GridType, SprintStateProps, SprintType, StageType } from '@/api/graphql/sprint/sprint.types';
 import { createSlice, current, PayloadAction } from '@reduxjs/toolkit';
-import { AyahTabletType, GridInput, SprintStateProps, SprintType, StageType } from 'app/api/sprint/sprint.types';
 import * as _ from 'lodash';
 const initialState: SprintStateProps = {
   sprints: [],
@@ -11,10 +11,79 @@ const initialState: SprintStateProps = {
   spaceSprint: '',
   //validStages: [''],
   // minmax: { min: -1, max: -1 },
-  stageSelected: undefined,
-  gridsSelected: undefined,
-  gridSelected: undefined,
-  grid: undefined,
+  stageSelected: {
+    id: -1,
+    title: '',
+    grids: [{
+      author: '',
+      grid: -1,
+      group: [-1],
+      title: '',
+      description: '',
+      souraNb: -1,
+      arabName: '',
+      souraName: '',
+      ayahs: [[{
+        order: -1,
+        text: '',
+        juz: -1
+      }
+      ]]
+    }
+    ],
+    author: '',
+
+  },
+  spaceGridsSelected: [{
+    author: '',
+    grid: -1,
+    group: [-1],
+    title: '',
+    description: '',
+    souraNb: -1,
+    arabName: '',
+    souraName: '',
+    ayahs: [[{
+      order: -1,
+      text: '',
+      juz: -1
+    }
+    ]]
+  }
+  ],
+  gridSelected: {
+    author: '',
+    grid: -1,
+    group: [-1],
+    title: '',
+    description: '',
+    souraNb: -1,
+    arabName: '',
+    souraName: '',
+    ayahs: [[{
+      order: -1,
+      text: '',
+      juz: -1
+    }
+    ]]
+  },
+boardGridIndex :-1,
+  grid: {
+    author: '',
+    grid: -1,
+    group: [-1],
+    title: '',
+    description: '',
+    souraNb: -1,
+    arabName: '',
+    souraName: '',
+    ayahs: [[{
+      order: -1,
+      text: '',
+      juz: -1
+    }
+    ]]
+  },
   ayHided: [{ id: -1, order: -1 }],
   ayahArraySelected: undefined,
   validGrids: [''],
@@ -38,7 +107,7 @@ const sprintSlice = createSlice({
   initialState,
   reducers: {
 
-    setSprints(state: SprintStateProps, action: PayloadAction<{ sprints: SprintType[] }>) {
+    setSprints(state: SprintStateProps, action: PayloadAction<{ sprints: [SprintType] }>) {
       state.sprints = action.payload.sprints
     },
     setSpaceSprint(state: SprintStateProps, action: PayloadAction<{ sprint: string }>) {
@@ -48,8 +117,18 @@ const sprintSlice = createSlice({
     setSpaceStage(state: SprintStateProps, action: PayloadAction<{ stage: StageType }>) {
       state.spaceStage = action.payload.stage
     },
-    setSprintsTitles(state: SprintStateProps, action: PayloadAction<{ sprints: string[] }>) {
+    setSprintsTitles(state: SprintStateProps, action: PayloadAction<{ sprints: [string] }>) {
       state.sprintsTitles = action.payload.sprints
+    },
+    setSpaceGrids(state: SprintStateProps, action: PayloadAction<{ grids: [GridType] }>) {
+      console.log({ spaceGrids: action.payload.grids });
+      
+      state.spaceGridsSelected = action.payload.grids
+    },
+    setBoardGridIndex(state: SprintStateProps,
+      action: PayloadAction<{ index: number }>) {
+      console.log({ grid: action.payload.index })
+      state.boardGridIndex = action.payload.index
     },
     emptySprintsTitles(state: SprintStateProps) {
       state.sprintsTitles = initialState.sprintsTitles
@@ -79,14 +158,8 @@ const sprintSlice = createSlice({
 
 
     setGridSelected(state: SprintStateProps,
-      action: PayloadAction<{ grid: GridInput }>) {
-      console.log({ grid: action.payload.grid })
+      action: PayloadAction<{ grid: GridType }>) {
       state.gridSelected = action.payload.grid
-    },
-    setGrid(state: SprintStateProps,
-      action: PayloadAction<{ grid: AyahTabletType[] }>) {
-      console.log({ grid: action.payload.grid })
-      state.grid = action.payload.grid
     },
     setMinMax(state: SprintStateProps,
       action: PayloadAction<{ minmax: { min: number, max: number } }>) {
@@ -124,7 +197,7 @@ const sprintSlice = createSlice({
     validateGrids(state: SprintStateProps, action: PayloadAction<{ grids: string }>) {
       state.validGrids.push(action.payload.grids)
     },
-    setGrids(state: SprintStateProps, action: PayloadAction<{ grids: GridInput[] }>) {
+    setGrids(state: SprintStateProps, action: PayloadAction<{ grids: GridType[] }>) {
 
       state.grids = action.payload.grids
     },

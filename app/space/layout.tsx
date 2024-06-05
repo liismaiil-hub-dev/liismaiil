@@ -24,28 +24,19 @@ function Spacelayout({ children, grid, stage, board }: {
                         <Navigation />
                     </div>
 
-                    <section className="container flex  border bg-green-100 border-blue-600 w-full h-screen justify-between items-center" >
+                    <section className="container flex  border   w-full h-[calc(100vh-7rem)] justify-between items-center" >
 
-                        <div className="flex flex-col justify-start items-center border border-amber-500 w-1/4 h-full" >
+                        <div className="flex flex-col justify-start items-start bg-green-200 border shadow-md w-1/4 h-full" >
                             {grid}
                         </div >
-                        <div className="flex flex-col justify-start items-start space-y-3 border border-amber-500 w-3/4 
-                        h-full" >
-
-
-                            {/* <div className="flex  justify-between items-center nowrap max-h-1/4   border
-                      border-emerald-700 bg-green-400 text-sm text-blue-800" >
-
-                            {stage}
-                        </div> */}
-                            <div className="flex  justify-start items-start h-full bg-slate-100 w-full border  text-sm text-gray-500" >
+                        <div className="flex flex-col justify-between items-start space-y-3 border-3   w-3/4 h-full" >
+                            {/* 
+                            <div className="flex  justify-start   bg-orange-200 w-full h-full text-medium text-gray-500" >
                                 {board}
-                            </div>
-                            <div className="flex  justify-start items-start h-full w-full  border
-                      border-emerald-700  font-semibold text-gray-500" >
+                            </div> */}
 
-                                {children}
-                            </div >
+                            {children}
+
                         </div >
 
                     </section>

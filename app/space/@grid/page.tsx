@@ -47,16 +47,13 @@ export default async function GridNav() {
   console.log({ grids });
   if (typeof grids !== 'undefined' && grids.length > 0) {
 
-    return (<div id="grid-nav" className="flex flex-col justify-start items-center  h-full " >
+    return (
       <GridsComponent grids={grids} />
 
-    </div >
+
     )
   } else {
-    return (<div id="grid-nav" className="flex flex-col justify-start items-center  h-full " >
-      <GridsComponent grids={['']} />
-
-    </div >)
+    return (<GridsComponent grids={['']} />)
 
   }
 }

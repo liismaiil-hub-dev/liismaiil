@@ -1,9 +1,7 @@
 import {
   AddGridsOutput,
   GetGridsByNbInput,
-  GridInput,
   GridType,
-  GridTypeData,
   SECTION_MENU,
   SprintInput,
   SprintType
@@ -31,17 +29,19 @@ const getGrids = async (
 const getGridsByNb = async (
   _: undefined,
   { input }: { input: GetGridsByNbInput },
-  { GridModel, _lodash }: { GridModel: any, _lodash: { filter: (arg: [GridTypeData]) => [GridTypeData] } }
-): Promise<{ success: boolean, grids: Array<GridTypeData> } | undefined> => {
+  { GridModel, _lodash }: { GridModel: any, _lodash: { filter: any } }
+): Promise<{ success: boolean, grids: Array<GridType> } | undefined> => {
 
   const { author, souraNb } = input
+  console.log({ author, souraNb });
+
 
   try {
     const grids = await GridModel.find({ author }).sort({ souraNb: 1 }).lean().exec();
     console.log({ author, souraNb, grids });
 
     if (typeof grids !== 'undefined' && grids.length > 0) {
-      const _grids = await _lodash.filter(grids, (grid: GridTypeData) => grid.souraNb === souraNb)
+      const _grids = await _lodash.filter(grids, (grid: GridType) => (grid.souraNb === souraNb || grid.souraNb.toString() === souraNb.toString()))
       console.log(_grids)
 
       return { success: true, grids: _grids }

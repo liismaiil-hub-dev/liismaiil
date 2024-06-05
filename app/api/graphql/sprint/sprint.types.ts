@@ -9,17 +9,17 @@ export type CoordsType = {
 export type SprintStateProps = {
   spaceStage: StageType;
   spaceSprint: string;
-  grid: AyahTabletType[];
-  gridSelected: GridInput;
-  gridsSelected: { stageId: number; gridId: string; index: number; }[];
+  grid: GridType,
+  gridSelected: GridType;
+  spaceGridsSelected: [GridType];
+  boardGridIndex: number,
   stageSelected: StageType;
-  sprints: SprintType[];
-  sprintsTitles: string[];
+  sprints: [SprintType];
+  sprintsTitles: [string];
   title: string;
-  stages: StageType[];
+  stages: [StageType];
   stage: string;
   showMenu: boolean,
-
   sprintStages: [string][];
   description: string;
   newBoard: boolean;
@@ -28,9 +28,9 @@ export type SprintStateProps = {
 
   selectedStageId: number;
 
-  grids?: GridInput[];
+  grids?: [GridType];
   gridName?: string;
-  guests?: GuestType[];
+  guests?: [GuestType];
   dueDate?: string;
 };
 export type SprintType = {
@@ -46,7 +46,7 @@ export type StageType = {
   id: number;
   title: string;
   section?: string;
-  grids?: GridInput[];
+  grids?: GridType[];
   author: string;
   guests?: string[];
 };
@@ -61,22 +61,6 @@ export type GetGridsByNbInput = {
   souraNb: number;
 
 };
-export type GridTypeData = {
-  id?: string;
-  author: string;
-  grid: number;
-  group: [number];
-  title: string;
-  description: string;
-  souraNb: number;
-  arabName: string;
-  souraName: string;
-  tabletWords?: [WordsCommentType];
-  ayahs: [AyahTabletType][];
-  createdAt?: string;
-  updatedAt?: string;
-};
-
 
 //space $ 
 export type SprintInput = {
@@ -92,7 +76,7 @@ export type UpdateStageInput = {
   id: number;
   author: string;
   title?: string;
-  grids: [GridInput];
+  grids: [GridType];
 };
 
 export type removeStageInput = {
@@ -141,21 +125,7 @@ export type GridType = {
   createdAt?: string;
   updatedAt?: string;
 };
-export type GridInput = {
-  id?: number;
-  author: string;
-  title: string;
-  description: string;
-  souraNb: number;
-  arabName: string;
-  souraName: string;
-  tabletWords?: [WordsCommentType];
-  grid: number;
-  group: [number];
-  ayahs: [AyahTabletType][];
-  createdAt?: string;
-  updatedAt?: string;
-};
+
 export type GuestType = {
   tokenId: string;
   flag: string;

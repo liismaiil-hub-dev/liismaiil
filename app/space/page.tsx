@@ -1,5 +1,6 @@
 'use server'
-import Spaces from "@/components/space/Spaces";
+import Board from "@/components/space/Board";
+import Stage from "@/components/space/Stage";
 import { APP_ENV } from '@/store/constants/constants';
 import { readdir } from 'node:fs/promises';
 import path from 'path';
@@ -27,10 +28,10 @@ export default async function SpacePage() {
   console.log({ titles });
 
 
-  return (<section id="space-page" className="flex border 
-  border-violet-600  justify-start items-center w-full h-full" >
+  return (<section id="space-page" className="flex flex-col justify-start items-center border-2 border-blue-300 w-full h-full" >
 
-    <Spaces spaces={titles} />
+    <Stage />
+    <Board />
 
 
   </section>

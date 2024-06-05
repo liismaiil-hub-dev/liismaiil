@@ -35,9 +35,22 @@ export const SPRINTS_BY_AUTHOR = gql`
         title
         author
         guests
-        grids {
-          
-        }
+        grids{
+          grid
+          group
+          title
+          description
+          souraNb
+          arabName
+          souraName
+          ayahs{
+            order
+            text
+            juz
+            slice
+          }
+          createdA
+          }
       }
     }
   }
@@ -105,9 +118,25 @@ export const GET_STATS = gql`
   }
 `;
 export const GET_GRIDS_BY_NB = gql`
-  query GetGridsByNb($input: GetGridByNbInput) {
+  query GetGridsByNb($input: GetGridsByNbInput) {
     getGridsByNb(input: $input) {
-      
-    }
+      success
+      grids{
+          grid
+          group
+          title
+          description
+          souraNb
+          arabName
+          souraName
+          ayahs{
+            order
+            text
+            juz
+            
+          }
+          createdAt
+          }
+          }
   }
 `;
