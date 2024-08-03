@@ -33,16 +33,16 @@ const getGridsByNb = async (
 ): Promise<{ success: boolean, grids: Array<GridType> } | undefined> => {
 
   const { author, souraNb } = input
-  console.log({ author, souraNb });
+  //  console.log({ author, souraNb });
 
 
   try {
     const grids = await GridModel.find({ author }).sort({ souraNb: 1 }).lean().exec();
-    console.log({ author, souraNb, grids });
+    //  console.log({ author, souraNb, grids });
 
     if (typeof grids !== 'undefined' && grids.length > 0) {
       const _grids = await _lodash.filter(grids, (grid: GridType) => (grid.souraNb === souraNb || grid.souraNb.toString() === souraNb.toString()))
-      console.log(_grids)
+      //  console.log(_grids)
 
       return { success: true, grids: _grids }
     } else {

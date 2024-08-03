@@ -1,5 +1,5 @@
 'use client'
-import { CoordsType, ViewerTypeData } from '@/api/graphql/viewer/viewer.types'
+import { CoordsType, PROFILE_ENROLLMENT_NAMES_ENUM, ViewerTypeData } from '@/api/graphql/viewer/viewer.types'
 import { viewerActions } from '@/store/slices/viewerSlice'
 import { RootStateType } from '@/store/store'
 import { useRouter } from 'next/navigation'
@@ -34,17 +34,17 @@ function Organisation({ organisation }: { organisation: ViewerTypeData }) {
 
     return (
         <div key={organisation._id} className='border-2  cursor-pointer hover:animate-zoomIn
-                    border-white shadow-md hover:border-indigo-300   flex flex-col gap-3 justify-start items-center
-                     p-2 rounded-lg h-80 w-60'onClick={() => selectOrganisationHandler(organisation)} >
-            <div className='h-52 w-full relative flex-col items-start justify-end rounded-lg'
+                    border-green-300  shadow-md shadow-green-300 hover:border-indigo-300   flex flex-col gap-1 justify-start items-center
+                     p-2 rounded-lg h-52 w-60'onClick={() => selectOrganisationHandler(organisation)} >
+            <div className='h-36 w-full relative flex-col items-start justify-end rounded-lg'
                 style={{ "backgroundImage": `url(${organisation.avatar})` }} >
 
             </div>
-            <div className={`px-auto   text-center    w-full font-bold`}>
+            <div className={`px-auto   text-center text-xl   w-full font-light`}>
                 {organisation.login}
             </div>
-            <div className='px-auto  text-center  w-full'>
-                {organisation.status}
+            <div className='px-auto  text-xl text-center  capitalize w-full font-light'>
+                {PROFILE_ENROLLMENT_NAMES_ENUM[organisation.status]}
             </div>
         </div>)
 }

@@ -3,14 +3,12 @@ import ViewerModel from '@/api/graphql/viewer/Viewer.model';
 import { ViewerTypeData } from '@/api/graphql/viewer/viewer.types';
 import Organisations from "@/components/front/Organisations";
 //import MapComponent from '@/components/maps/MapComponent';
+import { getGuestFromToken } from '@/lib/authTools';
 import connectMongoose from '@/lib/mongoose-db';
-import { FLAG_FILES } from '@/store/constants/flagArray';
-import jsonfile from 'jsonfile';
-import mime from 'mime';
-import { Metadata } from 'next';
-
-import { APP_ENV } from '@/store/constants/constants';
+import { APP_ENV, COOKIE_NAME } from '@/store/constants/constants';
 import { promises as fs } from 'fs';
+import { Metadata } from 'next';
+import { cookies } from 'next/headers';
 
 
 const APP_NAME = "liismaiil-hub";
@@ -55,75 +53,54 @@ export const metadata: Metadata = {
     },
     */
 };
-type GuestType = {
-  collaboratorId: string;
-  tokenId: string;
-}
-async function putFlag() {
-  try {
-    const filename = `${process.cwd()}/store/shares/guests.json`
-    const mimetype = mime.getType(filename);
-    console.log({ filename, mimetype });
-    jsonfile.readFile(filename)
-      .then(obj => {
-        //now it an object
-        console.log({ obj });
-        const flaguedGuests = obj.map((gust, index) => {
-          const ind = (Math.ceil(Math.random() * FLAG_FILES.length))
-
-          return {
-            ...gust, flag: FLAG_FILES[ind]
-          }
-        })
-        // jsonfile.writeFile(filename, obj, { spaces: 2 }, function (err) {
-        /* if (err) {
-          console.error({ err })
-        } */
-        // const filestream = createReadStream(filename);
-        jsonfile.writeFile(filename, [...flaguedGuests], { spaces: 2 }, function (err) {
-          if (err) {
-            console.error({ err })
-
-          }
-
-        }
-        )
-      }).catch(error => {
-        console.log({ error });
-      })
-
-
-  } catch (error) {
-    console.log(error);
-  }
-}
 
 
 export const revalidate = 5;
 const countries = ["FR", "DZ", "MA", "PA", "IN", "SE", "MU", "YEM", "IR"]
+
+/**HOME COMPONENT */
 export default async function Home() {
   const organisations = await getOrganisations()
   const guests = await getGuests()
+  const guest =  await getGuestFromCookies()
+  
   if (process.env.APP_ENV === APP_ENV.BOX) {
     const parsedOrganisations = JSON.parse(organisations)
     const parsedGuests = JSON.parse(guests)
 
     return (
-      <main className=" flex flex-col justify-start items-center" >
-        <Organisations guests={parsedGuests} organisations={parsedOrganisations} />
-      </main>
-    )
+        <Organisations guest={guest!} guests={parsedGuests} organisations={parsedOrganisations} />
+       )
   } else {
     return (
-      <main className="flex flex-col justify-start items-center" >
-        <Organisations guests={guests} organisations={organisations} />
-      </main>
-
+        <Organisations guest={guest} guests={guests} organisations={organisations} />
+      
     )
   }
 
 }
+async function getGuestFromCookies(){
+ 
+  try {
+    const token = cookies().get(COOKIE_NAME)
+    if (typeof token !== 'undefined') {
+        
+      const guest = await getGuestFromToken(token.value)
+      return guest
+    }
+    return null
 
+
+    //redirect(`/space/${slug(data.host)}`)
+  } catch (e) {
+    console.error(e)
+    return null
+    //redirect(`/liismaiil/${slug(data.host)}`)
+
+  }
+
+
+}
 async function getOrganisations() {
   if (process.env.APP_ENV === APP_ENV.BOX) {
     try {
@@ -169,7 +146,6 @@ async function getGuests() {
   if (process.env.APP_ENV === APP_ENV.BOX) {
     try {
       const guests = await fs.readFile(process.cwd() + '/store/shares/guests.json', 'utf8');
-      console.log({ parsed: JSON.parse(guests) });
       return guests
 
     } catch (error) {

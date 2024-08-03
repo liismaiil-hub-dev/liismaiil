@@ -161,11 +161,27 @@ export const createHundredLiis = async () => {
   }
 };
 
-export function GridNormalize(obj: { order: number, juz: number, text: string }, index: number) {
-  this.order = obj.order
-  this.juz = obj.juz
-  this.text = obj.text
-  this.id = index
+export function downloadJsonFile() {
+  /*    try {
+         const blob = new Blob([JSON.stringify(dataGetGridsByNb.getGridsByNb.grids)], { type: "text/json" });
+         const link = document.createElement("a");
+         const filename = `${dataGetGridsByNb.getGridsByNb.grids[0].souraName}.json`
+ 
+         link.download = filename;
+         link.href = window.URL.createObjectURL(blob);
+         link.dataset.downloadurl = ["text/json", link.download, link.href].join("_");
+ 
+         const evt = new MouseEvent("click", {
+           view: window,
+           bubbles: true,
+           cancelable: true,
+         });
+ 
+         link.dispatchEvent(evt);
+         link.remove()
+       } catch (error) {
+ 
+       } */
 
 }
 export function omitDeep(obj: any, key: string) {

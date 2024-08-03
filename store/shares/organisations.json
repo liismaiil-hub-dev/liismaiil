@@ -98,6 +98,45 @@
         "updatedAt": "\"2024-03-07T16:48:10.524Z\"",
         "uid": "3jtczfl93BWlud2t3Q44KdC0EVJ3",
         "continent": "",
+        "country": "SE",
+        "guests": [
+            {
+                "token": "111",
+                "collaboratorId": "3jtczfl93BWlud2t3Q44KdC0EVJ3",
+                "enrollmentStatus": "GUEST",
+                "stages": [
+                    ""
+                ],
+                "price": 10,
+                "flag": "",
+                "startDate": "",
+                "endDate": ""
+            }
+        ],
+        "city": "tizi ouzou",
+        "state": "Algeria"
+    },
+    {
+        "_id": "64ca833de8cadc208fa4b394",
+        "login": "organisateurs fatik",
+        "email": "hicham.horsjeux@gmail.com",
+        "stripe_account_id": null,
+        "phone": "0699307223",
+        "bio": "library shared books organisator FAtick region",
+        "status": "ORGA",
+        "website": "http://localhost:3001/64ca833de8cadc208fa4b394",
+        "instagram": "",
+        "organisation": null,
+        "addressGeo": "Sénégal fatick region agricole project",
+        "createdAt": "\"2023-08-02T18:24:29.145Z\"",
+        "coords": {
+            "lat": -41.275199,
+            "long": 174.778244
+        },
+        "avatar": "https://res.cloudinary.com/liismaiil/image/upload/v1695915072/lami1a/viewer/1695915071990.jpg",
+        "updatedAt": "\"2024-03-07T16:48:10.524Z\"",
+        "uid": "3jtczfl93BWlud2t3Q44KdC0EVJ3",
+        "continent": "",
         "country": "DZ",
         "guests": [
             {

@@ -13,7 +13,7 @@ export default async function Guests() {
   if (process.env.APP_ENV === APP_ENV.BOX) {
 
     const parsedGuests = JSON.parse(guests)
-    console.log({ guests });
+  //console.log({ guests });
 
     return (
       <main className=" flex flex-col justify-start items-center" >

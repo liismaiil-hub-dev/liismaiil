@@ -1,12 +1,15 @@
 // third-party
-import { AyahTabletType, GridType, SprintStateProps, SprintType, StageType } from '@/api/graphql/sprint/sprint.types';
+import { GridType, SprintStateProps, SprintType, StageType } from '@/api/graphql/sprint/sprint.types';
+import { AyahTabletType } from '@/api/graphql/tablet/tablet.types';
 import { createSlice, current, PayloadAction } from '@reduxjs/toolkit';
-import * as _ from 'lodash';
 const initialState: SprintStateProps = {
-  sprints: [],
+  sprints: [
+    {}
+  ],
   sprintsTitles: [''],
   showMenu: false,
-  stages: [],
+  stages: [{}],
+  validGrids: [''],
   stage: '',
   spaceSprint: '',
   //validStages: [''],
@@ -51,6 +54,12 @@ const initialState: SprintStateProps = {
     ]]
   }
   ],
+  gridsAyahsSelected: [{
+    order: -1,
+    text: '',
+    juz: -1
+  }
+  ],
   gridSelected: {
     author: '',
     grid: -1,
@@ -67,7 +76,7 @@ const initialState: SprintStateProps = {
     }
     ]]
   },
-boardGridIndex :-1,
+  boardGridIndex: -1,
   grid: {
     author: '',
     grid: -1,
@@ -93,7 +102,11 @@ boardGridIndex :-1,
   title: '',
   newBoard: true,
   openSprint: false,
-  guests: [],
+  guests: [{
+    collaboratorId: '', flag: '', tokenId: '',
+    startDate: '',
+    endDate: ''
+  }],
   description: '',
   sprintStages: [],
   selectedTablet: '',
@@ -122,8 +135,19 @@ const sprintSlice = createSlice({
     },
     setSpaceGrids(state: SprintStateProps, action: PayloadAction<{ grids: [GridType] }>) {
       console.log({ spaceGrids: action.payload.grids });
-      
+
       state.spaceGridsSelected = action.payload.grids
+    },
+    setGridSelected(state: SprintStateProps,
+      action: PayloadAction<{ grid: GridType }>) {
+      console.log({ gridSelected: action.payload.grid });
+
+      state.gridSelected = action.payload.grid
+    },
+    setGridsAyahsSelected(state: SprintStateProps,
+      action: PayloadAction<{ gridsAyahsSelected: [AyahTabletType] }>) {
+
+      state.gridsAyahsSelected = action.payload.gridsAyahsSelected
     },
     setBoardGridIndex(state: SprintStateProps,
       action: PayloadAction<{ index: number }>) {
@@ -150,52 +174,22 @@ const sprintSlice = createSlice({
 
       state.stage = action.payload.stage
     },
-    setGridsSelected(state: SprintStateProps,
-      action: PayloadAction<{ grids: { stageId: number, gridId: string, index: number }[] }>) {
 
-      state.gridsSelected = action.payload.grids
+
+    setAyahsGridSelected(state: SprintStateProps,
+      action: PayloadAction<{ ayahsGridSelected: AyahTabletType[] }>) {
+
+      state.ayahsGridSelected = action.payload.ayahsGridSelected
     },
 
 
-    setGridSelected(state: SprintStateProps,
-      action: PayloadAction<{ grid: GridType }>) {
-      state.gridSelected = action.payload.grid
-    },
-    setMinMax(state: SprintStateProps,
-      action: PayloadAction<{ minmax: { min: number, max: number } }>) {
-      console.log({ minmax: action.payload.minmax })
-      state.minmax = action.payload.minmax
-    },
-
-    hideAy(state: SprintStateProps,
-      action: PayloadAction<{ ayIds: { order: number, id: number } }>) {
-      console.log({ ayIds: action.payload.ayIds })
-      if (typeof current(state)?.ayHided === 'undefined' || _.isEmpty(current(state)?.ayHided[0])) {
-
-        state.ayHided = [action.payload.ayIds]
-      } else if (current(state)?.ayHided[0].order === action.payload.ayIds.order) {
-        return state
-      } else {
-        state.ayHided.push(action.payload.ayIds)
-      }
-    },
-    resetHidedAy(state: SprintStateProps) {
-      state.ayHided = initialState.ayHided
-
-    },
-
-    setAyahArraySelected(state: SprintStateProps,
-      action: PayloadAction<{ ayahArray: AyahTabletType[] }>) {
-      console.log({ ayahArray: action.payload.ayahArray })
-      state.ayahArraySelected = action.payload.ayahArray
-    },
     validateStage(state, action: PayloadAction<{ stage: string }>) {
 
       state.validStages.push(action.payload.stage)
     },
 
-    validateGrids(state: SprintStateProps, action: PayloadAction<{ grids: string }>) {
-      state.validGrids.push(action.payload.grids)
+    validateGrid(state: SprintStateProps, action: PayloadAction<{ grid: string }>) {
+      state.validGrids.push(action.payload.grid)
     },
     setGrids(state: SprintStateProps, action: PayloadAction<{ grids: GridType[] }>) {
 

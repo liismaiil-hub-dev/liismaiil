@@ -1,7 +1,7 @@
 import { GuestType } from "../sprint/sprint.types";
 type ImageType = {
-  public_id:string,
-  url:string
+  public_id: string,
+  url: string
 }
 export type ViewerTypeData = {
   _id: string;
@@ -13,10 +13,10 @@ export type ViewerTypeData = {
   stripe_account_id?: string;
   hasWallet?: boolean;
   phone?: string;
-  avatar?: ImageType|string;
+  avatar?: ImageType | string;
   flagToken?: {
-    flag:string,
-    token:string
+    flag: string,
+    token: string
   };
   organisation?: string;
   status: PROFILE_STATUS_ENUM;
@@ -25,11 +25,11 @@ export type ViewerTypeData = {
   telegram?: string;
 
   cha3bi?: number;
- 
+
   bookings?: BookingType[];
 
   guests?: GuestType[];
- 
+
   coords?: CoordsType;
   addressGeo?: string;
   contact?: string;
@@ -38,13 +38,13 @@ export type ViewerTypeData = {
   state?: string;
   continent?: string;
   rewards?: string[];
-  
+
   updatedAt?: string;
   createdAt?: string;
 };
-export type CoordsType ={
-  long: number, 
-  lat: number 
+export type CoordsType = {
+  long: number,
+  lat: number
 }
 
 export type BookingType = {
@@ -57,53 +57,63 @@ export type SigninViewerInput = {
 }
 
 export enum EVENT_STATUS_ENUM {
-  ADMIN= "ADMIN",
-  COLL= 'COLL',
-  ORGA= 'ORGA',
-  LIIS= 'LIIS',
-    DELIVER= 'DELIVER',
-  GUEST= 'GUEST',
-  LIBRARY= 'LIBRARY',
-  }
-export enum PROFILE_STATUS_ENUM{
-ADMIN =  "ADMIN",
-COLL= 'COLL',
-ORGA= 'ORGA',
-LIIS= 'LIIS',
-LIISIL= 'LIISIL',
-DELIVER= 'DELIVER',
-GUEST= 'GUEST',
-USER= 'USER',
-DISCOUNT= 'DISCOUNT',
-LIBRARY= 'LIBRARY',
-LIISMAIIL_GUEST= 'LIISMAIIL_GUEST'
-} 
+  ADMIN = "ADMIN",
+  COLL = 'COLL',
+  ORGA = 'ORGA',
+  LIIS = 'LIIS',
+  DELIVER = 'DELIVER',
+  GUEST = 'GUEST',
+  LIBRARY = 'LIBRARY',
+}
+export enum PROFILE_STATUS_ENUM {
+  ADMIN = "ADMIN",
+  COLL = 'COLL',
+  ORGA = 'ORGA',
+  LIIS = 'LIIS',
+  LIISIL = 'LIISIL',
+  DELIVER = 'DELIVER',
+  GUEST = 'GUEST',
+  USER = 'USER',
+  DISCOUNT = 'DISCOUNT',
+  LIBRARY = 'LIBRARY',
+  LIISMAIIL_GUEST = 'LIISMAIIL_GUEST'
+}
+export enum COUNTRY_ENUM {
+  FR = "FR",
+  DZ = 'DZ',
+  SE = 'SE',
+  MR = 'MR',
+  BF = 'BF',
+  PK = 'PK',
+  TZ = 'TZ',
+  SP = 'SP'
+}
 export enum PROFILE_ENROLLMENT_NAMES_ENUM {
-  ADMIN= "ADMIN",
+  ADMIN = "ADMIN",
   LIIS = "liismanager",
   COLL = "collaborator",
   ORGA = "organisator",
   GUEST = "guest",
-  LIBRARY= "library",
+  LIBRARY = "library",
   LIISIL = "liismaiil",
-  DISCOUNT= "discount",
+  DISCOUNT = "discount",
   DELIVER = "deliver",
   USER = "user",
-  LIISMAIIL_GUEST='liismaiil_guest'
+  LIISMAIIL_GUEST = 'liismaiil_guest'
 }
 
 export enum PROFILE_ENROLLMENT_COLOR_ENUM {
-  GUEST= "primary",
-  COLL= "warning",
-  ORGA= "success",
-  LIIS= "secondary",
-  DELIVER= "info",
-  USER= "info",
-  LIISIL= "secondary",
-  ADMIN= "error",
-  DISCOUNT= "error",
-  LIBRARY= "info",
-  LIISMAIIL_GUEST= "info",
+  GUEST = "primary",
+  COLL = "warning",
+  ORGA = "success",
+  LIIS = "secondary",
+  DELIVER = "info",
+  USER = "info",
+  LIISIL = "secondary",
+  ADMIN = "error",
+  DISCOUNT = "error",
+  LIBRARY = "info",
+  LIISMAIIL_GUEST = "info",
 }
 export enum CARDS_LEVEL_ENUM {
   SOBH = 'SOBH',
@@ -115,7 +125,7 @@ export enum CARDS_LEVEL_ENUM {
 export enum CARDS_LEVEL_COLOR_ENUM {
   SOBH = "primary",
   DOHR = "warning",
-  ASR =  "success",
+  ASR = "success",
   MAGH = "secondary",
-  ICHA =  "info"
+  ICHA = "info"
 }

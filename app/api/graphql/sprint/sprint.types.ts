@@ -10,7 +10,9 @@ export type SprintStateProps = {
   spaceStage: StageType;
   spaceSprint: string;
   grid: GridType,
+  validGrids: [string];
   gridSelected: GridType;
+  gridsAyahsSelected: [AyahTabletType];
   spaceGridsSelected: [GridType];
   boardGridIndex: number,
   stageSelected: StageType;
@@ -33,6 +35,14 @@ export type SprintStateProps = {
   guests?: [GuestType];
   dueDate?: string;
 };
+export type AyahWithId = {
+  order: number;
+  text: string;
+  juz: number;
+  slice?: string;
+  id: number
+}
+
 export type SprintType = {
   _id?: string;
   title: string;
@@ -127,13 +137,14 @@ export type GridType = {
 };
 
 export type GuestType = {
-  tokenId: string;
+  tokenId: number; //112
   flag: string;
   price?: number;
+  host: number;
   collaboratorId: string;
   enrollmentStatus?: string;
-  startDate: string;
-  endDate: string;
+  startDate?: string;
+  endDate?: string;
   stages?: [string];
 };
 

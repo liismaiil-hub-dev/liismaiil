@@ -1,11 +1,12 @@
 'use client'
 import { GuestType } from '@/api/graphql/sprint/sprint.types'
 import { CoordsType, ViewerTypeData } from '@/api/graphql/viewer/viewer.types'
-import { guestActions } from '@/store/slices/guestSlice'
+import MapComponent from "@/components/maps/Map"
+import GoogleMapComponent from "@/components/maps/GoogleMapComponent"
+import { guestActions, OrgCoordType } from '@/store/slices/guestSlice'
 import { viewerActions } from '@/store/slices/viewerSlice'
-import { RootStateType } from '@/store/store'
 import React, { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import Organisation from './Organisation'
 import SearchHost from "./SearchHost"
 
@@ -20,33 +21,47 @@ type CountryCityCoords = {
 }
 
 // -----------------------------COMPONENT-------------------------//
-function Organisations({ organisations, guests }: { organisations: ViewerTypeData[], guests: GuestType[] }) {
+function Organisations({ organisations, guests, guest }: { organisations: ViewerTypeData[], guests: GuestType[], guest: GuestType }) {
     const dispatch = useDispatch()
 
     const { setOrganisations, setOrganisation } = viewerActions
-    const { setGuests } = guestActions
+    const { setGuests, setGuest, setOrgCoords, } = guestActions
 
-    const { organisationsContext, organisationContext } = useSelector((state: RootStateType) => state.viewer)
-
+   const organisationsCoords:OrgCoordType[] = organisations.map((org)  => {
+    console.log({coords:org.coords, address:org.addressGeo});
+    
+    return {coords:org.coords, addressGeo:org.addressGeo}
+   } )
     useEffect(() => {
         dispatch(setOrganisations({ organisations }))
         dispatch(setGuests({ guests }))
+        dispatch(setOrgCoords({orgCoords:organisationsCoords}))
+        dispatch(setGuest({ guest }))
     }, [])
 
     return (
-        <section className=" bg-green-100 w-screen scrollbar-hide flex flex-col  space-y-1 items-center p-5 justify-start " >
+        <section className=" w-full h-full  scrollbar-hide  flex-col  space-y-1 items-center  p-1 justify-start " >
             <SearchHost organisations={organisations} />
-            <div className="flex  flex-row justify-start  items-center space-x-4 ">
+            <div className="grid grid-col-1  md:grid  md:grid-cols-2 justify-items-start  md:justify-items-stretch md:items-center items-start gap-1 ">
+            
+            <div className="grid grid-cols-1 md:grid-cols-2  h-1/2 w-1/2  justify-items-stretch justify-start items-center flex-wrap gap-2 ">
                 {typeof organisations !== 'undefined' && organisations.length > 0 &&
                     organisations.map((org: ViewerTypeData) => {
-                        return (<div key={org._id} className=" bg-green-100/10 ">
+                        return (<div key={org._id} className="p-3 ">
                             <Organisation organisation={org} />
                         </div>
 
                         )
                     }
                     )}
-            </div></section >
+            </div>
+            <div className="flex  w-full justify-center items-center flex-grow ">
+                <GoogleMapComponent /> 
+            {/* <MapComponent /> */}
+            </div>
+            </div>
+
+            </section >
     )
 }
 export default React.memo(Organisations)

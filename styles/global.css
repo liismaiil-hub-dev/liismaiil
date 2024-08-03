@@ -14,17 +14,17 @@
 
 @layer components {
   
-  .menu-item {
-    @apply w-full  hover:bg-green-300 text-slate-500 p-2 mx-auto rounded-md text-center dark:bg-gray-700 dark:text-yellow-50;
+  .selected-navig-mobile {
+    @apply bg-blue-500 text-blue-300 rounded-xl  shadow-lg;
   }
-  .sub-menu {
-    @apply p-4  hover:bg-gray-500/20 hover:text-blue-800 transition-colors ease-in-out cursor-pointer;
+  .navig-mobile {
+    @apply flex  justify-center items-center p-1 transition-colors ease-in-out cursor-pointer;
   }
-  .div-sub-menu {
-    @apply absolute top-full right-0  whitespace-nowrap bg-green-200/10 w-auto rounded-b-md text-right;
+  .navig-mobile-svg {
+    @apply flex justify-center text-center items-center;
   }
-  .mobile-menu {
-    @apply rounded-sm w-full;
+  .nanvig-mobile-txt {
+    @apply text-center  tracking-wide;
   }
   .mobile-menu-item {
     @apply flex  p-4 justify-center relative h-full items-center text-blue-900;

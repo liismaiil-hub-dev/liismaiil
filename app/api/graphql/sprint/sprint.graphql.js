@@ -26,16 +26,17 @@ type GridType {
 type SprintComment {
       id: Int
     comment: String
-    token: String
+    tokenId: Int
   }
 type SprintGuest {
-    token: String
+    tokenId: Int
     flag: String
     name: String
     time: String
   }
 type GuestType {
-    token: String
+    tokenId: Int
+    host: Int
     flag: String
     price:String
     collaboratorId: String

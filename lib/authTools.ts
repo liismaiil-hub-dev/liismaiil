@@ -6,10 +6,7 @@ import organisations from '@/store/shares/organisations.json'
 import jwt from 'jsonwebtoken'
 import _ from 'lodash'
 import 'server-only'
-export type GuestRegistrd = {
-  host: string,
-  tokenId: string
-}
+
 const SECRET = process.env.NEXT_PUBLIC_JWT_SECRET!
 
 export const createTokenForGuest = (tokenId: string) => {
@@ -18,12 +15,17 @@ export const createTokenForGuest = (tokenId: string) => {
 }
 
 export const getGuestFromToken = async (token: string) => {
-  const payload = jwt.verify(token, SECRET) as { id: string }
+  try {
+    const payload = jwt.verify(token, SECRET) as { id: string }
+    const _guest = _.find(guestsRegistred!, function (o: GuestType) { return o.tokenId === payload.id });
 
-  console.log({ payload });
-  const _guest = _.findIndex(guestsRegistred!, function (o: GuestRegistrd) { return o.tokenId === payload.id });
+    return _guest
 
-  return _guest
+  } catch (error) {
+    console.log({ error });
+
+  }
+
 }
 
 export const signin = async ({ tokenId, host, country }: {

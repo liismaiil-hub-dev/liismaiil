@@ -3,21 +3,22 @@ import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 export const GuestSchema = new Schema<GuestType>(
   {
-    token: String,
+    tokenId: Number, //112
     flag: String,
     price: Number,
+    host: Number,
     collaboratorId: String,
     enrollmentStatus: String,
-
     startDate: String,
     endDate: String,
+    stages: [String],
 
-    stages: [String]
   },
   {
     timestamps: true
   }
 );
+
 
 export default mongoose.models
   ? mongoose.models.Guest || mongoose.model<GuestType>('Guest', GuestSchema)

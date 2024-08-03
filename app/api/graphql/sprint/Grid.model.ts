@@ -1,5 +1,6 @@
-import { GridTypeData } from '@/api/graphql/sprint/sprint.types';
+import { GridType } from '@/api/graphql/sprint/sprint.types';
 import mongoose from 'mongoose';
+import { GridTypeData } from '../tablet/tablet.types';
 const Schema = mongoose.Schema;
 export const gridSchema = new Schema<GridTypeData>(
   {

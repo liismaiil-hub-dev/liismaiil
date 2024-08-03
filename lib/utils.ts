@@ -85,3 +85,42 @@ export const callsnapShotLooper = (snapshot) => {
   });
   return data;
 };
+
+export async function putFlag() {
+  try {
+    const filename = `${process.cwd()}/store/shares/guests.json`
+    const mimetype = mime.getType(filename);
+    console.log({ filename, mimetype });
+    jsonfile.readFile(filename)
+      .then(obj => {
+        //now it an object
+        console.log({ obj });
+        const flaguedGuests = obj.map((gust, index) => {
+          const ind = (Math.ceil(Math.random() * FLAG_FILES.length))
+
+          return {
+            ...gust, flag: FLAG_FILES[ind]
+          }
+        })
+        // jsonfile.writeFile(filename, obj, { spaces: 2 }, function (err) {
+        /* if (err) {
+          console.error({ err })
+        } */
+        // const filestream = createReadStream(filename);
+        jsonfile.writeFile(filename, [...flaguedGuests], { spaces: 2 }, function (err) {
+          if (err) {
+            console.error({ err })
+
+          }
+
+        }
+        )
+      }).catch(error => {
+        console.log({ error });
+      })
+
+
+  } catch (error) {
+    console.log(error);
+  }
+}

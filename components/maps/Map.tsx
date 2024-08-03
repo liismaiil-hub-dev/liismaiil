@@ -1,72 +1,95 @@
-import React, { useState, useMemo } from 'react'
-import Map, {
-    Marker,
-    Popup,
-    NavigationControl,
-    FullscreenControl,
-    ScaleControl,
-    GeolocateControl
-} from 'react-map-gl';
-
-/* import ControlPanel from './control-panel'; */
-import Pin from './pin';
-// lat: 48.8678, long: 2.30473
-export default function MapComponent({ long, lat, city }: { long: number, lat: number, city: string }) {
-    const [popupInfo, setPopupInfo] = useState('');
-    const pins = useMemo(() =>
-        <Marker
-            longitude={long}
-            latitude={lat}
-            anchor="bottom"
-            onClick={e => {
-                // If we let the click event propagates to the map, it will immediately close the popup
-                // with `closeOnClick: true`
-                e.originalEvent.stopPropagation();
-                setPopupInfo(city);
-            }}
-        >
-            <Pin />
-        </Marker>
-        ,
-        [city, long, lat])
+'use client'
+import { RootStateType } from '@/store/store';
+import { GoogleMap, InfoWindowF, MarkerF, useJsApiLoader } from '@react-google-maps/api';
+import React, { useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 
-    return (
-        <>
-            <Map
-                initialViewState={{
-                    latitude: lat,
-                    longitude: long,
-                    zoom: 7,
-                    bearing: 0,
-                    pitch: 0
-                }}
-
-                mapStyle="mapbox://styles/mapbox/dark-v9"
-                mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_API_TOKEN}
-            >
-                {/*    <GeolocateControl position="top-left" />
-                <FullscreenControl position="top-left" />
-                <NavigationControl position="top-left" />
-                <ScaleControl />
-
-                {pins}
-
-                {popupInfo && (
-                    <Popup
-                        anchor="top"
-                        longitude={Number(long)}
-                        latitude={Number(lat)}
-                        onClose={() => setPopupInfo('no description')}
-                    >
-                        <div>
-                            {city},
-                        </div>
-                    </Popup> 
-                )}*/}
-            </Map>
-            {/*             <ControlPanel /> */}
-        </>
-    );
+const containerStyle = {
+  width: '100%',
+  height: '500px'
+};
+const options = {
+    mapId: "c3ecb1eac5683d99",
+     mapTypeControl:false,   
+    streetViewControl:false   
 }
 
+function MyComponent() {
+    
+    const { isLoaded } = useJsApiLoader({
+        googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAP_KEY!
+    })
+    const {  orgCoords } = useSelector((state: RootStateType) => state.guest)
+    const [infoWindowOpen, setInfoWindowOpen] = useState(false);
+    const center = {
+        lat:14.346076882072916, 
+        lng:-16.408125736499372
+        
+    };
+    
+    const [map, setMap] = React.useState(null)
+
+    
+    const mapRef = useRef(null)
+    const onLoad = React.useCallback(function callback(map) {
+        // This is just an example of getting and using the map instance!!! don't just blindly copy!
+        const bounds = new window.google.maps.LatLngBounds(center);
+        map.fitBounds(bounds);
+        
+        setMap(map)
+        mapRef.current = map
+    }, [])
+    const handleMarkerClick = (event) => {
+        setInfoWindowOpen((infoWindow)=> !infoWindow )
+        console.log({event});
+        
+    }
+    const handleClose = () => {
+        setInfoWindowOpen(false )
+        
+    }
+    const handleMarkerDrag = (event) => {
+        console.log({event});
+        
+    }
+    
+
+  const onUnmount = React.useCallback(function callback(map) {
+    setMap(null)
+  }, [])
+
+  return isLoaded ? (
+      <GoogleMap
+      onClick={() => {
+    setInfoWindowOpen((infoWindow)=> !infoWindow )}}
+        mapContainerStyle={containerStyle}
+        center={center}
+        zoom={0}
+        onLoad={onLoad}
+        onUnmount={onUnmount}
+        options={options}
+      >
+        {orgCoords && orgCoords.map((coo, index) =>  <MarkerF key={`${index}_${coo.coords.lat}`} position={{lat:coo.coords.lat, lng:coo.coords.long}}
+        cursor={'pointer'}
+        label={{text:coo.addressGeo.substring(0, 11),
+            className:'text-emerald-50 font-thin bg-slate-500 '}}
+            onClick={handleMarkerClick }
+            onDrag={handleMarkerDrag }
+            >{infoWindowOpen &&
+      <InfoWindowF onCloseClick={handleClose} position={{lat:coo.coords.lat, lng:coo.coords.long}}>
+        <div className="flex justify-center w-10 h-10 items-center">
+            {coo.addressGeo.substring(0, 11)}
+            </div> 
+        
+        </InfoWindowF> }         
+    
+    </MarkerF>
+
+    )
+        }
+      </GoogleMap>
+  ) : <></>
+}
+
+export default React.memo(MyComponent)

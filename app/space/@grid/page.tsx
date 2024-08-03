@@ -20,16 +20,16 @@ const getGrids = async (): Promise<{ souraName: string, souraNb: number }[] | un
     await connectMongoose()
 
     try {
-      const grids = await GridModel.find({ author: '3jtczfl93BWlud2t3Q44KdC0EVJ3' }).sort({ souraNb: 1 }).lean().exec();
+      const grids: GridType[] = await GridModel.find({ author: '3jtczfl93BWlud2t3Q44KdC0EVJ3' }).select({ "_id": 0}).sort({ souraNb: 1 }).lean().exec();
 
       if (typeof grids !== 'undefined' && grids.length > 0) {
-        const souraName = await grids.map((gr: GridType) => {
-          return { souraName: gr.arabName, souraNb: parseInt(gr.souraNb) }
+        const souraName = grids.map((gr: GridType) => {
+          return { souraName: gr.arabName, souraNb: parseInt(gr.souraNb.toString()) };
         })
-        console.log({ souraName });
         const uniqGrids = _.uniqBy(souraName, 'souraNb')
         const sortedGrids = _.sortBy(uniqGrids, ['souraNb'])
-
+console.log({sortedGrids});
+ 
         return sortedGrids as [{ souraName: string, souraNb: number }]
       } else {
         return
@@ -53,7 +53,7 @@ export default async function GridNav() {
 
     )
   } else {
-    return (<GridsComponent grids={['']} />)
+    return (<GridsComponent grids={[{souraName:'', souraNb:-1}]} />)
 
   }
 }

@@ -18,7 +18,10 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { ApolloWrapper } from './ApolloWraper';
 
 import GuestsComponents from "@/components/front/Guests";
+
 import { Inter } from 'next/font/google';
+import { usePathname } from 'next/navigation';
+ 
 const inter = Inter({ subsets: ['latin'] })
 
 
@@ -29,8 +32,16 @@ export const viewport = {
 
 
 function RootLayout({ children }: { children: ReactNode }) {
+ const pathname = usePathname()
 
+ 
   return <html lang="en" className='light'>
+    <head>
+
+    <script async
+    src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAP_KEY}&loading=async&libraries=places&callback=initMap`}>
+</script>
+      </head>
     <body className={`${inter.className} h-screen w-screen`}>
       <NextSeo {...SEO} />
       <ToastContainer position="top-center" />
@@ -39,20 +50,32 @@ function RootLayout({ children }: { children: ReactNode }) {
           <NextUIProvider >
             <PersistGate persistor={persistor}>
               <ErrorBoundary fallback={<ErrorBoundaryComp />}>
-                <main className='container mx-auto w-screen  h-screen flex flex-col space-y-1 justify-start items-center '>
+                <main className='container mx-auto w-screen   flex flex-col space-y-1 justify-start items-center '>
                   <div className='container '>
                     <Navigation />
                   </div>
-                  <div className='container border-2 h-1/2  scrollbar-hide rounded-r-md border-green-300
-                   flex flex-col  justify-start items-start '>
+
+                  {pathname ==='/' ?
+                   <div className=' container border-2    scrollbar-hide rounded-md border-green-300 flex flex-col justify-stretch items-stretch'>
+                  
+                  <div className='h-4/5 container border-2  rounded-md border-green-300 '>
                     {children}
                   </div>
-                  <div className="flex border-2 h-full w-full  border-violet-500  justify-start items-center">
+
+                  <div className="flex border-2 h-1/5 w-full pt-2  border-violet-500  justify-center items-center">
                     <GuestsComponents />
                   </div>
+
+                 
                   <div className="flex justify-center items-center">
                     <Footer />
                   </div>
+                  
+                  </div>: 
+                  <div className='container border-2   scrollbar-hide rounded-r-md border-green-300 flex flex-col  justify-start items-center w-full h-full '>
+                    {children}
+                  </div>
+                 }
                 </main>
               </ErrorBoundary>
             </PersistGate>
