@@ -3,11 +3,16 @@ import { ApolloServer } from "@apollo/server";
 import { startServerAndCreateNextHandler } from "@as-integrations/next";
 import { NextRequest } from "next/server";
 
+import { dbFirestore, FieldValue, timeStamp } from './fb-utils-admin';
+
+import { guestDefs } from "@/api/graphql/guest/guest.graphql.js";
+import guestResolver from "@/api/graphql/guest/guest.resolver";
 import GridModel from "@/api/graphql/sprint/Grid.model";
-import GuestModel from "@/api/graphql/sprint/Guest.model";
 import { sprintDefs } from "@/api/graphql/sprint/sprint.graphql.js";
 import SprintModel from "@/api/graphql/sprint/Sprint.model";
 import sprintResolver from "@/api/graphql/sprint/sprint.resolver";
+import { stageDefs } from "@/api/graphql/stage/stage.graphql.js";
+import stageResolver from "@/api/graphql/stage/stage.resolver";
 import { tabletDefs } from "@/api/graphql/tablet/tablet.graphql.js";
 import tabletResolver from "@/api/graphql/tablet/tablet.resolver";
 import { viewerDefs } from "@/api/graphql/viewer/viewer.graphql.js";
@@ -28,13 +33,15 @@ import slug from "slug";
 const typesArray = [
   viewerDefs,
   sprintDefs,
-
+  stageDefs,
+  guestDefs,
   tabletDefs
 ];
 const resolversArray = [
   viewerResolver,
   sprintResolver,
-
+  stageResolver,
+  guestResolver,
   tabletResolver
 ];
 
@@ -128,12 +135,14 @@ const handler = startServerAndCreateNextHandler<NextRequest>(apolloServer, {
 */
     const mongoose = await connectMongoose();
     return {
+      dbFirestore,
+      FieldValue,
+      timeStamp,
       path,
       fs,
       _lodash,
       slug,
       ViewerModel,
-      GuestModel,
       SprintModel,
       GridModel,
       req,

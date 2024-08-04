@@ -1,12 +1,10 @@
-import { DateTimeResolver } from 'graphql-scalars';
+import { GuestType } from '@/api/graphql/stage/stage.types';
 import {
-  
-  EventTypeData,
   PROFILE_STATUS_ENUM,
-  SigninViewerInput, ViewerTypeData,
-} from './viewer.types';
-import { GuestType } from '../sprint/sprint.types';
-
+  ViewerTypeData,
+} from '@/api/graphql/viewer/viewer.types';
+import { Firestore } from 'firebase-admin/firestore';
+import { DateTimeResolver } from 'graphql-scalars';
 
 
 
@@ -43,33 +41,26 @@ export const viewerById = async (
 
 export const getGuests = async (
   _: undefined,
-  { email }: { email: string },
-  { ViewerModel }: { ViewerModel: any }
-): Promise<{ success: boolean, message: Array<GuestType> } | undefined> => {
+  { collaboratorId }: { collaboratorId: string },
+  { dbFirestore }: { dbFirestore: Firestore }
+): Promise<GuestType[] | undefined> => {
   try {
-    const enrollments = await ViewerModel.findOne({
-      email
-    }).select('guests').lean().exec();
-    if (enrollments && enrollments.length > 0) {
-      return { success: true, message: enrollments }
-    } else {
-      return ({
-        success: false, message: [{
-          title: '',
+    //console.log({ firestore });
 
-          token: '',
-          profileEmail: '',
-          profileId: '',
-          flag: '',
-          price: -1,
-          startDate: '',
-          endDate: '',
-          status: PROFILE_STATUS_ENUM.GUEST,
-        }]
-      })
-    }
+    const guests: GuestType[] = [];
+    return dbFirestore
+      .collection('guests').where('collaboratorId', '==', `${collaboratorId}`)
+      .get()
+      .then((querySnapshot: any) => {
+        querySnapshot.forEach((doc: any) => {
+          guests.push({ id: doc.id, ...doc.data() });
+        });
+        return guests;
+      });
+    return guests;
   } catch (error: any) {
-    throw error;
+    console.log({ error });
+    throw new Error(error);
   }
 };
 
@@ -79,9 +70,13 @@ const frontCollaborators = async (
   { ViewerModel }: { ViewerModel: any }
 ): Promise<ViewerTypeData[] | undefined> => {
   try {
-    const collaborators = await ViewerModel.find({ status: { $in: [PROFILE_STATUS_ENUM.ORGA, 
-      PROFILE_STATUS_ENUM.LIIS, PROFILE_STATUS_ENUM.LIBRARY,
-       PROFILE_STATUS_ENUM.ADMIN] } }).lean().exec();
+    const collaborators = await ViewerModel.find({
+      status: {
+        $in: [PROFILE_STATUS_ENUM.ORGA,
+        PROFILE_STATUS_ENUM.LIIS, PROFILE_STATUS_ENUM.LIBRARY,
+        PROFILE_STATUS_ENUM.ADMIN]
+      }
+    }).lean().exec();
     return collaborators
   } catch (error: any) {
     console.log({ error });
@@ -120,10 +115,10 @@ const viewerResolver = {
   Query: {
     viewer,
     viewerById,
-   
+
     getGuests,
-   
-    frontCollaborators, 
+
+    frontCollaborators,
     //getQrCode
   },
 

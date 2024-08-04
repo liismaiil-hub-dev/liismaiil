@@ -50,7 +50,7 @@ function RootLayout({ children }: { children: ReactNode }) {
           <NextUIProvider >
             <PersistGate persistor={persistor}>
               <ErrorBoundary fallback={<ErrorBoundaryComp />}>
-                <main className='container mx-auto w-screen   flex flex-col space-y-1 justify-start items-center '>
+                <main className='container mx-auto w-screen  flex flex-col space-y-1 justify-start items-center '>
                   <div className='container '>
                     <Navigation />
                   </div>

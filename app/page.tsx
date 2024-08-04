@@ -3,13 +3,14 @@ import ViewerModel from '@/api/graphql/viewer/Viewer.model';
 import { ViewerTypeData } from '@/api/graphql/viewer/viewer.types';
 import Organisations from "@/components/front/Organisations";
 //import MapComponent from '@/components/maps/MapComponent';
+import { dbFirestore } from '@/api/graphql/fb-utils-admin';
+import { GuestType } from '@/api/graphql/stage/stage.types';
 import { getGuestFromToken } from '@/lib/authTools';
 import connectMongoose from '@/lib/mongoose-db';
-import { APP_ENV, COOKIE_NAME } from '@/store/constants/constants';
-import { promises as fs } from 'fs';
+import { COOKIE_NAME } from '@/store/constants/constants';
+import { DocumentData, DocumentSnapshot } from 'firebase-admin/firestore';
 import { Metadata } from 'next';
 import { cookies } from 'next/headers';
-
 
 const APP_NAME = "liismaiil-hub";
 const APP_DEFAULT_TITLE = "liismaiil hub App";
@@ -63,7 +64,9 @@ export default async function Home() {
   const organisations = await getOrganisations()
   const guests = await getGuests()
   const guest =  await getGuestFromCookies()
+  console.log({guest});
   
+  /* 
   if (process.env.APP_ENV === APP_ENV.BOX) {
     const parsedOrganisations = JSON.parse(organisations)
     const parsedGuests = JSON.parse(guests)
@@ -71,12 +74,12 @@ export default async function Home() {
     return (
         <Organisations guest={guest!} guests={parsedGuests} organisations={parsedOrganisations} />
        )
-  } else {
+  } else { */
     return (
         <Organisations guest={guest} guests={guests} organisations={organisations} />
       
     )
-  }
+  
 
 }
 async function getGuestFromCookies(){
@@ -96,13 +99,13 @@ async function getGuestFromCookies(){
     console.error(e)
     return null
     //redirect(`/liismaiil/${slug(data.host)}`)
-
-  }
+}
 
 
 }
 async function getOrganisations() {
-  if (process.env.APP_ENV === APP_ENV.BOX) {
+  /**
+   * if (process.env.APP_ENV === APP_ENV.BOX) {
     try {
 
       const organisations = await fs.readFile(process.cwd() + '/store/shares/organisations.json', 'utf8');
@@ -112,9 +115,10 @@ async function getOrganisations() {
       return `[]`
     }
   }
+   */
   await connectMongoose()
   const organisations: ViewerTypeData[] = [];
-  const docs = await ViewerModel.find({ status: { $in: ['ORGA', 'ADMIN', 'LIIS'] } }).exec()
+  const docs = await ViewerModel?.find({ status: { $in: ['ORGA', 'ADMIN', 'LIIS'] } }).exec()
 
   docs.forEach((doc: ViewerTypeData & any) => {
     const { guests, updatedAt, login, email, uid,
@@ -143,7 +147,28 @@ async function getOrganisations() {
   return organisations as ViewerTypeData[]
 }
 async function getGuests() {
-  if (process.env.APP_ENV === APP_ENV.BOX) {
+ try{
+  
+
+    //console.log({ firestore });
+    const snapshot = await dbFirestore.collection('guests').get();
+
+    const guests: GuestType[] = [];
+    snapshot.forEach(async (doc: DocumentSnapshot<GuestType | DocumentData>) => {
+      const guest = await doc?.data()!;
+      guests.push(guest as GuestType);
+    });
+
+    return guests;
+  } catch (error: any) {
+    console.log({ error });
+    throw new Error(error);
+  }
+}
+
+ 
+ /**
+  *  if (process.env.APP_ENV === APP_ENV.BOX) {
     try {
       const guests = await fs.readFile(process.cwd() + '/store/shares/guests.json', 'utf8');
       return guests
@@ -153,33 +178,6 @@ async function getGuests() {
       return `[]`
     }
   }
-  await connectMongoose()
-  const organisations: ViewerTypeData[] = [];
-  const docs = await ViewerModel.find({ status: { $in: ['ORGA', 'ADMIN', 'LIIS'] } }).exec()
-
-  docs.forEach((doc: ViewerTypeData & any) => {
-    const { guests, updatedAt, login, email, uid,
-      organisation = null, website = null, coords, status, addressGeo,
-      instagram = null, stripe_account_id = null, phone = null, avatar, continent = '', country = '', city = '', state = '',
-      bio = null, } = doc?._doc
-
-    //createdAt: JSON.stringify(createdAt),
-    organisations.push({
-      _id: uid.toString(),
-      login,
-      email,
-      stripe_account_id,
-      phone, bio,
-      status,
-      website, instagram, organisation,
-      addressGeo: `${addressGeo}`,
-      coords,
-      avatar: avatar.url,
-      updatedAt: JSON.stringify(updatedAt),
-      uid: uid, continent, country, city, state
-    });
-  });
-
-
-  return organisations as ViewerTypeData[]
-} 
+  */
+  
+  

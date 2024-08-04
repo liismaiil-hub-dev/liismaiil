@@ -1,0 +1,154 @@
+import { Profile } from './Profile.model';
+import { isEmpty } from '@/lib/utils/is-empty';
+import jwt from 'jsonwebtoken';
+///
+
+type Tablets {
+  total: Int!
+  result: [ Tablet!]
+}
+
+type Tablet {
+  title: String
+  description: String
+}
+
+
+
+
+
+////
+
+export const newToken = asyncCatchError(async (profil) => {
+  return jwt.sign({ id: profil._id }, process.env.secrets.jwt, {
+    expiresIn: process.secrets.jwtExp,
+  });
+});
+// send token cookie
+export const sendToken = asyncCatchError(async (profil, statusCode, res) => {
+  const options = {
+    expires: new Date(Date.now() + process.env.cookieExpiresTime * 24 * 60 * 60 * 1000),
+    httpOnly: true,
+  };
+  if (process.env.NODE_ENV === 'prod') {
+    options.secure = true;
+  }
+  const token = await newToken(profil);
+  // const token  = `Bearer ${tok}`
+  res.status(statusCode).cookie('token', token, options).json({ success: true, token });
+});
+
+export const verifyToken = (token) =>
+  new Promise((resolve, reject) => {
+    jwt.verify(token, process.env.secrets.jwt, (err, payload) => {
+      if (err) return reject(err);
+      return resolve(payload);
+    });
+  });
+
+export const signup = asyncCatchError(async (req, res) => {
+  const { errors, isValid } = validSignUp(req.body);
+  if (!isValid) {
+    return res.status(400).json({ message: 'Email | password not valid' });
+  }
+  console.log({ req: req.body });
+  const { email, password, login, role } = req.body;
+  const profile = await Profile.findOne({ email });
+  console.log({ profile });
+  if (!isEmpty(profile)) {
+    return res.status(400).json({ message: 'email already exists' });
+  }
+  const newprofile = new Profile({ email, password, login, role });
+  const newprofilsaved = await newprofile.save();
+  if (newprofilsaved) {
+    //const token = await newToken(newprofil)
+    return sendToken(newprofilsaved, 201, res);
+    //res.status(201).json({success: true, token:`Bearer ${token}`})
+  } else {
+    return res.status(400).json({ message: 'profilecan t be saved' });
+  }
+});
+//SIGNIN
+export const signin = asyncCatchError(async (input) => {
+  const { email, password } = { ...input };
+  const profile = await Profile.findOne({ email }).select('email +password').exec();
+  if (!isEmpty(profile)) {
+    const match = await profile.checkPassword(password);
+    if (!match) {
+      throw new ErrorHandler('Invalid email && passoword combination', 401);
+    }
+    return sendToken(profile, 200);
+  }
+  throw new ErrorHandler('Invelid Credential', 401);
+});
+// protect routes for authenticated profils
+export const isIdentified = asyncCatchError(async (req, res, next) => {
+  const bearer = req.header('Authorization');
+  if (!bearer || !bearer.startsWith('Bearer ')) {
+    return next(new ErrorHandler('Cant be identidfied', 401));
+  }
+  const token = bearer.split('Bearer ')[1].trim();
+  let payload = await verifyToken(token);
+  const profile = await Profile.findById(payload.id).select('email login').lean().exec();
+  req.user = profile;
+  if (!profile) {
+    return next(new ErrorHandler('Cant be identidfied', 401));
+  }
+  next();
+});
+
+export const authorizeRoles = (...roles) => {
+  return (req, res, next) => {
+    req.user.role = 'admin';
+    //      enum: ['user', 'org', 'fam'],
+    if (!roles.includes(req.user.role)) {
+      return next(new ErrorHandler('not allowed to access the resource', 403));
+    }
+    next();
+  };
+};
+export const forgotPassword = async (req, res, next) => {
+  const profile = await Profile.findOne({ email: req.body.email });
+  if (!profile) {
+    return next(new ErrorHandler('profile nor found', 404));
+  }
+  const resetToken = profile.getResetPasswordToken();
+  await profile.save({ validateBeforeSave: false });
+
+  // create reset url
+  const resetUrl = `${req.protocol}://${req.get('host')}/api/v1/profil/password/reset/${resetToken}`;
+  const message = ` Your password reset url link is :\n\n\n ${resetUrl}  \n\n\n if you dont require that , then 
+  ignore that `;
+  try {
+    await sendEmail({
+      email: profile.email,
+      subject: 'liismaiil password recovery ',
+      message: message,
+    });
+    return res.status(200).json({
+      success: true,
+      message: `email sent successfully to : ${profil.email}`,
+    });
+  } catch (error) {
+    profile.resetPasswordToken = null;
+    profile.resetPasswordExpire = null;
+
+    await profile.save({ validateBeforeSave: false });
+    return next(new ErrorHandler('Email for recovering is not sent ', 500));
+  }
+};
+export const resetPassword = asyncErrorCatch(async (req, res, next) => {
+  const resetPasswordToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
+  const profile = Profile.findOne({
+    resetPasswordToken,
+    resetPasswordExpire: { $gt: Date.now() },
+  });
+  if (!profile) {
+    return next(new ErrorHandler('reset Password Token not found', 400));
+  }
+  profile.password = req.body.password;
+  profile.resetPasswordToken = null;
+  profile.resetPasswordExpire = null;
+  await profile.save();
+  newToken(profile, 200, res);
+});

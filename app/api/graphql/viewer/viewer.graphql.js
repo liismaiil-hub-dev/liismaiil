@@ -21,8 +21,7 @@ type Viewer {
 
   cha3bi:Int
   bookings:[BookingType]
-  guests:[GuestType]
-
+ 
   coords:CoordsType
   addressGeo:String
   contact:String
@@ -96,7 +95,7 @@ type qrCodeOutput {
 
 type GetGuestsOutput {
   success: Boolean
-  message:[GuestType]
+  message:[Guest]
 }
 
 
@@ -109,7 +108,7 @@ type OkSuccess {
   type Query {
     viewer(email:String): Viewer
     viewerById(id:String): Viewer
-    getGuests(email:String): GetGuestsOutput
+    getGuests(email:String): [Guest]
     frontCollaborators:[Viewer]
     }
  

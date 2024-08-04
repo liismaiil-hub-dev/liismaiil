@@ -1,7 +1,6 @@
 'use client'
 import { GuestType } from '@/api/graphql/sprint/sprint.types'
 import { CoordsType, ViewerTypeData } from '@/api/graphql/viewer/viewer.types'
-import MapComponent from "@/components/maps/Map"
 import GoogleMapComponent from "@/components/maps/GoogleMapComponent"
 import { guestActions, OrgCoordType } from '@/store/slices/guestSlice'
 import { viewerActions } from '@/store/slices/viewerSlice'

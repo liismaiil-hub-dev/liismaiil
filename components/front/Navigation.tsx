@@ -11,23 +11,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import GuestModal from './GuestModal';
 import ThemeSelector from "./ThemeSelector";
 
-
-
 function Navigation() {
     const [showMenu, setShowMenu] = useState<Boolean>(false)
     const dispatch = useDispatch()
-
     const { guest } = useSelector((state: RootStateType) => state.guest)
     const { logout } = guestActions
     const pathname = usePathname()
     const isRoute = (route: string) => {
-
-
         return pathname.split('/')[1] === route
-
     }
     useEffect(() => {
-    console.log(showMenu) 
+//    console.log(showMenu) 
     }, [showMenu])
     const [guestConnect, setGuestConnect] = useState(false)
     const SetGuestHandler = () => {
@@ -48,17 +42,18 @@ function Navigation() {
              <section className='hidden md:flex justify-center items-center h-20 ' >
                 <Logo />
             </section>
-            <section className='flex  justify-center items-center  ml-3 gap-2 h-20 relative  md:hidden' >
+             {/* moble nav  */}
+            <section className='flex justify-center items-center  ml-3 gap-2 h-20 relative  md:hidden' >
                 <div className=' text-2xl font-semibold flex items-center justify-center border-3 border-green-300  bg-blue-500 relative 
                  rounded-xl w-16 h-16 hover:bg-blue-300 hover:text-blue-600 cursor-pointer ' >
                 <FaBars onClick={() => { setShowMenu((showMenu) => !showMenu) }} />
                 </div>
-            <section className={cn(!showMenu && 'hidden',"md:hidden flex justify-center bg-blue-300/70 border-3 border-green-300   gap-3 rounded-xl text-xl font-light items-center absolute top-1 left-20 " )} >
+                <section className={cn(!showMenu && 'hidden',"md:hidden flex justify-center bg-blue-300/70 border-3 border-green-300   gap-3 rounded-xl text-xl font-light items-center absolute top-1 left-20 " )} >
                 <div  onClick={() => { setShowMenu((showMenu) => !showMenu) }}  className={cn(isRoute('') &&  'selected-navig-mobile', 'navig-mobile') }  >
                 <Link key={`home`} href='/' >
                       <div className={'navig-mobile-svg'}  >
                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-6 bold">
-  <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
                     </svg>
                         </div>
                     <div  className={ 'nanvig-mobile-txt' }  >
@@ -156,15 +151,13 @@ function Navigation() {
                 <div className={cn(isRoute('') && ' border-1 border-green-500 text-blue-500  ', 'text-center  px-4 py-3 rounded-md ')}  >
                     Home 
                 </div>
-                    </Link>
-
-
-                <div className={cn(isRoute('space')  &&' border-1 border-green-500 text-blue-500  ', 'text-center  px-4 py-3 rounded-md ')}  >
+                </Link>
+                 <div className={cn(isRoute('space')  &&' border-1 border-green-500 text-blue-500  ', 'text-center  px-4 py-3 rounded-md ')}  >
                     <Link key={`space`} href='/space'> Space </Link>
                 </div>
                  <div className={cn(isRoute('stage')  && ' border-1 border-green-500 text-blue-500  ', 'text-center  px-4 py-3 rounded-md ')}  >
               
-                        <Link key={`stage`} href='/stage'> Stage </Link>
+                        <Link key={`stage`} href='/stages'> Stages </Link>
                     </div>
                 <div className={cn(isRoute('sprints')  && ' border-1 border-green-500 text-blue-500  ', 'text-center  px-4 py-3 rounded-md ')}  >
               

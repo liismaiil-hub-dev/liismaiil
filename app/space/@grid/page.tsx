@@ -1,6 +1,6 @@
 
 import GridModel from '@/api/graphql/sprint/Grid.model';
-import { GridType } from '@/api/graphql/sprint/sprint.types';
+import { GridType } from '@/api/graphql/stage/stage.types';
 import GridsComponent from "@/components/space/Grids";
 import connectMongoose from "@/lib/mongoose-db";
 import { APP_ENV } from '@/store/constants/constants';
@@ -44,7 +44,7 @@ console.log({sortedGrids});
 }
 export default async function GridNav() {
   const grids = await getGrids()
-  console.log({ grids });
+  //console.log({ grids });
   if (typeof grids !== 'undefined' && grids.length > 0) {
 
     return (

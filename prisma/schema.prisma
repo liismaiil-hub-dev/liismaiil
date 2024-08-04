@@ -11,28 +11,53 @@ datasource db {
 }
 
 
-model Guest {
+
+model SprintSession {
+  id          Int              @id @default(autoincrement())
+  title       String
+  description String
+  sessionStart DateTime?
+  sessionEnd DateTime?
+  sprints    Sprint[]
+}
+
+model StageSession {
+  id          Int              @id @default(autoincrement())
+  title       String
+  sessionStart DateTime?
+  sessionEnd DateTime?
+  sprints    Stage[]
+}
+
+
+
+ model Guest {
   id      Int      @id @default(autoincrement())
   tokenId   String   @unique
-  hostId    Int
-//  role    Role     @default(GUEST)
+  flag   String 
+  collaboratorId String  
+  host   Int
+//  status    Role     @default(GUEST)
   stages   Stage[]
+  endDate String
   sprints Sprint[]
 }
 
 model Sprint {
   id     Int    @id @default(autoincrement())
-  bio    String
-  userId Int    @unique
-  users Guest[]
+  title   String
+  pblished   Boolean
+  guests Guest[]
   SCategory SCategory[]
   stages Stage[]
+  grids Grid[]
+
+  Session SprintSession[]
 }
+
 
 model Stage {
   id         Int        @id @default(autoincrement())
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
   title      String
   published  Boolean    @default(false)
   author     Guest       @relation(fields: [authorId], references: [id])
@@ -41,8 +66,12 @@ model Stage {
   categories Category[]
 
   Sprint Sprint[]
-}
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
 
+
+  StageSession StageSession[]
+}
 model Ayah {
   id  Int        @id @default(autoincrement())
   juz  Int
@@ -61,7 +90,9 @@ model Grid {
   souraNb Int
   grid Int
   group Int
-  Stage Stage[]
+  stages Stage[]
+
+  Sprint Sprint[]
 }
   
 

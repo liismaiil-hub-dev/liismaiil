@@ -1,26 +1,13 @@
 export const sprintDefs = `
 type SprintType {
-  _id:String
+    id:Int
   title:String
   description:String
   startDate:String
   endDate:String
   author:String
   stages: [StageType]
-}
-type GridType {
-    author: String
-    grid: Int
-    group: [Int]
-    title: String
-    description: String
-    souraNb: Int
-    arabName: String
-    souraName: String
-    tabletWords: [WordsCommentType]
-    ayahs:[[AyahTemplateType]]
-    createdAt:DateTime
-    updatedAt:DateTime
+
 }
 
 type SprintComment {
@@ -31,21 +18,8 @@ type SprintComment {
 type SprintGuest {
     tokenId: Int
     flag: String
-    name: String
     time: String
   }
-type GuestType {
-    tokenId: Int
-    host: Int
-    flag: String
-    price:String
-    collaboratorId: String
-    enrollmentStatus:String
-    startDate:String
-    endDate:String
-    stages:[String]
-  }
-
 type StageType  { 
       id: Int
       title: String
@@ -63,7 +37,7 @@ input StageInput {
   description:String
   section:String
   author: String
-  grids:[GridInput]
+  grids:[StageGridInput]
   }
 
 input SprintInput {
@@ -75,11 +49,6 @@ input SprintInput {
   title: String!
   }
 
-input UpdateStageInput {
-  author:String!
-  title: String!
-  grids:[GridInput]
-  }
 input RemoveStageInput {
   sprintId:String
   id:Int
@@ -132,7 +101,7 @@ type GridsPlusOutput{
   } 
 type GetGridsByNbOutput{
   success:Boolean
-  grids:[GridType]!
+  grids:[StageGrid]!
   } 
 type SuccessMessageOutput {
   success: Boolean
@@ -144,7 +113,7 @@ type Query {
     getGridsByNb(input:GetGridsByNbInput): GetGridsByNbOutput
     getGridsPlus(author:String): GridsPlusOutput
     sprints(author:String): [SprintType]
-    guests(author:String): [GuestType]
+    guests(author:String): [Guest]
     sprint(titleSlug:String): SprintType
     sprintsByAuthor(author:String): [SprintType]
     sprintsByMenu(menu:String): [SprintType]

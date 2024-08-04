@@ -1,4 +1,4 @@
-import { GuestType } from "../sprint/sprint.types";
+import { GuestType } from "@/api/graphql/stage/stage.types";
 type ImageType = {
   public_id: string,
   url: string
@@ -41,6 +41,10 @@ export type ViewerTypeData = {
 
   updatedAt?: string;
   createdAt?: string;
+};
+export type FlagTokenType = {
+  flag: string,
+  token: string
 };
 export type CoordsType = {
   long: number,

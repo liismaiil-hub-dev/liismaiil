@@ -1,11 +1,8 @@
 import {
-  AddGridsOutput,
-  GetGridsByNbInput,
+  GetGridsBySouraNbInput,
   GridType,
-  SECTION_MENU,
-  SprintInput,
   SprintType
-} from './sprint.types';
+} from '@/api/graphql/stage/stage.types';
 const getGrids = async (
   _: undefined,
   { author }: { author: string },
@@ -26,23 +23,22 @@ const getGrids = async (
     throw error;
   }
 };
+//getGridsByNb
 const getGridsByNb = async (
   _: undefined,
-  { input }: { input: GetGridsByNbInput },
+  { input }: { input: GetGridsBySouraNbInput },
   { GridModel, _lodash }: { GridModel: any, _lodash: { filter: any } }
 ): Promise<{ success: boolean, grids: Array<GridType> } | undefined> => {
 
   const { author, souraNb } = input
-  //  console.log({ author, souraNb });
-
-
+  console.log({ author, souraNb })
   try {
     const grids = await GridModel.find({ author }).sort({ souraNb: 1 }).lean().exec();
     //  console.log({ author, souraNb, grids });
 
     if (typeof grids !== 'undefined' && grids.length > 0) {
       const _grids = await _lodash.filter(grids, (grid: GridType) => (grid.souraNb === souraNb || grid.souraNb.toString() === souraNb.toString()))
-      //  console.log(_grids)
+      console.log(_grids[0]['ayahs'])
 
       return { success: true, grids: _grids }
     } else {
@@ -126,7 +122,7 @@ const sprints = async (
     throw error;
   }
 };
-const guests = async (
+const guestsByCat = async (
   _: undefined,
   { input }: { input: { menu: string; author: string } },
   { GridModel }: { GridModel: any }
@@ -435,7 +431,6 @@ const SprintResolver = {
     getGridsByNb,
     getGridsPlus,
     sprints,
-    guests,
     sprint,
     sprintsByAuthor,
     sprintsByMenu,
