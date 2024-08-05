@@ -15,9 +15,6 @@ import { stageDefs } from "@/api/graphql/stage/stage.graphql.js";
 import stageResolver from "@/api/graphql/stage/stage.resolver";
 import { tabletDefs } from "@/api/graphql/tablet/tablet.graphql.js";
 import tabletResolver from "@/api/graphql/tablet/tablet.resolver";
-import { viewerDefs } from "@/api/graphql/viewer/viewer.graphql.js";
-import ViewerModel from "@/api/graphql/viewer/Viewer.model";
-import viewerResolver from "@/api/graphql/viewer/viewer.resolver";
 import { mergeResolvers, mergeTypeDefs } from "@graphql-tools/merge";
 import fs from "fs";
 import path from "path";
@@ -31,14 +28,14 @@ import slug from "slug";
 
 
 const typesArray = [
-  viewerDefs,
+  //viewerDefs,
   sprintDefs,
   stageDefs,
   guestDefs,
   tabletDefs
 ];
 const resolversArray = [
-  viewerResolver,
+  //viewerResolver,
   sprintResolver,
   stageResolver,
   guestResolver,
@@ -142,7 +139,6 @@ const handler = startServerAndCreateNextHandler<NextRequest>(apolloServer, {
       fs,
       _lodash,
       slug,
-      ViewerModel,
       SprintModel,
       GridModel,
       req,

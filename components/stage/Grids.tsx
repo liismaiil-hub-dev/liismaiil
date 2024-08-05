@@ -100,6 +100,7 @@ console.log(`grids de stage --------${grids?.length}`);
   const dispatch = useDispatch()
  const [GetGridsByNb, {data:dataGetGridsByNb, loading:loadingGetGridsByNb, error: errorGetGridsByNb}]= useLazyQuery(GET_GRIDS_BY_NB)
   const { setSpaceGrids } = sprintActions
+  //const { grids } = useSelector((state: RootStateType) => state.sprint)
 
   // creating chunks 
   const newTiwal: GridMenu[] = useMemo(() => grids.filter((gr: GridMenu) => {
@@ -119,7 +120,10 @@ console.log(`grids de stage --------${grids?.length}`);
   }), [grids])
 
   useEffect(() => {
+    console.log(`dataGridNb  ${dataGetGridsByNb?.getGridsByNb?.grids}`);
     if (dataGetGridsByNb && dataGetGridsByNb.getGridsByNb && dataGetGridsByNb.getGridsByNb.success && dataGetGridsByNb.getGridsByNb.grids.length > 0) {
+      console.log(`Grids comp from souras page : ${dataGetGridsByNb.getGridsByNb.grids} `);
+      
       dispatch(setSpaceGrids({ grids: dataGetGridsByNb.getGridsByNb.grids }))
     
     } else if (errorGetGridsByNb || !dataGetGridsByNb?.getGridsByNb.success) {
@@ -127,9 +131,9 @@ console.log(`grids de stage --------${grids?.length}`);
       }
   }, [dataGetGridsByNb, loadingGetGridsByNb, errorGetGridsByNb]);
 
-  const selectSouraHandler = ({souraNb, accordion}:{souraNb: number, accordion:string }) => {
-    console.log({souraNb, accordion});
-    console.log(grids);
+  const selectSouraHandler = (souraNb: number) => {
+  try {
+    
     GetGridsByNb({
       variables:{
         input:{
@@ -138,6 +142,9 @@ console.log(`grids de stage --------${grids?.length}`);
         }
       }
     })
+  } catch (error) {
+    console.log(error);
+  }
 
   }
   return (
@@ -149,19 +156,19 @@ console.log(`grids de stage --------${grids?.length}`);
        >
         <AccordionItem key={`${GRIDS_TLD.TIWAL}`} aria-label="souar tiwal" 
         title={`${GRIDS_NAME[GRIDS_TLD.TIWAL]}`}>
-          <TiwalAccordion grids={newTiwal}  handleSelectedSouraNb={(arg) => selectSouraHandler({souraNb:arg,accordion:GRIDS_TLD.TIWAL})} />
+          <TiwalAccordion grids={newTiwal}  handleSelectedSouraNb={(arg) => selectSouraHandler(arg)} />
 
         </AccordionItem>
         <AccordionItem key={`${GRIDS_TLD.MIIN}`} aria-label={`souar ${GRIDS_NAME[GRIDS_TLD.MIIN]}`} title={`${GRIDS_NAME[GRIDS_TLD.MIIN]}`}>
-          <MiinAccordion grids={newMiin}  handleSelectedSouraNb={(arg) => selectSouraHandler({souraNb:arg,accordion:GRIDS_TLD.MIIN})} />
+          <MiinAccordion grids={newMiin}  handleSelectedSouraNb={(arg) => selectSouraHandler(arg)} />
         </AccordionItem>
         <AccordionItem key={`${GRIDS_TLD.MATHANI}`} aria-label={`souar ${GRIDS_NAME[GRIDS_TLD.MATHANI]}`} title={`${GRIDS_NAME[GRIDS_TLD.MATHANI]}`}>
-          <MathaniAccordion grids={newMathani}  handleSelectedSouraNb={(arg) => selectSouraHandler({souraNb:arg,accordion:GRIDS_TLD.MATHANI})} />
+          <MathaniAccordion grids={newMathani}  handleSelectedSouraNb={(arg) => selectSouraHandler(arg)} />
         </AccordionItem>
         <AccordionItem key={`${GRIDS_TLD.MOFASAL}`} aria-label={`souar ${GRIDS_NAME[GRIDS_TLD.MOFASAL]}`} title={`${GRIDS_NAME[GRIDS_TLD.MOFASAL]}`}>
           <ScrollShadow className=" h-[calc(100vh-20rem)]">
             <MofasalAccordion grids={newMofasal} 
-              handleSelectedSouraNb={(arg) => selectSouraHandler({souraNb:arg,accordion:GRIDS_TLD.MOFASAL})} />
+              handleSelectedSouraNb={(arg) => selectSouraHandler(arg)} />
           </ScrollShadow>
 
         </AccordionItem>

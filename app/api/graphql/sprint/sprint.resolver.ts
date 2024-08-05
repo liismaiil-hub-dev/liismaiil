@@ -1,5 +1,7 @@
 import {
   GetGridsBySouraNbInput,
+  GridAyahsJson,
+  GridBrut,
   GridType,
   SprintType
 } from '@/api/graphql/stage/stage.types';
@@ -28,19 +30,45 @@ const getGridsByNb = async (
   _: undefined,
   { input }: { input: GetGridsBySouraNbInput },
   { GridModel, _lodash }: { GridModel: any, _lodash: { filter: any } }
-): Promise<{ success: boolean, grids: Array<GridType> } | undefined> => {
+): Promise<{
+  success: boolean, grids: Array<GridAyahsJson>
+} | undefined> => {
 
   const { author, souraNb } = input
   console.log({ author, souraNb })
   try {
-    const grids = await GridModel.find({ author }).sort({ souraNb: 1 }).lean().exec();
-    //  console.log({ author, souraNb, grids });
+    const grids = await GridModel.find({ author, souraNb }).sort({ souraNb: 1 }).lean().exec();
+    console.log({ grids });
 
     if (typeof grids !== 'undefined' && grids.length > 0) {
-      const _grids = await _lodash.filter(grids, (grid: GridType) => (grid.souraNb === souraNb || grid.souraNb.toString() === souraNb.toString()))
-      console.log(_grids[0]['ayahs'])
+      const _grids = await _lodash.filter(grids, (grid: GridBrut) => (grid.souraNb === souraNb || grid.souraNb.toString() === souraNb.toString()))
+      const _gridToJson = _grids.map((grd: GridBrut) => {
 
-      return { success: true, grids: _grids }
+        const _ayahsStringified = JSON.stringify(grd.ayahs);
+        const grp = grd?.group[0];
+        const idStringify = JSON.stringify(grd.id);
+        console.log(` grp :: ${grp} --- idStringify ${idStringify} `);
+        return {
+          //id: grd._id,
+          author: grd.author,   //'3jtczfl93BWlud2t3Q44KdC0EVJ3',
+          title: grd.title, //"6-Al-An'aam-grid:4 -grp: All groups selected",
+
+          arabName: grd.arabName,//'سورة الأنعام',
+          ayahs: _ayahsStringified,
+          createdAt: grd.createdAt,
+          description: grd.description,//"6-Al-An'aam-grid:4 -grp: All groups selected",
+          grid: grd.grid,//4,
+          group: grp,
+          souraName: grd.souraName,//"Al-An'aam",
+          souraNb: grd.souraNb, //6,
+          //tabletWords: [],
+          //  updatedAt: grd.updatedAt,//2024-04 - 29T13: 31: 48.632Z
+        }
+
+      })
+
+
+      return { success: true, grids: _gridToJson }
     } else {
       return { success: false, grids: [] };
     }

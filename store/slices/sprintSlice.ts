@@ -1,10 +1,10 @@
 // third-party
-import { GridType, SprintStateProps, SprintType, StageType } from '@/api/graphql/sprint/sprint.types';
+import { GridType, SprintStateProps, SprintType, StageTypeData } from '@/api/graphql/stage/stage.types';
 import { AyahTabletType } from '@/api/graphql/tablet/tablet.types';
 import { createSlice, current, PayloadAction } from '@reduxjs/toolkit';
 const initialState: SprintStateProps = {
   sprints: [
-    {}
+    {id:0,author:'',description:'',endDate:'',stages:[''],startDate:'',title:''}
   ],
   sprintsTitles: [''],
   showMenu: false,
@@ -95,7 +95,7 @@ const initialState: SprintStateProps = {
   },
   ayHided: [{ id: -1, order: -1 }],
   ayahArraySelected: undefined,
-  validGrids: [''],
+
   dueDate: '',
   gridName: '',
   author: 'kazdhicham@gmail.com',

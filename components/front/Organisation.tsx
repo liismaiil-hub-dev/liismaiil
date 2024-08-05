@@ -1,5 +1,6 @@
 'use client'
-import { CoordsType, PROFILE_ENROLLMENT_NAMES_ENUM, ViewerTypeData } from '@/api/graphql/viewer/viewer.types'
+import { CoordsType, PROFILE_ENROLLMENT_NAMES_ENUM } from '@/api/graphql/viewer/viewer.types'
+import { ProfileTypeData } from '@/app/api/graphql/profile/profile.types'
 import { viewerActions } from '@/store/slices/viewerSlice'
 import { RootStateType } from '@/store/store'
 import { useRouter } from 'next/navigation'
@@ -17,7 +18,7 @@ type CountryCityCoords = {
 }
 
 // -----------------------------COMPONENT-------------------------//
-function Organisation({ organisation }: { organisation: ViewerTypeData }) {
+function Organisation({ liismaiilProfile }: { liismaiilProfile: ProfileTypeData }) {
     const dispatch = useDispatch()
 
     useSelector((state: RootStateType) => state.viewer)
@@ -27,24 +28,31 @@ function Organisation({ organisation }: { organisation: ViewerTypeData }) {
 
     const router = useRouter()
 
-    function selectOrganisationHandler(org: ViewerTypeData) {
+    function selectOrganisationHandler(org: ProfileTypeData) {
         router.push(`/space/${org.uid}`)
     }
 
 
     return (
-        <div key={organisation._id} className='border-2  cursor-pointer hover:animate-zoomIn
-                    border-green-300  shadow-md shadow-green-300 hover:border-indigo-300   flex flex-col gap-1 justify-start items-center
-                     p-2 rounded-lg h-52 w-60'onClick={() => selectOrganisationHandler(organisation)} >
+        <div key={liismaiilProfile._id} className='border  cursor-pointer hover:animate-zoomIn
+                    border-green-300  shadow-md shadow-green-300 
+                    hover:border-indigo-300  
+                     flex flex-col gap-1 
+                     justify-start 
+                     items-center
+                     p-2 
+                     rounded-lg
+                      h-52 
+                      w-60'onClick={() => selectOrganisationHandler(liismaiilProfile)} >
             <div className='h-36 w-full relative flex-col items-start justify-end rounded-lg'
-                style={{ "backgroundImage": `url(${organisation.avatar})` }} >
+                style={{ "backgroundImage": `url(${liismaiilProfile.avatar.url})` }} >
 
             </div>
             <div className={`px-auto   text-center text-xl   w-full font-light`}>
-                {organisation.login}
+                {liismaiilProfile.login}
             </div>
             <div className='px-auto  text-xl text-center  capitalize w-full font-light'>
-                {PROFILE_ENROLLMENT_NAMES_ENUM[organisation.status]}
+                {PROFILE_ENROLLMENT_NAMES_ENUM[liismaiilProfile.status]}
             </div>
         </div>)
 }

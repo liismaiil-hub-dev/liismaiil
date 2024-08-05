@@ -1,5 +1,5 @@
 
-import { CoordsType, GuestType } from '@/api/graphql/sprint/sprint.types';
+import { CoordsType, GuestType } from '@/api/graphql/profile/profile.types';
 import { PROFILE_STATUS_ENUM, ViewerTypeData } from '@/api/graphql/viewer/viewer.types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 

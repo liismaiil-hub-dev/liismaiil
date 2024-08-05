@@ -15,7 +15,7 @@ export const metadata = {
     description: 'space liismaiil board stages '
 }
 
-function Spacelayout({ children, grid, stage, board }: {
+function Spacelayout({ children,souras, stage, board }: {
     children: ReactNode, sprint: ReactNode,
     stage: ReactNode, board: ReactNode, grid: ReactNode
 }) {
@@ -30,9 +30,9 @@ function Spacelayout({ children, grid, stage, board }: {
                     <div className='container '>
                         <Navigation />
                     </div>
-                    <section className="container flex  border   w-full h-[calc(100vh-7rem)] justify-between items-center" >
-                        <div className="flex flex-col justify-start items-start bg-green-200 border shadow-md w-1/4 h-full" >
-                            {grid}
+                    <section className="container flex border   w-full h-[calc(100vh-7rem)] justify-between items-start" >
+                        <div className="flex flex-col justify-start items-center bg-green-200 border shadow-md w-1/4 h-full" >
+                            {souras}
                         </div >
                         <div className="flex flex-col justify-between items-start space-y-3 border-3   w-3/4 h-full" >
                             {/* 

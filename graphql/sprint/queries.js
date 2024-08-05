@@ -123,20 +123,12 @@ export const GET_GRIDS_BY_NB = gql`
       success
       grids{
           grid
-          group
           title
-          description
           souraNb
           arabName
           souraName
-          ayahs{
-            order
-            text
-            juz
-            
-          }
-          createdAt
-          }
           }
   }
+          }
+  
 `;

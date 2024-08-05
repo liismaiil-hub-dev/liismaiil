@@ -21,7 +21,7 @@ const GoogleMapComponent = () => {
  const map = useMap();
 
 const { orgCoords } = useSelector((state: RootStateType) => state.guest)
-console.log({orgCoords});
+//console.log({orgCoords});
 
 return( <APIProvider apiKey={ process.env.NEXT_PUBLIC_GOOGLE_MAP_KEY!}>
     <Map

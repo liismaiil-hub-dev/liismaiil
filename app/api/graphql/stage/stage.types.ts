@@ -1,5 +1,10 @@
 import { PROFILE_STATUS_ENUM } from "../viewer/viewer.types";
 
+export type SprintStateProps = {
+  sprints: SprintType[],
+}
+
+
 export type SprintType = {
   _id: number;
   title: String;
@@ -8,7 +13,6 @@ export type SprintType = {
   endDate: String;
   author: String;
   stages: [StageTypeData]
-
 }
 
 export type PromoteRateType = {
@@ -25,7 +29,40 @@ export type GridType = {
   grid: number;
   group: number;
 };
+export type GridBrut = {
+  id: number;
+  arabName: string;
+  author: string;
+  createdAt: string;
+  description: string;
+  title: string;
+  souraNb: number;
+  souraName: string;
+  ayahs: [Ayah[]];
+  grid: number;
+  group: [number];
+};
+export type GridJsoned = {
+  id: number;
+  arabName: string;
+  title: string;
+  souraNb: number;
+  souraName: string;
+  ayahs: string;
+  grid: number;
+  group: number;
+};
 
+export type GridAyahsJson = {
+  id: number;
+  arabName: string;
+  title: string;
+  souraNb: number;
+  souraName: string;
+  ayahs: string;
+  grid: number;
+  group: number | [number];
+};
 export type GuestType = {
   tokenId: number; //112
   flag: string;
@@ -42,8 +79,8 @@ export type GuestType = {
 export type AddGuestInput = GuestType;
 export type UpdateGuestInput = GuestType;
 export type GetGridsBySouraNbInput = {
-  author:string, 
-  souraNb: number 
+  author: string,
+  souraNb: number
 }
 export type PromoteStageInput = {
   stage: number,

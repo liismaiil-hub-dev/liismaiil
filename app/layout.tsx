@@ -56,13 +56,13 @@ function RootLayout({ children }: { children: ReactNode }) {
                   </div>
 
                   {pathname ==='/' ?
-                   <div className=' container border-2    scrollbar-hide rounded-md border-green-300 flex flex-col justify-stretch items-stretch'>
+                   <div className=' container border-2    scrollbar-hide rounded-md border-green-300 flex flex-col justify-start items-stretch'>
                   
-                  <div className='h-4/5 container border-2  rounded-md border-green-300 '>
+                  <div className='h-1/2 container border-2  rounded-md border-green-700 '>
                     {children}
                   </div>
 
-                  <div className="flex border-2 h-1/5 w-full pt-2  border-violet-500  justify-center items-center">
+                  <div className="flex border-2 h-1/2 w-full pt-2  border-violet-500  justify-center items-center">
                     <GuestsComponents />
                   </div>
 

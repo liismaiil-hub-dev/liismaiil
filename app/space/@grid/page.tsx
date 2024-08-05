@@ -28,9 +28,8 @@ const getGrids = async (): Promise<{ souraName: string, souraNb: number }[] | un
         })
         const uniqGrids = _.uniqBy(souraName, 'souraNb')
         const sortedGrids = _.sortBy(uniqGrids, ['souraNb'])
-console.log({sortedGrids});
- 
-        return sortedGrids as [{ souraName: string, souraNb: number }]
+      console.log({sortedGrids});
+      return sortedGrids as [{ souraName: string, souraNb: number }]
       } else {
         return
       }

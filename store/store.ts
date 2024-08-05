@@ -2,6 +2,7 @@ import coursReducer from '@/store/slices/coursSlice'
 import guestReducer from '@/store/slices/guestSlice'
 import lessonReducer from '@/store/slices/lessonSlice'
 
+import profileReducer from '@/store/slices/profileSlice'
 import searchReducer from '@/store/slices/searchSlice'
 import sprintReducer from '@/store/slices/sprintSlice'
 import viewerReducer from '@/store/slices/viewerSlice'
@@ -41,12 +42,13 @@ const persistConfig = {
 }
 const rootReducer = combineReducers({
   viewer: viewerReducer,
+  profile: profileReducer,
   guest: guestReducer,
   lesson: lessonReducer,
   cours: coursReducer,
   sprint: sprintReducer,
   search: searchReducer,
- })
+})
 const persistedRootReducer = persistReducer(persistConfig, rootReducer)
 
 export const store = configureStore({

@@ -39,7 +39,7 @@ function Navigation() {
     return (
         <nav className={`container  flex  justify-between bg-transparent flex-wrap 
         items-center mx-auto w-full z-10  border-2 border-blue-200 shadow-md`} >
-             <section className='hidden md:flex justify-center items-center h-20 ' >
+             <section className='hidden md:flex justify-start items-center h-20 ' >
                 <Logo />
             </section>
              {/* moble nav  */}
@@ -146,8 +146,8 @@ function Navigation() {
           
             {/* laptop nav  */}
 
-            <section className='hidden md:flex text-xl font-extralight justify-stretch  items-center space-x-3 text-gray-400' >
-                    <Link key={`home`} href='/'  className=' flex justify-center'> 
+            <section className='hidden md:flex text-xl font-extralight md:justify-end  items-center flex-wrap  text-gray-400' >
+                <Link key={`home`} href='/'  className=' flex justify-center'> 
                 <div className={cn(isRoute('') && ' border-1 border-green-500 text-blue-500  ', 'text-center  px-4 py-3 rounded-md ')}  >
                     Home 
                 </div>

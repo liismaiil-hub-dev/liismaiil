@@ -1,16 +1,14 @@
 /* import { useEffect, useState } from 'react' */
-import ViewerModel from '@/api/graphql/viewer/Viewer.model';
-import { ViewerTypeData } from '@/api/graphql/viewer/viewer.types';
 import Organisations from "@/components/front/Organisations";
 //import MapComponent from '@/components/maps/MapComponent';
 import { dbFirestore } from '@/api/graphql/fb-utils-admin';
 import { GuestType } from '@/api/graphql/stage/stage.types';
 import { getGuestFromToken } from '@/lib/authTools';
-import connectMongoose from '@/lib/mongoose-db';
 import { COOKIE_NAME } from '@/store/constants/constants';
 import { DocumentData, DocumentSnapshot } from 'firebase-admin/firestore';
 import { Metadata } from 'next';
 import { cookies } from 'next/headers';
+import { ProfileTypeData } from "./api/graphql/profile/profile.types";
 
 const APP_NAME = "liismaiil-hub";
 const APP_DEFAULT_TITLE = "liismaiil hub App";
@@ -61,7 +59,7 @@ const countries = ["FR", "DZ", "MA", "PA", "IN", "SE", "MU", "YEM", "IR"]
 
 /**HOME COMPONENT */
 export default async function Home() {
-  const organisations = await getOrganisations()
+  const collaborators = await getCollaborators()
   const guests = await getGuests()
   const guest =  await getGuestFromCookies()
   console.log({guest});
@@ -76,7 +74,7 @@ export default async function Home() {
        )
   } else { */
     return (
-        <Organisations guest={guest} guests={guests} organisations={organisations} />
+        <Organisations guest={guest} guests={guests} collaborators={collaborators} />
       
     )
   
@@ -103,49 +101,7 @@ async function getGuestFromCookies(){
 
 
 }
-async function getOrganisations() {
-  /**
-   * if (process.env.APP_ENV === APP_ENV.BOX) {
-    try {
 
-      const organisations = await fs.readFile(process.cwd() + '/store/shares/organisations.json', 'utf8');
-      return organisations
-    } catch (error) {
-      console.log(error);
-      return `[]`
-    }
-  }
-   */
-  await connectMongoose()
-  const organisations: ViewerTypeData[] = [];
-  const docs = await ViewerModel?.find({ status: { $in: ['ORGA', 'ADMIN', 'LIIS'] } }).exec()
-
-  docs.forEach((doc: ViewerTypeData & any) => {
-    const { guests, updatedAt, login, email, uid,
-      organisation = null, website = null, coords, status, addressGeo,
-      instagram = null, stripe_account_id = null, phone = null, avatar, continent = '', country = '', city = '', state = '',
-      bio = null, } = doc?._doc
-
-    //createdAt: JSON.stringify(createdAt),
-    organisations.push({
-      _id: uid.toString(),
-      login,
-      email,
-      stripe_account_id,
-      phone, bio,
-      status,
-      website, instagram, organisation,
-      addressGeo: `${addressGeo}`,
-      coords,
-      avatar: avatar.url,
-      updatedAt: JSON.stringify(updatedAt),
-      uid: uid, continent, country, city, state
-    });
-  });
-
-
-  return organisations as ViewerTypeData[]
-}
 async function getGuests() {
  try{
   
@@ -160,6 +116,22 @@ async function getGuests() {
     });
 
     return guests;
+  } catch (error: any) {
+    console.log({ error });
+    throw new Error(error);
+  }
+}
+
+ async function getCollaborators() {
+ try{
+  const snapshot = await dbFirestore.collection('profiles').where('status', 'in',['ORGA', 'ADMIN', 'LIIS'] ).get();
+    const collaborators: ProfileTypeData[] = [];
+    snapshot.forEach(async (doc: DocumentSnapshot<GuestType | DocumentData>) => {
+      const coolaborat = await doc?.data()!;
+      collaborators.push(coolaborat as ProfileTypeData);
+    });
+
+    return collaborators;
   } catch (error: any) {
     console.log({ error });
     throw new Error(error);

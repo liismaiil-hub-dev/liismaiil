@@ -1,9 +1,9 @@
 'use client'
 
 import { CoordsType, COUNTRY_ENUM, ViewerTypeData } from '@/api/graphql/viewer/viewer.types';
-import { viewerActions } from '@/store/slices/viewerSlice';
+import { ProfileTypeData } from '@/app/api/graphql/profile/profile.types';
 import { RootStateType } from '@/store/store';
-import { Button, cn } from '@nextui-org/react';
+import { cn } from '@nextui-org/react';
 import _ from 'lodash';
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
@@ -24,13 +24,11 @@ type CountryCityCoords = {
 }
 
 // -----------------------------COMPONENT-------------------------//
-function SearchHost({ organisations }: { organisations:ViewerTypeData[] }) {
+function SearchHost( ) {
     const dispatch = useDispatch()
 
-    useSelector((state: RootStateType) => state.viewer)
+    const {liismaiilProfiles} =  useSelector((state: RootStateType) => state.profile)
  
-    const { setOrganisation, setCountry } = viewerActions
-
     const router = useRouter()
 
     const { organisationsContext, organisationContext } = useSelector((state: RootStateType) => state.viewer)
@@ -70,6 +68,7 @@ function SearchHost({ organisations }: { organisations:ViewerTypeData[] }) {
     
     const [countryGuest, setCountryGuest] = useState('');
 
+
     const handleCountryChange = (e) => {
 
             setCountryGuest(e.target.value) 
@@ -98,16 +97,19 @@ function SearchHost({ organisations }: { organisations:ViewerTypeData[] }) {
 
 
 
-    return (<section className=" flex md:flex-row md:h-36 flex-col items-center justify-center  md:justify-center md:items-start  gap-3 ">
-        <Button onClick={()  =>geolocation()}>
+    return (<section className=" flex md:flex-row md:h-25 py-3 flex-col items-center justify-center  md:justify-center md:items-start  gap-3 ">
+     {/*    <Button onClick={()  =>geolocation()}>
             Geolocate
-        </Button>
+        </Button> */}
         <div className="flex items-center md:flex-col outline-none justify-start gap-3 ">
-            <label htmlFor="host">Choose  host :   </label>
-            <select className='shadow-md' name="host" id="host" onChange={(e) => handleHostChange(e)}>
-                <option value="">--choose a host--</option>
-                {typeof organisations!== 'undefined' && organisations?.map((host: ViewerTypeData) => <option className='outline-none ' ref={hostRef} key={`${slug(host.login)}`}
-                    value={`${slug(host.login)}`} >{host.login}</option>)}
+            
+            <select className='shadow-md outline-none  text-center text-green-500 border border-green-500 -800 rounded-md ' name="host" id="host" onChange={(e) => handleHostChange(e)}>
+                <option   value="">--choose a host--</option>
+                {typeof liismaiilProfiles!== 'undefined' && liismaiilProfiles?.map(
+                    (host: ProfileTypeData) => <option  
+                  //  ref={hostRef} 
+                    key={`${host?.login ? slug(host?.login): ''}`}
+                    value={`${host?.login ? slug(host?.login): ''}`} >{host?.login}</option>)}
             </select>
          <div  className={cn( organHost === '' &&  'hidden' ," flex text-green-600 text-center cursor-pointer")}>
             <Link key={`hosts`} href={`/hosts/${organHost}`}> {`host's stages`} 
@@ -116,11 +118,11 @@ function SearchHost({ organisations }: { organisations:ViewerTypeData[] }) {
         </div> 
        
                 <div className="flex items-center md:flex-col outline-none justify-start gap-3 ">
-            <label htmlFor="country">Choose country : </label>
-            <select name="country" id="country" onChange={(e) => handleCountryChange(e)}>
+             <select className='shadow-md outline-none  text-center text-blue-600  border border-blue-800 rounded-md ' name="country" id="country" onChange={(e) => handleCountryChange(e)}>
                 <option value="">--choose a country --</option>
-                {Object.values( COUNTRY_ENUM).map((country: COUNTRY_ENUM) => <option  key={`${slug(country)}`}
-                    value={country}>{country}</option>)}
+                {typeof liismaiilProfiles!== 'undefined' && liismaiilProfiles?.map(
+                    (host: ProfileTypeData) =>  <option  key={`${slug(host.addressGeo? host.addressGeo: '')}`}
+                    value={host.addressGeo?.split(',').pop()}>{host.addressGeo?.split(',').pop()}</option>)}
 
             </select>
             <div  className={cn( !(countryGuest in  COUNTRY_ENUM) &&  'hidden' ," flex text-green-600 cursor-pointer")}>

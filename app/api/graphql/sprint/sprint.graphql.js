@@ -101,8 +101,19 @@ type GridsPlusOutput{
   } 
 type GetGridsByNbOutput{
   success:Boolean
-  grids:[StageGrid]!
-  } 
+  grids:[StageGridJsoned!]
+}
+type StageGridJsoned{
+  souraName: String
+  arabName: String
+  title: String
+  souraNb: Int
+  author: String
+  ayahs: String
+  grid: Int
+  group: Int
+} 
+ 
 type SuccessMessageOutput {
   success: Boolean
   message:String

@@ -5,7 +5,7 @@ function Logo() {
         <div className='cursor-pointer p-3' >
             <Link href='/' >
                 <Image src="/liismLogo.svg" alt="liismaiil s logo"
-                    className='object-contain' width={170} height={70} />
+                    className='object-contain' width={150} height={70} />
             </Link>
         </div>
     )
