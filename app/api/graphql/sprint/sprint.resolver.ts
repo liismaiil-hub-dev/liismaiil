@@ -37,7 +37,7 @@ const getGridsByNb = async (
   const { author, souraNb } = input
   console.log({ author, souraNb })
   try {
-    const grids = await GridModel.find({ author, souraNb }).sort({ souraNb: 1 }).lean().exec();
+    const grids = await GridModel.find({ souraNb }).sort({ souraNb: 1 }).lean().exec();
     console.log({ grids });
 
     if (typeof grids !== 'undefined' && grids.length > 0) {

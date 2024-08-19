@@ -55,7 +55,6 @@ export const metadata: Metadata = {
 
 
 export const revalidate = 5;
-const countries = ["FR", "DZ", "MA", "PA", "IN", "SE", "MU", "YEM", "IR"]
 
 /**HOME COMPONENT */
 export default async function Home() {
@@ -102,7 +101,7 @@ async function getGuestFromCookies(){
 
 }
 
-async function getGuests() {
+export async function getGuests() {
  try{
   
 

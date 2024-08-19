@@ -126,7 +126,9 @@ export const GET_GRIDS_BY_NB = gql`
           title
           souraNb
           arabName
+          group
           souraName
+          ayahs
           }
   }
           }

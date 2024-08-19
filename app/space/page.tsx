@@ -1,6 +1,5 @@
 'use server'
 import Board from "@/components/space/Board";
-import GridCard from "@/components/space/GridCard";
 import { APP_ENV } from '@/store/constants/constants';
 import { readdir } from 'node:fs/promises';
 import path from 'path';
@@ -24,13 +23,12 @@ const getTitles = async (): Promise<string[]| undefined>=> {
 }
 export default async function SpacePage() {
 
-  const titles = await getTitles()
-  console.log({ titles });
+  //const titles = await getTitles()
+ // console.log({ titles });
 
 
-  return (<section id="space-page" className="flex flex-col justify-start items-center border-2 border-blue-300 w-full h-full" >
+  return (<section id="space-page" className="flex flex-col justify-start items-center border-2 border-blue-300 w-full h-screen" >
 
-    <GridCard />
     <Board />
 
 

@@ -17,7 +17,7 @@ export enum APP_ENV {
 }
 export enum GRIDS_TLD {
   TIWAL = "TIWAL",
-  MIIN= 'MIIN',
+  MIIN = 'MIIN',
   MATHANI = 'MATHANI',
   MOFASAL = 'MOFASAL',
 }

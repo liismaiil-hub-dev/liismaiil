@@ -1,16 +1,18 @@
+'use server'
+import Board from "@/components/space/Board";
+import GridCard from "@/components/stage/GridCard";
 
 
 function StagePage() {
-    return (
 
-        <div className="h-full  bg-gray-200 p-10">
-            <h2 className='text-4xl text-center my-10 font-semibold'> 
-            stages</h2>
+  return (<section id="space-page" className="flex flex-col justify-start items-center border-2 border-blue-300 w-full h-screen" >
 
-        </div>
+    <GridCard />
+    <Board />
 
 
-    )
+  </section>
+  )
 }
 
 export default StagePage

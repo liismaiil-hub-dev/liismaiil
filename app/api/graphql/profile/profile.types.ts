@@ -3,7 +3,8 @@ export type ProfileTypeData = {
   _id: string;
   email: string;
   login: string;
-  token?: string;
+  token?: number;
+  tokenId: number;
   vierified?: boolean;
   phone?: string;
   isAdmin?: boolean;
@@ -19,7 +20,7 @@ export type ProfileTypeData = {
       rate: number;
     }
   ];
-  avatar:ImageType;
+  avatar: ImageType;
   guests: GuestType[];
   messages?: MessageTypeData[];
   conversationFeed: FeedTypeData[];
@@ -29,6 +30,10 @@ export type ProfileTypeData = {
   updatedAt?: string;
   createdAt?: string;
 };
+type ImageType = {
+  public_id: string,
+  url: string
+}
 export type CoordsType = {
   long: number,
   lat: number
@@ -255,9 +260,17 @@ export type DeleteConversationFeedInput = {
   product: string; // titleSlug / subject
   rec: string; // product author === email
 };
-
+export enum EVENT_STATUS_ENUM {
+  ADMIN = "ADMIN",
+  COLL = 'COLL',
+  ORGA = 'ORGA',
+  LIIS = 'LIIS',
+  DELIVER = 'DELIVER',
+  GUEST = 'GUEST',
+  LIBRARY = 'LIBRARY',
+}
 export enum PROFILE_STATUS_ENUM {
-  ADMIN = 'ADMIN',
+  ADMIN = "ADMIN",
   COLL = 'COLL',
   ORGA = 'ORGA',
   LIIS = 'LIIS',
@@ -268,4 +281,55 @@ export enum PROFILE_STATUS_ENUM {
   DISCOUNT = 'DISCOUNT',
   LIBRARY = 'LIBRARY',
   LIISMAIIL_GUEST = 'LIISMAIIL_GUEST'
+}
+export enum COUNTRY_ENUM {
+  FR = "FR",
+  DZ = 'DZ',
+  SE = 'SE',
+  MR = 'MR',
+  BF = 'BF',
+  PK = 'PK',
+  TZ = 'TZ',
+  SP = 'SP'
+}
+export enum PROFILE_ENROLLMENT_NAMES_ENUM {
+  ADMIN = "ADMIN",
+  LIIS = "liismanager",
+  COLL = "collaborator",
+  ORGA = "organisator",
+  GUEST = "guest",
+  LIBRARY = "library",
+  LIISIL = "liismaiil",
+  DISCOUNT = "discount",
+  DELIVER = "deliver",
+  USER = "user",
+  LIISMAIIL_GUEST = 'liismaiil_guest'
+}
+
+export enum PROFILE_ENROLLMENT_COLOR_ENUM {
+  GUEST = "primary",
+  COLL = "warning",
+  ORGA = "success",
+  LIIS = "secondary",
+  DELIVER = "info",
+  USER = "info",
+  LIISIL = "secondary",
+  ADMIN = "error",
+  DISCOUNT = "error",
+  LIBRARY = "info",
+  LIISMAIIL_GUEST = "info",
+}
+export enum CARDS_LEVEL_ENUM {
+  SOBH = 'SOBH',
+  DOHR = 'DOHR',
+  ASR = 'ASR',
+  MAGH = 'MAGH',
+  ICHA = 'ICHA'
+}
+export enum CARDS_LEVEL_COLOR_ENUM {
+  SOBH = "primary",
+  DOHR = "warning",
+  ASR = "success",
+  MAGH = "secondary",
+  ICHA = "info"
 }

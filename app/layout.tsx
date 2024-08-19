@@ -15,12 +15,13 @@ import { Providers } from '@/store/Providers';
 import { persistor } from '@/store/store';
 import { ReactNode } from "react";
 import { PersistGate } from 'redux-persist/integration/react';
-import { ApolloWrapper } from './ApolloWraper';
+
 
 import GuestsComponents from "@/components/front/Guests";
 
 import { Inter } from 'next/font/google';
 import { usePathname } from 'next/navigation';
+import { ApolloWrapper } from "./ApolloWrapper";
  
 const inter = Inter({ subsets: ['latin'] })
 
@@ -37,15 +38,14 @@ function RootLayout({ children }: { children: ReactNode }) {
  
   return <html lang="en" className='light'>
     <head>
-
     <script async
     src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAP_KEY}&loading=async&libraries=places&callback=initMap`}>
 </script>
       </head>
     <body className={`${inter.className} h-screen w-screen`}>
+          <ApolloWrapper>   
       <NextSeo {...SEO} />
       <ToastContainer position="top-center" />
-      <ApolloWrapper>
         <Providers >
           <NextUIProvider >
             <PersistGate persistor={persistor}>
@@ -54,23 +54,17 @@ function RootLayout({ children }: { children: ReactNode }) {
                   <div className='container '>
                     <Navigation />
                   </div>
-
                   {pathname ==='/' ?
                    <div className=' container border-2    scrollbar-hide rounded-md border-green-300 flex flex-col justify-start items-stretch'>
-                  
                   <div className='h-1/2 container border-2  rounded-md border-green-700 '>
                     {children}
                   </div>
-
                   <div className="flex border-2 h-1/2 w-full pt-2  border-violet-500  justify-center items-center">
                     <GuestsComponents />
                   </div>
-
-                 
                   <div className="flex justify-center items-center">
                     <Footer />
                   </div>
-                  
                   </div>: 
                   <div className='container border-2   scrollbar-hide rounded-r-md border-green-300 flex flex-col  justify-start items-center w-full h-full '>
                     {children}

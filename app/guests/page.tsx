@@ -1,8 +1,10 @@
 import GuestsComponents from "@/components/front/Guests";
+import { getCurrentGuest, getGuestsStagesdb } from "@/lib/guests";
 
-
-export default function Guests() {
-
+export default async function  Guests() {
+    const guest = getCurrentGuest()
+    const {credential} = guest;
+const guests = await getGuestsStagesdb(tokenId)
     return (
                 <div className="flex border-2 h-full w-full p-3  border-violet-500  justify-start items-start gap-3 flex-wrap">
                     <GuestsComponents />

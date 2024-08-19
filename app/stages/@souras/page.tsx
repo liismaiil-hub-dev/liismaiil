@@ -25,21 +25,22 @@ const getGrids = async (): Promise<{ souraName: string, souraNb: number }[] | un
         return
       }
     } catch (err) {
-
-      console.log({ err });
+        console.log({ err });
       return
     }
   }
 export default async function SourasNav() {
   const grids = await getGrids()
   if (typeof grids !== 'undefined' && grids.length > 0) {
- //console.log(`grids stages ${grids}` );
+// console.log(`grids stages ${grids}` );
 
     return (
       <GridsComponent grids={grids} />
 )
   } else {
-    return (<GridsComponent grids={['']} />)
+    return (<GridsComponent grids={[{
+      souraName:'',souraNb:0
+    }]} />)
 
   }
 }

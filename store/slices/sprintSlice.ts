@@ -1,11 +1,53 @@
 // third-party
-import { GridType, SprintStateProps, SprintType, StageTypeData } from '@/api/graphql/stage/stage.types';
-import { AyahTabletType } from '@/api/graphql/tablet/tablet.types';
+import { Ayah, EVAL_STATE, GridJsoned, SprintStateProps, SprintType, StageTypeData } from '@/api/graphql/stage/stage.types';
 import { createSlice, current, PayloadAction } from '@reduxjs/toolkit';
 const initialState: SprintStateProps = {
-  sprints: [
-    {id:0,author:'',description:'',endDate:'',stages:[''],startDate:'',title:''}
+  spaceGridsSelected: [{
+    grid: -1,
+    group: -1,
+    title: '',
+    souraNb: -1,
+    arabName: '',
+    souraName: '',
+    ayahs: '',
+    id: 0
+  }
   ],
+  gridSelected: {
+    grid: -1,
+    group: -1,
+    title: '',
+    souraNb: -1,
+    arabName: '',
+    souraName: '',
+    ayahs: '',
+    id: 0
+  },
+  evalIndex: 0,
+  sprints: [
+    { id: 0, author: '', description: '', endDate: '', stages: [''], startDate: '', title: '' }
+  ],
+  orderedAyahsContext: [{
+    id: 0,
+    juz: 0,
+    order: 0,
+    text: ''
+  }
+  ],
+  shuffeledAyahsContext: [{
+    id: 0,
+    juz: 0,
+    order: 0,
+    text: ''
+  }],
+  gridIndexContext: 0,
+  hideNbContext: false,
+  faultsNbContext: 0,
+  correctsNbContext: 0,
+  evalContext: EVAL_STATE.ORDER,
+
+  //____________________________________
+
   sprintsTitles: [''],
   showMenu: false,
   stages: [{}],
@@ -37,46 +79,15 @@ const initialState: SprintStateProps = {
     author: '',
 
   },
-  spaceGridsSelected: [{
-    author: '',
-    grid: -1,
-    group: [-1],
-    title: '',
-    description: '',
-    souraNb: -1,
-    arabName: '',
-    souraName: '',
-    ayahs: [[{
-      order: -1,
-      text: '',
-      juz: -1
-    }
-    ]]
-  }
-  ],
+
   gridsAyahsSelected: [{
     order: -1,
     text: '',
     juz: -1
   }
   ],
-  gridSelected: {
-    author: '',
-    grid: -1,
-    group: [-1],
-    title: '',
-    description: '',
-    souraNb: -1,
-    arabName: '',
-    souraName: '',
-    ayahs: [[{
-      order: -1,
-      text: '',
-      juz: -1
-    }
-    ]]
-  },
-  boardGridIndex: -1,
+
+
   grid: {
     author: '',
     grid: -1,
@@ -123,78 +134,65 @@ const sprintSlice = createSlice({
     setSprints(state: SprintStateProps, action: PayloadAction<{ sprints: [SprintType] }>) {
       state.sprints = action.payload.sprints
     },
-    setSpaceSprint(state: SprintStateProps, action: PayloadAction<{ sprint: string }>) {
+    setEvalIndex(state: SprintStateProps, action: PayloadAction<{ index: number }>) {
+      state.evalIndex = action.payload.index
+    },
+    setGridSelected(state: SprintStateProps,
+      action: PayloadAction<{ grid: GridJsoned }>) {
+      //      console.log({ gridSelected: action.payload.grid });
+      state.gridSelected = action.payload.grid
+    },
+
+    setOrderedAyahsContext(state: SprintStateProps, action: PayloadAction<{ ayahs: Ayah[] }>) {
+      state.orderedAyahsContext = action.payload.ayahs
+    },
+
+    setShuffeledAyahsContext(state: SprintStateProps, action: PayloadAction<{ ayahs: Ayah[] }>) {
+      state.shuffeledAyahsContext = action.payload.ayahs
+    },
+    setGridIndexContext(state: SprintStateProps,
+      action: PayloadAction<{ index: number }>) {
+      console.log({ grid: action.payload.index })
+      state.gridIndexContext = action.payload.index
+    },
+
+    setHideNbContext(state: SprintStateProps,
+      action: PayloadAction<{ hide: boolean }>) {
+      state.hideNbContext = action.payload.hide
+    },
+    setEvalContext(state: SprintStateProps,
+      action: PayloadAction<{ eval: EVAL_STATE }>) {
+      state.evalContext = action.payload.eval
+    },
+
+    setFaultsNbContext(state: SprintStateProps,
+      action: PayloadAction<{ nb: number }>) {
+      state.faultsNbContext = action.payload.nb
+    },
+    setCorrectsNbContext(state: SprintStateProps,
+      action: PayloadAction<{ nb: number }>) {
+      state.correctsNbContext = action.payload.nb
+    },
+    setSpaceGrids(state: SprintStateProps, action: PayloadAction<{ grids: GridJsoned[] }>) {
+      console.log({ spaceGrids: action.payload.grids });
+      state.spaceGridsSelected = action.payload.grids
+    },
+    setSpaceSprint(state: SprintStateProps, action: PayloadAction<{ sprint: SprintType }>) {
       state.spaceSprint = action.payload.sprint
     },
 
-    setSpaceStage(state: SprintStateProps, action: PayloadAction<{ stage: StageType }>) {
+    setSpaceStage(state: SprintStateProps, action: PayloadAction<{ stage: StageTypeData }>) {
       state.spaceStage = action.payload.stage
     },
-    setSprintsTitles(state: SprintStateProps, action: PayloadAction<{ sprints: [string] }>) {
-      state.sprintsTitles = action.payload.sprints
-    },
-    setSpaceGrids(state: SprintStateProps, action: PayloadAction<{ grids: [GridType] }>) {
-      console.log({ spaceGrids: action.payload.grids });
-
-      state.spaceGridsSelected = action.payload.grids
-    },
-    setGridSelected(state: SprintStateProps,
-      action: PayloadAction<{ grid: GridType }>) {
-      console.log({ gridSelected: action.payload.grid });
-
-      state.gridSelected = action.payload.grid
-    },
-    setGridsAyahsSelected(state: SprintStateProps,
-      action: PayloadAction<{ gridsAyahsSelected: [AyahTabletType] }>) {
-
-      state.gridsAyahsSelected = action.payload.gridsAyahsSelected
-    },
-    setBoardGridIndex(state: SprintStateProps,
-      action: PayloadAction<{ index: number }>) {
-      console.log({ grid: action.payload.index })
-      state.boardGridIndex = action.payload.index
-    },
-    emptySprintsTitles(state: SprintStateProps) {
-      state.sprintsTitles = initialState.sprintsTitles
-    },
-
-    emptySprints(state: SprintStateProps) {
-      state.sprints = initialState.sprints
-    },
-
-    showSideBarMenu(state: SprintStateProps, action: PayloadAction<{ show: boolean }>) {
-      state.showMenu = action.payload.show
-    },
-
-    setStageSelected(state: SprintStateProps, action: PayloadAction<{ stage: StageType }>) {
+    setStageSelected(state: SprintStateProps, action: PayloadAction<{ stage: StageTypeData }>) {
       console.log({ state: current(state), stage: action.payload.stage })
       state.stageSelected = action.payload.stage
     },
-    setStage(state: SprintStateProps, action: PayloadAction<{ stage: string }>) {
-
-      state.stage = action.payload.stage
-    },
-
-
-    setAyahsGridSelected(state: SprintStateProps,
-      action: PayloadAction<{ ayahsGridSelected: AyahTabletType[] }>) {
-
-      state.ayahsGridSelected = action.payload.ayahsGridSelected
-    },
-
-
     validateStage(state, action: PayloadAction<{ stage: string }>) {
 
       state.validStages.push(action.payload.stage)
     },
 
-    validateGrid(state: SprintStateProps, action: PayloadAction<{ grid: string }>) {
-      state.validGrids.push(action.payload.grid)
-    },
-    setGrids(state: SprintStateProps, action: PayloadAction<{ grids: GridType[] }>) {
-
-      state.grids = action.payload.grids
-    },
 
     emptySprint(state) {
       state.sprints = initialState.sprints

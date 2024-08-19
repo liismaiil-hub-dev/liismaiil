@@ -25,6 +25,9 @@
        "@/app/*": [
         "app/*"
       ],
+      "@/db/*": [
+        "db/*"
+      ],
       "@/api/*": [
         "app/api/*"
       ],
@@ -38,14 +41,14 @@
       "@/utils/*": [
         "utils/*"
       ],
+      "@/graphql/*": [
+        "graphql/*"
+      ],
       "@/styles/*": [
         "styles/*"
       ],
       "@/lib/*": [
         "lib/*"
-      ],
-      "@/graphql/*": [
-        "graphql/*"
       ],
       "@/store/*": [
         "store/*"

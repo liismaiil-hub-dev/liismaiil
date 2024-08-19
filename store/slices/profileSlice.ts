@@ -9,6 +9,8 @@ export type ProfileStateType = {
   friendRequests?: { token: string; profileEmail: string; profileId: string; flag: string }[];
   friendFound?: { token: string; profileEmail: string; profileId: string; flag: '' };
   liismaiilProfiles: ProfileTypeData[],
+  hostToken: number,
+  country: string,
   profileAuth: {
     _id: string;
     email: string;
@@ -102,6 +104,10 @@ export const initialProfileState: ProfileStateType = {
   isLoggedIn: false,
   products: [''],
   isAdmin: false,
+  hostToken: 0,
+  country: 'New Zealand',
+
+
   accessRecaptcha: '',
   friendRequests: [{ token: '', profileEmail: '', profileId: '', flag: '' }],
   friendFound: { token: '', profileEmail: '', profileId: '', flag: '' },
@@ -260,7 +266,13 @@ const profileSlice = createSlice({
     ) {
       state.liismaiilProfiles = action.payload.profiles;
     },
+    setCountry(state, action: PayloadAction<{ country: string }>) {
+      state.country = action.payload.country;
+    },
 
+    setHostToken(state, action: PayloadAction<{ hostToken: number }>) {
+      state.hostToken = action.payload.hostToken;
+    },
     setProfileAddress(state, action: PayloadAction<{ address: Address }>) {
       state.address = action.payload.address;
     },

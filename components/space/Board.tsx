@@ -1,5 +1,4 @@
 'use client'
-import { AyahWithId } from '@/api/graphql/sprint/sprint.types';
 import { AyahTabletType } from '@/api/graphql/tablet/tablet.types';
 import { sprintActions } from "@/store/slices/sprintSlice";
 import { RootStateType } from '@/store/store';

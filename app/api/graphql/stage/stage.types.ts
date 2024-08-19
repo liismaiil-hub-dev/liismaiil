@@ -1,17 +1,36 @@
-import { PROFILE_STATUS_ENUM } from "../viewer/viewer.types";
+import { PROFILE_STATUS_ENUM } from "@/api/graphql/profile/profile.types";
 
 export type SprintStateProps = {
   sprints: SprintType[],
+  spaceGridsSelected: GridJsoned[],
+  gridSelected: GridJsoned,
+  stageSelected: StageTypeData,
+  evalIndex: number,
+  orderedAyahsContext: Ayah[],
+  shuffeledAyahsContext: Ayah[],
+  gridIndexContext: number,
+  hideNbContext: boolean,
+  faultsNbContext: number,
+  correctsNbContext: number,
+  spaceSprint: SprintType,
+  spaceStage: StageTypeData,
+  validStages: [string],
+  evalContext: EVAL_STATE
 }
 
+export enum EVAL_STATE {
+  EVAL = 'EVAL',
+  ORDER = 'ORDER',
+  CLICK = 'CLICK',
+}
 
 export type SprintType = {
   _id: number;
-  title: String;
-  description: String;
-  startDate: String;
-  endDate: String;
-  author: String;
+  title: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  author: string;
   stages: [StageTypeData]
 }
 
@@ -69,6 +88,7 @@ export type GuestType = {
   price?: number;
   collaboratorId: string;
   host: number;
+  password: string;
   status: PROFILE_STATUS_ENUM;
   enrollmentStatus?: string;
   startDate?: string;
@@ -86,6 +106,7 @@ export type PromoteStageInput = {
   stage: number,
   category: STAGE_CATEGORY_ENUM
 };
+
 export type StageTypeData = {
   id: number;
   title: string;
@@ -96,11 +117,18 @@ export type StageTypeData = {
   sprints: [String];
   createdAt?: string;
 }
+
+export type AyahTabletType = {
+  order: number;
+  text: string;
+  juz: number;
+  slice?: string;
+};
 export type Ayah = {
   id: number;
   juz: number;
   order: number;
-  text: number;
+  text: string;
 }
 export enum STAGE_CATEGORY_ENUM {
   SOBH = "SOBH",

@@ -19,8 +19,7 @@ type CountryCityCoords = {
 
 // -----------------------------COMPONENT-------------------------//
 function Organisation({ liismaiilProfile }: { liismaiilProfile: ProfileTypeData }) {
-    const dispatch = useDispatch()
-
+   
     useSelector((state: RootStateType) => state.viewer)
     const [countries, setCountries] = useState(() => ['DZ', 'MA', 'FR']);
 

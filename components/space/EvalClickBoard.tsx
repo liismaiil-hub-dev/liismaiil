@@ -1,5 +1,5 @@
 'use client'
-import { AyahTabletType } from '@/api/graphql/sprint/sprint.types';
+import { AyahTabletType } from '@/api/graphql/stage/stage.types';
 import * as _ from 'lodash';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -13,26 +13,11 @@ type AyahWithId = {
     id: number
 }
 
-export default function EvalClickBoard({ grid, evalIndex, hideNb, arabName }: { grid: AyahTabletType[], evalIndex: number, hideNb: boolean, arabName: string },) {
+export default function EvalClickBoard() {
 
     const dispatch = useDispatch()
-    const [orderedAyahs, setOrderedAyahs] = useState<AyahTabletType[]>(() => _.sortBy(grid, 'order'))
-    const orderedAyahsWithId: AyahWithId[] = orderedAyahs.map((ordG: AyahTabletType, index) => ({ ...ordG, id: index }))
     
-    const [gridState, setGridState] = useState<AyahWithId[]>(() => _.shuffle(orderedAyahsWithId))
-const [actualAyah, setActualAyah] = useState(0);
-
     
-    function handleShuffle() {
-        const newGrid = _.shuffle(gridState)
-        console.log({ newGrid })
-        setGridState(newGrid)
-    }
-    function handleValidate() {
-        const newGrid = _.shuffle(gridState)
-        console.log({ newGrid })
-        setGridState(newGrid)
-    }
     function pressHandler(ord:number){
         if(ord && ord=== actualAyah){
             setActualAyah((prev)  => prev + 1)

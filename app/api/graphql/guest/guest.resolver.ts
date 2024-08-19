@@ -5,7 +5,7 @@ import {
   GuestType,
   PromoteStageInput
 } from '@/api/graphql/stage/stage.types';
-import { FlagTokenType, PROFILE_STATUS_ENUM } from '@/api/graphql/viewer/viewer.types';
+import { FlagTokenType, PROFILE_STATUS_ENUM } from '@/api/graphql/profile/profile.types';
 import { DocumentData, DocumentReference, DocumentSnapshot, FieldValue, Firestore } from 'firebase-admin/firestore';
 //import { FirebaseError } from '@firebase/util';
 const guest = async (

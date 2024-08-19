@@ -9,6 +9,7 @@ import { Accordion, AccordionItem, Button, ScrollShadow } from "@nextui-org/reac
 import { useEffect, useMemo } from 'react';
 import { useDispatch } from "react-redux";
 
+
 type GridMenu = {
   souraName: string;
   souraNb: number;
@@ -95,13 +96,15 @@ const MofasalAccordion = ({ grids, handleSelectedSouraNb }: {
 //             _____COMPONENT_____________
 
 const Grids = ({ grids }: { grids: GridMenu[] }) => {
-console.log(`grids de stage --------${grids?.length}`);
- 
+  console.log({grids});
+  
+  console.log(`grids de stage --------${grids?.length}`);
+  
   const dispatch = useDispatch()
- const [GetGridsByNb, {data:dataGetGridsByNb, loading:loadingGetGridsByNb, error: errorGetGridsByNb}]= useLazyQuery(GET_GRIDS_BY_NB)
+  const [GetGridsByNb, {data:dataGetGridsByNb, loading:loadingGetGridsByNb, error: errorGetGridsByNb}]= useLazyQuery(GET_GRIDS_BY_NB)
   const { setSpaceGrids } = sprintActions
   //const { grids } = useSelector((state: RootStateType) => state.sprint)
-
+  
   // creating chunks 
   const newTiwal: GridMenu[] = useMemo(() => grids.filter((gr: GridMenu) => {
     return gr.souraNb <= 7
@@ -109,21 +112,18 @@ console.log(`grids de stage --------${grids?.length}`);
   const newMiin = useMemo(() => grids.filter((gr: GridMenu) => {
     return gr.souraNb > 7 && gr.souraNb <= 18;
   }), [grids])
-
-
+  
+  
   const newMathani = useMemo(() => grids.filter((gr: GridMenu) => {
     return gr.souraNb > 18 && gr.souraNb <= 50;
   }), [grids])
-
+  
   const newMofasal = useMemo(() => grids.filter((gr: GridMenu) => {
     return gr.souraNb > 50;
   }), [grids])
-
+  
   useEffect(() => {
-    console.log(`dataGridNb  ${dataGetGridsByNb?.getGridsByNb?.grids}`);
     if (dataGetGridsByNb && dataGetGridsByNb.getGridsByNb && dataGetGridsByNb.getGridsByNb.success && dataGetGridsByNb.getGridsByNb.grids.length > 0) {
-      console.log(`Grids comp from souras page : ${dataGetGridsByNb.getGridsByNb.grids} `);
-      
       dispatch(setSpaceGrids({ grids: dataGetGridsByNb.getGridsByNb.grids }))
     
     } else if (errorGetGridsByNb || !dataGetGridsByNb?.getGridsByNb.success) {
@@ -132,8 +132,7 @@ console.log(`grids de stage --------${grids?.length}`);
   }, [dataGetGridsByNb, loadingGetGridsByNb, errorGetGridsByNb]);
 
   const selectSouraHandler = (souraNb: number) => {
-  try {
-    
+  try { 
     GetGridsByNb({
       variables:{
         input:{

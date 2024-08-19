@@ -27,7 +27,7 @@ function Organisations({ collaborators, guests, guest }: { collaborators: Profil
     useEffect(() => {
         dispatch(setLiismaiilProfiles({ profiles:collaborators }))
         dispatch(setGuests({ guests }))
-     // console.log({collaboratorsCoords});
+      console.log({collaborators});
       
         dispatch(setOrgCoords({orgCoords:collaboratorsCoords}))
         dispatch(setGuest({ guest }))

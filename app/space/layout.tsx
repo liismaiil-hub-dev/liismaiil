@@ -1,57 +1,57 @@
-import ErrorBoundaryComp from "@/components/front/ErrorBoundaryComp";
-import Navigation from '@/components/front/Navigation';
-import { Providers } from '@/store/Providers';
+'use client'
 import '@/styles/global.css';
-import { NextUIProvider } from "@nextui-org/react";
+import 'react-toastify/dist/ReactToastify.css';
+/* import { useEffect, useState } from 'react'; */
+import { RootStateType } from '@/store/store';
+import '@/styles/global.css';
 import { Inter } from 'next/font/google';
+import { usePathname } from 'next/navigation';
 import { ReactNode } from 'react';
-import { ErrorBoundary } from 'react-error-boundary';
-import { ToastContainer } from 'react-toastify';
+import { useSelector } from 'react-redux';
 
 const inter = Inter({ subsets: ['latin'] })
 
-export const metadata = {
-    title: 'space liismaiil',
-    description: 'space liismaiil board stages '
-}
+//const Navigation = dynamic(()=> import('@/components/front/Navigation'),{ssr:false})
 
-function Spacelayout({ children,souras, stage, board }: {
-    children: ReactNode, sprint: ReactNode,
+function Spacelayout({ children,souras, sprint, grid }: {
+    children: ReactNode, sprint: ReactNode, 
+    souras: ReactNode,
     stage: ReactNode, board: ReactNode, grid: ReactNode
 }) {
-    return (<html lang="en" className='light'>
-        <body className={` h-screen w-screen`}>
-            <ErrorBoundary fallback={<ErrorBoundaryComp />}>
-      <ToastContainer position="top-center" />
-        <Providers >
-          <NextUIProvider >
-            
-                <main className='container mx-auto w-full  flex flex-col  justify-start items-center h -full'>
-                    <div className='container '>
-                        <Navigation />
-                    </div>
-                    <section className="container flex border   w-full h-[calc(100vh-7rem)] justify-between items-start" >
-                        <div className="flex flex-col justify-start items-center bg-green-200 border shadow-md w-1/4 h-full" >
+ 
+  const {  gridSelected, hideNbContext, spaceGridsSelected, evalIndex, shuffeledAyahsContext, orderedAyahsContext, gridIndexContext, evalContext } = useSelector((state: RootStateType) => state.sprint)
+  
+    const path = usePathname(); 
+    return (
+                <main className='container mx-auto w-full  flex flex-col  justify-start items-center  min-h-screen '>
+                    <section className="container flex   w-full max-h-['5rem']  ring-2 ring-yellow-300/80 justify-between items-center" >
+                        <div className="h-full w-1/4 bg-green-100/70 border 
+                        shadow-md " >
                             {souras}
+                        </div > 
+                         <div className="flex flex-col justify-start items-center bg-emerald-600/100 border border-yellow-200 shadow-md w-1/2" >
+                            {grid}
                         </div >
-                        <div className="flex flex-col justify-between items-start space-y-3 border-3   w-3/4 h-full" >
+                        <div className="flex flex-col justify-start items-center bg-green-100/50 border shadow-md w-1/4" >
+                            {sprint}
+                        </div >
+                    </section>
+  <section className="container flex-col   w-full max-h-['5rem']  ring-2 ring-red-300/80 justify-start items-center" >
+                  
+                       {gridSelected && gridSelected.arabName!="" && <div className="flex flex-col justify-start items-start    w-full max-h-[calc(100vh-5rem)]]" >
                             {/* 
                             <div className="flex  justify-start   bg-orange-200 w-full h-full text-medium text-gray-500" >
-                                {board}
+                            {board}
                             </div> */}
 
                             {children}
 
-                        </div >
+                        </div >}
 
                     </section>
                 </main>
-            </NextUIProvider >
-        </Providers >
-            </ErrorBoundary>
 
-        </body>
-    </html >
+       
     )
 }
 

@@ -1,5 +1,5 @@
 'use client'
-import { AyahTabletType, AyahWithId } from '@/api/graphql/sprint/sprint.types';
+import {  Ayah,AyahTabletType } from '@/api/graphql/stage/stage.types';
 import { useEffect, useState } from 'react';
 
 import { sprintActions } from '@/store/slices/sprintSlice';
@@ -27,10 +27,10 @@ import * as _ from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 
-export default function EvalBoardSorted({ grid, evalIndex, hideNb, arabName }: { grid: AyahTabletType[], evalIndex: number, hideNb: boolean, arabName: string },) {
+export default function EvalBoardSorted() {
 
     const dispatch = useDispatch()
-    const { sprints, spaceSprint, gridSelected, sprintsTitles, spaceStage } = useSelector((state: RootStateType) => state.sprint)
+    const { sprints, gridSelected, orderedAyahsContext, shuffeledAyahsContext , gridIndexContext } = useSelector((state: RootStateType) => state.sprint)
     const sensors = useSensors(
         useSensor(PointerSensor),
         useSensor(TouchSensor),
@@ -38,35 +38,14 @@ export default function EvalBoardSorted({ grid, evalIndex, hideNb, arabName }: {
             coordinateGetter: sortableKeyboardCoordinates,
         })
     );
-    const { setSprints, setSprintsTitles, emptySprintsTitles, setGridsSelected, setGridSelected, setAyahArraySelected, hideAy, resetHidedAy, setMinMax } = sprintActions
+    const { setSprints, setSprintsTitles, emptySprintsTitles, setGridSelected  } = sprintActions
 
     
-    const [orderedAyahs, setOrderedAyahs] = useState<AyahTabletType[]>(() => _.sortBy(grid, 'order'))
-    const [shuffeledAyahs, setShuffeleddAyahs] = useState<AyahTabletType[]>(() => _.shuffle(orderedAyahs))
-    
-    const [orderedGridForDnd, setOrderedGridForDnd] = useState<AyahWithId[]>(() =>
-        orderedAyahs.map((ordG: AyahTabletType, index) => ({ ...ordG, id: index + 1 })));
-    
-    const [shuffeledGridForDnd, setShuffeledGridForDnd] = useState<AyahWithId[]>(() =>_.shuffle(orderedGridForDnd))
-    
-    const [gridState, setGridState] = useState<AyahWithId[]>(() => shuffeledAyahs.map((shuff: AyahTabletType, index) => ({
-        ...shuff, id: shuff.order + 1 })));
-        const [isFirst, setIsFirst] = useState(true);
-        useEffect(() => {
-        console.log({gridSelected});
-        //setGridState(() => _.shuffle(orderedGridForDnd));
-        setIsFirst(true)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
     
     // Drag end  function
     function handleDragEnd(event:DragEndEvent) {
         const { active, over } = event;
                  
-        if(isFirst){
-              toast.success("first ayah start step ")
-        setIsFirst(false)
-            } 
             
             const oldIndex = _.findIndex(gridState,function(aywId) {
                 
@@ -76,10 +55,6 @@ export default function EvalBoardSorted({ grid, evalIndex, hideNb, arabName }: {
             console.log({activeId:active.id});
              setGridState(arrayMove(gridState,oldIndex, parseInt(active!.id.toString()) -1 ))
         }  
-useEffect(() => {
-  console.log({gridState});
-  
-}, [gridState]);
 
 function handleDragStart(event: { active: any; over: any; }) {
         const { active, over } = event;
@@ -88,18 +63,11 @@ function handleDragStart(event: { active: any; over: any; }) {
 
 
     function handleShuffle() {
-        const newGrid = _.shuffle(gridState)
-        console.log({ newGrid })
-        setGridState(newGrid)
     }
     function handleValidate() {
-        const newGrid = _.shuffle(gridState)
-        console.log({ newGrid })
-        setGridState(newGrid)
     }
 
     function handleDismiss() {
-        setOrderedGridForDnd( orderedAyahs.map((ordG: AyahTabletType, index) => ({ ...ordG, id: index })))
     }
     const randomColor = Math.floor(Math.random() * 16777215).toString(16);
 

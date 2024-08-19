@@ -3,6 +3,9 @@
 import jsonfile from 'jsonfile';
 import mime from 'mime';
 import path from 'path';
+import { dbFirestore, FieldValue, timeStamp } from '@/api/graphql/fb-utils-admin';
+import { GuestType } from '../graphql/stage/stage.types';
+import { redirect } from 'next/navigation';
 
 
 export const dynamic = 'force-dynamic' // defaults to auto
@@ -19,60 +22,30 @@ export async function OPTION(request: Request) {
   })
 }
 export const POST = async (req: Request) => {
-  const guest = await req.json()
+  const {
+    
+  } = await req.json()
   console.log({ guest });
 
   try {
-    const filename = `${process.cwd()}/store/shares/guests.json`
-    const mimetype = mime.getType(filename);
-    //    console.log({ filename, mimetype });
-    try {
-      return jsonfile.readFile(filename)
-        .then(obj => {
-          //now it an object
-          console.log({ obj });
-          // jsonfile.writeFile(filename, obj, { spaces: 2 }, function (err) {
-          /* if (err) {
-            console.error({ err })
-          } */
-          // const filestream = createReadStream(filename);
-          jsonfile.writeFile(filename, [...obj, guest], { spaces: 2 }, function (err) {
-            if (err) {
-              console.error({ err })
-              return new Response(JSON.stringify({ success: false, err }))
-            }
-            const response = new Response(JSON.stringify({ message: true }))
-            /*  response.headers.set('Content-disposition', 'attachment; filename=' + filename)
-             response.headers.set('Content-type', mimetype ? mimetype : 'text/json')
-             */
-            return response
-          }
-          )
-        }).catch(error => {
-          console.log({ error });
-          return jsonfile.writeFile(filename, [guest], { spaces: 2 }, function (err) {
-            if (err) {
-              console.error({ err })
-              return new Response(JSON.stringify({ success: false, err }))
-            }
-            console.log('add guest to file')
-
-            // const filestream = createReadStream(filename);
-            const response = new Response(JSON.stringify({ message: true }))
-            /*  response.headers.set('Content-disposition', 'attachment; filename=' + filename)
-             response.headers.set('Content-type', mimetype ? mimetype : 'text/json')
-             */
-            return response
-          })
-        })
-    } catch (error) {
-      console.log({ error });
-      return new Response(JSON.stringify({ success: false, error }))
+    const { collaboratorId, flag, host, status, tokenId, startDate } = ;
+    const guestSnapshot = await dbFirestore.collection('guests').doc(`${tokenId}`).get();
+    if (guestSnapshot.exists) {
+      const { collaboratorId, host } = guestSnapshot.data() as GuestType;
+      if (typeof host === 'undefined' || typeof collaboratorId === 'undefined') {
+        dbFirestore.collection('profiles').doc(`${tokenId}`).set({ collaboratorId, flag, host, status, tokenId, startDate }, { merge: true });
+        return { collaboratorId, flag, host, status, tokenId, startDate };
+      }
+    } else {
+      dbFirestore.collection('profiles').doc(`${tokenId}`).set({ collaboratorId, flag, host, status, tokenId, startDate }, { merge: true });
+      return { collaboratorId, flag, host, status, tokenId, startDate };
     }
-  } catch (error) {
-    console.log({ error });
-    return new Response(JSON.stringify({ success: false, error }))
+  } catch (error: any) {
+    console.error(error);
+    throw new Error(error);
   }
+  redirect(`stages/${token}`)
+
 }
 export const GET = async (req: Request) => {
   const guestsDirName = path.join(process.cwd(), '/store/shares')

@@ -8,7 +8,7 @@ function ErrorBoundaryComp() {
                 width={300} height={300} alt="Error image" />
 
         </div>
-        <div className='font-ranga font-light text-red-400'>Server Error / network Error.</div>;
+        <div className='font-ranga font-light text-red-400'>Server Error / network Error.</div>
     </div>
 }
 
