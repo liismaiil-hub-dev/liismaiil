@@ -13,7 +13,18 @@
 }
 
 @layer components {
-  
+
+  .grid-ayah {
+    @apply  hover:-translate-y-1 duration-200 rounded-sm  shadow-sm;
+  }
+
+  .grid-ayah-ord {
+    @apply bg-emerald-100/50 text-blue-900 ;
+  }
+
+  .grid-ayah-shuff {
+    @apply bg-emerald-800/50 text-blue-50 ;
+  }
   .selected-navig-mobile {
     @apply bg-blue-500 text-blue-300 rounded-xl  shadow-lg;
   }

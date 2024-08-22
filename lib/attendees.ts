@@ -1,6 +1,6 @@
 import 'server-only'
 import { db } from '@/db/db'
-import { attendees, events, rsvps } from '@/db/schema'
+import { attendees, stages, rsvps } from '@/db/schema'
 import { memoize } from 'nextjs-better-unstable-cache'
 import { eq, sql } from 'drizzle-orm'
 import { delay } from '../utils/delay'

@@ -38,7 +38,7 @@ export default function EvalBoardSorted() {
             coordinateGetter: sortableKeyboardCoordinates,
         })
     );
-    const { setSprints, setSprintsTitles, emptySprintsTitles, setGridSelected  } = sprintActions
+    const { setSprints, setGridSelected  } = sprintActions
 
     
     

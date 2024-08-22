@@ -123,6 +123,8 @@ const Grids = ({ grids }: { grids: GridMenu[] }) => {
   }), [grids])
   
   useEffect(() => {
+    console.log({dataGetGridsByNb});
+    
     if (dataGetGridsByNb && dataGetGridsByNb.getGridsByNb && dataGetGridsByNb.getGridsByNb.success && dataGetGridsByNb.getGridsByNb.grids.length > 0) {
       dispatch(setSpaceGrids({ grids: dataGetGridsByNb.getGridsByNb.grids }))
     
@@ -147,7 +149,7 @@ const Grids = ({ grids }: { grids: GridMenu[] }) => {
 
   }
   return (
-    <section className="flex flex-col text-blue-800 justify-start items-center w-full h-full">
+    <section className="flex flex-col text-blue-800 justify-start items-center w-full  max-h-52 overflow-y-scroll">
       <Accordion
         /* selectedKeys={selectedKeys}
         onSelectionChange={()  => setSelectedKeys() }

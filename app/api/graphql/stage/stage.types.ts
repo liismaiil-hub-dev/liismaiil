@@ -8,6 +8,7 @@ export type SprintStateProps = {
   evalIndex: number,
   orderedAyahsContext: Ayah[],
   shuffeledAyahsContext: Ayah[],
+  shuffeledFirstAyahsContext: Ayah[],
   gridIndexContext: number,
   hideNbContext: boolean,
   faultsNbContext: number,
@@ -25,7 +26,7 @@ export enum EVAL_STATE {
 }
 
 export type SprintType = {
-  _id: number;
+  id: number;
   title: string;
   description: string;
   startDate: string;
@@ -95,6 +96,7 @@ export type GuestType = {
   endDate?: string;
   stages?: [string];
   sprints?: [string];
+  country?: [string];
 };
 export type AddGuestInput = GuestType;
 export type UpdateGuestInput = GuestType;

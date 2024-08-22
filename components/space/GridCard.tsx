@@ -9,13 +9,13 @@ import { useDispatch, useSelector } from 'react-redux';
 function GridCard() {
     const dispatch = useDispatch()
     const {   gridSelected,spaceGridsSelected} = useSelector((state: RootStateType) => state.sprint)
-console.log({spaceGridsSelected});
 
     const { setGridSelected } = sprintActions
-    useEffect(() => {
-console.log({gridSelected});
+useEffect(() => {
+  console.log({spaceGridsSelected});
   
-}, [gridSelected]);
+}, [spaceGridsSelected]);
+  
 const handleSetGridSelected = (grid: GridJsoned  )=> {
 dispatch(setGridSelected({ grid: grid }))
 }
@@ -24,7 +24,7 @@ dispatch(setGridSelected({ grid: grid }))
         return (
             <Card className="mx-1 border-2 border-blue-600/50 rounded-md px-3" key={grid.grid} shadow="sm" isPressable onPress={() => handleSetGridSelected(grid)}>
                 <CardBody className="flex justify-start items-center  overflow-visible p-0 h-[140px]">
-                    <p>{grid.arabName}. </p>
+                    <p>{grid.arabName}.Nb: {grid.souraNb}  </p>
                     <p>grid : {grid.grid}. </p>
                     <p>groups : {grid.group}. </p>
 

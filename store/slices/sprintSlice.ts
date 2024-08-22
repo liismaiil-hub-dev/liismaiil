@@ -40,6 +40,12 @@ const initialState: SprintStateProps = {
     order: 0,
     text: ''
   }],
+  shuffeledFirstAyahsContext: [{
+    id: 0,
+    juz: 0,
+    order: 0,
+    text: ''
+  }],
   gridIndexContext: 0,
   hideNbContext: false,
   faultsNbContext: 0,
@@ -149,6 +155,9 @@ const sprintSlice = createSlice({
 
     setShuffeledAyahsContext(state: SprintStateProps, action: PayloadAction<{ ayahs: Ayah[] }>) {
       state.shuffeledAyahsContext = action.payload.ayahs
+    },
+    setShuffeledFirstAyahsContext(state: SprintStateProps, action: PayloadAction<{ ayahs: Ayah[] }>) {
+      state.shuffeledFirstAyahsContext = action.payload.ayahs
     },
     setGridIndexContext(state: SprintStateProps,
       action: PayloadAction<{ index: number }>) {

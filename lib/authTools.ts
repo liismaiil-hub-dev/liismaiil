@@ -1,8 +1,11 @@
 import { dbFirestore } from '@/api/graphql/fb-utils-admin';
 import { GuestType } from '@/api/graphql/stage/stage.types';
-import { PROFILE_STATUS_ENUM, ProfileTypeData } from '@/app/api/graphql/profile/profile.types';
+import { PROFILE_STATUS_ENUM } from '@/app/api/graphql/profile/profile.types';
+import { FLAG_FILES } from '@/store/constants/flagArray';
+import { DocumentData } from '@google-cloud/firestore';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import _ from 'lodash';
 import 'server-only';
 
 const SECRET = process.env.NEXT_PUBLIC_JWT_SECRET!
@@ -21,12 +24,13 @@ export const getGuestFromToken = async (token: string) => {
     const guestSnapshot = await dbFirestore.collection('guests').doc(`${parseInt(token)}`).get();
     try {
       if (guestSnapshot.exists) {
+        const randomFlag = _.random(FLAG_FILES.length)
 
-        const { tokenId, collaboratorId, flag, host, } = guestSnapshot.data() as GuestType;
+        const { tokenId, collaboratorId, flag = FLAG_FILES[randomFlag], host, } = guestSnapshot.data() as GuestType;
         if (typeof tokenId === 'undefined' || tokenId === 0) {
           return null
         } else {
-          return { credential: JSON.stringify({ collaboratorId, flag, host, tokenId, status: PROFILE_STATUS_ENUM.GUEST }) };
+          return ({ collaboratorId, flag, host, tokenId, status: PROFILE_STATUS_ENUM.GUEST });
         }
       } else {
         return null
@@ -109,7 +113,7 @@ export const signup = async ({
       };
     } else {
       const { host: hostRegistred, country: countryRegistred,
-        colaboratorId: collaboratorIdRegistred, password: passRegistred } = guestSnapshot.data as ProfileTypeData | DocumentData
+        collaboratorId: collaboratorIdRegistred, password: passRegistred } = guestSnapshot.data as GuestType | DocumentData
 
 
       if (await verifyPassword(password, passRegistred) === true) {

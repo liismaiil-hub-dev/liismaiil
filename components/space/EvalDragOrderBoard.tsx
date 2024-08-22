@@ -111,7 +111,7 @@ export default function EvalDragOrderBoard() {
         </div>
         <div className="flex flex-col items-center justify-start   h-full  w-full  gap-2  border-emerald-500  " >
             {orderedAyahsContext && orderedAyahsContext ?.length > 0 &&
-                    orderedAyahsContext .map((ayd: AyahWithId) => {
+                    orderedAyahsContext .map((ayd: Ayah) => {
                         return (   <Droppable  key={`${ayd.id}`} id={ayd.id}  ayd={ayd}/>)
                     })  }</div>
                 </div>
