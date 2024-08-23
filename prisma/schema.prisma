@@ -10,101 +10,60 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
-
-model SprintSession {
-  id          Int              @id @default(autoincrement())
-  title       String
-  description String
-  sessionStart DateTime?
-  sessionEnd DateTime?
-  sprints    Sprint[]
-}
-
-model StageSession {
-  id          Int              @id @default(autoincrement())
-  title       String
-  sessionStart DateTime?
-  sessionEnd DateTime?
-  sprints    Stage[]
-}
-
-
-
- model Guest {
+model Guest {
   id      Int      @id @default(autoincrement())
   tokenId   String   @unique
   flag   String 
   collaboratorId String  
   host   Int
-//  status    Role     @default(GUEST)
-  stages   Stage[]
+ //status    Role     @default(GUEST)
+  createdAt  DateTime @default(now())
+  country String
+  password String
+  onLine Boolean
   endDate String
+  stages   Stage[]
+  sprints Sprint[]
+
+  }
+model Stage {
+  id          Int              @id @default(autoincrement())
+  stageId Int
+  createdAt DateTime @default(now())
+  souraName String
+  souraNb Int
+  grid Int
+  startOn DateTime
+  createdById String
+  guests Guest[]
+  ayahs Ayah[]
+
   sprints Sprint[]
 }
-
-model Sprint {
-  id     Int    @id @default(autoincrement())
-  title   String
-  pblished   Boolean
-  guests Guest[]
-  SCategory SCategory[]
-  stages Stage[]
-  grids Grid[]
-
-  Session SprintSession[]
-}
-
-
-model Stage {
-  id         Int        @id @default(autoincrement())
-  title      String
-  published  Boolean    @default(false)
-  author     Guest       @relation(fields: [authorId], references: [id])
-  authorId   Int
-  grids Grid[]
-  categories Category[]
-
-  Sprint Sprint[]
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-
-
-  StageSession StageSession[]
-}
 model Ayah {
-  id  Int        @id @default(autoincrement())
+  index  Int        @id @default(autoincrement())
   juz  Int
   order  Int    
   text     String
-  
-  Grid Grid[]
+  stages Stage[]
 }
 
-model Grid {
-  id  Int        @id @default(autoincrement())
-  arabName  String
-  ayahs  Ayah[]    
-  souraName     String
-  title     String
+
+
+ 
+model Sprint {
+  id     Int    @id @default(autoincrement())
+  sprintId Int
+  createdAt  DateTime @default(now())
+  souraName String 
   souraNb Int
   grid Int
-  group Int
+  startOn DateTime
+  createdById String
+  pblished   Boolean
+  guests Guest[]
   stages Stage[]
+ }
 
-  Sprint Sprint[]
-}
-  
 
-model Category {
-  id    Int    @id @default(autoincrement())
-  name  String
-  stages Stage[]
-  //sprints Sprint[]
-}
-model SCategory {
-  id    Int    @id @default(autoincrement())
-  name  String
-  sprints Sprint[]
-  //sprints Sprint[]
-}
+
