@@ -97,13 +97,16 @@ function SearchHost( ) {
 
 
 
-    return (<section className=" flex md:flex-row md:h-25 py-3 flex-col items-center justify-center  md:justify-center md:items-start  gap-3 ">
+    return (<section className="   md:h-25 py-3 
+    flex-col items-stretch justify-start  
+    md:flex md:justify-evenly 
+    md:items-center  gap-3 ">
      {/*    <Button onClick={()  =>geolocation()}>
             Geolocate
         </Button> */}
-        <div className="flex items-center md:flex-col outline-none justify-start gap-3 ">
+        <div className="flex items-center justify-center md:flex-col outline-none  w-full gap-3  ">
             
-            <select className='shadow-md outline-none  text-center text-green-500 border border-green-500 -800 rounded-md ' name="host" id="host" onChange={(e) => handleHostChange(e)}>
+            <select className='shadow-md outline-none  text-center  text-green-500 border border-green-500 -800 rounded-md ' name="host" id="host" onChange={(e) => handleHostChange(e)}>
                 <option   value="">--choose a host--</option>
                 {typeof liismaiilProfiles!== 'undefined' && liismaiilProfiles?.map(
                     (host: ProfileTypeData) => <option  
@@ -116,9 +119,8 @@ function SearchHost( ) {
             </Link>
         </div>      
         </div> 
-       
-                <div className="flex items-center md:flex-col outline-none justify-start gap-3 ">
-             <select className='shadow-md outline-none  text-center text-blue-600  border border-blue-800 rounded-md ' name="country" id="country" onChange={(e) => handleCountryChange(e)}>
+       <div className="flex items-center md:flex-col outline-none justify-center  w-full gap-3 ">
+             <select className='shadow-md outline-none  text-center  text-blue-600  border border-blue-800 rounded-md ' name="country" id="country" onChange={(e) => handleCountryChange(e)}>
                 <option value="">--choose a country --</option>
                 {typeof liismaiilProfiles!== 'undefined' && liismaiilProfiles?.map(
                     (host: ProfileTypeData) =>  <option  key={`${slug(host.addressGeo? host.addressGeo: '')}`}

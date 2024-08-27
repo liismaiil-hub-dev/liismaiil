@@ -3,9 +3,10 @@ import { CoordsType, PROFILE_ENROLLMENT_NAMES_ENUM } from '@/api/graphql/viewer/
 import { ProfileTypeData } from '@/app/api/graphql/profile/profile.types'
 import { viewerActions } from '@/store/slices/viewerSlice'
 import { RootStateType } from '@/store/store'
+import _ from 'lodash'
 import { useRouter } from 'next/navigation'
 import react, { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 
 // eslint-disable-next-line react-hooks/exhaustive-deps
 
@@ -24,6 +25,7 @@ function Organisation({ liismaiilProfile }: { liismaiilProfile: ProfileTypeData 
     const [countries, setCountries] = useState(() => ['DZ', 'MA', 'FR']);
 
     const { setOrganisation } = viewerActions
+console.log({liismaiilProfile : liismaiilProfile.login.slice(0,10).padEnd(11,'.') });
 
     const router = useRouter()
 
@@ -34,25 +36,26 @@ function Organisation({ liismaiilProfile }: { liismaiilProfile: ProfileTypeData 
 
     return (
         <div key={liismaiilProfile._id} className='border  cursor-pointer hover:animate-zoomIn
-                    border-green-300  shadow-md shadow-green-300 
-                    hover:border-indigo-300  
+                    border-green-300  shadow-md shadow-green-300/30 
+                    hover:border-indigo-300 
+                      transition-all duration-300 ease-in-out
                      flex flex-col gap-1 
                      justify-start 
                      items-center
+                     size-48
                      p-2 
                      rounded-lg
-                      h-52 
-                      w-60'onClick={() => selectOrganisationHandler(liismaiilProfile)} >
-            <div className='h-36 w-full relative flex-col items-start justify-end rounded-lg'
+                     ' onClick={() => selectOrganisationHandler(liismaiilProfile)} >
+            <div className='size-40 w-full  rounded-lg'
                 style={{ "backgroundImage": `url(${liismaiilProfile.avatar.url})` }} >
 
             </div>
-            <div className={`px-auto   text-center text-xl   w-full font-light`}>
-                {liismaiilProfile.login}
+            <div className={`px-auto   text-center  text-xl   w-full font-light`}>
+                {liismaiilProfile.login.split(' ')[0]}
             </div>
-            <div className='px-auto  text-xl text-center  capitalize w-full font-light'>
+             <div className='px-auto  text-xl text-center  capitalize w-full font-light'>
                 {PROFILE_ENROLLMENT_NAMES_ENUM[liismaiilProfile.status]}
-            </div>
+            </div> 
         </div>)
 }
 export default react.memo(Organisation)

@@ -17,6 +17,9 @@
   .grid-ayah {
     @apply  hover:-translate-y-1 duration-200 rounded-sm  shadow-sm;
   }
+  .CENTER {
+    @apply  flex justify-center items-center;
+  }         
 
   .grid-ayah-ord {
     @apply bg-emerald-100/50 text-blue-900 ;
@@ -49,6 +52,12 @@
   }
   a:focus {
     @apply outline-none;
+  }
+  .nav-selected {
+    @apply border-1 border-green-500 text-blue-500  
+  }
+  .nav-element{
+    @apply  text-center  px-3 py-2 rounded-md 
   }
   a:focus-visible {
     @apply right-2 ring-blue-300 ring-opacity-50;

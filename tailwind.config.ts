@@ -1,5 +1,9 @@
 import type { Config } from "tailwindcss";
+import plugin from "tailwindcss/plugin";
+
 const { nextui } = require("@nextui-org/react");
+
+
 
 const config: Config = {
   darkMode: 'class',
@@ -45,10 +49,16 @@ const config: Config = {
         zoomIn: "zoomIn 1000ms ease-in-out ",
       },
       colors: {
-        primary: "#5F9EA0",
-        prim: "#b83975",
+        header: "#eeeeee",
+        primary: "#b83975",
         secondary: "#00cba9",
-        tertiary: "#eeeeee",
+        tertiary: "#f69435",
+        quadrenary: "#8dbb7c",
+
+        appPrimary: "#5F9EA0",
+        appSecondary: "#00cba9",
+        appTertiary: "#eeeeee",
+        body: "#eeeeee",
       },
 
       important: true,
@@ -71,14 +81,8 @@ const config: Config = {
       //},
 
     },
-  }
-
-  ,
-  plugins: [require("flowbite/plugin"), nextui()],
+  },
+  plugins: [
+  require("flowbite/plugin"), nextui()],
 };
 export default config;
-/**backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
-      }, */

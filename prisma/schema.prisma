@@ -11,59 +11,58 @@ datasource db {
 }
 
 model Guest {
-  id      Int      @id @default(autoincrement())
-  tokenId   String   @unique
-  flag   String 
-  collaboratorId String  
-  host   Int
- //status    Role     @default(GUEST)
-  createdAt  DateTime @default(now())
-  country String
-  password String
-  onLine Boolean
-  endDate String
-  stages   Stage[]
-  sprints Sprint[]
+  tokenId        Int      @id @unique 
+  host           Int
+  flag           String
+  collaboratorId String
+  //status    Role     @default(GUEST)
+  createdAt      DateTime @default(now())
+  country        String
+  password       String
+  onLine         Boolean
+  endDate        String
+  stages         Stage[]
+  sprints        Sprint[]
+  @@unique([ country,collaboratorId, onLine])
 
-  }
+}
+
 model Stage {
-  id          Int              @id @default(autoincrement())
-  stageId Int
-  createdAt DateTime @default(now())
-  souraName String
-  souraNb Int
-  grid Int
-  startOn DateTime
+  stageId     String  @id @unique
+  createdAt   DateTime @default(now())
+  souraName   String
+  souraNb     Int
+  grid        Int
+  startOn     DateTime
   createdById String
-  guests Guest[]
-  ayahs Ayah[]
+  guests      Guest[]
+  ayahs       Ayah[]
+  sprints     Sprint[]
+  @@unique([ createdById,souraNb,startOn])
 
-  sprints Sprint[]
 }
+
 model Ayah {
-  index  Int        @id @default(autoincrement())
-  juz  Int
-  order  Int    
-  text     String
+  id  Int    @id @default(autoincrement()) 
+  souraNb   Int 
+  juz    Int
+  order  Int
+  text   String
   stages Stage[]
+  @@unique([souraNb, order])
 }
 
-
-
- 
 model Sprint {
-  id     Int    @id @default(autoincrement())
-  sprintId Int
-  createdAt  DateTime @default(now())
-  souraName String 
-  souraNb Int
-  grid Int
-  startOn DateTime
+  sprintId    String @id @unique 
+  createdAt   DateTime @default(now())
+  souraName   String
+  souraNb     Int
+  grid        Int
+  startOn     DateTime
   createdById String
-  pblished   Boolean
-  guests Guest[]
-  stages Stage[]
- }
+  published   Boolean
+  guests      Guest[]
+  stages      Stage[]
+  @@unique([createdById, souraNb, grid,createdAt])
 
-
-
+}

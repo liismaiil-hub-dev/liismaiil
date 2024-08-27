@@ -50,19 +50,19 @@ function RootLayout({ children }: { children: ReactNode }) {
           <NextUIProvider >
             <PersistGate persistor={persistor}>
               <ErrorBoundary fallback={<ErrorBoundaryComp />}>
-                <main className='container mx-auto w-screen  flex flex-col space-y-1 justify-start items-center '>
+                <main className='container mx-auto w-screen  flex flex-col space-y-1 max-h-screen  justify-start items-center '>
                   <div className='container '>
                     <Navigation />
                   </div>
                   {pathname ==='/' ?
-                   <div className=' container border-2    scrollbar-hide rounded-md border-green-300 flex flex-col justify-start items-stretch'>
-                  <div className='h-1/2 container border-2  rounded-md border-green-700 '>
+                   <div className=' container  flex flex-col gap-3 justify-start items-center'>
+                  <div className='  container border-2  rounded-md border-green-700/20 shadow-md '>
                     {children}
                   </div>
-                  <div className="flex border-2 h-1/2 w-full pt-2  border-violet-500  justify-center items-center">
+                  <div className="flex flex-col  justify-start w-full items-start">
                     <GuestsComponents />
                   </div>
-                  <div className="flex justify-center items-center">
+                  <div className="flex justify-center w-full items-center">
                     <Footer />
                   </div>
                   </div>: 

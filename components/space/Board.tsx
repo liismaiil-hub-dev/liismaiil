@@ -158,44 +158,48 @@ const Board = () => {
   const {setShuffeledFirstAyahsContext, setOrderedAyahsContext, setShuffeledAyahsContext, setEvalContext,setEvalIndex, setHideNbContext, setGridIndexContext} = sprintActions
   const [first, setFirst] = useState(() => true);
   
-  const [gridsState, setgridsState] = useState(() => JSON.parse(gridSelected.ayahs) as []);
+  const [gridsState, setGridsState] = useState(() => JSON.parse(gridSelected.ayahs) as [Ayah[]]);
  useEffect(() => {
-  
-  const gridSelectedLength = JSON.parse(gridSelected.ayahs)[gridIndexContext]
-    console.log({hideNbContext, orderedAyahsContext, gridSelected, gridIndexContext, gridSelectedLength,ayahs: JSON.parse(gridSelected.ayahs)});
-   if(typeof gridSelected !== 'undefined' && gridSelected.ayahs != ''&& gridSelectedLength !== orderedAyahsContext.length){
-    const shuffeleledFirst = JSON.parse(gridSelected.ayahs)[gridIndexContext ?? 0].map((ordG: Ayah, index:number) => ({ ...ordG, id: index + 1 })) ;
+   if(typeof gridSelected !== 'undefined' && gridSelected.ayahs != ''){
+   setGridsState(JSON.parse(gridSelected.ayahs))
+  }
+  }, []);
 
-      const orderedAy = [..._.sortBy(JSON.parse(gridSelected.ayahs)[gridIndexContext ?? 0], ['order'])].map((ordG: Ayah, index) => ({ ...ordG, id: index + 1 })) 
-        console.log({orderedAy });
+   useEffect(() => {
+   if(typeof gridSelected !== 'undefined' && gridSelected.ayahs != ''){
+   setGridsState(JSON.parse(gridSelected.ayahs))
+  }
+  }, [gridSelected]);
+
+  useEffect(() => {
+  
+  const gridSelectedLength = JSON.parse(gridSelected.ayahs)[gridIndexContext].length
+    console.log({hideNbContext, orderedAyahsContext, gridSelected, gridIndexContext, gridSelectedLength,ayahs: JSON.parse(gridSelected.ayahs)});
+   if(typeof gridSelected !== 'undefined' && gridSelected.ayahs != ''&& gridsState.length > 0){
+    const shuffeleledFirst = gridsState[gridIndexContext ?? 0].map((ordG: Ayah, index:number) => ({ ...ordG, index:  gridIndexContext ? ordG.order + gridIndexContext : ordG.order   })) ;
+
+      const orderedAy = [..._.sortBy(gridsState[gridIndexContext ?? 0], ['order'])].map((ordG: Ayah, index) => ({ ...ordG, index:  gridIndexContext ? ordG.order + gridIndexContext : ordG.order})) 
+        
   dispatch(setShuffeledFirstAyahsContext({ayahs: shuffeleledFirst}))
   
   dispatch(setOrderedAyahsContext({ayahs: orderedAy}))
   
   setFirst(false)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-   //console.log({gridSelectedAy : gridSelected.ayahs});
+
     }
-  }, []);
-/* 
-  useEffect(() => {
-   if(typeof orderedAyahsContext !== 'undefined' && orderedAyahsContext.length >0  ){
-    dispatch(setShuffeledAyahsContext({ayahs:[..._.shuffle(orderedAyahsContext)]}))}
+  }, [gridsState]);
 
-  }, [orderedAyahsContext]);
- */
   useEffect(() => {
-  console.log({ gridSelected, gridIndexContext });
-    if(typeof gridSelected !== 'undefined' && gridIndexContext>=0 && gridSelected.ayahs != ''  && JSON.parse(gridSelected.ayahs)[gridIndexContext].length>=0 ){
-    const firstAy = [...JSON.parse(gridSelected.ayahs)[gridIndexContext].map((ay: Ayah, index:number) => ({ ...ay, id: index + 1 }))]  
-    const orderedAy = [..._.sortBy(JSON.parse(gridSelected.ayahs)[gridIndexContext], ['order'])].map((ordG: Ayah, index) => ({ ...ordG, id: index + 1 })) 
+  console.log({ gridIndexContext });
+    if(typeof gridSelected !== 'undefined' && gridIndexContext>=0 && (gridsState[gridIndexContext].length<= gridSelected.grid * gridSelected.grid  )  ){
+    const firstAy = [...gridsState[gridIndexContext].map((ay: Ayah, index:number) => ({ ...ay, index:  gridIndexContext != 0 ? ay.order + index : gridIndexContext  * ay.order + index }))]  
+    const orderedAy = [..._.sortBy(gridsState[gridIndexContext], ['order'])].map((ordG: Ayah, index) => ({ ...ordG, index: index + gridIndexContext })) 
         console.log({orderedAy });
-
     dispatch(setOrderedAyahsContext({ayahs:orderedAy}))
     dispatch(setShuffeledFirstAyahsContext({ayahs:firstAy}))}
     setFirst(false)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ gridSelected, gridIndexContext]);
+  }, [  gridIndexContext]);
 
   
   function nextIndexHandler() {

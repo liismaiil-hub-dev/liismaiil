@@ -53,12 +53,14 @@ export const initialGuestState: GuestStateType = {
     status: PROFILE_STATUS_ENUM.ORGA
   }],
   guest: {
-    tokenId: '', collaboratorId: '', enrollmentStatus: PROFILE_STATUS_ENUM.GUEST, stages: [''], price: -1,
+    tokenId: 0, collaboratorId: '', enrollmentStatus: PROFILE_STATUS_ENUM.GUEST, stages: [''], price: -1,
     flag: '', startDate: '', endDate: '',
   },
   guests: [{
-    tokenId: '', collaboratorId: '', enrollmentStatus: PROFILE_STATUS_ENUM.GUEST, stages: [''], price: -1,
+    tokenId: 0, collaboratorId: '', enrollmentStatus: PROFILE_STATUS_ENUM.GUEST, stages: [''], price: -1,
     flag: '', startDate: '', endDate: '',
+    host: 0,
+    status: PROFILE_STATUS_ENUM.ADMIN
   }],
   token: '',
   flag: '',

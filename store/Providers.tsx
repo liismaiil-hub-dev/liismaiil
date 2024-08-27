@@ -1,6 +1,6 @@
 "use client"
 import { Provider } from 'react-redux'
-import ThemeProvider from "./theme-provider";
+import { ThemeProvider } from "next-themes";
 
 import { store } from './store'
 
@@ -8,8 +8,11 @@ import { store } from './store'
 
 export function Providers({ children }: { children: React.ReactNode }) {
    
-    return <Provider store={store}>
+  return <ThemeProvider defaultTheme="system" attribute="class" enableSystem>
+  
+    <Provider store={store}>
         {children}
 
     </Provider>
+    </ThemeProvider>
 } 

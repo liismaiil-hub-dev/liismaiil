@@ -1,8 +1,9 @@
-import { Spinner } from "@nextui-org/spinner";
 
 
-function SpaceLoading() {
-    return <Spinner />
+function HomeLoading() {
+    return <div className="flex justify-center items-center"> ...loading</div>
+    //<Spinner />
+
 }
 
-export default SpaceLoading;
+export default HomeLoading;

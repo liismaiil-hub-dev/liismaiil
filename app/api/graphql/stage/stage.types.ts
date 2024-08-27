@@ -120,6 +120,54 @@ export type StageTypeData = {
   createdAt?: string;
 }
 
+
+export type StagePrismaType = {
+  id: number;
+  stageId: number;
+  createdAt: string;
+  souraName: string;
+  souraNb: number;
+  grid: number;
+  startOn: string
+  createdById: string;
+  guests: GuestPrismaType[];
+  ayahs: AyahPrismaType[];
+}
+export type AyahPrismaType = {
+  index: number;
+  juz: number;
+  order: number;
+  text: string;
+  stages: StagePrismaType[]
+  slice?: string;
+};
+export type GuestPrismaType = {
+  id: number;
+  tokenId: number;
+  flag: string;
+  collaboratorId: string;
+  host: number;
+  createdAt: string;
+  country: string;
+  password: string;
+  onLine: boolean;
+  endDate: string;
+  stages: StagePrismaType[];
+  sprints: SprintPrismaType[];
+};
+
+export type SprintPrismaType = {
+  id: number;
+  sprintId: number;
+  createdAt: string;
+  souraName: string;
+  souraNb: number;
+  grid: number;
+  startOn: string
+  createdById: string;
+  guests: GuestPrismaType[]
+  stages: StagePrismaType[]
+}
 export type AyahTabletType = {
   order: number;
   text: string;
