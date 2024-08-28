@@ -51,6 +51,7 @@ const initialState: SprintStateProps = {
   faultsNbContext: 0,
   correctsNbContext: 0,
   evalContext: EVAL_STATE.ORDER,
+  validContext: false,
 
   //____________________________________
 
@@ -168,6 +169,10 @@ const sprintSlice = createSlice({
     setHideNbContext(state: SprintStateProps,
       action: PayloadAction<{ hide: boolean }>) {
       state.hideNbContext = action.payload.hide
+    },
+    setValidContext(state: SprintStateProps,
+      action: PayloadAction<{ validCtxt: boolean }>) {
+      state.validContext = action.payload.validCtxt
     },
     setEvalContext(state: SprintStateProps,
       action: PayloadAction<{ eval: EVAL_STATE }>) {

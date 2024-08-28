@@ -2,150 +2,185 @@
 import { Ayah } from '@/app/api/graphql/stage/stage.types';
 import { sprintActions } from "@/store/slices/sprintSlice";
 import { RootStateType } from '@/store/store';
+import { cn } from '@nextui-org/react';
 import _ from 'lodash';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 import EvalClickBoardComp from "./EvalClickBoard";
 import EvalDragOrderBoardComp from "./EvalDragOrderBoard";
 import RadioButtonEvalState from "./RadioButtonEvalState";
 import SpaceButton from './SpaceButton';
 
-
+// REPERE
 const RepereComp = () => {
   const dispatch = useDispatch()
-  const { gridSelected,  hideNbContext, orderedAyahsContext,} = useSelector((state: RootStateType) => state.sprint)
+  const { gridSelected, validContext, hideNbContext, orderedAyahsContext,} = useSelector((state: RootStateType) => state.sprint)
   const { setOrderedAyahsContext,} = sprintActions
+console.log();
 
   function orderHandler(){
   dispatch(setOrderedAyahsContext({ayahs:orderedAyahsContext}))
 }  
-return <div className="flex  border-2 border-blue-400 rounded-md flex-col justify-start items-stretch ">
+return <div className={cn((typeof validContext !== 'undefined' && validContext === true) && 'blur-lg', `flex  border-2 border-blue-400 rounded-md flex-col justify-start space-y-2 items-stretch `)} >
+    <div className="flex-col justify-center items-center  ">
+  
     <p className='text-center'>{gridSelected.arabName}</p>
     <p className='text-center'>Nb of groups &nbsp;{gridSelected.group}</p>
     <p className='text-center'>Grid &nbsp;{gridSelected.grid}</p>
-    <div className="flex justify-center items-center ">
+    </div>
+  
+    <div className="CENTER ">
 
     <SpaceButton handlePress={orderHandler} title='Order Grid' />
     </div>
-    <div className="flex flex-col flex-auto justify-stretch items-stretch  space-y-1">
+    <div className="flex flex-col justify-start items-stretch  space-y-2">
       {orderedAyahsContext && orderedAyahsContext?.map((ayag: Ayah) => {
-        return (<div key={`${ayag.order}_${ayag.juz}`} className=" flex flex-row justify-stretch 
-        items-stretch ">
-           {typeof hideNbContext !=='undefined' && !hideNbContext ? 
-           <div key={`${ayag.order}_${ayag.juz}`} className=" flex flex-row justify-between 
-        items-center gap-3
-        border-b-3 border-green-300/25 my-2">
+           if(typeof hideNbContext !=='undefined' && !hideNbContext ){
+
+           return <div key={`${ayag.order}_${ayag.juz}`} className=" flex p-2 bg-emerald-100/30 justify-between 
+        items-center space-x-2
+        border-b-1 border-green-300/25 ">
           <div className='flex justify-center focus:border-red-500 items-center'>{ayag.order}</div>
-          <div className=' text-right  justify-self-stretch
+          <div className=' flex text-right justify-end items-center
            hover:bg-emerald-200 
            hover:cursor-pointer 
-            bg-slate-300  focus:border-red-500'>{ayag.text}</div>
-        </div>:
-          <div key={`${ayag.order}_${ayag.juz}`} className=" flex text-right flex-row justify-start 
-        items-center gap-3
-        border-b-3 border-green-300/25 my-2">
-          <div className='flex justify-start
-           hover:bg-emerald-200 
+            focus:border-red-500'>{ayag.text}</div>
+        </div>}else {
+
+          return(
+          <div  key={`${ayag.order}_${ayag.juz}`}className='flex justify-end  w-full   bg-emerald-100/30  text-right space-x-2
+        border-b-1 border-green-300/25
            hover:cursor-pointer 
-           items-center bg-slate-300  focus:border-red-500'>{ayag.text}</div>
-        </div>
-           } 
-        </div>
-        )
+           items-center   focus:border-red-500'>{ayag.text}</div>
+      )
+        }
+          
       })
       }</div>
   </div>
 }
- const EvalStageComp = () => {
+//EVAL
+ const EvalStageComp =  ({first}:{first: boolean}) => {
   const dispatch = useDispatch()
-  const { gridSelected, shuffeledFirstAyahsContext,  hideNbContext, orderedAyahsContext, gridIndexContext, shuffeledAyahsContext} = useSelector((state: RootStateType) => state.sprint)
- const { setShuffeledAyahsContext, setEvalIndex}  = sprintActions
-  
-  function shuffleHandler(){
-    const shuffeledAy = _.shuffle(shuffeledFirstAyahsContext)
-dispatch(setShuffeledAyahsContext({ayahs:shuffeledAy}))
-}    
-  function firstHandler(){
-    dispatch(setShuffeledAyahsContext({ayahs:shuffeledFirstAyahsContext}))
-}    
-
-return <div className="flex  border-2 border-blue-400 rounded-md flex-col justify-start items-stretch ">
-    <p className='text-center'>{gridSelected.arabName}</p>
-    <p className='text-center'>Nb of groups &nbsp;{gridSelected.group}</p>
-    <p className='text-center'>Grid &nbsp;{gridSelected.grid}</p>
-    <div className="flex justify-evenly items-center ">
-
-    <SpaceButton handlePress={firstHandler} title='First Grid' />
-    <SpaceButton handlePress={shuffleHandler} title='Shuffel Grid' />
-        </div>
-     <div className="flex flex-col flex-auto justify-stretch items-stretch  space-y-1">
-    {shuffeledAyahsContext && shuffeledAyahsContext?.map((ayag: Ayah) => {
-        return (<div key={`${ayag.order}_${ayag.juz}`} className=" flex flex-row justify-stretch 
-        items-stretch ">
-           {typeof hideNbContext !=='undefined' && !hideNbContext ? 
-           <div key={`${ayag.order}_${ayag.juz}`} className=" flex flex-row justify-between 
-        items-stretch gap-3
-        border-b-3 border-green-300/25 my-2">
-          <div className='flex justify-center focus:border-red-500 items-center'>{ayag.order}</div>
-          <div className='flex justify-center text-right
-           hover:bg-emerald-200 
-           hover:cursor-pointer 
-           items-center bg-slate-300  focus:border-red-500'>{ayag.text}</div>
-        </div>:
-          <div key={`${ayag.order}_${ayag.juz}`} className=" flex text-right flex-row justify-end 
-        items-center gap-3
-        border-b-3 border-green-300/25 my-2">
-          <div className='flex justify-center text-right
-           hover:bg-emerald-200 
-           hover:cursor-pointer 
-           items-center bg-slate-300  focus:border-red-500'>{ayag.text}</div>
-        </div>
-           } 
-    </div>
-      )})}
-    </div>
-  </div>
-}
- const EvalFirstStageComp = ({first}:{first: boolean}) => {
-  const dispatch = useDispatch()
-  const { gridSelected,   evalIndex, evalContext, hideNbContext, orderedAyahsContext, gridIndexContext, shuffeledFirstAyahsContext} = useSelector((state: RootStateType) => state.sprint)
+  const { gridSelected,   shuffeledAyahsContext, validContext,hideNbContext,  shuffeledFirstAyahsContext} = useSelector((state: RootStateType) => state.sprint)
   const { setShuffeledAyahsContext, setEvalIndex}  = sprintActions
+  const [firstState, setFirstState] = useState(() => first);
   
-  function shuffleHandler(){
+function shuffleHandler(){
     const shuffeledAy = _.shuffle(shuffeledFirstAyahsContext)
 dispatch(setShuffeledAyahsContext({ayahs:shuffeledAy}))
 }
  function firstHandler(){
+    setFirstState(true);
     dispatch(setShuffeledAyahsContext({ayahs:shuffeledFirstAyahsContext}))
 }    
 
+const [reorderedAyahs, setReorderedAyahs] = useState([-1]);
+const [errorNb, setErrorNb] = useState(0);
 
-return <div className="flex  border-2 border-blue-400 rounded-md flex-col justify-start items-stretch ">
+const [validGrid, setValidGrid] = useState(false);
+
+ function validAyahHandler(reord:number){
+   if(hideNbContext && validContext) {
+
+     if(reorderedAyahs[0] == -1) {
+       console.log({firstReord : reorderedAyahs[0]});
+       setReorderedAyahs([reord])
+      }else {
+        
+        if(reorderedAyahs[reorderedAyahs.length - 1 ]! + 1  !== reord ){
+          console.log({lastReordr : reorderedAyahs[reorderedAyahs.length - 1 ]! + 1,reord });
+  toast.warning(`you made a mistake try again ${reord} is not in place${reorderedAyahs[reorderedAyahs.length - 1 ]! + 1 } !!! `)
+setErrorNb((prev)=>prev +1 )
+}else {
+  console.log({lastReordr : reorderedAyahs[reorderedAyahs.length - 1 ]! + 1,reord });
+  
+        setReorderedAyahs([...reorderedAyahs,reord])
+      }} 
+}else {
+  toast.warning('you must hide number and check valid !!! ')
+}
+    //dispatch(setShuffeledAyahsContext({ayahs:shuffeledFirstAyahsContext}))
+}
+useEffect(() => {
+  console.log({reorderedAyahs});
+  
+}, [reorderedAyahs]);
+function ayahInReordered(ord: number){
+  console.log({reorderedAyahs, ord});
+  
+  return reorderedAyahs.some((el )=> el === ord)
+
+} 
+
+ function validAllHandler(){
+ const ordered =  reorderedAyahs.sort((a, b) => a - b);
+ if(ordered.every((value, index) => value === reorderedAyahs[index])){
+  setValidGrid(true)
+ }
+}    
+return <div className={ `flex  border-2 border-blue-400 rounded-md flex-col justify-start p-2  space-y-2 items-stretch `} >
+    <div className="flex-col justify-center items-center  ">
     <p className='text-center'>{gridSelected.arabName}</p>
     <p className='text-center'>Nb of groups &nbsp;{gridSelected.group}</p>
     <p className='text-center'>Grid &nbsp;{gridSelected.grid}</p>
+    <p className='text-center'>reordered suits &nbsp;{reorderedAyahs[0] != -1 && reorderedAyahs.join(', ')}</p>
+    <div className="flex justify-center items-center  ">
+
+    <p className= {cn(errorNb == 1 && 'text-red-200',' text-center text-emerald-200')}>errors &nbsp;
+    </p>
+    <p className= {cn(errorNb == 2 &&  ' text-red-300',' text-center text-emerald-400')}>
+    {errorNb}
+    </p>
+    </div>
+
+    </div>
   <div className="flex justify-evenly items-center ">
-    <SpaceButton handlePress={firstHandler} title='First Grid' />
+    <div className={cn(firstState && 'shadow-lg shadow-emerald-300','CENTER')}>
+<SpaceButton handlePress={firstHandler} title='First Grid'    />
+    </div>
     <SpaceButton handlePress={shuffleHandler} title='Shuffel Grid' />
+    <SpaceButton handlePress={validAllHandler} title='Valid Grid' />
         </div>
-    <div className="flex flex-col flex-auto justify-stretch items-stretch  space-y-1">
-  
-      {shuffeledFirstAyahsContext && shuffeledFirstAyahsContext?.map((ayag: Ayah) => {
-        return <div key={`${ayag.order}_${ayag.juz}`} className=" flex flex-row justify-between 
-        items-stretch gap-3
-        border-b-3 border-green-300/25 my-2">
-           {typeof hideNbContext !=='undefined' && !hideNbContext && <div className='flex justify-center focus:border-red-500 items-center'>{ayag.order}</div>} 
-          <div className='flex justify-center text-right
+    <div className="flex flex-col justify-start items-stretch  space-y-2">
+           {firstState && shuffeledFirstAyahsContext ? shuffeledFirstAyahsContext?.map((ayag: Ayah) => {
+       if(typeof hideNbContext !=='undefined' && !hideNbContext ){
+       
+           return <div onClick={() => {validAyahHandler(ayag.order)} } key={`${ayag.order}_${ayag.juz}`} className=" flex p-2 bg-emerald-100/30 justify-between px-2
+        items-center space-x-2
+        border-b-1 border-green-300/25 ">
+          <div className='flex justify-center focus:border-red-500 items-center'>{ayag.order}</div>
+          <div className=' flex text-right justify-end items-center
            hover:bg-emerald-200 
            hover:cursor-pointer 
-           items-center bg-slate-300  focus:border-red-500'>{ayag.text}</div>
-        </div>
+            focus:border-red-500'>{ayag.text}</div>
+        </div>}
+        else {
+       return(
+          <div  onClick={() => {validAyahHandler(ayag.order)} } key={`${ayag.order}_${ayag.juz}`}className={ 'flex justify-end  w-full   bg-emerald-100/30  text-right space-x-2 border-b-1 border-green-300/25 hover:cursor-pointer  items-center   focus:border-red-500'}>{ayag.text}</div>
+      )
+        }}):shuffeledAyahsContext?.map((ayag: Ayah) => {
+        if(typeof hideNbContext !=='undefined' && !hideNbContext ){
+           return <div onClick={() => {validAyahHandler(ayag.order)} } key={`${ayag.order}_${ayag.juz}`} className=" flex p-2 bg-emerald-100/30 justify-between 
+        items-center space-x-2
+        border-b-1 border-green-300/25 ">
+          <div className='flex justify-center focus:border-red-500 items-center'>{ayag.order}</div>
+          <div className=' flex text-right justify-end items-center
+           hover:bg-emerald-200 
+           hover:cursor-pointer 
+            focus:border-red-500'>{ayag.text}</div>
+        </div>}else {
+          return(
+          <div  onClick={() => {validAyahHandler(ayag.order)} } key={`${ayag.order}_${ayag.juz}`}className='  flex justify-end  w-full   bg-emerald-100/30  text-right space-x-2 border-b-1 border-green-300/25 hover:cursor-pointer items-center   focus:border-red-500'>{ayag.text}</div>
+          )
+      }
       })}
     </div>
   </div>
 }
 /**
- * Board Component
+ * Board PRINCIPAL Component
  */
 export enum EVAL_STATE  {
     EVAL = 'EVAL',
@@ -154,8 +189,8 @@ export enum EVAL_STATE  {
 }
 const Board = () => {
   const dispatch = useDispatch()
-  const { gridSelected,   evalIndex, evalContext, hideNbContext, orderedAyahsContext, gridIndexContext, shuffeledAyahsContext} = useSelector((state: RootStateType) => state.sprint)
-  const {setShuffeledFirstAyahsContext, setOrderedAyahsContext, setShuffeledAyahsContext, setEvalContext,setEvalIndex, setHideNbContext, setGridIndexContext} = sprintActions
+  const { gridSelected,   evalIndex, evalContext, hideNbContext, orderedAyahsContext, validContext,gridIndexContext, } = useSelector((state: RootStateType) => state.sprint)
+  const {setShuffeledFirstAyahsContext, setOrderedAyahsContext, setShuffeledAyahsContext, setEvalContext,setEvalIndex, setValidContext,setHideNbContext, setGridIndexContext} = sprintActions
   const [first, setFirst] = useState(() => true);
   
   const [gridsState, setGridsState] = useState(() => JSON.parse(gridSelected.ayahs) as [Ayah[]]);
@@ -220,37 +255,43 @@ function hideNbHandler() {
   }
   function shuffelHandler() {
     dispatch(setShuffeledAyahsContext({ayahs:_.shuffle(orderedAyahsContext)}))
-}/* 
-function evalHandler() {
-    setActualState(EVAL_STATE.EVAL)
-    setEvalIndex((prev) => prev + 1)
+}
+function validHandler() {
+  dispatch(setValidContext({validCtxt:!validContext}))
+   // setActualState(EVAL_STATE.EVAL)
+   // setEvalIndex((prev) => prev + 1)
   }
-  function clickHandler() {
-    setActualState(EVAL_STATE.CLICK)
+  function sprintHandler() {
+    //setActualState(EVAL_STATE.CLICK)
   
-    setEvalIndex((prev) => prev + 1)
+//    setEvalIndex((prev) => prev + 1)
   }
 
-function orderBoardHandler() {
-        setActualState(EVAL_STATE.ORDER)
-setEvalIndex((prev) => prev + 1)
-  } */
+
 useEffect(() => {
     console.log({ hideNbContext , evalContext , evalIndex , gridSelected, first });
   }, [hideNbContext, evalIndex,evalContext,gridSelected ]);
 
   return (
-    <div className="flex flex-col justify-stretch gap-3 h-full items-stretch w-full ">
-      <div className="flex  justify-around flex-row items-center ">
+    <div className=" flex-col justify-start space-y-2 h-full items-stretch w-full ">
+      <div className="flex  justify-around  items-center  py-2 ">
         <SpaceButton  handlePress={prevIndexHandler} title='Prev Grid' />
         <SpaceButton handlePress={nextIndexHandler} title='Next Grid' />
         <SpaceButton  handlePress={shuffelHandler} title='Shuffel Grid' />
+        <SpaceButton  handlePress={validHandler} title='Validate' />
+        <SpaceButton  handlePress={sprintHandler} title='Sprint On' />
         
-        <div className="flex  justify-center items-center  border border-green-400 text-center font-sans " >
+        <div className="flex  justify-between items-center  border border-green-400 text-center font-sans " >
          <input className="flex  justify-center items-center  border border-blue-800 text-green-300" 
          type="checkbox" 
-         id='HIDE_NB' name='HIDE_NB' value='HIDE_NB' checked={hideNbContext}  onChange={()  =>hideNbHandler()}/>
+         id='HIDE_NB' name='HIDE_NB' value='HIDE_NB' checked={validContext || hideNbContext}  onChange={()  =>hideNbHandler()}/>
     <label htmlFor='HIDE_NB' className='text-sm' >Hide nb</label>
+  </div>
+  <div className="flex  justify-between items-center  border border-green-400 text-center font-sans " >
+         <input className="flex  justify-center items-center  border border-blue-800 text-green-300" 
+         type="checkbox" 
+         id='VALID_CTXT' name='VALID_CTXT' value='HIDE_NB' checked={validContext}  onChange={()  =>validHandler()}/>
+    <label htmlFor='HIDE_NB' className='text-sm' >valid</label>
   </div>
         <RadioButtonEvalState 
           evalState={EVAL_STATE.EVAL}   title='Eval board' />
@@ -260,13 +301,15 @@ useEffect(() => {
           evalState={EVAL_STATE.CLICK}  title='Click Grid' />
          </div>
     {gridSelected && evalContext === EVAL_STATE.EVAL ?
-    <div className="gap-2 flex   justify-between  items-start ">
+    <div className="space-x-2 flex   justify-between  items-start ">
+    <div className="CENTER m-1 ">
           <RepereComp  />
-          {first ? <EvalFirstStageComp   first={first} />:
-           <EvalStageComp   />
-}
+        </div>
+    <div className="CENTER m-1">
 
-</div>:   evalContext === EVAL_STATE.ORDER?
+          <EvalStageComp first={first}   />
+        </div> </div>:  
+         evalContext === EVAL_STATE.ORDER?
             <EvalDragOrderBoardComp  />
        :evalContext === EVAL_STATE.CLICK && <EvalClickBoardComp 
             />}

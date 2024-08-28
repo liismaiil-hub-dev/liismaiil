@@ -58,6 +58,7 @@ const config: Config = {
         appPrimary: "#5F9EA0",
         appSecondary: "#00cba9",
         appTertiary: "#eeeeee",
+        
         body: "#eeeeee",
       },
 

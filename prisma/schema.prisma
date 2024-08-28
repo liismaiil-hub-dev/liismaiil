@@ -11,7 +11,8 @@ datasource db {
 }
 
 model Guest {
-  tokenId        Int      @id @unique 
+  id  Int    @id @default(autoincrement()) 
+  tokenId        Int       @unique 
   host           Int
   flag           String
   collaboratorId String
@@ -23,12 +24,24 @@ model Guest {
   endDate        String
   stages         Stage[]
   sprints        Sprint[]
+  favorites        Favorite[]
   @@unique([ country,collaboratorId, onLine])
 
 }
+model Favorite {
+  id  Int    @id @default(autoincrement()) 
+  hostId Int
+  guestId Int 
+  Guest Guest[]
+  
+  @@unique([hostId, guestId])
+}
+
 
 model Stage {
-  stageId     String  @id @unique
+  id  Int    @id @default(autoincrement()) 
+
+  stageId     String   @unique
   createdAt   DateTime @default(now())
   souraName   String
   souraNb     Int
@@ -53,7 +66,8 @@ model Ayah {
 }
 
 model Sprint {
-  sprintId    String @id @unique 
+  id  Int    @id @default(autoincrement()) 
+  sprintId    String  @unique 
   createdAt   DateTime @default(now())
   souraName   String
   souraNb     Int

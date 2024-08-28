@@ -16,7 +16,8 @@ export type SprintStateProps = {
   spaceSprint: SprintType,
   spaceStage: StageTypeData,
   validStages: [string],
-  evalContext: EVAL_STATE
+  evalContext: EVAL_STATE,
+  validContext: boolean,
 }
 
 export enum EVAL_STATE {

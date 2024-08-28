@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "NODE_OPTIONS='--no-deprecation' next -p 3005",
-    "build": "next build",
+    "build": "yarn prebuild && next build",
+    "prebuild": "prisma generate && prisma migrate deploy",
     "start": "next start",
     "lint": "next lint",
     "db-generate": "drizzle-kit generate: "

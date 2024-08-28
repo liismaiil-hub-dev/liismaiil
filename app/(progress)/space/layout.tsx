@@ -38,7 +38,7 @@ function Spacelayout({ children,souras, sprint, grid }: {
                     </section>
   <section className="container flex-col   w-full max-h-['5rem']  ring-2 ring-red-300/80 justify-start items-center" >
                   
-                       {gridSelected && gridSelected.arabName!="" && <div className="flex flex-col justify-start items-start    w-full max-h-[calc(100vh-5rem)]]" >
+                       {gridSelected && gridSelected.arabName!="" && <div className="flex flex-col justify-start items-start scroll-smooth   w-full max-h-[calc(100vh-5rem)]]" >
                             {/* 
                             <div className="flex  justify-start   bg-orange-200 w-full h-full text-medium text-gray-500" >
                             {board}
