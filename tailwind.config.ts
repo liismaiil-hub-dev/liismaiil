@@ -49,17 +49,28 @@ const config: Config = {
         zoomIn: "zoomIn 1000ms ease-in-out ",
       },
       colors: {
-        header: "#eeeeee",
-        primary: "#b83975",
-        secondary: "#00cba9",
-        tertiary: "#f69435",
-        quadrenary: "#8dbb7c",
-
-        appPrimary: "#5F9EA0",
-        appSecondary: "#00cba9",
-        appTertiary: "#eeeeee",
+        natheader: "#DEF9C4",
+        natprimary: "#9CDBA6",
+        natsecondary: "#50B498",
+        nattertiary: "#468585",
+        natquadrenary: "#808836",
         
-        body: "#eeeeee",
+        natWarmheader: "#DEF9C4",
+        natWarmprimary: "#FFBF00",
+        natWarmsecondary: "#FF9A00",
+        natWarmtertiary: "#D10363",
+        natWarmquadrenary: "#EE4E4E",
+
+        appheader: "#CDFADB",
+        appprimary: "#F6FDC3",
+        appsecondary: "#FFCF96",
+        apptertiary: "#FF8080",
+        appquadrenary: "#FFCF81",
+ 
+        body: "#E1F7F5",
+        coldbody: "#EEF5FF",
+        hotbody: "#E6FF94",
+        lightbody: "#F6FB7A",
       },
 
       important: true,

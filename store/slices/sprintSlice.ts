@@ -55,62 +55,7 @@ const initialState: SprintStateProps = {
 
   //____________________________________
 
-  sprintsTitles: [''],
-  showMenu: false,
-  stages: [{}],
-  validGrids: [''],
-  stage: '',
-  spaceSprint: '',
-  //validStages: [''],
-  // minmax: { min: -1, max: -1 },
-  stageSelected: {
-    id: -1,
-    title: '',
-    grids: [{
-      author: '',
-      grid: -1,
-      group: [-1],
-      title: '',
-      description: '',
-      souraNb: -1,
-      arabName: '',
-      souraName: '',
-      ayahs: [[{
-        order: -1,
-        text: '',
-        juz: -1
-      }
-      ]]
-    }
-    ],
-    author: '',
 
-  },
-
-  gridsAyahsSelected: [{
-    order: -1,
-    text: '',
-    juz: -1
-  }
-  ],
-
-
-  grid: {
-    author: '',
-    grid: -1,
-    group: [-1],
-    title: '',
-    description: '',
-    souraNb: -1,
-    arabName: '',
-    souraName: '',
-    ayahs: [[{
-      order: -1,
-      text: '',
-      juz: -1
-    }
-    ]]
-  },
   ayHided: [{ id: -1, order: -1 }],
   ayahArraySelected: undefined,
 

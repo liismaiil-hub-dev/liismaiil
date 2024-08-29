@@ -1,15 +1,15 @@
 'use server'
-
-import { db } from '@/db/db'
+import { prisma } from '@/lib/prisma-db';
 import { sprints } from '@/db/schema'
 import { delay } from '@/lib/delay'
 import { getCurrentGuest } from '@/lib/guests'
-import randomName from '@scaleway/random-name'
+
 import { revalidateTag } from 'next/cache'
 
-export const createNewSprint = async () => {
+export const createNewStage = async () => {
   await delay(1000)
-  const user = await getCurrentGuest()
+  const stage = await prisma.stage.create
+
 
   await db.insert(sprints).values({
     startOn: new Date().toUTCString(),

@@ -78,5 +78,4 @@ model Sprint {
   guests      Guest[]
   stages      Stage[]
   @@unique([createdById, souraNb, grid,createdAt])
-
 }
