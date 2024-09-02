@@ -1,20 +1,21 @@
 /* eslint-disable no-undef */
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+import { GuestPrismaType } from '@/app/api/graphql/stage/stage.types';
 /* import randToken from 'rand-token';
  */
-export const createToken = (guest:Guest) => {
+export const createToken = (guest:GuestPrismaType) => {
   // Sign the JWT
 
   return jwt.sign(
     {
-      id: user.id,
-      login: user.login,
-      email: user.email,
+      id: guest.id,
+      tokenId: guest.tokenId,
+      host: guest.host,
       iss: 'liismaiil',
       aud: 'liismaiil'
     },
-    process.env.NEXT_PUBLIC_JWT_SECRET,
+    process.env.NEXT_PUBLIC_JWT_SECRE!,
     { algorithm: 'HS256', expiresIn: '5d' }
   );
 };
@@ -22,7 +23,7 @@ export const createToken = (guest:Guest) => {
 export const verifyToken = async (token) => {
   // Sign the JWT
   new Promise((resolve, reject) => {
-    jwt.verify(token, process.env.NEXT_PUBLIC_JWT_SECRET, (err, payload) => {
+    jwt.verify(token, process.env.NEXT_PUBLIC_JWT_SECRET!, (err, payload) => {
       if (err) return reject(err);
 
       resolve(payload);
@@ -52,12 +53,12 @@ export const verifyPassword = (passwordAttempt, hashedPassword) => {
 };
 
 export const requireAdmin = (req, res, next) => {
-  if (!req.user) {
+  if (!req.guest) {
     return res.status(401).json({
       message: 'There was a problem authorizing the request'
     });
   }
-  if (req.user.role !== 'admin') {
+  if (req.guest.role !== 'admin') {
     return res.status(401).json({ message: 'Insufficient role' });
   }
   next();
@@ -89,7 +90,7 @@ export const authorize = async (btoken, dbModel) => {
       try {
         const auth = await dbModel.findOne({ refreshToken: token }).lean().exec();
         if (auth?.expiresAt?.toISOString() > new Date().toISOString()) {
-          return auth.user;
+          return auth.guest;
         } else return false;
       } catch (error) {
         throw new Error(error);

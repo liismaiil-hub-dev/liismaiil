@@ -24,7 +24,7 @@ function Navigation() {
         return pathname.split('/')[1] === route
     }
     useEffect(() => {
-//    console.log(showMenu) 
+        //    console.log(showMenu) 
     }, [showMenu])
     const [guestConnect, setGuestConnect] = useState(false)
     const SetGuestHandler = () => {
@@ -42,137 +42,137 @@ function Navigation() {
     return (
         <nav className={`container  flex  justify-between bg-emerald-100-100/50 h-24 
         items-center mx-auto w-full z-10  border-2 border-blue-200/50 rounded-sm shadow-md`} >
-             <section className=' hidden md:flex justify-center items-center  p-3 ' >
+            <section className=' hidden md:flex justify-center items-center  p-3 ' >
                 <Logo />
             </section>
-             {/* moble nav  */}
+            {/* moble nav  */}
             <section className='flex justify-center items-center  space-x-3 h-20   md:hidden' >
-                
-                <div   className={cn(isRoute('') &&  'selected-navig-mobile', 'navig-mobile') }  >
-                <Link key={`home`} href='/' >
-                      <div className={'navig-mobile-svg'}  >
-                        <FiHome/>
+
+                <div className={cn(isRoute('') && 'selected-navig-mobile', 'navig-mobile')}  >
+                    <Link prefetch={true} key={`home`} href='/' >
+                        <div className={'navig-mobile-svg'}  >
+                            <FiHome />
                         </div>
-                    <div  className={ 'nanvig-mobile-txt' }  >
-                        Home
+                        <div className={'nanvig-mobile-txt'}  >
+                            Home
                         </div>
-                        </Link>
+                    </Link>
                 </div>
-                <div  className={cn(isRoute('space') && 'selected-navig-mobile','navig-mobile') }  >
-                        <Link key={`space`} href='/space'>     
-                           <div className={'navig-mobile-svg'}  >
+                <div className={cn(isRoute('space') && 'selected-navig-mobile', 'navig-mobile')}  >
+                    <Link prefetch={true} key={`space`} href='/space'>
+                        <div className={'navig-mobile-svg'}  >
                             <FaWaterLadder />
-                            </div>
-                        <div className={ 'navig-mobile-txt' }  >
+                        </div>
+                        <div className={'navig-mobile-txt'}  >
                             Space
                         </div>
-                        </Link>
-                </div>
-                <div  className={cn(isRoute('stage') &&  'selected-navig-mobile','navig-mobile') }  >
-                        <Link key={`stage`} href='/stage'> 
-                    <div className={'navig-mobile-svg'}  >
-                            <SiProgress />
-                     
-                    </div>
-<div  className={ 'nanvig-mobile-txt' }  >        
-                    Stage
-                    </div>
                     </Link>
                 </div>
-                <div  className={cn(isRoute('sprints') && 'selected-navig-mobile','navig-mobile') }  >
-                     <Link key={`sprints`} href='/sprints'>
-                         <div className={'navig-mobile-svg'}  >
+                <div className={cn(isRoute('stage') && 'selected-navig-mobile', 'navig-mobile')}  >
+                    <Link prefetch={true} key={`stage`} href='/stage'>
+                        <div className={'navig-mobile-svg'}  >
+                            <SiProgress />
+
+                        </div>
+                        <div className={'nanvig-mobile-txt'}  >
+                            Stage
+                        </div>
+                    </Link>
+                </div>
+                <div className={cn(isRoute('sprints') && 'selected-navig-mobile', 'navig-mobile')}  >
+                    <Link prefetch={true} key={`sprints`} href='/sprints'>
+                        <div className={'navig-mobile-svg'}  >
                             <SiCrunchyroll />
 
-                    </div>
-                     <div  className={ 'nanvig-mobile-txt' }  >
-                           Sprints
-                    </div>
+                        </div>
+                        <div className={'nanvig-mobile-txt'}  >
+                            Sprints
+                        </div>
                     </Link>
                 </div>
-                <div  className={cn(isRoute('guests') &&  'selected-navig-mobile','navig-mobile') }  >
+                <div className={cn(isRoute('guests') && 'selected-navig-mobile', 'navig-mobile')}  >
 
-                        <Link key={`guests`} href='/guests'>
-                       <div className={'navig-mobile-svg'}  >
-                       <PiHandsPrayingThin />
-                    </div>
-                   <div  className={ 'nanvig-mobile-txt' }  >
-                     Guests 
-                    </div>
-        </Link>
-                </div>
-                <div  className={cn(isRoute('hosts') &&  'selected-navig-mobile','navig-mobile') }  >
-                        <Link key={`hosts`} href='/hosts'>
-                     <div className={'navig-mobile-svg'}  >
-                         < SiMastercomfig />
-                    </div>
-                    <div  className={ 'nanvig-mobile-txt' }  >
-                    Hosts
-                    </div>
+                    <Link prefetch={true} key={`guests`} href='/guests'>
+                        <div className={'navig-mobile-svg'}  >
+                            <PiHandsPrayingThin />
+                        </div>
+                        <div className={'nanvig-mobile-txt'}  >
+                            Guests
+                        </div>
                     </Link>
                 </div>
-                <div  className={cn(isRoute('signIn') &&  'selected-navig-mobile','navig-mobile') }  >
-                    {(typeof guest !== 'undefined' && guest !==null && guest?.tokenId !== 0) ? 
-                      <div className={cn(isRoute('signOut') ? 'borde-3 border-yellow-200 shadow-lg': 'text-center font-semibold') }  >
-                          <Link onClick={handleLogout}  key={`logout`} href='/'> 
-                          Sign out 
-                        </Link>
-                        </div>:<div className={cn(isRoute('signIn') && 'borde-3 border-yellow-200 shadow-lg', 'text-center font-semibold')} >
-                            <Link key={`login`} href='/signIn'> Sign in 
+                <div className={cn(isRoute('hosts') && 'selected-navig-mobile', 'navig-mobile')}  >
+                    <Link prefetch={true} key={`hosts`} href='/hosts'>
+                        <div className={'navig-mobile-svg'}  >
+                            < SiMastercomfig />
+                        </div>
+                        <div className={'nanvig-mobile-txt'}  >
+                            Hosts
+                        </div>
+                    </Link>
+                </div>
+                <div className={cn(isRoute('signIn') && 'selected-navig-mobile', 'navig-mobile')}  >
+                    {(typeof guest !== 'undefined' && guest !== null && guest?.tokenId !== 0) ?
+                        <div className={cn(isRoute('signOut') ? 'borde-3 border-yellow-200 shadow-lg' : 'text-center font-semibold')}  >
+                            <Link prefetch={true} onClick={handleLogout} key={`logout`} href='/'>
+                                Sign out
                             </Link>
-                    </div>
+                        </div> : <div className={cn(isRoute('signIn') && 'borde-3 border-yellow-200 shadow-lg', 'text-center font-semibold')} >
+                            <Link prefetch={true} key={`login`} href='/signIn'> Sign in
+                            </Link>
+                        </div>
 
-                            }
-                    </div>
-                    <div className="relative flex basis-0 justify-end gap-6 sm:gap-8 md:flex-grow">
-                        <ThemeSelector className="relative z-10" />
-                    </div>
-                
+                    }
+                </div>
+                <div className="relative flex basis-0 justify-end gap-6 sm:gap-8 md:flex-grow">
+                    <ThemeSelector className="relative z-10" />
+                </div>
+
             </section>
-            
-            
+
+
             {/* laptop nav  */}
 
             <section className='hidden md:flex text-xl font-extralight space-x-2 space-y-2 md:justify-center  md:items-center flex-wrap  text-gray-400' >
                 <div className={cn(isRoute('') && 'nav-selected', 'CENTER nav-element')}  >
-                <Link key={`home`} href='/'  > 
-                    Home 
-                </Link>
+                    <Link prefetch={true} key={`home`} href='/'  >
+                        Home
+                    </Link>
                 </div>
-                 <div className={cn(isRoute('space')  &&' nav-selected', 'CENTER nav-element')}  >
-                    <Link key={`space`} href='/space'> Space </Link>
+                <div className={cn(isRoute('space') && ' nav-selected', 'CENTER nav-element')}  >
+                    <Link prefetch={true} key={`space`} href='/space'> Space </Link>
                 </div>
-                 <div className={cn(isRoute('stage')  && ' nav-selected', 'CENTER nav-element')}  >
-              
-                        <Link key={`stage`} href='/stages'> Stages </Link>
+                <div className={cn(isRoute('stage') && ' nav-selected', 'CENTER nav-element')}  >
+
+                    <Link prefetch={true} key={`stage`} href='/stages'> Stages </Link>
+                </div>
+                <div className={cn(isRoute('sprints') && ' nav-selected', 'CENTER nav-element')}  >
+
+                    <Link prefetch={true} key={`sprints`} href='/sprints'> Sprints </Link>
+                </div>
+                <div className={cn(isRoute('guests') && ' nav-selected', 'CENTER nav-element')}  >
+
+                    <Link prefetch={true} key={`guests`} href='/guests'>Guests </Link>
+                </div>
+                <div className={cn(isRoute('hosts') && ' nav-selected', 'CENTER nav-element')}  >
+
+                    <Link prefetch={true} key={`hosts`} href='/hosts'>Hosts </Link>
+                </div>
+
+                {(typeof guest !== 'undefined' && guest !== null && guest?.tokenId !== 0) ?
+                    <div className={cn((guest?.tokenId !== 0) && 'nav-selected', 'outline-none text-green-400 CENTER nav-element')}  >
+
+                        <Link prefetch={true}
+                            onClick={handleLogout} href='/'> Sign out </Link>
                     </div>
-                <div className={cn(isRoute('sprints')  && ' nav-selected', 'CENTER nav-element')}  >
-              
-                    <Link key={`sprints`} href='/sprints'> Sprints </Link>
-                </div>
-                <div className={cn(isRoute('guests')  && ' nav-selected', 'CENTER nav-element')}  >
-                
-                    <Link key={`guests`} href='/guests'>Guests </Link>
-                </div>
-                <div className={cn(isRoute('hosts')  && ' nav-selected', 'CENTER nav-element')}  >
-               
-                    <Link key={`hosts`} href='/hosts'>Hosts </Link>
-                </div>
-               
-                    {(typeof guest !== 'undefined' && guest !== null && guest?.tokenId !== 0) ? 
-                 <div  className={cn((guest?.tokenId !== 0)&&  'nav-selected','outline-none text-green-400 CENTER nav-element')}  >
-                
-                    <Link 
-                        onClick={handleLogout} href='/'> Sign out </Link> 
-                </div>
-                        
-                        :
-                        <div  className={cn((guest?.tokenId !== 0)&&  'nav-selected','outline-none text-green-400 CENTER nav-element')}  >
-                
-                 
-                        <Link  className='outline-none text-orange-400 ' key={`login`} href='/signIn'> Sign in </Link>
-                </div>
-                        }
+
+                    :
+                    <div className={cn((guest?.tokenId !== 0) && 'nav-selected', 'outline-none text-green-400 CENTER nav-element')}  >
+
+
+                        <Link prefetch={true} className='outline-none text-orange-400 ' key={`login`} href='/signIn'> Sign in </Link>
+                    </div>
+                }
 
                 <div className="relative flex basis-0 justify-end gap-6 sm:gap-8 md:flex-grow">
                     <ThemeSelector className="relative z-10" />

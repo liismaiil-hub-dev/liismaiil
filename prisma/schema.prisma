@@ -15,16 +15,18 @@ model Guest {
   tokenId        Int       @unique 
   host           Int
   flag           String
+  password       String
+  guestPassword  String 
   collaboratorId String
   //status    Role     @default(GUEST)
-  createdAt      DateTime @default(now())
   country        String
-  password       String
+  status       String
   onLine         Boolean
+  startDate      DateTime @default(now())
   endDate        String
   stages         Stage[]
   sprints        Sprint[]
-  favorites        Favorite[]
+  favorites         Favorite[]
   @@unique([ country,collaboratorId, onLine])
 
 }
@@ -40,7 +42,6 @@ model Favorite {
 
 model Stage {
   id  Int    @id @default(autoincrement()) 
-
   stageId     String   @unique
   createdAt   DateTime @default(now())
   souraName   String
@@ -49,21 +50,12 @@ model Stage {
   startOn     DateTime
   createdById String
   guests      Guest[]
-  ayahs       Ayah[]
+  ayahs       String
   sprints     Sprint[]
   @@unique([ createdById,souraNb,startOn])
 
 }
 
-model Ayah {
-  id  Int    @id @default(autoincrement()) 
-  souraNb   Int 
-  juz    Int
-  order  Int
-  text   String
-  stages Stage[]
-  @@unique([souraNb, order])
-}
 
 model Sprint {
   id  Int    @id @default(autoincrement()) 

@@ -2,7 +2,7 @@
 import organisations from "@/store/shares/organisations.json";
 import { RootStateType } from '@/store/store';
 
-import { registerGuest } from "@/actions/auth";
+import { registerGuest, registerGuestPrisma } from "@/actions/auth";
 import SelectHost from "@/components/auth/SelectHost";
 import Submit from "@/components/auth/Submit";
 import { OrgCoordType } from "@/store/slices/guestSlice";
@@ -15,12 +15,13 @@ import { toast } from "react-toastify";
 
 const initialState = {
   message: null,
+
 }
 
 const SignUp = () => {
   const [formState, action] = useFormState<{
     message: string,
-  }>(registerGuest, initialState)
+  }>(registerGuestPrisma, initialState)
   const { liismaiilProfiles } = useSelector((state: RootStateType) => state.profile)
  
    const collaboratorsCoords:OrgCoordType[] = liismaiilProfiles.map((org)  => {

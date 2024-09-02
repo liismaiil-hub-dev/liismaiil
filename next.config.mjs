@@ -4,7 +4,8 @@ import { withSentryConfig } from '@sentry/nextjs';
 const nextConfig = {
   //largePageDataBytes: 128 * 10000,
    
-  reactStrictMode: true,
+ 
+  reactStrictMode: false,
   env: {
     PORT: process.env.PORT,
     NEXT_PUBLIC_URL: process.env.NEXT_PUBLIC_URL,

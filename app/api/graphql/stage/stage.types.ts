@@ -1,7 +1,7 @@
-import { PROFILE_STATUS_ENUM } from "@/api/graphql/profile/profile.types";
+import { GuestType, LIISMAIIL_STATUS_ENUM } from "@/api/graphql/profile/profile.types";
 
 export type SprintStateProps = {
-  sprints: SprintType[],
+  sprints: SprintPrismaType[],
   spaceGridsSelected: GridJsoned[],
   gridSelected: GridJsoned,
   stageSelected: StageTypeData,
@@ -13,7 +13,7 @@ export type SprintStateProps = {
   hideNbContext: boolean,
   faultsNbContext: number,
   correctsNbContext: number,
-  spaceSprint: SprintType,
+  spaceSprint: SprintPrismaType,
   spaceStage: StageTypeData,
   validStages: [string],
   evalContext: EVAL_STATE,
@@ -26,14 +26,18 @@ export enum EVAL_STATE {
   CLICK = 'CLICK',
 }
 
-export type SprintType = {
-  id: number;
-  title: string;
-  description: string;
-  startDate: string;
-  endDate: string;
-  author: string;
-  stages: [StageTypeData]
+export type SprintPrismaType = {
+  sprintId: string,
+  createdAt: string,
+  souraName: string
+  souraNb: number,
+  grid: number,
+  startOn: string,
+  createdById: string,
+  published: boolean,
+  guests: [GuestPrismaType],
+  stages: [StagePrismaType],
+
 }
 
 export type PromoteRateType = {
@@ -84,21 +88,7 @@ export type GridAyahsJson = {
   grid: number;
   group: number | [number];
 };
-export type GuestType = {
-  tokenId: number; //112
-  flag: string;
-  price?: number;
-  collaboratorId: string;
-  host: number;
-  password: string;
-  status: PROFILE_STATUS_ENUM;
-  enrollmentStatus?: string;
-  startDate?: string;
-  endDate?: string;
-  stages?: [string];
-  sprints?: [string];
-  country?: [string];
-};
+
 export type AddGuestInput = GuestType;
 export type UpdateGuestInput = GuestType;
 export type GetGridsBySouraNbInput = {
@@ -148,27 +138,15 @@ export type GuestPrismaType = {
   flag: string;
   collaboratorId: string;
   host: number;
-  createdAt: string;
+  status: LIISMAIIL_STATUS_ENUM;
   country: string;
-  password: string;
   onLine: boolean;
+  startDate: string;
   endDate: string;
   stages: StagePrismaType[];
   sprints: SprintPrismaType[];
 };
 
-export type SprintPrismaType = {
-  id: number;
-  sprintId: number;
-  createdAt: string;
-  souraName: string;
-  souraNb: number;
-  grid: number;
-  startOn: string
-  createdById: string;
-  guests: GuestPrismaType[]
-  stages: StagePrismaType[]
-}
 export type AyahTabletType = {
   order: number;
   text: string;
