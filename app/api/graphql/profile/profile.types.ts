@@ -45,8 +45,10 @@ export type GuestType = {
   price?: number;
   collaboratorId: string;
   host: number;
-  status: PROFILE_STATUS_ENUM;
+  status: LIISMAIIL_STATUS_ENUM;
   enrollmentStatus?: string;
+  country?: string;
+  onLine?: boolean;
   startDate?: string;
   endDate?: string;
   stages?: [string];
@@ -281,6 +283,10 @@ export enum PROFILE_STATUS_ENUM {
   DISCOUNT = 'DISCOUNT',
   LIBRARY = 'LIBRARY',
   LIISMAIIL_GUEST = 'LIISMAIIL_GUEST'
+}
+export enum LIISMAIIL_STATUS_ENUM {
+  GUEST = 'GUEST',
+  HOST = 'HOST',
 }
 export enum COUNTRY_ENUM {
   FR = "FR",

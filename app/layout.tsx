@@ -15,23 +15,14 @@ import { Providers } from '@/store/Providers';
 import { persistor } from '@/store/store';
 import { ReactNode } from "react";
 import { PersistGate } from 'redux-persist/integration/react';
-
-
 import GuestsComponents from "@/components/front/Guests";
-
 import { Inter } from 'next/font/google';
 import { usePathname } from 'next/navigation';
 import { ApolloWrapper } from "./ApolloWrapper";
- 
 const inter = Inter({ subsets: ['latin'] })
-
-
 export const viewport = {
   themeColor: "#FFFFFF",
 };
-
-
-
 function RootLayout({ children }: { children: ReactNode }) {
  const pathname = usePathname()
 

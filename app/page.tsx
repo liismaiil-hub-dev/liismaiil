@@ -2,7 +2,7 @@
 import Organisations from "@/components/front/Organisations";
 //import MapComponent from '@/components/maps/MapComponent';
 import { dbFirestore } from '@/api/graphql/fb-utils-admin';
-import { GuestType } from '@/api/graphql/stage/stage.types';
+import { GuestPrismaType } from '@/api/graphql/stage/stage.types';
 import { getGuestFromToken } from '@/lib/authTools';
 import { COOKIE_NAME } from '@/store/constants/constants';
 import { DocumentData, DocumentSnapshot } from 'firebase-admin/firestore';

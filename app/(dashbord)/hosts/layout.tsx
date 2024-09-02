@@ -13,7 +13,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 //const Navigation = dynamic(()=> import('@/components/front/Navigation'),{ssr:false})
 
-function Spacelayout({ children, stages, sprints, guests }: {
+function HostLayout({ children, stages, sprints, guests }: {
     children: ReactNode, sprints: ReactNode,
 
     stages: ReactNode, guests: ReactNode
@@ -24,7 +24,7 @@ function Spacelayout({ children, stages, sprints, guests }: {
     const path = usePathname();
     return (
         <main className='container mx-auto w-full  flex flex-col  justify-start items-center  min-h-screen '>
-            <section className="container flex   w-full max-h-52  ring-2 ring-yellow-300/80 justify-between items-center" >
+           {/*  <section className="container flex   w-full max-h-52  ring-2 ring-yellow-300/80 justify-between items-center" >
                 <div className="h-52  w-1/4 bg-green-100/70 border 
                         shadow-md " >
                     {stages}
@@ -35,10 +35,10 @@ function Spacelayout({ children, stages, sprints, guests }: {
                 <div className="flex flex-col justify-start items-center bg-green-100/50 border shadow-md w-1/4" >
                     {guests}
                 </div >
-            </section>
-            <section className="container flex-col   w-full max-h-['5rem']  ring-2 ring-red-300/80 justify-start items-center" >
+            </section> */}
+            <section className="container flex-col   w-full  h-full  ring-2 ring-red-300/80 justify-start items-center" >
 
-                {gridSelected && gridSelected.arabName != "" && <div className="flex flex-col justify-start items-start scroll-smooth   w-full max-h-[calc(100vh-5rem)]]" >
+                {gridSelected && gridSelected.arabName != "" && <div className="flex flex-col justify-start items-center scroll-smooth   w-full max-h-[calc(100vh-5rem)]]" >
                     {/* 
                             <div className="flex  justify-start   bg-orange-200 w-full h-full text-medium text-gray-500" >
                             {board}
@@ -55,4 +55,4 @@ function Spacelayout({ children, stages, sprints, guests }: {
     )
 }
 
-export default Spacelayout;
+export default HostLayout;
