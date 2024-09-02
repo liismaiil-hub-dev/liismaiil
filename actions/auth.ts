@@ -15,7 +15,7 @@ const authSchema = z.object({
 
 export const registerGuest = async (prevState: any, formData: FormData) => {
   const data = authSchema.parse({
-    country: formData.get('tokenId'),
+    country: formData.get('country'),
     host: formData?.get('host'),
     tokenId: formData.get('tokenId'),
     password: formData.get('password'),

@@ -27,11 +27,11 @@ const SignIn = () => {
       <div className='flex flex-col w-full h-full justify-center items-left gap-3 '>
         
         <div className='flex   justify-between items-center  gap-6 rounded-md'>
-          <label id={'token'} className="text-center "> token: </label>
+          <label htmlFor={'token'} className="text-center "> token: </label>
           <input  type="text" name={'tokenId'} id={'token'} className="border  w-full flex justify-end  rounded-md " required />
         </div>
         <div className='flex justify-between items-center  gap-6 rounded-md'>
-          <label id={'password'} className="text-left "> password: </label>
+          <label htmlFor={'password'} className="text-left "> password: </label>
           <input  type="password" name={'password'} id={'password'} className="border  w-full flex justify-end  rounded-md " required />
         </div>
         <div className='flex justify-center items-center '>
