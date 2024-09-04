@@ -1,6 +1,18 @@
+'use client'
+import { getAllStagesForDashboard } from "@/lib/sprints";
 import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
+import { useEffect, useState, useTransition } from "react";
 
-const Stages = ({ stages }: { stages: string[] }) => {
+const Stages = () => {
+  const [isPending, startTransition] = useTransition();
+  const [stages, setStages] = useState([]);
+
+  useEffect(() => {
+    startTransition(async () => {
+      const _stages = await getAllStagesForDashboard()
+      setStages(_stages);
+    });
+  }, []);
 
   return (
     <section className="flex flex-col  justify-start items-center w-screen h-screen">

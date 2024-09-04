@@ -23,6 +23,7 @@ function Navigation() {
     const isRoute = (route: string) => {
         return pathname.split('/')[1] === route
     }
+
     useEffect(() => {
         //    console.log(showMenu) 
     }, [showMenu])
@@ -38,6 +39,7 @@ function Navigation() {
         dispatch(logout())
         setShowMenu(false)
     }
+    console.log({ guest });
 
     return (
         <nav className={`container  flex  justify-between bg-emerald-100-100/50 h-24 

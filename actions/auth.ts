@@ -1,21 +1,36 @@
 'use server'
-import { createTokenForGuest, signin, signup, signupPrisma } from '@/lib/authTools'
-import { COOKIE_NAME } from '@/store/constants/constants'
-import { cookies } from 'next/headers'
-import { z } from 'zod'
+import { createTokenForGuest, hashPassword, registerPrisma, signin, signinPrisma, signup } from '@/lib/authTools';
 
-const authSchema = z.object({
-  host: z.string(),
-  country: z.string(),
+import { COOKIE_NAME } from '@/store/constants/constants';
+import { FLAG_FILES } from '@/store/constants/flagArray';
+import _ from 'lodash';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+import { z } from 'zod';
+
+const GuestRegisterSchema = z.object({
+  tokenId: z.number().int().lte(100),
+  host: z.number().int().lte(100),
   password: z.string(),
-  tokenId: z.string(),
-  collaboratorId: z.string(),
+  country: z.string().max(3),
+});
 
-})
+const GuestSignInSchema = z.object({
+  tokenId: z.number().int().lte(100),
+  host: z.number().int().lte(100),
+  password: z.string(),
+
+});
+
 
 export const registerGuest = async (prevState: any, formData: FormData) => {
+<<<<<<< HEAD
   const data = authSchema.parse({
     country: formData.get('country'),
+=======
+  const data = GuestRegisterSchema.parse({
+    country: formData.get('tokenId'),
+>>>>>>> features/space
     host: formData?.get('host'),
     tokenId: formData.get('tokenId'),
     password: formData.get('password'),
@@ -40,9 +55,10 @@ export const registerGuest = async (prevState: any, formData: FormData) => {
 }
 
 export const signinGuest = async (prevState: any, formData: FormData) => {
-  const data = authSchema.parse({
+  const data = GuestSignInSchema.parse({
     tokenId: formData.get('tokenId'),
     password: formData.get('password'),
+    host: formData.get('host'),
   })
 
   try {
@@ -63,23 +79,31 @@ export const signinGuest = async (prevState: any, formData: FormData) => {
   }
 }
 // prisma seeding
-export const registerGuestPrisma = async (prevState: any, formData: FormData, flag:string) => {
-  const data = authSchema.parse({
-    country: formData.get('tokenId'),
-    host: formData?.get('host'),
+export const registerGuestPrisma = async (formData: FormData,): Promise<{ message: string; }> => {
+  const randomFlag = FLAG_FILES[_.random(FLAG_FILES.length)]
+
+  const data = GuestRegisterSchema.parse({
     tokenId: formData.get('tokenId'),
+    host: formData?.get('host'),
+    country: formData.get('country'),
     password: formData.get('password'),
-    collaboratorId: 'O6cKgXEsuPNAuzCMTGeblWW9sWI3',
-    flag: flag,
   })
 
+  console.log({
+    data,
+    tokenId: formData.get('tokenId'),
+    host: formData?.get('host'),
+    country: formData.get('country'),
+    password: formData.get('password'),
+  });
+  const hashedPass = await hashPassword(data.password) as string;
   try {
-    const { message } = await signupPrisma(data)
+    const { message } = await registerPrisma({ ...data, collaboratorId: 'O6cKgXEsuPNAuzCMTGeblWW9sWI3' })
     const { tokenId } = JSON.parse(message)
     console.log({ tokenId });
 
     cookies().set(COOKIE_NAME, createTokenForGuest(tokenId))
-    return { message: true }
+    return { message }
 
     //redirect(`/space/${slug(data.host)}`)
   } catch (e) {
@@ -90,8 +114,8 @@ export const registerGuestPrisma = async (prevState: any, formData: FormData, fl
   }
 }
 
-export const signinPrisma = async (prevState: any, formData: FormData, flag: string) => {
-  const data = authSchema.parse({
+export const signinGuestPrisma = async (formData: FormData,) => {
+  const data = GuestSignInSchema.parse({
     tokenId: formData.get('tokenId'),
     password: formData.get('password'),
     host: formData.get('host'),
@@ -100,17 +124,21 @@ export const signinPrisma = async (prevState: any, formData: FormData, flag: str
   try {
     console.log({ data });
 
-    const { tokenId, collaboratorId, host, flag } = await signinPrisma(data)
+    const { tokenId, collaboratorId, host, flag, message, success } = await signinPrisma(data)
     if (tokenId !== 0 && collaboratorId !== 0 && host !== 0) {
       cookies().set(COOKIE_NAME, (tokenId).toString())
 
-      return { collaboratorId, flag, host, tokenId }
+      return { message: JSON.stringify({ collaboratorId, flag, host, tokenId }) }
     } else {
-      return { tokenId: 0, collaboratorId: 0, flag: '', host: 0 }
+      return {
+        message: JSON.stringify({ tokenId: 0, collaboratorId: 0, flag: '', host: 0 })
+      }
     }
   } catch (e) {
     console.error(e)
-    return {}
-    // redirect(`/liismaiil/${slug(data.host)}`)
+    redirect(`/`);
+    return {
+      message: JSON.stringify({ tokenId: 0, collaboratorId: 0, flag: '', host: 0, error: e })
+    }
   }
 }

@@ -1,9 +1,8 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
-import { createRouter } from 'next-connect';
-import { Context, Telegraf } from 'telegraf';
+import { Context, Telegraf } from "telegraf"; 
+import { NextResponse } from 'next/server';
 import { Update } from 'telegraf/typings/core/types/typegram';
 
-const router = createRouter<NextApiRequest, NextApiResponse>();
+
 
 const Bot = (function () {
   let bot: Telegraf<Context<Update>> | any;
@@ -20,120 +19,100 @@ const Bot = (function () {
     },
   };
 })();
+export const POST = async (req: Request) => {
 
-router
-  // Use express middleware in next-connect with expressWrapper function
-  .use(async (req, res, next) => {
-    const start = Date.now();
-    await next(); // call next in chain
-    const end = Date.now();
-    console.log(`Request took ${end - start}ms`);
-  })
-  .get((req, res) => {
-    res.send({ success: true, message: process.env.TELEGRAM_TOKEN });
-  })
-  .post(async (req, res) => {
+  // Generate test SMTP service account from ethereal.email
+  // Only needed if you don't have a real mail account for testing
+  try {
+    console.log({ body: req.body, token: process.env.TELEGRAM_TOKEN });
+    const { title, description, author, startDate, endDate, stages } = req.json();
+    console.log({ title, description, author, startDate });
 
-    // Generate test SMTP service account from ethereal.email
-    // Only needed if you don't have a real mail account for testing
-    try {
-      console.log({ body: req.body, token: process.env.TELEGRAM_TOKEN });
-      const { title, description, author, startDate, endDate, stages } = req.body.input;
-      console.log({ title, description, author, startDate });
+    //`6500496540:AAFPGnKjmNd98kx5Rp4fPO7a6Ktdvf3MvbU
+    const bot = Bot.getInstance()
+    bot?.start((ctx) => {
+      ctx.reply(`ALLAH AKBAR`);
+      ctx.reply('you are on liismaiil sprint bot notifications');
+    });
+    bot.command('echo', async (ctx, next) => {
+      try {
+        ctx.reply(`${title}`);
+        ctx.reply(`${description}`);
+        next(ctx);
+      } catch (error) {
+        console.log({ error });
+      }
+      // Explicit usage
+    });
+    bot.on('text', async (ctx) => {
+      // Explicit usage
+      await ctx.reply(`https://liismaiil.org/sprint/${author}`);
+      // resend existing file by file_id
+      /*await ctx.replyWithSticker('123123jkbhj6b')
 
-      //`6500496540:AAFPGnKjmNd98kx5Rp4fPO7a6Ktdvf3MvbU
-      const bot = Bot.getInstance()
-      bot?.start((ctx) => {
-        ctx.reply(`ALLAH AKBAR`);
-        ctx.reply('you are on liismaiil sprint bot notifications');
-      });
-      bot.command('echo', async (ctx, next) => {
-        try {
-          ctx.reply(`${title}`);
-          ctx.reply(`${description}`);
-          next(ctx);
-        } catch (error) {
-          console.log({ error });
-        }
-        // Explicit usage
-      });
-      bot.on('text', async (ctx) => {
-        // Explicit usage
-        await ctx.reply(`https://liismaiil.org/sprint/${author}`);
-        // resend existing file by file_id
-        /*await ctx.replyWithSticker('123123jkbhj6b')
+      // send file
+      await ctx.replyWithVideo(Input.fromLocalFile('/path/to/video.mp4'))
 
-        // send file
-        await ctx.replyWithVideo(Input.fromLocalFile('/path/to/video.mp4'))
+      // send stream
+      await ctx.replyWithVideo(
+        Input.fromReadableStream(fs.createReadStream('/path/to/video.mp4'))
+      )
 
-        // send stream
-        await ctx.replyWithVideo(
-          Input.fromReadableStream(fs.createReadStream('/path/to/video.mp4'))
+      // send buffer
+      await ctx.replyWithVoice(Input.fromBuffer(Buffer.alloc()))
+
+      // send url via Telegram server
+      await ctx.replyWithPhoto(Input.fromURL('https://picsum.photos/200/300/'))
+
+      // pipe url content
+      /*   await ctx.replyWithPhoto(
+          Input.fromURLStream('https://picsum.photos/200/300/?random', 'kitten.jpg')
         )
+   */
+    })
 
-        // send buffer
-        await ctx.replyWithVoice(Input.fromBuffer(Buffer.alloc()))
+    bot.command('quit', async (ctx) => {
+      // Explicit usage
+      await ctx.telegram.leaveChat(ctx.message.chat.id);
 
-        // send url via Telegram server
-        await ctx.replyWithPhoto(Input.fromURL('https://picsum.photos/200/300/'))
+      // Using context shortcut
+      await ctx.leaveChat();
+    });
 
-        // pipe url content
-        /*   await ctx.replyWithPhoto(
-            Input.fromURLStream('https://picsum.photos/200/300/?random', 'kitten.jpg')
-          )
-     */
-      })
+    bot.on('callback_query', async (ctx) => {
+      // Explicit usage
+      await ctx.telegram.answerCbQuery(ctx.callbackQuery.id);
 
-      bot.command('quit', async (ctx) => {
+      // Using context shortcut
+      await ctx.answerCbQuery();
+    });
+
+    /*  bot.on('inline_query', async (ctx) => {
+        const result = [];
         // Explicit usage
-        await ctx.telegram.leaveChat(ctx.message.chat.id);
-
+        await ctx.telegram.answerInlineQuery(ctx.inlineQuery.id, result);
+  
         // Using context shortcut
-        await ctx.leaveChat();
-      });
+        await ctx.answerInlineQuery(result);
+      }); */
 
-      bot.on('callback_query', async (ctx) => {
-        // Explicit usage
-        await ctx.telegram.answerCbQuery(ctx.callbackQuery.id);
-
-        // Using context shortcut
-        await ctx.answerCbQuery();
-      });
-
-      /*  bot.on('inline_query', async (ctx) => {
-          const result = [];
-          // Explicit usage
-          await ctx.telegram.answerInlineQuery(ctx.inlineQuery.id, result);
-    
-          // Using context shortcut
-          await ctx.answerInlineQuery(result);
-        }); */
-
-      bot.launch();
-      // Enable graceful stop
-      process.once('SIGINT', () => bot.stop('SIGINT'));
-      process.once('SIGTERM', () => bot.stop('SIGTERM'));
-    } catch (error) {
-      console.log({ error });
-    }
-
-    res.json({ corps: req.body });
-  });
-/* 
-export const config = {
-  runtime: "edge",
-};
- */
-export default router.handler({
-  onError: (err: Error, req: NextApiRequest, res: NextApiResponse) => {
-    console.error(err.stack);
-    res.status(err.statusCode || 500).end(err.message);
-  },
-  onNoMatch: (req, res, next) => {
-    res.status(404).end('Page is not found');
+    bot.launch();
+    // Enable graceful stop
+    process.once('SIGINT', () => bot.stop('SIGINT'));
+    process.once('SIGTERM', () => bot.stop('SIGTERM'));
+  } catch (error) {
+    console.log({ error });
   }
-});
 
+  NextResponse.json({ corps: req.body });
+}
+
+
+
+// Use express middleware in next-connect with expressWrapper function
+export const GET = async (req: Request) => {
+  NextResponse.json({ success: true, message: process.env.TELEGRAM_TOKEN });
+}
 //TODO .use(authCheckMiddleware)
 
 /* bot.on('text', async (ctx, next) => {

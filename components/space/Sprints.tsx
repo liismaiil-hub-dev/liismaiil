@@ -2,9 +2,13 @@
 import { SprintPrismaType } from "@/api/graphql/stage/stage.types";
 
 import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
+import { useTransition } from "react";
 
 
-const Sprints = (sprints: SprintPrismaType[]) => {
+const Sprints = () => {
+
+        useTransition()
+
   return (
     <section className="flex flex-col  justify-start items-center w-full h-full">
       <div className="flex justify-content-center ">

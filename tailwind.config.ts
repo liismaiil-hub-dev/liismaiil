@@ -1,5 +1,4 @@
 import type { Config } from "tailwindcss";
-import plugin from "tailwindcss/plugin";
 
 const { nextui } = require("@nextui-org/react");
 
@@ -54,7 +53,7 @@ const config: Config = {
         natsecondary: "#50B498",
         nattertiary: "#468585",
         natquadrenary: "#808836",
-        
+
         natWarmheader: "#DEF9C4",
         natWarmprimary: "#FFBF00",
         natWarmsecondary: "#FF9A00",
@@ -66,7 +65,7 @@ const config: Config = {
         appsecondary: "#FFCF96",
         apptertiary: "#FF8080",
         appquadrenary: "#FFCF81",
- 
+
         body: "#E1F7F5",
         coldbody: "#EEF5FF",
         hotbody: "#E6FF94",
@@ -94,7 +93,6 @@ const config: Config = {
 
     },
   },
-  plugins: [
-  require("flowbite/plugin"), nextui()],
+  plugins: [nextui()],
 };
 export default config;

@@ -1,21 +1,18 @@
 import { gql } from '@apollo/client';
 
-export const ADD_DOMAIN = gql`
-  mutation AddDomain($input: CreateDomainInput) {
-    addDomain(input: $input) {
-      title
-      titleSlug
-      viewers {
-        login
-      }
-      city
-      country
-      cards {
-        title
-      }
-      tablets {
-        title
-      }
+export const ADD_GUEST_PRISMA = gql`
+  mutation AddGuestPrisma($input:AddGuestPrismaInput ) {
+    addGuestPrisma(input: $input) {
+     tokenId
+  host
+  flag
+  password
+  collaboratorId
+  status
+  country
+  onLine
+  startDate
+  endDate
     }
   }
 `;

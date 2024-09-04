@@ -1,12 +1,12 @@
+import { groupBy } from 'lodash';
 'use server'
-import { GuestType } from "@/app/api/graphql/profile/profile.types";
-import { db } from "@/db/db";
-import { guests, stages } from "@/db/schema";
-import { getGuestFromToken } from '@/lib/authTools';
+import { GuestType, LIISMAIIL_STATUS_ENUM } from "@/app/api/graphql/profile/profile.types";
+//import { db } from "@/db/db";
+import { getGuestFromTokenPrisma } from '@/lib/authTools';
+import prisma from "@/lib/prisma-db";
 import 'server-only';
 
 import { COOKIE_NAME } from '@/store/constants/constants';
-import { eq, sql } from "drizzle-orm";
 import { cookies } from 'next/headers';
 import { memoize } from "nextjs-better-unstable-cache";
 import { cache } from 'react';
@@ -18,40 +18,64 @@ export const getCurrentGuest = cache(async () => {
   if (!token) return null
   console.log({ tokenCoukies: token.value });
 
-  const guest = await getGuestFromToken(token.value)
+  const guest = await getGuestFromTokenPrisma(parseInt(token.value))
   if (!guest) return null
   console.log({ guest });
-
-
   return guest as GuestType
 })
 
-export const getGuestsForDashboard = memoize(async (tokenId: number) => {
+export const getHostsForDashboard = memoize(async () => {
 
-  const counts = await db.select({ totalAttendees: sql`count(distinct ${tokenId}) ` }).from(guests).leftJoin(stages, eq(stages.guestId, guests.tokenId)).groupBy(stages.id).execute();
-  return counts;
+  const guests = await prisma.guest.findMany({
+    where: { status: LIISMAIIL_STATUS_ENUM.HOST }
+  })
+  return guests;
 }, {
   persist: true,
-  revalidateTags: (tokenId) => ['dashboard:guests'],
+  revalidateTags: ['dashboard:guests'],
   suppressWarnings: true,
   log: ['datacache', 'verbose', 'dedupe'],
   logid: 'dashboard: guests'
 })
 
-export const getStagesForDashboard = memoize(async (tokenId: number) => {
+export const getOwnStagesForDashboard = memoize(async (tokenId: number) => {
 
-  const counts = await db.select({ totalAttendees: sql`count(distinct ${tokenId}) ` }).from(stages).leftJoin(guests, eq(stages.guestId, guests.tokenId)).where(eq(stages.createdById, tokenId)).groupBy(stages.id).execute();
-  return counts;
+  const stages = await prisma.stage.findMany({
+    where:{
+      guests:{some:{
+        tokenId
+      }}
+    },
+    orderBy: {souraNb:'asc'}
+  })
+  return stages;
 }, {
-  persist: true
+  persist: true,
+  revalidateTags: ['dashboard:stages'],
+  suppressWarnings: true,
+  log: ['datacache', 'verbose', 'dedupe'],
+  logid: 'dashboard: stages'
+})
+
+// sprints for Guest
+export const getOwnSprintsForDashboard = memoize(async (tokenId: number) => {
+
+  const sprints = await prisma.sprint.findMany({
+
+    orderBy: { souraNb: 'asc' },
+    where: {
+      guests: {
+        some: { tokenId }
+      }
+    }
+  })
+  return sprints;
+}, {
+  persist: true,
+  revalidateTags: (tokenId) => [`${tokenId}dashboard:sprints`],
+  suppressWarnings: true,
+  log: ['datacache', 'verbose', 'dedupe'],
+  logid: `dashboard:sprints`,
 })
 
 
-
-export const getSprintsForDashboard = memoize(async (tokenId) => {
-
-  const counts = await db.select({ totalAttendees: sql`count(distinct ${tokenId}) ` }).from(stages).leftJoin(guests, eq(stages.guestId, guests.tokenId)).where(eq(stages.createdById, tokenId)).groupBy(stages.id).execute();
-  return counts;
-}, {
-  persist: true
-})

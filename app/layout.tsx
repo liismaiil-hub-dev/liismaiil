@@ -4,7 +4,6 @@ import ErrorBoundaryComp from "@/components/front/ErrorBoundaryComp";
 import Footer from '@/components/layouts/Footer';
 import SEO from '@/lib/next-seo-config';
 import '@/styles/global.css';
-import { NextUIProvider } from "@nextui-org/react";
 import { NextSeo } from 'next-seo';
 import { ErrorBoundary } from 'react-error-boundary';
 import { ToastContainer } from 'react-toastify';
@@ -38,7 +37,6 @@ function RootLayout({ children }: { children: ReactNode }) {
       <NextSeo {...SEO} />
       <ToastContainer position="top-center" />
         <Providers >
-          <NextUIProvider >
             <PersistGate persistor={persistor}>
               <ErrorBoundary fallback={<ErrorBoundaryComp />}>
                 <main className='container mx-auto w-screen  flex flex-col space-y-1 max-h-screen  justify-start items-center '>
@@ -64,8 +62,7 @@ function RootLayout({ children }: { children: ReactNode }) {
                 </main>
               </ErrorBoundary>
             </PersistGate>
-          </NextUIProvider >
-        </Providers >
+           </Providers >
       </ApolloWrapper>
     </body>
   </html >
