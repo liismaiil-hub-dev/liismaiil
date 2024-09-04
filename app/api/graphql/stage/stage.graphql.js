@@ -29,6 +29,46 @@ type StageGrid {
   grid: Int
   group: Int
 }
+type SprintPrismaType  {
+  sprintId: String
+  createdAt: String
+  souraName: String
+  souraNb: Int
+  grid: Int
+  startOn: String
+  createdById: String
+  published: Boolean
+  guests: [GuestPrismaType]
+  stages: [StagePrismaType]
+
+}
+type  StagePrismaType  {
+  id: Int
+  stageId: Int
+  createdAt: String
+  souraName: String
+  souraNb: Int
+  grid: Int
+  startOn: String
+  createdById: String
+  guests: [GuestPrismaType]
+  ayahs: String
+}
+type  GuestPrismaType {
+  id: Int
+  tokenId: Int
+  host: Int
+  flag: String
+  password: String
+  collaboratorId: String
+  status: String
+  country: String
+  onLine: Boolean
+  startDate: String
+  endDate: String
+  stage: [StagePrismaType]
+  sprints: [SprintPrismaType]
+}
 
 type Ayah {
   id: Int
@@ -64,6 +104,15 @@ input StageInput {
   sprints: [String]
   createdAt: String
   }
+
+input AddGuestPrismaInput {
+  tokenId: Int!
+  password: String
+  host:Int
+  country: String
+  collaboratorId:String
+}
+
 input RemoveStageInput  {
   int: Int
   authorId: Int
@@ -75,6 +124,7 @@ type SuccessOutput {
 }
 type Query {
     stages: [Stage!]
+    hostsForDashboard: [GuestPrismaType!]
     stagesById(id:Int): [Stage!]
     stagesByToken(token:Int): [Stage!]
     stagesByCategory(category:String): [Stage!]
@@ -82,7 +132,8 @@ type Query {
 
 type Mutation {
     addStage(input: StageInput): Stage!
-}
+    addGuestPrisma(input: AddGuestPrismaInput) : GuestPrismaType
+    }
 enum StageCategory {
   SOBH
   DOHR

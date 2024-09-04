@@ -10,6 +10,7 @@ import { GuestPrismaType } from "@/app/api/graphql/stage/stage.types";
 import { useCallback, useEffect, useState } from 'react';
 import { useFormState } from "react-dom";
 import { useDispatch, useSelector } from 'react-redux';
+import { useQuery } from "@apollo/client";
 
 const fatickCenter = {
   lat: 14.346076882072916,
@@ -31,7 +32,7 @@ const GeoForm = ({ hosts }: { hosts: GuestPrismaType[] }) => {
     return ({ tokenId: host.tokenId, flag: host.flag, country: host.country, onLine: host.onLine, })
   }));
   const [hostState, setHostState] = useState({ tokenId: 100, flag: '', country: 'DZ', onLine: false });
-
+const [GetAllHosts, { data, loading, error}] =  useQuery(GET_ALL_HOSTS)
   const [countryState, setCountryState] = useState(() => organisations[0]?.country);
 
   const [formState, action] = useFormState<{ country: string, host: string }>(getDataLayerUrls, initialState)

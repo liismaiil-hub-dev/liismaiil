@@ -3,6 +3,7 @@ import { ApolloServer } from "@apollo/server";
 import { startServerAndCreateNextHandler } from "@as-integrations/next";
 import { NextRequest } from "next/server";
 
+import { registerPrisma } from "@/api/graphql/tools";
 import { dbFirestore, FieldValue, timeStamp } from './fb-utils-admin';
 
 import { guestDefs } from "@/api/graphql/guest/guest.graphql.js";
@@ -19,6 +20,7 @@ import { mergeResolvers, mergeTypeDefs } from "@graphql-tools/merge";
 import fs from "fs";
 import path from "path";
 
+
 import _lodash from "lodash";
 
 import connectMongoose from "@/lib/mongoose-db";
@@ -28,14 +30,13 @@ import slug from "slug";
 
 
 const typesArray = [
-  //viewerDefs,
+
   sprintDefs,
   stageDefs,
   guestDefs,
   tabletDefs
 ];
 const resolversArray = [
-  //viewerResolver,
   sprintResolver,
   stageResolver,
   guestResolver,
@@ -132,6 +133,9 @@ const handler = startServerAndCreateNextHandler<NextRequest>(apolloServer, {
 */
     const mongoose = await connectMongoose();
     return {
+
+
+      registerPrisma,
       dbFirestore,
       FieldValue,
       timeStamp,

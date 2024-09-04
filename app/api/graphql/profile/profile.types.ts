@@ -41,10 +41,11 @@ export type CoordsType = {
 
 export type GuestType = {
   tokenId: number; //112
+  host: number;
   flag: string;
+  password?: string;
   price?: number;
   collaboratorId: string;
-  host: number;
   status: LIISMAIIL_STATUS_ENUM;
   enrollmentStatus?: string;
   country?: string;

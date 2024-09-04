@@ -89,8 +89,15 @@ export type GridAyahsJson = {
   group: number | [number];
 };
 
-export type AddGuestInput = GuestType;
-export type UpdateGuestInput = GuestType;
+export type AddGuestPrismaInput = {
+  tokenId: number;
+  host: number;
+  password: string;
+  collaboratorId: string;
+  country: string;
+};
+;
+export type UpdateGuestInput = AddGuestPrismaInput;
 export type GetGridsBySouraNbInput = {
   author: string,
   souraNb: number
@@ -122,7 +129,7 @@ export type StagePrismaType = {
   startOn: string
   createdById: string;
   guests: GuestPrismaType[];
-  ayahs: AyahPrismaType[];
+  ayahs: string;
 }
 export type AyahPrismaType = {
   index: number;
@@ -132,19 +139,21 @@ export type AyahPrismaType = {
   stages: StagePrismaType[]
   slice?: string;
 };
+
 export type GuestPrismaType = {
-  id: number;
+  id?: number;
   tokenId: number;
-  flag: string;
-  collaboratorId: string;
   host: number;
+  flag: string;
+  password?: string;
+  collaboratorId: string;
   status: LIISMAIIL_STATUS_ENUM;
   country: string;
-  onLine: boolean;
+  onLine?: boolean;
   startDate: string;
-  endDate: string;
-  stages: StagePrismaType[];
-  sprints: SprintPrismaType[];
+  endDate?: string;
+  stage?: StagePrismaType[];
+  sprints?: SprintPrismaType[];
 };
 
 export type AyahTabletType = {
@@ -169,3 +178,5 @@ export enum STAGE_CATEGORY_ENUM {
   MEDIUM = 'MEDIUM',
   HIGH = 'HIGH',
 }
+
+

@@ -6,28 +6,28 @@ import { APP_ENV } from '@/store/constants/constants';
 import { readdir } from 'node:fs/promises';
 import path from 'path';
 
-const getStages = async (): Promise<StagePrismaType[]| undefined | any>=> {
+const getStages = async (): Promise<StagePrismaType[] | undefined | any> => {
   'use server'
   if (process.env.APP_ENV === APP_ENV.BOX) {
     const stagesDirName = path.join(process.cwd(), '/store/shares/stages')
     try {
       const files = await readdir(stagesDirName);
       console.log({ files })
-  //    return files
+      //    return files
     } catch (err) {
       console.error(err);
       return []
     }
 
   } else {
-const stages =  await prisma.stage.findMany({})   
-return stages
+    const stages = await prisma.stage.findMany({})
+    return stages
   }
 }
 export default async function SpacePage() {
 
-  const titles = await getStages()
-  console.log({ titles });
+  const stages = await getStages()
+  console.log({ stagesInPage: stages });
 
 
   return (<section id="space-page" className="flex flex-col justify-start items-center  w-full h-screen" >

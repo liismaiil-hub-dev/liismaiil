@@ -1,9 +1,8 @@
-import { withSentryConfig } from '@sentry/nextjs';
+
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
   //largePageDataBytes: 128 * 10000,
-   
  
   reactStrictMode: false,
   env: {
@@ -50,7 +49,7 @@ const nextConfig = {
 };
 
 
-export default withSentryConfig(withSentryConfig(nextConfig, {
+export default nextConfig /* withSentryConfig(withSentryConfig(nextConfig, {
 // For all available options, see:
 // https://github.com/getsentry/sentry-webpack-plugin#options
 
@@ -116,4 +115,4 @@ disableLogger: true,
 // https://docs.sentry.io/product/crons/
 // https://vercel.com/docs/cron-jobs
 automaticVercelMonitors: true,
-});
+}); */

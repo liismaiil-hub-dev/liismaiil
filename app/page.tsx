@@ -8,7 +8,7 @@ import { COOKIE_NAME } from '@/store/constants/constants';
 import { DocumentData, DocumentSnapshot } from 'firebase-admin/firestore';
 import { Metadata } from 'next';
 import { cookies } from 'next/headers';
-import { ProfileTypeData } from "./api/graphql/profile/profile.types";
+import { GuestType, ProfileTypeData } from "./api/graphql/profile/profile.types";
 
 const APP_NAME = "liismaiil-hub";
 const APP_DEFAULT_TITLE = "liismaiil hub App";
@@ -90,9 +90,7 @@ async function getGuestFromCookies(){
     }
     return null
 
-
-    //redirect(`/space/${slug(data.host)}`)
-  } catch (e) {
+} catch (e) {
     console.error(e)
     return null
     //redirect(`/liismaiil/${slug(data.host)}`)
@@ -103,9 +101,7 @@ async function getGuestFromCookies(){
 
 export async function getGuests() {
  try{
-  
-
-    //console.log({ firestore });
+  //console.log({ firestore });
     const snapshot = await dbFirestore.collection('guests').get();
 
     const guests: GuestType[] = [];

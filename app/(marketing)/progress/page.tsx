@@ -14,7 +14,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { APP_ENV } from '@/store/constants/constants'
-import { GridNormalize } from 'app/api/tools/GridNormalize'
+import { GridNormalize } from '@/lib/tools/GridNormalize'
 import { toast } from 'react-toastify'
 
 type AyahWithIndex = {

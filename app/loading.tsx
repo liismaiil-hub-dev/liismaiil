@@ -1,8 +1,9 @@
+import { Spinner } from "@nextui-org/react";
 
 
 function HomeLoading() {
-    return <div className="flex justify-center items-center"> ...loading</div>
-    //<Spinner />
+    return <div className="flex justify-center items-center"> <Spinner /></div>
+
 
 }
 
