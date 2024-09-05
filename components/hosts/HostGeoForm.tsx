@@ -10,7 +10,6 @@ import { GuestPrismaType } from "@/app/api/graphql/stage/stage.types";
 import { useCallback, useEffect, useState } from 'react';
 import { useFormState } from "react-dom";
 import { useDispatch, useSelector } from 'react-redux';
-import { useQuery } from "@apollo/client";
 
 const fatickCenter = {
   lat: 14.346076882072916,
@@ -31,8 +30,8 @@ const GeoForm = ({ hosts }: { hosts: GuestPrismaType[] }) => {
   const [hostsState, setHostsState] = useState(() => hosts.map((host) => {
     return ({ tokenId: host.tokenId, flag: host.flag, country: host.country, onLine: host.onLine, })
   }));
-  const [hostState, setHostState] = useState({ tokenId: 100, flag: '', country: 'DZ', onLine: false });
-const [GetAllHosts, { data, loading, error}] =  useQuery(GET_ALL_HOSTS)
+  const [hostState, setHostState] = useState(100);
+  //const [GetAllHosts, { data, loading, error}] =  useQuery(GET_ALL_HOSTS)
   const [countryState, setCountryState] = useState(() => organisations[0]?.country);
 
   const [formState, action] = useFormState<{ country: string, host: string }>(getDataLayerUrls, initialState)
@@ -70,24 +69,23 @@ const [GetAllHosts, { data, loading, error}] =  useQuery(GET_ALL_HOSTS)
     <div className='flex relative   w-full h-30 justify-center items-center gap-3'>
 
       <form className="loginForm" action={action}>
-        <div className='flex flex-col w-full h-full justify-center items-left gap-3 '>
-          <div className='  flex  justify-end items-center gap-6   rounded-md'>
-            <select onChange={(e) => { setCountryState(e.target.value) }} id="country" value={countryState}
-              name="country" className="w-full bg-gray-50 border border-gray-300
-           text-gray-900 text-sm rounded-lg focus:ring-blue-500
-         focus:border-blue-500 block  p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400
-          dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+        <div className='flex border-1 border-emerald-700/50 p-7 rounded-md flex-col w-full h-full justify-center items-left gap-3 shadow-md '>
+          <div className='flex   justify-between items-center  gap-6 rounded-md'>
+
+            <label htmlFor={'country'} className="text-left w-28"> token: </label>
+            <select onChange={(e) => { setCountryState(e.target.value) }} value={countryState}
+              name="country" id="country" className="px-3  w-full flex justify-end h-11 ring-1 ring-emerald-200/30 rounded-md ">
               {countries.map(count => {
 
                 return (<option key={count} value={count}>{count}</option>)
               })}
             </select>
           </div>
-          <div className='flex  justify-end items-center gap-6 rounded-md'>
-            <select onChange={(e) => { setHostState(e.target.value) }} name={"host"} id="host" value={hostState}
-              className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500
-         focus:border-blue-500 block  p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400
-          dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+          <div className='flex   justify-between items-center  gap-6 rounded-md'>
+
+            <label htmlFor={'host'} className="text-left w-28"> token: </label>
+            <select onChange={(e) => { setHostState(parseInt(e.target.value)) }} name={"host"} id="host" value={hostState}
+              className="px-3  w-full flex justify-end h-11 ring-1 ring-emerald-200/30 rounded-md ">
 
               {hostsState.map(host => {
 

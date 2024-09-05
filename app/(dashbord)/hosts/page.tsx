@@ -11,22 +11,28 @@ const getAllHosts = async (): Promise<GuestPrismaType[] | undefined | any> => {
 }
 
 export default async function HostsPage() {
-   
+
 
     return (
         <div className="flex border-2 h-full w-full p-3  border-violet-500  justify-center items-center gap-3 ">
-            <HostGeoForm  />
-            <HostsList /> 
+            <HostsList />
         </div>
     );
 }
 async function HostsList() {
     const hosts = await getAllHosts();
     console.log({ hosts });
+    if (typeof hosts != 'undefined' && hosts.length > 0) {
+        return (
+            <div className="flex border-2 h-full w-full p-3  border-violet-500  justify-center items-center gap-3 ">
+                <HostGeoForm hosts={hosts} />
+            </div>)
+    }
+    else {
+        return (
+            <div className="flex border-2 h-full w-full p-3  border-violet-500  justify-center items-center gap-3 ">
+                <HostGeoForm hosts={[]} />
+            </div>)
+    }
 
-    return (
-        <div className="flex border-2 h-full w-full p-3  border-violet-500  justify-center items-center gap-3 ">
-            <HostGeoForm hosts={hosts} />
-        </div>
-    );
 }

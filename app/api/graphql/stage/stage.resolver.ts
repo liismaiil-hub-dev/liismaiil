@@ -2,7 +2,7 @@ import { GuestRegisterSchema } from "@/api/graphql/tools";
 import { PrismaClient } from '@prisma/client';
 import { Firestore } from 'firebase-admin/firestore';
 import { LIISMAIIL_STATUS_ENUM } from '../profile/profile.types';
-import { AddGuestPrismaInput, GuestPrismaType, STAGE_CATEGORY_ENUM, StageTypeData } from './stage.types';
+import { AddGuestPrismaInput, AddGuestPrismaOutput, GuestPrismaType, STAGE_CATEGORY_ENUM, StageTypeData } from './stage.types';
 
 
 const stages = async (_: undefined, __: undefined, { dbFirestore }: { dbFirestore: Firestore }): Promise<Array<StageTypeData> | null> => {
@@ -176,41 +176,31 @@ const addGuestPrisma = async (
   _: undefined,
   { input }: { input: AddGuestPrismaInput },
   { registerPrisma, }: { registerPrisma: (arg: any) => any, }
-): Promise<GuestPrismaType | undefined> => {
+): Promise<AddGuestPrismaOutput | undefined> => {
   try {
     console.log({ input });
-
-    const { host, country, password, tokenId, } = input;
-
-    const data = GuestRegisterSchema.parse({
-      tokenId,
-      host,
-      country,
-      password,
-    })
+    const { collaboratorId, host, country, password, tokenId, } = input;
+    const data = GuestRegisterSchema.parse({ tokenId, host, country, password, collaboratorId })
     console.log({ data });
-
     try {
-      const { message } = await registerPrisma({ ...data, collaboratorId: 'O6cKgXEsuPNAuzCMTGeblWW9sWI3' })
-      const { tokenId } = JSON.parse(message)
-      console.log({ tokenId });
+      const { success, tokenId, country, host, flag } = await registerPrisma({ ...data, collaboratorId: collaboratorId ? collaboratorId : 'O6cKgXEsuPNAuzCMTGeblWW9sWI3' })
 
-      return JSON.parse(message) as GuestPrismaType
-
-      //redirect(`/space/${slug(data.host)}`)
+      if (success) {
+        return ({ tokenId, country, host, success, flag })
+      } else {
+        return {
+          tokenId, country, host, success, flag
+        }
+      }
     } catch (e) {
       console.error(e)
       return {
         tokenId: -1,
         host: -1,
         flag: '',
-
-        collaboratorId: '',
-        status: '',
+        success: false,
         country: ''
       }
-      //redirect(`/liismaiil/${slug(data.host)}`)
-
     }
   } catch (error: any) {
     console.error(error);
@@ -290,6 +280,7 @@ const ProductResolver = {
   },
   Mutation: {
     addStage,
+    addStagePrisma,
     addGuestPrisma,
   }
 };

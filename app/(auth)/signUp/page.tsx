@@ -60,14 +60,14 @@ const SignUp = () => {
         console.log({ error });
 
       } else {
-
         AddGuestPrisma({
           variables: {
             input: {
               tokenId,
               host,
               password,
-              country
+              country,
+              collaboratorId:'O6cKgXEsuPNAuzCMTGeblWW9sWI3'
             }
           }
         })
@@ -81,6 +81,10 @@ const SignUp = () => {
   }
   useEffect(() => {
     console.log({ data, error, loading });
+    if (typeof data != 'undefined' && data.addGuestPrisma && !error && !loading) {
+      console.log({ dataGuestPrisma: data.addGuestPrisma });
+
+    }
 
   }, [loading, data, error]);
 
@@ -110,7 +114,7 @@ const SignUp = () => {
     }
   }
   return (<div className='flex relative  flex-col w-full h-screen justify-center items-center gap-3'>
-    <form className="loginForm" onSubmit={(e) => handleSubmit(e)} /* action={action} */>
+    <form onSubmit={(e) => handleSubmit(e)} /* action={action} */>
       <div className='flex border-1 border-emerald-700/50 p-7 rounded-md flex-col w-full h-full justify-center items-left gap-3 shadow-md '>
         {/* <SelectHost countryHandler={(country: string) => handleCountry(country)} hostHandler={(host: number) => handleHost(host)} /> */}
         <div className='flex   justify-between items-center  gap-6 rounded-md'>

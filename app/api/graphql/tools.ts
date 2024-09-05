@@ -1,13 +1,16 @@
 import { dbFirestore } from '@/api/graphql/fb-utils-admin';
 import { GuestType, LIISMAIIL_STATUS_ENUM, PROFILE_STATUS_ENUM } from '@/app/api/graphql/profile/profile.types';
 import prisma from "@/lib/prisma-db";
+import { COOKIE_NAME } from '@/store/constants/constants';
 import { FLAG_FILES } from '@/store/constants/flagArray';
 import { DocumentData } from '@google-cloud/firestore';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import _ from 'lodash';
 import moment from 'moment';
+import { cookies } from 'next/headers';
 import { z } from "zod";
+
 const SECRET = process.env.NEXT_PUBLIC_JWT_SECRET!
 
 
@@ -26,15 +29,18 @@ export const GuestRegisterSchema = z.object({
     host: z.number().int().lte(100),
     password: z.string(),
     country: z.string().max(3),
+    collaboratorId: z.string().max(35),
 });
 
 
 
-export const createTokenForGuest = async (tokenId: number) => {
-    const token = jwt.sign({ id: tokenId }, SECRET)
+export const createTokenForGuest = ({ tokenId, host, collaboratorId, country, flag, status, onLine
+}: {
+    tokenId: number, host: number, collaboratorId: string, country: string, flag: string, status: LIISMAIIL_STATUS_ENUM, onLine: boolean
+}) => {
+    const token = jwt.sign({ tokenId, host, collaboratorId, country, flag, status, onLine }, SECRET)
     return token
 }
-
 export const getGuestFromToken = async (token: string) => {
     try {
         console.log({ tokenGetGuestFromToken: token });
@@ -166,8 +172,6 @@ export const signup = async ({
         } else {
             const { host: hostRegistred, country: countryRegistred,
                 collaboratorId: collaboratorIdRegistred, password: passRegistred } = guestSnapshot.data as GuestType | DocumentData
-
-
             if (await verifyPassword(password, passRegistred) === true) {
 
                 return {
@@ -232,71 +236,79 @@ export const registerPrisma = async ({
     host: number,
     country: string,
     collaboratorId: string,
-}): Promise<{ message: string } | undefined> => {
+}): Promise<{
+    success: boolean,
+    tokenId: number,
+    host: number
+    country: string,
+    flag: string,
+} | undefined> => {
     console.log({
         host,
         tokenId,
         country,
         collaboratorId,
         password,
-});
-   
+    });
+
     const guestInDb = await prisma.guest.findFirst({ where: { tokenId: tokenId } });
 
     try {
-
         if (!guestInDb) {
             const randomFlag = FLAG_FILES[_.random(FLAG_FILES.length)]
             const hashedPass = await hashPassword(password) as string;
 
             const guestPassword = await hashPassword('123') as string;
+            const collaborator = collaboratorId ? collaboratorId : 'O6cKgXEsuPNAuzCMTGeblWW9sWI3';
+            const status = collaborator === 'O6cKgXEsuPNAuzCMTGeblWW9sWI3' ? LIISMAIIL_STATUS_ENUM.HOST :
+                LIISMAIIL_STATUS_ENUM.GUEST;
+            const countryTmp = country ? country : 'OM';
+
             const newGuest = await prisma.guest.create({
                 data: {
                     tokenId: tokenId,
                     host: host,
                     password: hashedPass,
-                    collaboratorId: collaboratorId ? collaboratorId : 'O6cKgXEsuPNAuzCMTGeblWW9sWI3',
-                    country: country ? country : 'OM',
+                    collaboratorId: collaborator,
+                    country: countryTmp,
                     flag: randomFlag,
                     guestPassword: guestPassword,
-                    status: collaboratorId === 'O6cKgXEsuPNAuzCMTGeblWW9sWI3' ? LIISMAIIL_STATUS_ENUM.HOST : LIISMAIIL_STATUS_ENUM.GUEST,
+                    status,
                     onLine: true,
-                    startDate: new Date().toISOString(),
-                    endDate: moment(Date()).add(1, 'years').toISOString(),
+                    startDate: moment().toISOString(),
+                    endDate: moment().add(1, 'years').toISOString(),
                 }
             })
             console.log({ newGuest });
-            // cookies().set(COOKIE_NAME, createTokenForGuest(tokenId))
+            cookies().set(COOKIE_NAME, createTokenForGuest({
+                tokenId, host, collaboratorId: collaborator, country: countryTmp, flag: randomFlag, status,
+                onLine: true
+            }))
             return {
-                message: JSON.stringify({
-                    message: 'success registration',
-                    success: true,
-                    tokenId,
-                    country,
-                    host
-                })
+                success: true,
+                tokenId,
+                country,
+                host, flag: randomFlag,
             }
-        } else {
-            const { tokenId, host, password: passRegistred } = guestInDb
+        }
+        else {
+            const { tokenId, host, password: passRegistred, country, flag } = guestInDb
             const verif = await verifyPassword(password, passRegistred)
             if (verif) {
                 if (typeof tokenId != 'undefined') {
-                    return { message: JSON.stringify({ tokenId: 0, collaboratorId: 0, flag: '', host: 0, success: false, message: 'you already registred please sign in ' }) }
-                } else {
-                    return {
-                        message: JSON.stringify({ success: false, message: 'already regIstred try to sign in again', tokenId: 0, collaboratorId: 0, flag: '', host: 0 })
-                    };
+                    return ({ tokenId, host, success: true, country, flag })
                 }
-            }
+            } else {
+                return { success: false, tokenId: 0, host: 0, country: '', flag: '' }
+            };
         }
+
+
     } catch (error: any) {
         console.error(error);
-        return {
-            message: JSON.stringify({
-                tokenId: 0, collaboratorId: 0, flag: '', host: 0
-            })
-        }
+        return { tokenId: 0, country: '', flag: '', host: 0, success: false }
     }
+
 }
 
 export const hashPassword = async (password: string) => {

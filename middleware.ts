@@ -7,8 +7,8 @@ export function middleware(request: NextRequest) {
     //
     const token = cookies().get(COOKIE_NAME)
     console.log({ middleWaretoken: token });
-    
-    
+
+
     const { isBot } = userAgent(request)
     if (isBot) {
 
@@ -39,5 +39,5 @@ export function middleware(request: NextRequest) {
 
 // See "Matching Paths" below to learn more
 export const config = {
-    matcher: ['/sprints/:path*', '/stages/:path*', '/hosts/:path*']
+    matcher: ['/sprints/:path*', '/stages/:path*',]
 }

@@ -24,13 +24,8 @@ const GuestSignInSchema = z.object({
 
 
 export const registerGuest = async (prevState: any, formData: FormData) => {
-<<<<<<< HEAD
-  const data = authSchema.parse({
-    country: formData.get('country'),
-=======
   const data = GuestRegisterSchema.parse({
     country: formData.get('tokenId'),
->>>>>>> features/space
     host: formData?.get('host'),
     tokenId: formData.get('tokenId'),
     password: formData.get('password'),
@@ -114,24 +109,27 @@ export const registerGuestPrisma = async (formData: FormData,): Promise<{ messag
   }
 }
 
-export const signinGuestPrisma = async (formData: FormData,) => {
+export const signinGuestPrisma = async (formData: FormData) => {
   const data = GuestSignInSchema.parse({
-    tokenId: formData.get('tokenId'),
+    tokenId: parseInt(formData.get('tokenId') as string),
     password: formData.get('password'),
-    host: formData.get('host'),
+    host: parseInt(formData.get('host') as string),
   })
 
   try {
-    console.log({ data });
+
 
     const { tokenId, collaboratorId, host, flag, message, success } = await signinPrisma(data)
-    if (tokenId !== 0 && collaboratorId !== 0 && host !== 0) {
-      cookies().set(COOKIE_NAME, (tokenId).toString())
+    if (success) {
+      console.log({ tokenId, collaboratorId, host, flag, message, success });
 
-      return { message: JSON.stringify({ collaboratorId, flag, host, tokenId }) }
-    } else {
-      return {
-        message: JSON.stringify({ tokenId: 0, collaboratorId: 0, flag: '', host: 0 })
+      if (tokenId !== -1 && collaboratorId !== -1 && host !== -1) {
+        cookies().set(COOKIE_NAME, createTokenForGuest(tokenId).toString())
+        redirect('/stages')
+        // return { message: JSON.stringify({ collaboratorId, flag, host, tokenId }) }
+      } else {
+        redirect('/')
+
       }
     }
   } catch (e) {

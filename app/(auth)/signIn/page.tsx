@@ -2,9 +2,8 @@
 
 import { signinGuestPrisma } from "@/actions/auth";
 import Link from 'next/link';
-import { redirect } from "next/navigation";
-import { useEffect, useState } from "react";
-import { useFormState, useFormStatus } from "react-dom";
+import { useState } from "react";
+import { useFormStatus } from "react-dom";
 import { useDispatch } from 'react-redux';
 import { toast } from "react-toastify";
 import { z } from "zod";
@@ -25,21 +24,22 @@ export const GuestSignInSchema = z.object({
 
 
 const SignIn = () => {
+  /* 
   const [formState, action] = useFormState<{
     message: string,
   }>(signinGuestPrisma, initialState)
-
+ */
   const dispatch = useDispatch()
   const { pending } = useFormStatus()
   const [guest, setGuest] = useState({
     tokenId: 0, host: 0, password: ""
   });
-  useEffect(() => {
+  /* useEffect(() => {
 
     console.log({ formState });
 
   }, [formState]);
-
+ */
   const [tokenId, setTokenId] = useState<number | undefined>();
   const [host, setHost] = useState<number | undefined>(0);
   const [country, setCountry] = useState<string | undefined>('OM');
@@ -72,20 +72,20 @@ const SignIn = () => {
   }
 
   return (<div className='flex relative  flex-col w-full h-screen justify-center items-center gap-3'>
-    <form className="loginForm" action={action}>
-      <div className='flex flex-col w-full h-full justify-center items-left gap-3 '>
+    <form action={signinGuestPrisma}>
+      <div className='flex border-1 border-emerald-700/50 p-7 rounded-md flex-col w-full h-full justify-center items-left gap-3 shadow-md '>
 
         <div className='flex   justify-between items-center  gap-6 rounded-md'>
           <label htmlFor={'token'} className="text-left w-28 "> token: </label>
-          <input onChange={(e) => setTokenId(parseInt(e.target.value))} type="text" name={'tokenId'} id={'token'} className="border   w-full flex justify-end  rounded-md " required />
+          <input onChange={(e) => setTokenId(parseInt(e.target.value))} type="text" name={'tokenId'} id={'token'} className="px-3  w-full flex justify-end h-11 ring-1 ring-emerald-200/30 rounded-md " required />
         </div>
         <div className='flex justify-between items-center  gap-6 rounded-md'>
           <label htmlFor={'host'} className="text-left w-28" > host: </label>
-          <input onChange={(e) => setHost(parseInt(e.target.value))} type="text" name={'host'} id={'hostId'} className="border text-blue-300  w-full flex justify-end  rounded-md " required />
+          <input onChange={(e) => setHost(parseInt(e.target.value))} type="text" name={'host'} id={'hostId'} className="px-3  w-full flex justify-end h-11 ring-1 ring-emerald-200/30 rounded-md " required />
         </div>
         <div className='flex justify-between items-center  gap-6 rounded-md'>
           <label htmlFor={'password'} className="text-left w-28 "> password:</label>
-          <input onChange={(e) => setPassword(e.target.value)} type="password" name={'password'} id={'password'} className="border  w-full flex justify-end  rounded-md " required />
+          <input onChange={(e) => setPassword(e.target.value)} type="password" name={'password'} id={'password'} className="px-3  w-full flex justify-end h-11 ring-1 ring-emerald-200/30 rounded-md " required />
         </div>
         <div className='flex justify-center items-center '>
 
@@ -99,16 +99,13 @@ const SignIn = () => {
    text-center p-2'> {`If it s your first connexion, Get a guest account -> `}</Link>
 
         </div>
-        {formState && formState?.tokenId &&
+        {/*         {formState && formState?.tokenId &&
           toast.info(`${JSON.parse(formState.tokenId)['tokenId']} successfully signin`) && redirect(`/stages/${formState.tokenId}`)}
-
+ */}
       </div>
     </form>
   </div>
   )
 }
-{/* Login.getLayout = function getLayout({ page, pageProps }) {
-  return ( {page}</AppLayout>)
-}
- */}
+
 export default SignIn;

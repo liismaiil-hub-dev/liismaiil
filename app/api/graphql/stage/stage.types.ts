@@ -1,4 +1,4 @@
-import { GuestType, LIISMAIIL_STATUS_ENUM } from "@/api/graphql/profile/profile.types";
+import { LIISMAIIL_STATUS_ENUM } from "@/api/graphql/profile/profile.types";
 
 export type SprintStateProps = {
   sprints: SprintPrismaType[],
@@ -139,7 +139,13 @@ export type AyahPrismaType = {
   stages: StagePrismaType[]
   slice?: string;
 };
-
+export type AddGuestPrismaOutput = {
+  success: boolean,
+  tokenId: number,
+  country: string,
+  host: number,
+  flag: string,
+}
 export type GuestPrismaType = {
   id?: number;
   tokenId: number;
@@ -155,7 +161,10 @@ export type GuestPrismaType = {
   stage?: StagePrismaType[];
   sprints?: SprintPrismaType[];
 };
-
+export type RegisterPrismaGridsMenuInput = {
+  souraName: string;
+  souraNb: number;
+}
 export type AyahTabletType = {
   order: number;
   text: string;

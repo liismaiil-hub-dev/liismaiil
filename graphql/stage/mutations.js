@@ -3,23 +3,17 @@ import { gql } from '@apollo/client';
 export const ADD_GUEST_PRISMA = gql`
   mutation AddGuestPrisma($input:AddGuestPrismaInput ) {
     addGuestPrisma(input: $input) {
-     tokenId
-  host
-  flag
-  password
-  collaboratorId
-  status
-  country
-  onLine
-  startDate
-  endDate
+      tokenId
+      host
+      flag
+      country
+      success
     }
   }
 `;
-
-export const UPDATE_DOMAIN = gql`
-  mutation UpdateDomain($input: UpdateDomainInput) {
-    updateDomain(input: $input) {
+export const UPDATE_STAGE = gql`
+  mutation UpdateStage($input: UpdateStageInput) {
+    updateStage(input: $input) {
       title
       titleSlug
       viewers {
@@ -37,8 +31,8 @@ export const UPDATE_DOMAIN = gql`
   }
 `;
 export const ADD_VIEWER = gql`
-  mutation AddViewerToDomain($input: AddViewerInput) {
-    addViewerToDomain(input: $input) {
+  mutation AddViewerToStage($input: AddViewerInput) {
+    addViewerToStage(input: $input) {
       title
       titleSlug
       viewers {
@@ -56,8 +50,8 @@ export const ADD_VIEWER = gql`
   }
 `;
 
-export const REMOVE_DOMAIN = gql`
-  mutation RemoveDomain {
-    removeDomain
+export const REMOVE_STAGE = gql`
+  mutation RemoveStage {
+    removeStage
   }
 `;

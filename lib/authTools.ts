@@ -14,11 +14,32 @@ import "server-only";
 
 const SECRET = process.env.NEXT_PUBLIC_JWT_SECRET!
 
-export const createTokenForGuest = (tokenId: number) => {
-  const token = jwt.sign({ id: tokenId }, SECRET)
+export const createTokenForGuest = ({ tokenId, host, collaboratorId, country, flag, status, onLine
+}: {
+  tokenId: number, host: number, collaboratorId: string, country: string, flag: string, status: LIISMAIIL_STATUS_ENUM, onLine: boolean
+}) => {
+  const token = jwt.sign({ tokenId, host, collaboratorId, country, flag, status, onLine }, SECRET, { expiresIn: '1d' });
   return token
 }
+export const logoutGuestFromPrisma = async (tokenId: number) => {
+  try {
+    console.log({ tokenGetGuestFromToken: tokenId });
 
+    //const tokenId = jwt.verify(token,SECRET)
+
+    const updatedOnline = await prisma.guest.update({
+      where: { tokenId: tokenId },
+      data: {
+        onLine: false
+      },
+    })
+    return { success: true }
+
+  } catch (error) {
+    console.log({ error });
+    return { success: false }
+  }
+}
 export const getGuestFromToken = async (token: string) => {
   try {
     console.log({ tokenGetGuestFromToken: token });
@@ -182,19 +203,18 @@ export const signinPrisma = async ({ tokenId, password }: {
   const _guest = await prisma.guest.findFirst({ where: { tokenId } });
   try {
     if (_guest) {
-      console.log({ _guest });
 
       const { tokenId, collaboratorId, flag, host, password: dbPassword } = _guest;
       const verif = await verifyPassword(password, dbPassword)
       if (verif) {
 
-        return { success: true, tokenId, collaboratorId, flag, host, message: 'true' }
+        return { success: true, tokenId, collaboratorId, flag, host, }
       };
 
     } else {
       return {
-        tokenId: 0, collaboratorId: 0, flag: '', host: 0, success: true,
-        message: 'token dont exist '
+        tokenId: -1, collaboratorId: 0, flag: '', host: -1, success: false,
+        message: 'tokenId dont exist '
       }
     }
 
@@ -226,23 +246,31 @@ export const registerPrisma = async ({
       const hashedPass = await hashPassword(password) as string;
 
       const guestPassword = await hashPassword('123') as string;
+      const collaborator = collaboratorId ? collaboratorId : 'O6cKgXEsuPNAuzCMTGeblWW9sWI3';
+      const status = collaborator === 'O6cKgXEsuPNAuzCMTGeblWW9sWI3' ? LIISMAIIL_STATUS_ENUM.HOST :
+        LIISMAIIL_STATUS_ENUM.GUEST;
+      const countryTmp = country ? country : 'OM';
+
       const newGuest = await prisma.guest.create({
         data: {
           tokenId: tokenId,
           host: host,
           password: hashedPass,
-          collaboratorId: collaboratorId ? collaboratorId : 'O6cKgXEsuPNAuzCMTGeblWW9sWI3',
-          country: country ? country : 'OM',
+          collaboratorId: collaborator,
+          country: countryTmp,
           flag: randomFlag,
           guestPassword: guestPassword,
-          status: collaboratorId === 'O6cKgXEsuPNAuzCMTGeblWW9sWI3' ? LIISMAIIL_STATUS_ENUM.HOST : LIISMAIIL_STATUS_ENUM.GUEST,
+          status,
           onLine: true,
           startDate: new Date().toISOString(),
           endDate: moment(Date()).add(1, 'years').toISOString(),
         }
       })
       console.log({ newGuest });
-      cookies().set(COOKIE_NAME, createTokenForGuest(tokenId))
+      cookies().set(COOKIE_NAME, createTokenForGuest({
+        tokenId, host, collaboratorId: collaborator, country: countryTmp, flag: randomFlag, status,
+        onLine: true
+      }))
       return {
         message: JSON.stringify({
           message: 'success registration',

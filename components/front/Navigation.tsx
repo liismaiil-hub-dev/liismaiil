@@ -1,9 +1,11 @@
 'use client'
 //import Logo from '@/components/auth/Logo-ISM';
 import Logo from '@/components/front/Logo';
+import { COOKIE_NAME } from '@/store/constants/constants';
 import { guestActions } from "@/store/slices/guestSlice";
 import { RootStateType } from '@/store/store';
 import { cn } from '@nextui-org/react';
+import Cookies from "js-cookie";
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
@@ -14,6 +16,7 @@ import { SiCrunchyroll, SiMastercomfig, SiProgress } from "react-icons/si";
 import { useDispatch, useSelector } from 'react-redux';
 import GuestModal from './GuestModal';
 import ThemeSelector from "./ThemeSelector";
+
 function Navigation() {
     const [showMenu, setShowMenu] = useState<Boolean>(false)
     const dispatch = useDispatch()
@@ -23,6 +26,11 @@ function Navigation() {
     const isRoute = (route: string) => {
         return pathname.split('/')[1] === route
     }
+    useEffect(() => {
+        const _guest = Cookies.get(COOKIE_NAME)
+        console.log({ _guest });
+
+    }, []);
 
     useEffect(() => {
         //    console.log(showMenu) 
@@ -42,7 +50,7 @@ function Navigation() {
     console.log({ guest });
 
     return (
-        <nav className={`container  flex  justify-between bg-emerald-100-100/50 h-24 
+        <nav className={`container  flex  justify-between bg-emerald-100/30 h-24 
         items-center mx-auto w-full z-10  border-2 border-blue-200/50 rounded-sm shadow-md`} >
             <section className=' hidden md:flex justify-center items-center  p-3 ' >
                 <Logo />

@@ -19,7 +19,7 @@ type StageGrid {
   grid: Int
   group: Int
 }
-  input StageGridInput {
+input StageGridInput {
   id: Int
   arabName: String
   title: String
@@ -76,7 +76,6 @@ type Ayah {
   order: Int
   text: String
 }
-
 input UpdateStageInput {
    id: Int
   title: String
@@ -104,6 +103,18 @@ input StageInput {
   sprints: [String]
   createdAt: String
   }
+input StagePrismaInput {
+   id: Int
+  stageId: Int
+  createdAt: String
+  souraName: String
+  souraNb: Int
+  grid: Int
+  startOn: String
+  createdById: String
+  
+  ayahs: String
+  }
 
 input AddGuestPrismaInput {
   tokenId: Int!
@@ -112,12 +123,29 @@ input AddGuestPrismaInput {
   country: String
   collaboratorId:String
 }
+type  AddGuestPrismaOutput {
+  tokenId: Int!
+  flag: String
+  host:Int
+  country: String
+  success:Boolean
+ }
 
 input RemoveStageInput  {
   int: Int
   authorId: Int
 }
+  
+type RegisterPrismaGridsMenuOutput{
+    souraName:String
+    souraNb:Int
+}
 
+
+input Input  {
+  int: Int
+  authorId: Int
+}
 type SuccessOutput {
   success: Boolean
   message: String
@@ -132,16 +160,13 @@ type Query {
 
 type Mutation {
     addStage(input: StageInput): Stage!
-    addGuestPrisma(input: AddGuestPrismaInput) : GuestPrismaType
+    addStagePrisma(input: StagePrismaInput): StagePrismaType!
+    addGuestPrisma(input: AddGuestPrismaInput) : AddGuestPrismaOutput
     }
 enum StageCategory {
   SOBH
   DOHR
-  ASR
-  MAGHRB
-  ICHA
-  LOW
-  MEDIUM
+  ADIUM
   HIGH
  }
 `;

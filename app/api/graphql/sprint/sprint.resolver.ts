@@ -3,7 +3,7 @@ import {
   GridAyahsJson,
   GridBrut,
   GridType,
-  SprintType
+  SprintPrismaType
 } from '@/api/graphql/stage/stage.types';
 const getGrids = async (
   _: undefined,

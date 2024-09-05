@@ -24,12 +24,11 @@ model Guest {
   onLine         Boolean
   startDate      DateTime @default(now())
   endDate        String
-  stages         Stage[]
+  stages        Stage[]
   sprints        Sprint[]
   favorites         Favorite[]
-  @@unique([ country,collaboratorId, onLine])
-
-}
+  
+  }
 model Favorite {
   id  Int    @id @default(autoincrement()) 
   hostId Int
@@ -49,11 +48,12 @@ model Stage {
   grid        Int
   startOn     DateTime
   createdById String
-  guests      Guest[]
+  
   ayahs       String
   sprints     Sprint[]
-  @@unique([ createdById,souraNb,startOn])
+  @@unique([ createdById,souraNb])
 
+  Guest Guest[]
 }
 
 
@@ -69,5 +69,5 @@ model Sprint {
   published   Boolean
   guests      Guest[]
   stages      Stage[]
-  @@unique([createdById, souraNb, grid,createdAt])
+  @@unique([createdById, souraNb ])
 }

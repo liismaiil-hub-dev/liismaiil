@@ -2,14 +2,13 @@
 import Organisations from "@/components/front/Organisations";
 //import MapComponent from '@/components/maps/MapComponent';
 import { dbFirestore } from '@/api/graphql/fb-utils-admin';
-import { GuestPrismaType } from '@/api/graphql/stage/stage.types';
-import { getGuestFromToken } from '@/lib/authTools';
 import { COOKIE_NAME } from '@/store/constants/constants';
 import { DocumentData, DocumentSnapshot } from 'firebase-admin/firestore';
+import jwt from 'jsonwebtoken';
 import { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import { GuestType, ProfileTypeData } from "./api/graphql/profile/profile.types";
-
+const SECRET = process.env.NEXT_PUBLIC_JWT_SECRET!
 const APP_NAME = "liismaiil-hub";
 const APP_DEFAULT_TITLE = "liismaiil hub App";
 const APP_TITLE_TEMPLATE = "%s |  liismaiil hub App";
@@ -60,9 +59,9 @@ export const revalidate = 5;
 export default async function Home() {
   const collaborators = await getCollaborators()
   const guests = await getGuests()
-  const guest =  await getGuestFromCookies()
-  console.log({guest});
-  
+  const guest = await getGuestFromCookies()
+  console.log({ guest });
+
   /* 
   if (process.env.APP_ENV === APP_ENV.BOX) {
     const parsedOrganisations = JSON.parse(organisations)
@@ -72,36 +71,39 @@ export default async function Home() {
         <Organisations guest={guest!} guests={parsedGuests} organisations={parsedOrganisations} />
        )
   } else { */
-    return (
-        <Organisations guest={guest} guests={guests} collaborators={collaborators} />
-      
-    )
-  
+  return (
+    <Organisations guest={guest} guests={guests} collaborators={collaborators} />
+
+  )
+
 
 }
-async function getGuestFromCookies(){
- 
+async function getGuestFromCookies() {
+
   try {
     const token = cookies().get(COOKIE_NAME)
     if (typeof token !== 'undefined') {
-        
-      const guest = await getGuestFromToken(token.value)
+      const guest = jwt.verify(token.value, SECRET)
+
+      //const guest = await getGuestFromTokenPrisma(parseInt(tokenId))
+      console.log({ guest });
+
       return guest
     }
     return null
 
-} catch (e) {
+  } catch (e) {
     console.error(e)
     return null
     //redirect(`/liismaiil/${slug(data.host)}`)
-}
+  }
 
 
 }
 
 export async function getGuests() {
- try{
-  //console.log({ firestore });
+  try {
+    //console.log({ firestore });
     const snapshot = await dbFirestore.collection('guests').get();
 
     const guests: GuestType[] = [];
@@ -117,9 +119,9 @@ export async function getGuests() {
   }
 }
 
- async function getCollaborators() {
- try{
-  const snapshot = await dbFirestore.collection('profiles').where('status', 'in',['ORGA', 'ADMIN', 'LIIS'] ).get();
+async function getCollaborators() {
+  try {
+    const snapshot = await dbFirestore.collection('profiles').where('status', 'in', ['ORGA', 'ADMIN', 'LIIS']).get();
     const collaborators: ProfileTypeData[] = [];
     snapshot.forEach(async (doc: DocumentSnapshot<GuestType | DocumentData>) => {
       const coolaborat = await doc?.data()!;
@@ -133,18 +135,17 @@ export async function getGuests() {
   }
 }
 
- 
- /**
-  *  if (process.env.APP_ENV === APP_ENV.BOX) {
-    try {
-      const guests = await fs.readFile(process.cwd() + '/store/shares/guests.json', 'utf8');
-      return guests
 
-    } catch (error) {
-      console.log(error);
-      return `[]`
-    }
-  }
-  */
-  
-  
+/**
+ *  if (process.env.APP_ENV === APP_ENV.BOX) {
+   try {
+     const guests = await fs.readFile(process.cwd() + '/store/shares/guests.json', 'utf8');
+     return guests
+
+   } catch (error) {
+     console.log(error);
+     return `[]`
+   }
+ }
+ */
+
