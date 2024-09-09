@@ -226,6 +226,7 @@ export const signinPrisma = async ({ tokenId, password }: {
 
 export const registerPrisma = async ({
     host,
+    status,
     tokenId,
     country,
     collaboratorId,
@@ -234,12 +235,14 @@ export const registerPrisma = async ({
     tokenId: number,
     password: string,
     host: number,
+    status: LIISMAIIL_STATUS_ENUM,
     country: string,
     collaboratorId: string,
 }): Promise<{
     success: boolean,
     tokenId: number,
     host: number
+    status: LIISMAIIL_STATUS_ENUM,
     country: string,
     flag: string,
 } | undefined> => {
@@ -260,8 +263,7 @@ export const registerPrisma = async ({
 
             const guestPassword = await hashPassword('123') as string;
             const collaborator = collaboratorId ? collaboratorId : 'O6cKgXEsuPNAuzCMTGeblWW9sWI3';
-            const status = collaborator === 'O6cKgXEsuPNAuzCMTGeblWW9sWI3' ? LIISMAIIL_STATUS_ENUM.HOST :
-                LIISMAIIL_STATUS_ENUM.GUEST;
+            
             const countryTmp = country ? country : 'OM';
 
             const newGuest = await prisma.guest.create({
@@ -288,6 +290,7 @@ export const registerPrisma = async ({
                 success: true,
                 tokenId,
                 country,
+                status,
                 host, flag: randomFlag,
             }
         }
@@ -296,17 +299,15 @@ export const registerPrisma = async ({
             const verif = await verifyPassword(password, passRegistred)
             if (verif) {
                 if (typeof tokenId != 'undefined') {
-                    return ({ tokenId, host, success: true, country, flag })
+                    return ({ tokenId, host, success: true, country, flag, status })
                 }
             } else {
-                return { success: false, tokenId: 0, host: 0, country: '', flag: '' }
+                return { success: false, tokenId: 0, host: 0, country: '', flag: '', status:LIISMAIIL_STATUS_ENUM.GUEST }
             };
-        }
-
-
+        }   
     } catch (error: any) {
         console.error(error);
-        return { tokenId: 0, country: '', flag: '', host: 0, success: false }
+        return { tokenId: 0, country: '', flag: '', host: 0, success: false, status: LIISMAIIL_STATUS_ENUM.GUEST }
     }
 
 }

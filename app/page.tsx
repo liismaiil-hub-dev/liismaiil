@@ -2,12 +2,15 @@
 import Organisations from "@/components/front/Organisations";
 //import MapComponent from '@/components/maps/MapComponent';
 import { dbFirestore } from '@/api/graphql/fb-utils-admin';
+import { getGuestFromTokenPrisma } from "@/lib/authTools";
+import prisma from "@/lib/prisma-db";
 import { COOKIE_NAME } from '@/store/constants/constants';
 import { DocumentData, DocumentSnapshot } from 'firebase-admin/firestore';
 import jwt from 'jsonwebtoken';
 import { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import { GuestType, ProfileTypeData } from "./api/graphql/profile/profile.types";
+
 const SECRET = process.env.NEXT_PUBLIC_JWT_SECRET!
 const APP_NAME = "liismaiil-hub";
 const APP_DEFAULT_TITLE = "liismaiil hub App";
@@ -58,10 +61,25 @@ export const revalidate = 5;
 /**HOME COMPONENT */
 export default async function Home() {
   const collaborators = await getCollaborators()
-  const guests = await getGuests()
+  const hosts = await getHosts()
   const guest = await getGuestFromCookies()
-  console.log({ guest });
+  //console.log({ hosts, collaborators });
+  const localOnline = await getLocalGuests();
+  console.log({ localOnline });
 
+  const hostsPrisma = hosts.map((guest: GuestType) => {
+
+    return {
+
+      tokenId: guest.tokenId,
+      host: guest.host,
+      flag: guest.flag,
+      collaboratorId: guest.collaboratorId,
+      status: guest.status,
+      country: guest.country ? guest.country : 'OM',
+    }
+  }
+  )
   /* 
   if (process.env.APP_ENV === APP_ENV.BOX) {
     const parsedOrganisations = JSON.parse(organisations)
@@ -72,23 +90,22 @@ export default async function Home() {
        )
   } else { */
   return (
-    <Organisations guest={guest} guests={guests} collaborators={collaborators} />
-
+    <Organisations guestPrisma={guest} localOnline={localOnline} hosts={hostsPrisma} collaborators={collaborators} />
   )
-
-
 }
 async function getGuestFromCookies() {
 
   try {
     const token = cookies().get(COOKIE_NAME)
     if (typeof token !== 'undefined') {
-      const guest = jwt.verify(token.value, SECRET)
+      const _guest = jwt.verify(token.value, SECRET)
 
-      //const guest = await getGuestFromTokenPrisma(parseInt(tokenId))
-      console.log({ guest });
+      console.log({ _guest });
 
-      return guest
+      const guest = await getGuestFromTokenPrisma(_guest.tokenId!)
+
+
+      return _guest
     }
     return null
 
@@ -101,7 +118,7 @@ async function getGuestFromCookies() {
 
 }
 
-export async function getGuests() {
+export async function getHosts() {
   try {
     //console.log({ firestore });
     const snapshot = await dbFirestore.collection('guests').get();
@@ -111,8 +128,19 @@ export async function getGuests() {
       const guest = await doc?.data()!;
       guests.push(guest as GuestType);
     });
+    console.log({ hosts: guests });
 
     return guests;
+  } catch (error: any) {
+    console.log({ error });
+    throw new Error(error);
+  }
+}
+export async function getLocalGuests() {
+  try {
+    //console.log({ firestore });
+    const _onlinGuests = await prisma.guest.findMany({ where: { onLine: true } });
+    return _onlinGuests;
   } catch (error: any) {
     console.log({ error });
     throw new Error(error);
@@ -127,8 +155,10 @@ async function getCollaborators() {
       const coolaborat = await doc?.data()!;
       collaborators.push(coolaborat as ProfileTypeData);
     });
+    console.log({ collaborators });
 
     return collaborators;
+
   } catch (error: any) {
     console.log({ error });
     throw new Error(error);

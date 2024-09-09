@@ -29,16 +29,16 @@
     @apply bg-emerald-800/50 text-blue-50 ;
   }
   .selected-navig-mobile {
-    @apply bg-blue-500 text-blue-300 rounded-xl  shadow-lg;
+    @apply bg-yellow-400/20 text-blue-300 rounded-xl px-3 border-2 border-blue-700/30 shadow-lg;
   }
   .navig-mobile {
-    @apply flex  justify-center items-center p-1 transition-colors ease-in-out cursor-pointer;
+    @apply flex  justify-center text-blue-300  text-xl items-center p-1 transition-colors ease-in-out cursor-pointer;
   }
   .navig-mobile-svg {
-    @apply flex justify-center text-center items-center;
+    @apply flex justify-center text-center text-natTertiary/80 items-center;
   }
   .nanvig-mobile-txt {
-    @apply text-center  tracking-wide;
+    @apply text-center  tracking-wide font-light ;
   }
   .mobile-menu-item {
     @apply flex  p-4 justify-center relative h-full items-center text-blue-900;

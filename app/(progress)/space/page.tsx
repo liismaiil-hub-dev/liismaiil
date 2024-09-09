@@ -27,7 +27,7 @@ const getStages = async (): Promise<StagePrismaType[] | undefined | any> => {
 export default async function SpacePage() {
 
   const stages = await getStages()
-  console.log({ stagesInPage: stages });
+  console.log({ stagesInSpacePage: stages });
 
 
   return (<section id="space-page" className="flex flex-col justify-start items-center  w-full h-screen" >

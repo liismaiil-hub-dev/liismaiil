@@ -48,11 +48,11 @@ const config: Config = {
         zoomIn: "zoomIn 1000ms ease-in-out ",
       },
       colors: {
-        natheader: "#DEF9C4",
-        natprimary: "#9CDBA6",
-        natsecondary: "#50B498",
-        nattertiary: "#468585",
-        natquadrenary: "#808836",
+        natHeader: "#DEF9C4",
+        natPrimary: "#9CDBA6",
+        natSecondary: "#50B498",
+        natTertiary: "#468585",
+        natQuadrenary: "#808836",
 
         natWarmheader: "#DEF9C4",
         natWarmprimary: "#FFBF00",

@@ -3,7 +3,7 @@ export type ProfileTypeData = {
   _id: string;
   email: string;
   login: string;
-  token?: number;
+  
   tokenId: number;
   vierified?: boolean;
   phone?: string;
@@ -20,6 +20,7 @@ export type ProfileTypeData = {
       rate: number;
     }
   ];
+  
   avatar: ImageType;
   guests: GuestType[];
   messages?: MessageTypeData[];

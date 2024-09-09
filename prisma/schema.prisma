@@ -27,7 +27,7 @@ model Guest {
   stages        Stage[]
   sprints        Sprint[]
   favorites         Favorite[]
-  
+  @@index([tokenId]) 
   }
 model Favorite {
   id  Int    @id @default(autoincrement()) 
@@ -46,14 +46,13 @@ model Stage {
   souraName   String
   souraNb     Int
   grid        Int
-  startOn     DateTime
+  startOn     DateTime?
   createdById String
-  
   ayahs       String
   sprints     Sprint[]
-  @@unique([ createdById,souraNb])
-
   Guest Guest[]
+  @@unique([ createdById,stageId])
+@@index([stageId])
 }
 
 
@@ -70,4 +69,5 @@ model Sprint {
   guests      Guest[]
   stages      Stage[]
   @@unique([createdById, souraNb ])
+@@index([sprintId])
 }

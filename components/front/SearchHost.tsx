@@ -1,7 +1,7 @@
 'use client'
 
-import { CoordsType, COUNTRY_ENUM, ViewerTypeData } from '@/api/graphql/viewer/viewer.types';
-import { ProfileTypeData } from '@/app/api/graphql/profile/profile.types';
+import { CoordsType, COUNTRY_ENUM } from '@/api/graphql/profile/profile.types';
+import { CollaboratorProfileType } from '@/store/slices/profileSlice';
 import { RootStateType } from '@/store/store';
 import { cn } from '@nextui-org/react';
 import _ from 'lodash';
@@ -27,11 +27,10 @@ type CountryCityCoords = {
 function SearchHost() {
     const dispatch = useDispatch()
 
-    const { liismaiilProfiles } = useSelector((state: RootStateType) => state.profile)
+    const { collaboratorProfiles } = useSelector((state: RootStateType) => state.profile)
 
     const router = useRouter()
 
-    const { organisationsContext, organisationContext } = useSelector((state: RootStateType) => state.viewer)
     const { states, viewers } = useSelector((state: RootStateType) => state.search)
 
     const countryRef = useRef('')
@@ -74,18 +73,18 @@ function SearchHost() {
         setCountryGuest(e.target.value)
 
     }
-    const [organHost, setOrganHost] = useState('');
+    const [organHost, setOrganHost] = useState(-1);
 
     const handleHostChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
         if (hostRef.current.value !== "") {
-            const organisationContext = _.find(organisationsContext, (org: ViewerTypeData) => {
+            const collaboratorPrifile = _.find(collaboratorProfiles, (org: CollaboratorProfileType) => {
 
                 return slug(org.login) === e.target.value
             })
-            console.log({ organisationContext, orgref: hostRef.current.value });
-            if (organisationContext) {
-                setOrganHost(organisationContext.uid)
+            console.log({ collaboratorPrifile, orgref: hostRef.current.value });
+            if (collaboratorPrifile) {
+                setOrganHost(collaboratorPrifile.tokenId)
                 // dispatch(setOrganisation({ organisation: organisationContext }))
             } else {
                 toast.error('No organisation found')
@@ -101,13 +100,13 @@ function SearchHost() {
 
             <select className="px-3 text-center w-full flex justify-center h-11 ring-1 ring-emerald-200/30 rounded-md " name="host" id="host" onChange={(e) => handleHostChange(e)}>
                 <option value="">--choose a host--</option>
-                {typeof liismaiilProfiles !== 'undefined' && liismaiilProfiles?.map(
-                    (host: ProfileTypeData) => <option
+                {typeof collaboratorProfiles !== 'undefined' && collaboratorProfiles?.map(
+                    (host: CollaboratorProfileType) => <option
                         //  ref={hostRef} 
-                        key={`${host?.login ? slug(host?.login) : ''}`}
-                        value={`${host?.login ? slug(host?.login) : ''}`} >{host?.login}</option>)}
+                        key={`${host?.name ? slug(host?.name) : ''}`}
+                        value={`${host?.name ? slug(host?.name) : ''}`} >{host?.name}</option>)}
             </select>
-            <div className={cn(organHost === '' && 'hidden', "flex justify-center items-center text-green-600 text-center cursor-pointer")}>
+            <div className={cn(organHost === -1 && 'hidden', "flex justify-center items-center text-green-600 text-center cursor-pointer")}>
                 <Link key={`hosts`} href={`/hosts/${organHost}`}> {`host's stages`}
                 </Link>
             </div>
@@ -115,8 +114,8 @@ function SearchHost() {
         <div className="flex-col items-stretch justify-start w-full max-w-md   gap-3 ">
             <select className="px-3  w-full flex justify-end h-11 ring-1 ring-emerald-200/30 rounded-md " name="country" id="country" onChange={(e) => handleCountryChange(e)}>
                 <option value="">--choose a country --</option>
-                {typeof liismaiilProfiles !== 'undefined' && liismaiilProfiles?.map(
-                    (host: ProfileTypeData) => <option key={`${slug(host.addressGeo ? host.addressGeo : '')}`}
+                {typeof collaboratorProfiles !== 'undefined' && collaboratorProfiles?.map(
+                    (host: CollaboratorProfileType) => <option key={`${slug(host.addressGeo ? host.addressGeo : '')}`}
                         value={host.addressGeo?.split(',').pop()}>{host.addressGeo?.split(',').pop()}</option>)}
 
             </select>

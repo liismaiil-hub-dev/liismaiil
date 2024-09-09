@@ -1,46 +1,48 @@
 
 import GridModel from '@/api/graphql/sprint/Grid.model';
-import { GridType } from '@/api/graphql/stage/stage.types';
+import { Ayah, GridType } from '@/api/graphql/stage/stage.types';
 import GridsComponent from "@/components/stage/Grids";
 import connectMongoose from "@/lib/mongoose-db";
+import prisma from "@/lib/prisma-db";
 
 import _ from 'lodash';
 
 const getGrids = async (): Promise<{ souraName: string, souraNb: number }[] | undefined> => {
-    await connectMongoose()
+  await connectMongoose()
 
-    try {
-      const grids: GridType[] = await GridModel.find({ author: '3jtczfl93BWlud2t3Q44KdC0EVJ3' }).sort({ souraNb: 1 }).lean().exec() ;
+  try {
 
-      if (typeof grids !== 'undefined' && grids.length > 0) {
-   //console.log({grids});
-      
-        const souraName = grids.map((gr: GridType) => {
-          return { souraName: gr.arabName, souraNb: parseInt(gr.souraNb.toString()) };
-        })
-        const uniqGrids = _.uniqBy(souraName, 'souraNb')
-        const sortedGrids = _.sortBy(uniqGrids, ['souraNb'])
-       return sortedGrids as [{ souraName: string, souraNb: number }]
-      } else {
-        return
-      }
-    } catch (err) {
+    const grids: GridType[] = await GridModel.find({ author: '3jtczfl93BWlud2t3Q44KdC0EVJ3' }).sort({ souraNb: 1 }).lean().exec();
 
-      console.log({ err });
+    if (typeof grids !== 'undefined' && grids.length > 0) {
+      //console.log({grids});
+
+      const souraName = grids.map((gr: GridType) => {
+        return { souraName: gr.arabName, souraNb: parseInt(gr.souraNb.toString()) };
+      })
+      const uniqGrids = _.uniqBy(souraName, 'souraNb')
+      const sortedGrids = _.sortBy(uniqGrids, ['souraNb'])
+      return sortedGrids as [{ souraName: string, souraNb: number }]
+    } else {
       return
     }
+  } catch (err) {
+
+    console.log({ err });
+    return
   }
+}
 export default async function SourasNav() {
   const grids = await getGrids()
   if (typeof grids !== 'undefined' && grids.length > 0) {
- //console.log(`grids stages ${grids}` );
+    //console.log(`grids stages ${grids}` );
 
     return (
-        <div className="flex flex-col text-blue-800 justify-center items-center w-full">
+      <div className="flex flex-col text-blue-800 justify-center items-center w-full">
 
-          <GridsComponent grids={grids} />
-        </div>
-)
+        <GridsComponent grids={grids} />
+      </div>
+    )
   } else {
     return (<GridsComponent grids={['']} />)
 

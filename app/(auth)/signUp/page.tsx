@@ -4,11 +4,14 @@ import { FormEvent, useEffect, useState } from 'react';
 
 
 import { ADD_GUEST_PRISMA } from "@/graphql/stage/mutations";
+import { guestPrismaActions } from '@/store/slices/guestPrismaSlice';
+import { RootStateType } from '@/store/store';
 import { useMutation } from '@apollo/client';
 import Link from 'next/link';
-import { useFormStatus } from "react-dom";
+import { SiCrunchyroll, SiProgress } from 'react-icons/si';
+import { useDispatch, useSelector } from 'react-redux';
 import { toast } from "react-toastify";
-import { z } from "zod";
+import { z, ZodError } from "zod";
 
 const initialState = {
   message: null,
@@ -20,10 +23,10 @@ const initialState = {
 }
 
 export const GuestRegisterSchema = z.object({
-  tokenId: z.number().int().lte(100),
-  host: z.number().int().lte(100),
-  password: z.string(),
-  country: z.string().max(3),
+  tokenId: z.number().int().lte(1000, "false tokenId"),
+  host: z.number().int().lte(100, 'false host'),
+  password: z.string().max(5, 'the password length is less than 5 characters'),
+  country: z.string().max(3, 'the country code length is less than 3 characters'),
 });
 
 
@@ -37,13 +40,16 @@ const SignUp = () => {
         host: number,
    }>(registerGuestPrisma, initialState)
    */
-  //const { liismaiilProfiles } = useSelector((state: RootStateType) => state.profile)
-  const { pending } = useFormStatus()
+  const dispatch = useDispatch()
+  const { guestPrisma, } = useSelector((state: RootStateType) => state.guestPrisma)
+  const { setGuestPrisma } = guestPrismaActions
   const [AddGuestPrisma, { data, loading, error }] = useMutation(ADD_GUEST_PRISMA)
   const [tokenId, setTokenId] = useState<number | null>(null);
   const [host, setHost] = useState<number | null>(0);
   const [country, setCountry] = useState<string | null>('OM');
   const [password, setPassword] = useState('');
+  const [validationErrors, setValidationErrors] = useState<ZodError<{ tokenId: number; host: number; password: string; country: string; }>>({ tokenId: -1, host: -1, password: '', country: '' });
+
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
@@ -57,7 +63,8 @@ const SignUp = () => {
       const { success, error, data } = GuestRegisterSchema.safeParse(guest)
       console.log({ data: GuestRegisterSchema.safeParse(guest) });
       if (!success) {
-        console.log({ error });
+        setValidationErrors(error)
+        toast.warning('please correct the input values')
 
       } else {
         AddGuestPrisma({
@@ -67,7 +74,7 @@ const SignUp = () => {
               host,
               password,
               country,
-              collaboratorId:'O6cKgXEsuPNAuzCMTGeblWW9sWI3'
+              collaboratorId: 'O6cKgXEsuPNAuzCMTGeblWW9sWI3'
             }
           }
         })
@@ -82,11 +89,19 @@ const SignUp = () => {
   useEffect(() => {
     console.log({ data, error, loading });
     if (typeof data != 'undefined' && data.addGuestPrisma && !error && !loading) {
-      console.log({ dataGuestPrisma: data.addGuestPrisma });
+      dispatch(setGuestPrisma({ guestPrisma: data.addGuestPrisma }))
 
     }
 
   }, [loading, data, error]);
+
+  useEffect(() => {
+    if (typeof guestPrisma != 'undefined' && guestPrisma) {
+      console.log({ guestPrisma });
+    }
+
+  }, [guestPrisma]);
+
 
   const [open, setOpen] = useState(true);
   const [isValid, setIsValid] = useState(false);
@@ -112,6 +127,30 @@ const SignUp = () => {
     } catch (error) {
       console.log({ error });
     }
+  }
+  if (typeof guestPrisma != 'undefined' && guestPrisma.tokenId) {
+
+    return (<div className='flex relative  flex-col w-full h-screen justify-center items-center gap-3'>
+      <Link prefetch={true} key={`stage`} href={`${guestPrisma.tokenId}`} >
+        <div className={'navig-mobile-svg'}  >
+          <SiProgress />
+
+        </div>
+        <div className={'nanvig-mobile-txt'}  >
+          Stage
+        </div>
+      </Link>
+      <Link prefetch={true} key={`sprints`} href='/sprints'>
+        <div className={'navig-mobile-svg'}  >
+          <SiCrunchyroll />
+
+        </div>
+        <div className={'nanvig-mobile-txt'}  >
+          Sprints
+        </div>
+      </Link>
+    </div>
+    )
   }
   return (<div className='flex relative  flex-col w-full h-screen justify-center items-center gap-3'>
     <form onSubmit={(e) => handleSubmit(e)} /* action={action} */>

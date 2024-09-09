@@ -2,7 +2,7 @@
 //import Logo from '@/components/auth/Logo-ISM';
 import Logo from '@/components/front/Logo';
 import { COOKIE_NAME } from '@/store/constants/constants';
-import { guestActions } from "@/store/slices/guestSlice";
+import { guestPrismaActions } from "@/store/slices/guestPrismaSlice";
 import { RootStateType } from '@/store/store';
 import { cn } from '@nextui-org/react';
 import Cookies from "js-cookie";
@@ -10,7 +10,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { FaWaterLadder } from "react-icons/fa6";
-import { FiHome } from "react-icons/fi";
+import { FiHome, FiLogIn, FiLogOut } from "react-icons/fi";
 import { PiHandsPrayingThin } from "react-icons/pi";
 import { SiCrunchyroll, SiMastercomfig, SiProgress } from "react-icons/si";
 import { useDispatch, useSelector } from 'react-redux';
@@ -20,8 +20,8 @@ import ThemeSelector from "./ThemeSelector";
 function Navigation() {
     const [showMenu, setShowMenu] = useState<Boolean>(false)
     const dispatch = useDispatch()
-    const { guest } = useSelector((state: RootStateType) => state.guest)
-    const { logout } = guestActions
+    const { guestPrisma } = useSelector((state: RootStateType) => state.guestPrisma)
+    const { logout } = guestPrismaActions
     const pathname = usePathname()
     const isRoute = (route: string) => {
         return pathname.split('/')[1] === route
@@ -47,16 +47,18 @@ function Navigation() {
         dispatch(logout())
         setShowMenu(false)
     }
-    console.log({ guest });
+    console.log({ guestPrisma });
 
     return (
-        <nav className={`container  flex  justify-between bg-emerald-100/30 h-24 
+        <nav className={`container  flex  md:justify-between
+            justify-center
+            bg-emerald-100/30 h-24 
         items-center mx-auto w-full z-10  border-2 border-blue-200/50 rounded-sm shadow-md`} >
             <section className=' hidden md:flex justify-center items-center  p-3 ' >
                 <Logo />
             </section>
             {/* moble nav  */}
-            <section className='flex justify-center items-center  space-x-3 h-20   md:hidden' >
+            <section className='flex justify-between items-center p-1 space-x-1 h-20   md:hidden' >
 
                 <div className={cn(isRoute('') && 'selected-navig-mobile', 'navig-mobile')}  >
                     <Link prefetch={true} key={`home`} href='/' >
@@ -85,7 +87,7 @@ function Navigation() {
 
                         </div>
                         <div className={'nanvig-mobile-txt'}  >
-                            Stage
+                            Stages
                         </div>
                     </Link>
                 </div>
@@ -122,12 +124,18 @@ function Navigation() {
                     </Link>
                 </div>
                 <div className={cn(isRoute('signIn') && 'selected-navig-mobile', 'navig-mobile')}  >
-                    {(typeof guest !== 'undefined' && guest !== null && guest?.tokenId !== 0) ?
-                        <div className={cn(isRoute('signOut') ? 'borde-3 border-yellow-200 shadow-lg' : 'text-center font-semibold')}  >
+                    {(typeof guestPrisma !== 'undefined' && guestPrisma !== null && guestPrisma?.tokenId !== 0) ?
+                        <div className={cn(isRoute('signOut') ? 'borde-3 border-yellow-200 shadow-lg' : 'text-center font-tight')}  >
+                            <div className={'navig-mobile-svg'}  >
+                                < FiLogOut />
+                            </div>
                             <Link prefetch={true} onClick={handleLogout} key={`logout`} href='/'>
                                 Sign out
                             </Link>
-                        </div> : <div className={cn(isRoute('signIn') && 'borde-3 border-yellow-200 shadow-lg', 'text-center font-semibold')} >
+                        </div> : <div className={cn(isRoute('signIn') && 'borde-3 border-yellow-200 shadow-lg', 'text-center font-tight')} >
+                            <div className={'navig-mobile-svg'}  >
+                                < FiLogIn />
+                            </div>
                             <Link prefetch={true} key={`login`} href='/signIn'> Sign in
                             </Link>
                         </div>
@@ -143,7 +151,7 @@ function Navigation() {
 
             {/* laptop nav  */}
 
-            <section className='hidden md:flex text-xl font-extralight space-x-2 space-y-2 md:justify-center  md:items-center flex-wrap  text-gray-400' >
+            <section className='hidden md:flex text-xl font-extralight space-x-2 space-y-1 md:justify-center  md:items-center flex-wrap  text-gray-400' >
                 <div className={cn(isRoute('') && 'nav-selected', 'CENTER nav-element')}  >
                     <Link prefetch={true} key={`home`} href='/'  >
                         Home
@@ -169,15 +177,15 @@ function Navigation() {
                     <Link prefetch={true} key={`hosts`} href='/hosts'>Hosts </Link>
                 </div>
 
-                {(typeof guest !== 'undefined' && guest !== null && guest?.tokenId !== 0) ?
-                    <div className={cn((guest?.tokenId !== 0) && 'nav-selected', 'outline-none text-green-400 CENTER nav-element')}  >
+                {(typeof guestPrisma !== 'undefined' && guestPrisma !== null && guestPrisma?.tokenId !== 0) ?
+                    <div className={cn((guestPrisma?.tokenId !== 0) && 'nav-selected', 'outline-none text-green-400 CENTER nav-element')}  >
 
                         <Link prefetch={true}
                             onClick={handleLogout} href='/'> Sign out </Link>
                     </div>
 
                     :
-                    <div className={cn((guest?.tokenId !== 0) && 'nav-selected', 'outline-none text-green-400 CENTER nav-element')}  >
+                    <div className={cn((guestPrisma?.tokenId !== 0) && 'nav-selected', 'outline-none text-green-400 CENTER nav-element')}  >
 
 
                         <Link prefetch={true} className='outline-none text-orange-400 ' key={`login`} href='/signIn'> Sign in </Link>

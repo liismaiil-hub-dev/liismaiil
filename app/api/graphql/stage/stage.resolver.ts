@@ -133,7 +133,7 @@ const addStage = async (
     throw error;
   }
 };
-
+/**@todo modify to prisma */
 const addStagePrisma = async (
   _: undefined,
   { input }: { input: StageTypeData },
@@ -175,7 +175,7 @@ const addStagePrisma = async (
 const addGuestPrisma = async (
   _: undefined,
   { input }: { input: AddGuestPrismaInput },
-  { registerPrisma, }: { registerPrisma: (arg: any) => any, }
+  { registerPrisma, dbFirestore }: { registerPrisma: (arg: any) => any, dbFirestore: Firestore; }
 ): Promise<AddGuestPrismaOutput | undefined> => {
   try {
     console.log({ input });
@@ -183,18 +183,46 @@ const addGuestPrisma = async (
     const data = GuestRegisterSchema.parse({ tokenId, host, country, password, collaboratorId })
     console.log({ data });
     try {
-      const { success, tokenId, country, host, flag } = await registerPrisma({ ...data, collaboratorId: collaboratorId ? collaboratorId : 'O6cKgXEsuPNAuzCMTGeblWW9sWI3' })
+      try {
 
-      if (success) {
-        return ({ tokenId, country, host, success, flag })
-      } else {
+        const docRef = dbFirestore.collection('guests').doc(`${data.tokenId}`);
+        const snapshot = await docRef.get();
+        if (snapshot.exists) {
+          const { success, tokenId, country, host, flag, status } = await registerPrisma({ ...data, collaboratorId: collaboratorId ? collaboratorId : 'O6cKgXEsuPNAuzCMTGeblWW9sWI3', status: LIISMAIIL_STATUS_ENUM.HOST })
+          if (success) {
+            return ({ tokenId, country, host, success, flag, status })
+          } else {
+            return {
+              tokenId, country, host, success, flag, status
+            }
+          }
+        } else {
+          const { success, tokenId, country, host, flag, status } = await registerPrisma({ ...data, collaboratorId: collaboratorId ? collaboratorId : 'O6cKgXEsuPNAuzCMTGeblWW9sWI3', status: LIISMAIIL_STATUS_ENUM.GUEST })
+
+          if (success) {
+            return ({ tokenId, country, host, success, flag, status })
+          } else {
+            return {
+              tokenId, country, host, success, flag, status
+            }
+          }
+        }
+
+      } catch (error) {
+        console.error(error)
+
         return {
-          tokenId, country, host, success, flag
+          tokenId: -1,
+          host: -1,
+          flag: '',
+          success: false,
+          country: ''
         }
       }
     } catch (e) {
       console.error(e)
       return {
+        
         tokenId: -1,
         host: -1,
         flag: '',
@@ -210,11 +238,11 @@ const addGuestPrisma = async (
 
 const updateGuestPrisma = async (
   _: undefined,
-  { input }: { input: AddGuestInput },
+  { input }: { input: AddGuestPrismaInput },
   { dbFirestore, timeStamp }: { dbFirestore: Firestore; timeStamp: unknown }
 ): Promise<GuestPrismaType | undefined> => {
   try {
-    const { tokenId, host, collaboratorId, stages, sprints } = input;
+    const { tokenId, host, collaboratorId, country } = input;
 
     const updatedAt = timeStamp;
     const docRef = dbFirestore.collection('guests').doc(`${tokenId}`);

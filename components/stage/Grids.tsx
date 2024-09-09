@@ -9,6 +9,7 @@ import { Accordion, AccordionItem, Button, ScrollShadow } from "@nextui-org/reac
 import jwt from 'jsonwebtoken';
 import { useEffect, useMemo } from 'react';
 import { useDispatch } from "react-redux";
+import Cookies from "js-cookie";
 
 const SECRET = process.env.NEXT_PUBLIC_JWT_SECRET!
 
@@ -152,12 +153,11 @@ const Grids = ({ grids }: { grids: GridMenu[] }) => {
   }
 
 
-  const [cookies, setCookie, removeCookie] = useCookies([COOKIE_NAME]);
+  //const {tokenId} = Cookies.get(COOKIE_NAME);
 
-  useEffect(() => {
-
-    const token = cookies
-    console.log({ token });
+/*   useEffect(() => {
+   // const token = cookies
+    console.log({ tokenId });
     (async () => {
       if (typeof token != 'undefined') {
         const tokenId = await jwt.verify(token[COOKIE_NAME], SECRET)
@@ -165,7 +165,7 @@ const Grids = ({ grids }: { grids: GridMenu[] }) => {
       }
     })()
   }, []);
-
+ */
   return (
     <section className=" flex-col text-blue-800 justify-start items-center w-full  max-h-52 ">
       <div className={`flex-col justify-start items-center gap-6 rounded-md`}>

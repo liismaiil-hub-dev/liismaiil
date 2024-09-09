@@ -8,6 +8,7 @@ export const ADD_GUEST_PRISMA = gql`
       flag
       country
       success
+      status
     }
   }
 `;

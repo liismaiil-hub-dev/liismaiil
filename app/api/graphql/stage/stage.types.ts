@@ -1,4 +1,4 @@
-import { LIISMAIIL_STATUS_ENUM } from "@/api/graphql/profile/profile.types";
+import { LIISMAIIL_STATUS_ENUM } from './../profile/profile.types';
 
 export type SprintStateProps = {
   sprints: SprintPrismaType[],
@@ -145,6 +145,7 @@ export type AddGuestPrismaOutput = {
   country: string,
   host: number,
   flag: string,
+  status: LIISMAIIL_STATUS_ENUM,
 }
 export type GuestPrismaType = {
   id?: number;
@@ -153,10 +154,10 @@ export type GuestPrismaType = {
   flag: string;
   password?: string;
   collaboratorId: string;
-  status: LIISMAIIL_STATUS_ENUM;
-  country: string;
+  status: LIISMAIIL_STATUS_ENUM | string;
+  country?: string;
   onLine?: boolean;
-  startDate: string;
+  startDate?: string;
   endDate?: string;
   stage?: StagePrismaType[];
   sprints?: SprintPrismaType[];

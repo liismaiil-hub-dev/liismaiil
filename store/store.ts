@@ -1,11 +1,11 @@
 import coursReducer from '@/store/slices/coursSlice'
-import guestReducer from '@/store/slices/guestSlice'
+import guestPrismaReducer from '@/store/slices/guestPrismaSlice'
 import lessonReducer from '@/store/slices/lessonSlice'
 
 import profileReducer from '@/store/slices/profileSlice'
 import searchReducer from '@/store/slices/searchSlice'
 import sprintReducer from '@/store/slices/sprintSlice'
-import viewerReducer from '@/store/slices/viewerSlice'
+
 import { combineReducers, configureStore } from '@reduxjs/toolkit'
 import logger from 'redux-logger'
 import {
@@ -41,9 +41,8 @@ const persistConfig = {
   storage,
 }
 const rootReducer = combineReducers({
-  viewer: viewerReducer,
   profile: profileReducer,
-  guest: guestReducer,
+  guestPrisma: guestPrismaReducer,
   lesson: lessonReducer,
   cours: coursReducer,
   sprint: sprintReducer,

@@ -1,48 +1,50 @@
 -- CreateTable
 CREATE TABLE "Guest" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "tokenId" TEXT NOT NULL,
-    "flag" TEXT NOT NULL,
-    "collaboratorId" TEXT NOT NULL,
+    "tokenId" INTEGER NOT NULL,
     "host" INTEGER NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "country" TEXT NOT NULL,
+    "flag" TEXT NOT NULL,
     "password" TEXT NOT NULL,
+    "guestPassword" TEXT NOT NULL,
+    "collaboratorId" TEXT NOT NULL,
+    "country" TEXT NOT NULL,
+    "status" TEXT NOT NULL,
     "onLine" BOOLEAN NOT NULL,
+    "startDate" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "endDate" TEXT NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "Favorite" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "hostId" INTEGER NOT NULL,
+    "guestId" INTEGER NOT NULL
 );
 
 -- CreateTable
 CREATE TABLE "Stage" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "stageId" INTEGER NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "souraName" TEXT NOT NULL,
-    "souraNb" INTEGER NOT NULL,
-    "grid" INTEGER NOT NULL,
-    "startOn" DATETIME NOT NULL,
-    "createdById" TEXT NOT NULL
-);
-
--- CreateTable
-CREATE TABLE "Ayah" (
-    "index" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "juz" INTEGER NOT NULL,
-    "order" INTEGER NOT NULL,
-    "text" TEXT NOT NULL
-);
-
--- CreateTable
-CREATE TABLE "Sprint" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "sprintId" INTEGER NOT NULL,
+    "stageId" TEXT NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "souraName" TEXT NOT NULL,
     "souraNb" INTEGER NOT NULL,
     "grid" INTEGER NOT NULL,
     "startOn" DATETIME NOT NULL,
     "createdById" TEXT NOT NULL,
-    "pblished" BOOLEAN NOT NULL
+    "ayahs" TEXT NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "Sprint" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "sprintId" TEXT NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "souraName" TEXT NOT NULL,
+    "souraNb" INTEGER NOT NULL,
+    "grid" INTEGER NOT NULL,
+    "startOn" DATETIME NOT NULL,
+    "createdById" TEXT NOT NULL,
+    "published" BOOLEAN NOT NULL
 );
 
 -- CreateTable
@@ -62,11 +64,11 @@ CREATE TABLE "_GuestToSprint" (
 );
 
 -- CreateTable
-CREATE TABLE "_AyahToStage" (
+CREATE TABLE "_FavoriteToGuest" (
     "A" INTEGER NOT NULL,
     "B" INTEGER NOT NULL,
-    CONSTRAINT "_AyahToStage_A_fkey" FOREIGN KEY ("A") REFERENCES "Ayah" ("index") ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT "_AyahToStage_B_fkey" FOREIGN KEY ("B") REFERENCES "Stage" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT "_FavoriteToGuest_A_fkey" FOREIGN KEY ("A") REFERENCES "Favorite" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "_FavoriteToGuest_B_fkey" FOREIGN KEY ("B") REFERENCES "Guest" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -81,6 +83,21 @@ CREATE TABLE "_SprintToStage" (
 CREATE UNIQUE INDEX "Guest_tokenId_key" ON "Guest"("tokenId");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Favorite_hostId_guestId_key" ON "Favorite"("hostId", "guestId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Stage_stageId_key" ON "Stage"("stageId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Stage_createdById_souraNb_key" ON "Stage"("createdById", "souraNb");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Sprint_sprintId_key" ON "Sprint"("sprintId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Sprint_createdById_souraNb_key" ON "Sprint"("createdById", "souraNb");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "_GuestToStage_AB_unique" ON "_GuestToStage"("A", "B");
 
 -- CreateIndex
@@ -93,10 +110,10 @@ CREATE UNIQUE INDEX "_GuestToSprint_AB_unique" ON "_GuestToSprint"("A", "B");
 CREATE INDEX "_GuestToSprint_B_index" ON "_GuestToSprint"("B");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "_AyahToStage_AB_unique" ON "_AyahToStage"("A", "B");
+CREATE UNIQUE INDEX "_FavoriteToGuest_AB_unique" ON "_FavoriteToGuest"("A", "B");
 
 -- CreateIndex
-CREATE INDEX "_AyahToStage_B_index" ON "_AyahToStage"("B");
+CREATE INDEX "_FavoriteToGuest_B_index" ON "_FavoriteToGuest"("B");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_SprintToStage_AB_unique" ON "_SprintToStage"("A", "B");

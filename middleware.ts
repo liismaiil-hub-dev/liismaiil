@@ -7,9 +7,7 @@ export function middleware(request: NextRequest) {
     //
     const token = cookies().get(COOKIE_NAME)
     console.log({ middleWaretoken: token });
-
-
-    const { isBot } = userAgent(request)
+   const { isBot } = userAgent(request)
     if (isBot) {
 
         console.log({ isBot })
