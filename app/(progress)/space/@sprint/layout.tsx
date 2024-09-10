@@ -8,7 +8,7 @@ export const metadata = {
 
 function Spacelayout({ children, sprint, board }:
     { children: React.ReactNode, sprint: React.ReactNode, stage: React.ReactNode, board: React.ReactNode }) {
-    return (    <div id="spacePage" className="flex flex-col justify-center items-center h-full " >
+    return (    <div id="spacePage" className="flex flex-col justify-center items-center  " >
                
                     {children}
                </div>

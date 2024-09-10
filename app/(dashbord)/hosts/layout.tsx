@@ -19,12 +19,12 @@ function HostLayout({ children, stages, sprints, guests }: {
     stages: ReactNode, guests: ReactNode
 }) {
 
-    const { gridSelected, hideNbContext, spaceGridsSelected, evalIndex, shuffeledAyahsContext, orderedAyahsContext, gridIndexContext, evalContext } = useSelector((state: RootStateType) => state.sprint)
+    const { gridSelected, hideNbContext, spaceGridsSelected, evalIndex, shuffeledAyahsContext, orderedAyahsContext, gridIndexContext, evalContext } = useSelector((state: RootStateType) => state.stage)
 
     const path = usePathname();
     return (
         <main className='container mx-auto w-full  flex flex-col  justify-start items-center  min-h-screen '>
-           {/*  <section className="container flex   w-full max-h-52  ring-2 ring-yellow-300/80 justify-between items-center" >
+            {/*  <section className="container flex   w-full max-h-52  ring-2 ring-yellow-300/80 justify-between items-center" >
                 <div className="h-52  w-1/4 bg-green-100/70 border 
                         shadow-md " >
                     {stages}

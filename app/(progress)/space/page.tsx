@@ -30,7 +30,7 @@ export default async function SpacePage() {
   console.log({ stagesInSpacePage: stages });
 
 
-  return (<section id="space-page" className="flex flex-col justify-start items-center  w-full h-screen" >
+  return (<section id="space-page" className="flex flex-col justify-start items-center  w-full h-full" >
 
     <Board />
 

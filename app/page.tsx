@@ -65,7 +65,7 @@ export default async function Home() {
   const guest = await getGuestFromCookies()
   //console.log({ hosts, collaborators });
   const localOnline = await getLocalGuests();
-  console.log({ localOnline });
+  console.log({ localOnline, guest });
 
   const hostsPrisma = hosts.map((guest: GuestType) => {
 

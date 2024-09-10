@@ -1,30 +1,27 @@
 
 'use client'
 
+import { GridMenu } from "@/app/api/graphql/stage/stage.types";
 import { GET_GRIDS_BY_NB } from "@/graphql/sprint/queries";
-import { COOKIE_NAME, GRIDS_NAME, GRIDS_TLD } from "@/store/constants/constants";
-import { sprintActions } from "@/store/slices/sprintSlice";
+import { GRIDS_NAME, GRIDS_TLD } from "@/store/constants/constants";
+import { stageActions } from "@/store/slices/stageSlice";
 import { useLazyQuery } from "@apollo/client";
 import { Accordion, AccordionItem, Button, ScrollShadow } from "@nextui-org/react";
-import jwt from 'jsonwebtoken';
+import Cookies from "js-cookie";
 import { useEffect, useMemo } from 'react';
 import { useDispatch } from "react-redux";
-import Cookies from "js-cookie";
 
 const SECRET = process.env.NEXT_PUBLIC_JWT_SECRET!
 
 
-type GridMenu = {
-  souraName: string;
-  souraNb: number;
-}
+
 const TiwalAccordion = ({ grids, handleSelectedSouraNb }: {
   grids: GridMenu[],
   handleSelectedSouraNb: (arg: number) => void
 }) => {
   // console.log({ gridsTiWal: grids });
   return (
-    <section id='tiwal_accordion' className="flex flex-col justify-start items-start ">
+    <section id='tiwal_accordion' className="flex flex-col justify-start items-center ">
       {grids?.map((grd) => {
 
         return <Button onClick={() => { handleSelectedSouraNb(grd.souraNb) }} key={`${grd.souraName}-${grd.souraNb}`} aria-label={`${grd.souraName}`} title={`${grd.souraName}`}>
@@ -44,7 +41,7 @@ const MiinAccordion = ({ grids, handleSelectedSouraNb }: {
   handleSelectedSouraNb: (arg: number) => void
 }) => {
   return (
-    <section id='miin_accordion' className="flex flex-col justify-start items-start ">
+    <section id='miin_accordion' className="flex flex-col justify-start items-center ">
       {grids?.map((grd) => {
 
         return <Button onClick={() => { handleSelectedSouraNb(grd.souraNb) }} key={`${grd.souraName}-${grd.souraNb}`} aria-label={`${grd.souraName}`} title={`${grd.souraName}`}>
@@ -64,7 +61,7 @@ const MathaniAccordion = ({ grids, handleSelectedSouraNb }: {
   handleSelectedSouraNb: (arg: number) => void
 }) => {
   return (
-    <section id='tiwal_accordion' className="flex flex-col justify-start items-start ">
+    <section id='tiwal_accordion' className="flex flex-col justify-start items-center ">
       {grids?.map((grd) => {
 
         return <Button onClick={() => { handleSelectedSouraNb(grd.souraNb) }} key={`${grd.souraName}-${grd.souraNb}`} aria-label={`${grd.souraName}`} title={`${grd.souraName}`}>
@@ -83,7 +80,7 @@ const MofasalAccordion = ({ grids, handleSelectedSouraNb }: {
   handleSelectedSouraNb: (arg: number) => void
 }) => {
   return (
-    <section id='tiwal_accordion' className="flex flex-col justify-start items-start ">
+    <section id='tiwal_accordion' className="flex flex-col justify-start items-center ">
       {grids?.map((grd) => {
 
         return <Button onClick={() => { handleSelectedSouraNb(grd.souraNb) }} key={`${grd.souraName}-${grd.souraNb}`} aria-label={`${grd.souraName}`} title={`${grd.souraName}`}>
@@ -101,13 +98,16 @@ const MofasalAccordion = ({ grids, handleSelectedSouraNb }: {
 
 const Grids = ({ grids }: { grids: GridMenu[] }) => {
   console.log({ grids });
-
+  Cookies.remove("souraMenu");
   console.log(`grids de stage --------${grids?.length}`);
 
   const dispatch = useDispatch()
   const [GetGridsByNb, { data: dataGetGridsByNb, loading: loadingGetGridsByNb, error: errorGetGridsByNb }] = useLazyQuery(GET_GRIDS_BY_NB)
-  const { setSpaceGrids } = sprintActions
-  //const { grids } = useSelector((state: RootStateType) => state.sprint)
+  const { setSpaceGrids, setGridMenuSouraNb } = stageActions
+  //const { grids } = useSelector((state: RootStateType) => state.stage)
+  useEffect(() => {
+    dispatch(setGridMenuSouraNb({ menuSouraNb: grids }))
+  }, []);
 
   // creating chunks 
   const newTiwal: GridMenu[] = useMemo(() => grids.filter((gr: GridMenu) => {
@@ -152,22 +152,8 @@ const Grids = ({ grids }: { grids: GridMenu[] }) => {
     }
   }
 
-
-  //const {tokenId} = Cookies.get(COOKIE_NAME);
-
-/*   useEffect(() => {
-   // const token = cookies
-    console.log({ tokenId });
-    (async () => {
-      if (typeof token != 'undefined') {
-        const tokenId = await jwt.verify(token[COOKIE_NAME], SECRET)
-        console.log({ tokenId });
-      }
-    })()
-  }, []);
- */
   return (
-    <section className=" flex-col text-blue-800 justify-start items-center w-full  max-h-52 ">
+    <section className=" flex-col text-blue-800 justify-start overflow-scroll items-center w-full   max-h-52 ">
       <div className={`flex-col justify-start items-center gap-6 rounded-md`}>
         <Accordion
         /* selectedKeys={selectedKeys}
@@ -177,7 +163,6 @@ const Grids = ({ grids }: { grids: GridMenu[] }) => {
           <AccordionItem key={`${GRIDS_TLD.TIWAL}`} aria-label="souar tiwal"
             title={`${GRIDS_NAME[GRIDS_TLD.TIWAL]}`}>
             <TiwalAccordion grids={newTiwal} handleSelectedSouraNb={(arg) => selectSouraHandler(arg)} />
-
           </AccordionItem>
           <AccordionItem key={`${GRIDS_TLD.MIIN}`} aria-label={`souar ${GRIDS_NAME[GRIDS_TLD.MIIN]}`} title={`${GRIDS_NAME[GRIDS_TLD.MIIN]}`}>
             <MiinAccordion grids={newMiin} handleSelectedSouraNb={(arg) => selectSouraHandler(arg)} />
@@ -193,21 +178,6 @@ const Grids = ({ grids }: { grids: GridMenu[] }) => {
 
           </AccordionItem>
         </Accordion >
-      </div>
-      <div className='flex justify-center gap-3 items-center '>
-        {/* <button onClick={() => handleValidate()} disabled={pending} className='btn bg-emerald-300 
-             text-blue-700  text-center text-2xl p-2
-              rounded-md'>
-            {'Validate'}
-          </button> */}
-        <button type="submit" className='btn bg-blue-400
-             text-yellow-100  text-center text-2xl p-2
-              rounded-md'>
-          Register grids
-        </button>
-
-
-
       </div>
 
     </section>);

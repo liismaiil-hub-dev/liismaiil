@@ -87,12 +87,11 @@ export const getGuestFromTokenPrisma = async (token: number) => {
         if (typeof tokenId === 'undefined' || tokenId === 0) {
           return null
         } else {
-          return ({ collaboratorId, flag, host, tokenId, status: PROFILE_STATUS_ENUM.GUEST });
+          return ({ collaboratorId, flag, host, tokenId, status: LIISMAIIL_STATUS_ENUM.GUEST });
         }
       } else {
         return null
-
-      }
+}
 
     } catch (error) {
       console.log({ error });

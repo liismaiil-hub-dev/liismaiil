@@ -1,6 +1,6 @@
 import { LIISMAIIL_STATUS_ENUM } from './../profile/profile.types';
 
-export type SprintStateProps = {
+export type StageStateProps = {
   sprints: SprintPrismaType[],
   spaceGridsSelected: GridJsoned[],
   gridSelected: GridJsoned,
@@ -18,8 +18,13 @@ export type SprintStateProps = {
   validStages: [string],
   evalContext: EVAL_STATE,
   validContext: boolean,
+  menuSouraNb: GridMenu[],
+  gridsContext: [[Ayah]],
 }
-
+export type GridMenu = {
+  souraName: string;
+  souraNb: number;
+}
 export enum EVAL_STATE {
   EVAL = 'EVAL',
   ORDER = 'ORDER',
@@ -173,7 +178,7 @@ export type AyahTabletType = {
   slice?: string;
 };
 export type Ayah = {
-  id: number;
+  id?: number;
   juz: number;
   order: number;
   text: string;

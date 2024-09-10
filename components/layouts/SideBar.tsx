@@ -1,4 +1,4 @@
-import { sprintActions } from '@/store/slices/sprintSlice';
+import { stageActions } from '@/store/slices/stageSlice';
 import { RootStateType } from '@/store/store';
 import { SprintType, StageType } from 'app/api/sprint/sprint.types';
 import Link from 'next/link';
@@ -9,9 +9,9 @@ import { useDispatch, useSelector } from 'react-redux';
 function SideBar() {
     const router = useRouter()
     const dispatch = useDispatch()
-    const { sprints, sprintsTitles, spaceSprint } = useSelector((state: RootStateType) => state.sprint)
+    const { sprints, sprintsTitles, spaceSprint } = useSelector((state: RootStateType) => state.stage)
 
-    const { showSideBarMenu, setSpaceSprint, setSpaceStage } = sprintActions
+    const { showSideBarMenu, setSpaceSprint, setSpaceStage } = stageActions
     const isRoute = (route) => {
         return router.pathname.slice(1) === route
     }

@@ -1,7 +1,8 @@
+
 // third-party
-import { Ayah, EVAL_STATE, GridJsoned, SprintStateProps, SprintType, StageTypeData } from '@/api/graphql/stage/stage.types';
+import { Ayah, EVAL_STATE, GridJsoned, GridMenu, SprintPrismaType, StageStateProps, StageTypeData } from '@/api/graphql/stage/stage.types';
 import { createSlice, current, PayloadAction } from '@reduxjs/toolkit';
-const initialState: SprintStateProps = {
+const initialState: StageStateProps = {
   spaceGridsSelected: [{
     grid: -1,
     group: -1,
@@ -52,7 +53,15 @@ const initialState: SprintStateProps = {
   correctsNbContext: 0,
   evalContext: EVAL_STATE.ORDER,
   validContext: false,
-
+  menuSouraNb: [{ souraName: '', souraNb: -1 }],
+  gridsContext : [[
+    {
+      id:-1,
+      juz: 0,
+      order: 0,
+      text: ''
+    }
+  ]],
   //____________________________________
 
 
@@ -78,72 +87,80 @@ const initialState: SprintStateProps = {
 };
 
 
-const sprintSlice = createSlice({
-  name: 'sprint',
+const stageSlice = createSlice({
+  name: 'stage',
   initialState,
   reducers: {
 
-    setSprints(state: SprintStateProps, action: PayloadAction<{ sprints: [SprintType] }>) {
+    setSprints(state: StageStateProps, action: PayloadAction<{ sprints: [SprintPrismaType] }>) {
       state.sprints = action.payload.sprints
     },
-    setEvalIndex(state: SprintStateProps, action: PayloadAction<{ index: number }>) {
+    setGridMenuSouraNb(state: StageStateProps, action: PayloadAction<{ menuSouraNb: GridMenu[] }>) {
+      state.menuSouraNb = action.payload.menuSouraNb
+    },
+    setEvalIndex(state: StageStateProps, action: PayloadAction<{ index: number }>) {
       state.evalIndex = action.payload.index
     },
-    setGridSelected(state: SprintStateProps,
+    setGridSelected(state: StageStateProps,
       action: PayloadAction<{ grid: GridJsoned }>) {
       //      console.log({ gridSelected: action.payload.grid });
       state.gridSelected = action.payload.grid
     },
 
-    setOrderedAyahsContext(state: SprintStateProps, action: PayloadAction<{ ayahs: Ayah[] }>) {
+    setOrderedAyahsContext(state: StageStateProps, action: PayloadAction<{ ayahs: Ayah[] }>) {
       state.orderedAyahsContext = action.payload.ayahs
     },
 
-    setShuffeledAyahsContext(state: SprintStateProps, action: PayloadAction<{ ayahs: Ayah[] }>) {
+    setShuffeledAyahsContext(state: StageStateProps, action: PayloadAction<{ ayahs: Ayah[] }>) {
       state.shuffeledAyahsContext = action.payload.ayahs
     },
-    setShuffeledFirstAyahsContext(state: SprintStateProps, action: PayloadAction<{ ayahs: Ayah[] }>) {
+    setShuffeledFirstAyahsContext(state: StageStateProps, action: PayloadAction<{ ayahs: Ayah[] }>) {
       state.shuffeledFirstAyahsContext = action.payload.ayahs
     },
-    setGridIndexContext(state: SprintStateProps,
+    setGridIndexContext(state: StageStateProps,
       action: PayloadAction<{ index: number }>) {
       console.log({ grid: action.payload.index })
       state.gridIndexContext = action.payload.index
     },
+    setGridsContext(state: StageStateProps,
+      action: PayloadAction<{ grids: [Ayah][] }>) {
+      console.log({ grid: action.payload.grids })
+      state.gridsContext = action.payload.grids
+    },
 
-    setHideNbContext(state: SprintStateProps,
+    setHideNbContext(state: StageStateProps,
       action: PayloadAction<{ hide: boolean }>) {
       state.hideNbContext = action.payload.hide
     },
-    setValidContext(state: SprintStateProps,
+    setValidContext(state: StageStateProps,
       action: PayloadAction<{ validCtxt: boolean }>) {
       state.validContext = action.payload.validCtxt
     },
-    setEvalContext(state: SprintStateProps,
+    setEvalContext(state: StageStateProps,
       action: PayloadAction<{ eval: EVAL_STATE }>) {
       state.evalContext = action.payload.eval
     },
 
-    setFaultsNbContext(state: SprintStateProps,
+    setFaultsNbContext(state: StageStateProps,
       action: PayloadAction<{ nb: number }>) {
       state.faultsNbContext = action.payload.nb
     },
-    setCorrectsNbContext(state: SprintStateProps,
+    setCorrectsNbContext(state: StageStateProps,
       action: PayloadAction<{ nb: number }>) {
       state.correctsNbContext = action.payload.nb
     },
-    setSpaceGrids(state: SprintStateProps, action: PayloadAction<{ grids: GridJsoned[] }>) {
+    setSpaceGrids(state: StageStateProps, action: PayloadAction<{ grids: GridJsoned[] }>) {
       console.log({ spaceGrids: action.payload.grids });
       state.spaceGridsSelected = action.payload.grids
     },
-    setSpaceSprint(state: SprintStateProps, action: PayloadAction<{ sprint: SprintType }>) {
+    setSpaceSprint(state: StageStateProps, action: PayloadAction<{ sprint: SprintPrismaType }>) {
       state.spaceSprint = action.payload.sprint
     },
 
-    setSpaceStage(state: SprintStateProps, action: PayloadAction<{ stage: StageTypeData }>) {
+    setSpaceStage(state: StageStateProps, action: PayloadAction<{ stage: StageTypeData }>) {
       state.spaceStage = action.payload.stage
     },
-    setStageSelected(state: SprintStateProps, action: PayloadAction<{ stage: StageTypeData }>) {
+    setStageSelected(state: StageStateProps, action: PayloadAction<{ stage: StageTypeData }>) {
       console.log({ state: current(state), stage: action.payload.stage })
       state.stageSelected = action.payload.stage
     },
@@ -160,6 +177,6 @@ const sprintSlice = createSlice({
 });
 
 // Reducer
-export const sprintActions = sprintSlice.actions
-export default sprintSlice.reducer;
+export const stageActions = stageSlice.actions
+export default stageSlice.reducer;
 

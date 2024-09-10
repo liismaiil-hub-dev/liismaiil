@@ -1,6 +1,6 @@
 'use client'
 import { GridJsoned } from "@/api/graphql/stage/stage.types";
-import { sprintActions } from '@/store/slices/sprintSlice';
+import { stageActions } from '@/store/slices/stageSlice';
 import { RootStateType } from '@/store/store';
 import { Button, Card, CardBody } from "@nextui-org/react";
 import { useEffect } from "react";
@@ -8,17 +8,17 @@ import { useDispatch, useSelector } from 'react-redux';
 
 function GridCard() {
     const dispatch = useDispatch()
-    const {   gridSelected,spaceGridsSelected} = useSelector((state: RootStateType) => state.sprint)
-console.log({spaceGridsSelected});
+    const { gridSelected, spaceGridsSelected } = useSelector((state: RootStateType) => state.stage)
+    console.log({ spaceGridsSelected });
 
-    const { setGridSelected } = sprintActions
+    const { setGridSelected } = stageActions
     useEffect(() => {
-console.log({gridSelected});
-  
-}, [gridSelected]);
-const handleSetGridSelected = (grid: GridJsoned  )=> {
-dispatch(setGridSelected({ grid: grid }))
-}
+        console.log({ gridSelected });
+
+    }, [gridSelected]);
+    const handleSetGridSelected = (grid: GridJsoned) => {
+        dispatch(setGridSelected({ grid: grid }))
+    }
 
     return <div className="flex justify-between items-center"> {spaceGridsSelected && spaceGridsSelected.map((grid: GridJsoned) => {
         return (
@@ -28,9 +28,9 @@ dispatch(setGridSelected({ grid: grid }))
                     <p>grids : {grid.grid}. </p>
                     <p>groups : {grid.group}. </p>
 
-                    <Button onPress={() => handleSetGridSelected(grid)} color="primary" variant="bordered" className= {`border-2 border-blue-600 rounded-md  ${grid.grid === gridSelected.grid ? 'bg-orange-200':'bg-slate-400'} ` }>
+                    <Button onPress={() => handleSetGridSelected(grid)} color="primary" variant="bordered" className={`border-2 border-blue-600 rounded-md  ${grid.grid === gridSelected.grid ? 'bg-orange-200' : 'bg-slate-400'} `}>
                         On board
-                    </Button>  
+                    </Button>
                 </CardBody>
             </Card>
         );
@@ -38,4 +38,4 @@ dispatch(setGridSelected({ grid: grid }))
 }
 
 export default GridCard
-;
+    ;

@@ -4,7 +4,7 @@ import lessonReducer from '@/store/slices/lessonSlice'
 
 import profileReducer from '@/store/slices/profileSlice'
 import searchReducer from '@/store/slices/searchSlice'
-import sprintReducer from '@/store/slices/sprintSlice'
+import stageReducer from '@/store/slices/stageSlice'
 
 import { combineReducers, configureStore } from '@reduxjs/toolkit'
 import logger from 'redux-logger'
@@ -45,7 +45,7 @@ const rootReducer = combineReducers({
   guestPrisma: guestPrismaReducer,
   lesson: lessonReducer,
   cours: coursReducer,
-  sprint: sprintReducer,
+  stage: stageReducer,
   search: searchReducer,
 })
 const persistedRootReducer = persistReducer(persistConfig, rootReducer)

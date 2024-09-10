@@ -2,7 +2,7 @@
 
 import { GET_GRIDS_BY_NB } from "@/graphql/sprint/queries";
 import { GRIDS_NAME, GRIDS_TLD } from "@/store/constants/constants";
-import { sprintActions } from "@/store/slices/sprintSlice";
+import { stageActions } from "@/store/slices/stageSlice";
 import { useLazyQuery } from "@apollo/client";
 import { Accordion, AccordionItem, Button, ScrollShadow } from "@nextui-org/react";
 import { useEffect, useMemo, useState } from "react";
@@ -16,7 +16,7 @@ const TiwalAccordion = ({ grids, handleSelectedGrid }: {
   grids: GridMenu[],
   handleSelectedGrid: (arg: number) => void
 }) => {
-//  console.log({ gridsTiWal: grids });
+  //  console.log({ gridsTiWal: grids });
 
   return (
     <section id='tiwal_accordion' className="flex flex-col justify-start items-start ">
@@ -95,7 +95,7 @@ const MofasalAccordion = ({ grids, handleSelectedGrid }: {
 //             _____COMPONENT_____________
 
 const Grids = ({ grids }: { grids: GridMenu[] }) => {
-console.log({grids});
+  console.log({ grids });
 
   const dispatch = useDispatch()
 
@@ -104,7 +104,7 @@ console.log({grids});
   const [selectedKeys, setSelectedKeys] = useState(new Set([GRIDS_TLD.TIWAL]));
   const [selectedGrid, setSelectedGrid] = useState(0);
 
-  const { setSpaceGrids } = sprintActions
+  const { setSpaceGrids } = stageActions
 
   // creating chunks 
   const newTiwal: GridMenu[] = useMemo(() => grids.filter((gr: GridMenu) => {
@@ -126,33 +126,33 @@ console.log({grids});
   useEffect(() => {
     if (dataGetGridsByNb && dataGetGridsByNb.getGridsByNb && dataGetGridsByNb.getGridsByNb.success && dataGetGridsByNb.getGridsByNb.grids.length > 0) {
       dispatch(setSpaceGrids({ grids: dataGetGridsByNb.getGridsByNb.grids }))
-          try {
-           const blob = new Blob([JSON.stringify(dataGetGridsByNb.getGridsByNb.grids)], { type: "text/json" });
-           const link = document.createElement("a");
-           const filename = `${dataGetGridsByNb.getGridsByNb.grids[0].souraNb}.json`
-   
-           link.download = filename;
-           link.href = window.URL.createObjectURL(blob);
-           link.dataset.downloadurl = ["text/json", link.download, link.href].join("_");
-   
-           const evt = new MouseEvent("click", {
-             view: window,
-             bubbles: true,
-             cancelable: true,
-           });
-   
-           link.dispatchEvent(evt);
-           link.remove()
-         } catch (error) {
-   console.log({error});
-   
-         } 
+      try {
+        const blob = new Blob([JSON.stringify(dataGetGridsByNb.getGridsByNb.grids)], { type: "text/json" });
+        const link = document.createElement("a");
+        const filename = `${dataGetGridsByNb.getGridsByNb.grids[0].souraNb}.json`
+
+        link.download = filename;
+        link.href = window.URL.createObjectURL(blob);
+        link.dataset.downloadurl = ["text/json", link.download, link.href].join("_");
+
+        const evt = new MouseEvent("click", {
+          view: window,
+          bubbles: true,
+          cancelable: true,
+        });
+
+        link.dispatchEvent(evt);
+        link.remove()
+      } catch (error) {
+        console.log({ error });
+
+      }
     } else if (errorGetGridsByNb || !dataGetGridsByNb?.getGridsByNb.success) {
       console.log({ errorGetGridsByNb });
 
     }
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataGetGridsByNb, loadingGetGridsByNb, errorGetGridsByNb]);
 
   const selectedGridHandler = (arg: number) => {
@@ -181,7 +181,7 @@ console.log({grids});
 
         </AccordionItem>
         <AccordionItem key={`${GRIDS_TLD.MIIN}`} aria-label={`souar ${GRIDS_NAME[GRIDS_TLD.MIIN]}`} title={`${GRIDS_NAME[GRIDS_TLD.MIIN]}`}>
-          <MiinAccordion grids={newMiin}  handleSelectedGrid={(arg) => selectedGridHandler(arg)} />
+          <MiinAccordion grids={newMiin} handleSelectedGrid={(arg) => selectedGridHandler(arg)} />
         </AccordionItem>
         <AccordionItem key={`${GRIDS_TLD.MATHANI}`} aria-label={`souar ${GRIDS_NAME[GRIDS_TLD.MATHANI]}`} title={`${GRIDS_NAME[GRIDS_TLD.MATHANI]}`}>
           <MathaniAccordion grids={newMathani} handleSelectedGrid={(arg) => selectedGridHandler(arg)} />

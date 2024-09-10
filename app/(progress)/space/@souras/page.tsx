@@ -3,7 +3,6 @@ import GridModel from '@/api/graphql/sprint/Grid.model';
 import { Ayah, GridType } from '@/api/graphql/stage/stage.types';
 import GridsComponent from "@/components/stage/Grids";
 import connectMongoose from "@/lib/mongoose-db";
-import prisma from "@/lib/prisma-db";
 
 import _ from 'lodash';
 
@@ -11,7 +10,6 @@ const getGrids = async (): Promise<{ souraName: string, souraNb: number }[] | un
   await connectMongoose()
 
   try {
-
     const grids: GridType[] = await GridModel.find({ author: '3jtczfl93BWlud2t3Q44KdC0EVJ3' }).sort({ souraNb: 1 }).lean().exec();
 
     if (typeof grids !== 'undefined' && grids.length > 0) {
@@ -36,13 +34,9 @@ export default async function SourasNav() {
   const grids = await getGrids()
   if (typeof grids !== 'undefined' && grids.length > 0) {
     //console.log(`grids stages ${grids}` );
-
     return (
-      <div className="flex flex-col text-blue-800 justify-center items-center w-full">
-
         <GridsComponent grids={grids} />
-      </div>
-    )
+     )
   } else {
     return (<GridsComponent grids={['']} />)
 

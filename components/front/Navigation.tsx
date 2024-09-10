@@ -58,7 +58,7 @@ function Navigation() {
                 <Logo />
             </section>
             {/* moble nav  */}
-            <section className='flex justify-between items-center p-1 space-x-1 h-20   md:hidden' >
+            <section className='flex justify-between items-center p-1 space-x-1 h-24   md:hidden' >
 
                 <div className={cn(isRoute('') && 'selected-navig-mobile', 'navig-mobile')}  >
                     <Link prefetch={true} key={`home`} href='/' >
@@ -151,7 +151,7 @@ function Navigation() {
 
             {/* laptop nav  */}
 
-            <section className='hidden md:flex text-xl font-extralight space-x-2 space-y-1 md:justify-center  md:items-center flex-wrap  text-gray-400' >
+            <section className='hidden md:flex text-xl font-extralight space-x-2 space-y-1 md:justify-center  md:items-center flex-nowrap  text-gray-400' >
                 <div className={cn(isRoute('') && 'nav-selected', 'CENTER nav-element')}  >
                     <Link prefetch={true} key={`home`} href='/'  >
                         Home

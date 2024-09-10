@@ -3,7 +3,7 @@ import { AyahTabletType, GridInput, SprintType } from '@/api/graphql/sprint/spri
 
 import { Draggable } from '@/components/shared/Draggable'
 import { Droppable } from '@/components/shared/Droppable'
-import { sprintActions } from '@/store/slices/sprintSlice'
+import { stageActions } from '@/store/slices/stageSlice'
 import { RootStateType } from '@/store/store'
 import {
   closestCenter,
@@ -13,8 +13,8 @@ import * as _ from 'lodash'
 import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { APP_ENV } from '@/store/constants/constants'
 import { GridNormalize } from '@/lib/tools/GridNormalize'
+import { APP_ENV } from '@/store/constants/constants'
 import { toast } from 'react-toastify'
 
 type AyahWithIndex = {
@@ -28,9 +28,9 @@ type AyahWithIndex = {
 export default function Space() {
 
   const dispatch = useDispatch()
-  const { sprints, gridsSelected, gridSelected } = useSelector((state: RootStateType) => state.sprint)
+  const { sprints, gridsSelected, gridSelected } = useSelector((state: RootStateType) => state.stage)
 
-  const { setSprints, setSprintsTitles, setGridsSelected, setGridSelected, setAyahArraySelected, hideAy, resetHidedAy, setMinMax } = sprintActions
+  const { setSprints, setSprintsTitles, setGridsSelected, setGridSelected, setAyahArraySelected, hideAy, resetHidedAy, setMinMax } = stageActions
 
 
   const [gridState, setGridState] = useState<[] | null>(null)

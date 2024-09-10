@@ -1,24 +1,61 @@
 'use server'
-import { prisma } from '@/lib/prisma-db';
-import { sprints } from '@/db/schema'
-import { delay } from '@/lib/delay'
-import { getCurrentGuest } from '@/lib/guests'
+import prisma from '@/lib/prisma-db';
 
-import { revalidateTag } from 'next/cache'
+import { revalidateTag } from 'next/cache';
 
-export const createNewStage = async () => {
-  await delay(1000)
-  const stage = await prisma.stage.create
+export const createNewStage = async ({
+  stageId,
+  createdAt,
+  souraName,
+  souraNb,
+  grid,
+  startOn,
+  createdById,
+  ayahs,
+  tokenId
+}: {
+  stageId: string,
+  createdAt: string
+  souraName: string,
+  souraNb: number,
+  tokenId: number,
+  grid: number,
+  startOn: string,
+  createdById: string
+  ayahs: string
+}) => {
+  //const _guest = getCurrentGuest()
+  console.log({
+    stageId,
+    createdAt,
+    souraName,
+    souraNb,
+    grid,
+    startOn,
+    createdById,
+    ayahs,
+    tokenId
+  });
+  try {
+    const stage = await prisma.stage.create({
+      data: {
+        stageId,
+        createdAt,
+        souraName,
+        souraNb,
+        grid,
+        startOn,
+        createdById,
+        ayahs,
+      }
+    })
+
+  } catch (error) {
+    throw error
+  }
 
 
-  await db.insert(sprints).values({
-    startOn: new Date().toUTCString(),
-    createdById: user.id,
-    isPrivate: false,
-    name: randomName('event', ' '),
-  })
 
-  revalidateTag('events')
-  revalidateTag('dashboard:events')
+  revalidateTag('stages')
+  revalidateTag('dashboard:stages')
 }
- 
