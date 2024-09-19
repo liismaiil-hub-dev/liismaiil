@@ -3,7 +3,7 @@ import organisations from "@/store/shares/organisations.json";
 import { RootStateType } from '@/store/store';
 
 import { getDataLayerUrls } from "@/actions/host";
-import { COUNTRY_ENUM } from "@/api/graphql/viewer/viewer.types";
+import { COUNTRY_ENUM } from "@/api/graphql/profile/profile.types";
 import Submit from "@/components/auth/Submit";
 
 import { GuestPrismaType } from "@/app/api/graphql/stage/stage.types";

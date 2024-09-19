@@ -34,48 +34,62 @@ const Board = () => {
   const [first, setFirst] = useState(() => true);
 
   useEffect(() => {
-    if (typeof gridSelected !== 'undefined' && gridSelected.ayahs != '') {
-      dispatch(setGridsContext({ grids: JSON.parse(gridSelected.ayahs) }))
+    if (typeof gridSelected !== 'undefined' && typeof gridSelected.ayahs !== 'undefined' && gridSelected.ayahs && gridSelected?.ayahs[0] != '' && gridSelected?.ayahs.length > 0) {
+      console.log({ grdSelectedZ: gridSelected?.ayahs[0] });
+
+      const _grids: [[Ayah]] = gridSelected?.ayahs?.map((ay: string) => JSON.parse(ay) as [Ayah])
+      // dispatch(setGridsContext({ grids: _grids }))
+      dispatch(setGridIndexContext({ index: 0 }))
+      console.log({ guestPrisma });
+
+
     }
   }, []);
 
   useEffect(() => {
-    if (typeof gridSelected !== 'undefined' && gridSelected.ayahs != '') {
-      dispatch(setGridsContext({ grids: JSON.parse(gridSelected.ayahs) }))
+    if (typeof gridSelected !== 'undefined' && gridSelected.ayahs[0] != '' && typeof gridSelected.ayahs !== 'undefined') {
+
+      const _grids = gridSelected.ayahs?.map((ay: string) => JSON.parse(ay))
+      dispatch(setGridsContext({ grids: _grids }))
+      dispatch(setGridIndexContext({ index: 0 }))
+
     }
   }, [gridSelected]);
   useEffect(() => {
-    if (typeof gridSelected !== 'undefined' && gridSelected.ayahs != '' && gridsContext.length > gridIndexContext) {
+    if (typeof gridSelected !== 'undefined' && typeof gridSelected.ayahs !== 'undefined' && gridSelected.ayahs[0] != '' && gridsContext.length > gridIndexContext) {
       const shuffeleledFirst = gridsContext[gridIndexContext].map((ordG: Ayah, index: number) => ({ ...ordG, index: gridIndexContext ? ordG.order + gridIndexContext : ordG.order }));
 
       const orderedAy = [..._.sortBy(gridsContext[gridIndexContext], ['order'])].map((ordG: Ayah, index) => ({ ...ordG, index: gridIndexContext ? ordG.order + gridIndexContext : ordG.order }))
       dispatch(setShuffeledFirstAyahsContext({ ayahs: shuffeleledFirst }))
-      
+
       dispatch(setOrderedAyahsContext({ ayahs: orderedAy }))
-      
+
       setFirst(false)
-      
-    }else{
-      const shuffeleledFirst = gridsContext[ 0].map((ordG: Ayah, index: number) => ({ ...ordG, index: gridIndexContext ? ordG.order + gridIndexContext : ordG.order }));
-      
+
+    } else {
+      const shuffeleledFirst = gridsContext[0].map((ordG: Ayah, index: number) => ({ ...ordG, index: gridIndexContext ? ordG.order + gridIndexContext : ordG.order }));
+
       const orderedAy = [..._.sortBy(gridsContext[gridIndexContext ?? 0], ['order'])].map((ordG: Ayah, index) => ({ ...ordG, index: gridIndexContext ? ordG.order + gridIndexContext : ordG.order }))
-      dispatch(setGridIndexContext({index:0}))
-      
+      dispatch(setGridIndexContext({ index: 0 }))
+
       dispatch(setShuffeledFirstAyahsContext({ ayahs: shuffeleledFirst }))
 
       dispatch(setOrderedAyahsContext({ ayahs: orderedAy }))
 
       setFirst(false)
 
-    } 
+    }
 
   }, [gridIndexContext]);
 
 
   useEffect(() => {
-    const gridSelectedLength = JSON.parse(gridSelected.ayahs)[gridIndexContext]?.length
-    console.log({ hideNbContext, orderedAyahsContext, gridSelected, gridIndexContext, gridSelectedLength, ayahs: JSON.parse(gridSelected.ayahs) });
-    if (typeof gridSelected !== 'undefined' && gridSelected.ayahs != '' && gridsContext.length > 0) {
+
+    if (typeof gridSelected !== 'undefined' && gridSelected?.ayahs[0] != '' && typeof gridSelected.ayahs !== 'undefined') {
+      const _grids = gridSelected.ayahs?.map((ay: string) => JSON.parse(ay))
+
+      const gridSelectedLength = _grids?.length
+
       const shuffeleledFirst = gridsContext[gridIndexContext ?? 0]?.map((ordG: Ayah, index: number) => ({ ...ordG, index: gridIndexContext ? ordG.order + gridIndexContext : ordG.order }));
 
       const orderedAy = [..._.sortBy(gridsContext[gridIndexContext ?? 0], ['order'])].map((ordG: Ayah, index) => ({ ...ordG, index: gridIndexContext ? ordG.order + gridIndexContext : ordG.order }))
@@ -113,7 +127,7 @@ const Board = () => {
     }
   }
   function prevIndexHandler() {
-    dispatch(setGridIndexContext({ index: gridIndexContext < gridsContext.length && gridIndexContext !== 0 ? gridIndexContext + 1 : 0 }))
+    dispatch(setGridIndexContext({ index: gridIndexContext > 1 ? gridIndexContext - 1 : 0 }))
   }
 
   function hideNbHandler() {

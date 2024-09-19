@@ -186,7 +186,7 @@ const promoteStages = async (
 
 
 const guestResolver = {
-  DateTime: DateTimeResolver,
+
 
   Query: {
     guest,

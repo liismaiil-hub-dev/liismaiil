@@ -82,16 +82,7 @@ export enum PROFILE_STATUS_ENUM {
   LIBRARY = 'LIBRARY',
   LIISMAIIL_GUEST = 'LIISMAIIL_GUEST'
 }
-export enum COUNTRY_ENUM {
-  FR = "FR",
-  DZ = 'DZ',
-  SE = 'SE',
-  MR = 'MR',
-  BF = 'BF',
-  PK = 'PK',
-  TZ = 'TZ',
-  SP = 'SP'
-}
+
 export enum PROFILE_ENROLLMENT_NAMES_ENUM {
   ADMIN = "ADMIN",
   LIIS = "liismanager",

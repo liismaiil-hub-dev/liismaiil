@@ -130,17 +130,16 @@ const SignUp = () => {
   }
   if (typeof guestPrisma != 'undefined' && guestPrisma.tokenId) {
 
-    return (<div className='flex relative  flex-col w-full h-screen justify-center items-center gap-3'>
-      <Link prefetch={true} key={`stage`} href={`${guestPrisma.tokenId}`} >
+    return (<div className='flex relative  flex-col w-full font-thin text-2xl h-screen justify-center items-center gap-3'>
+      <Link prefetch={true} key={`stage`} href={`/stages/${guestPrisma.tokenId}`} >
         <div className={'navig-mobile-svg'}  >
           <SiProgress />
-
-        </div>
+          </div>
         <div className={'nanvig-mobile-txt'}  >
-          Stage
+          Stages
         </div>
       </Link>
-      <Link prefetch={true} key={`sprints`} href='/sprints'>
+      <Link prefetch={true} key={`sprints`} href={`/sprints/${guestPrisma.tokenId}`}>
         <div className={'navig-mobile-svg'}  >
           <SiCrunchyroll />
 

@@ -95,7 +95,7 @@ const MofasalAccordion = ({ grids, handleSelectedGrid }: {
 //             _____COMPONENT_____________
 
 const Grids = ({ grids }: { grids: GridMenu[] }) => {
-  console.log({ grids });
+  //console.log({ grids });
 
   const dispatch = useDispatch()
 

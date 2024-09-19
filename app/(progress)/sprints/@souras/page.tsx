@@ -12,13 +12,13 @@ const getGrids = async (): Promise<{ souraName: string, souraNb: number }[] | un
     await connectMongoose()
 
     try {
-      const grids: GridType[] = await GridModel.find({ author: '3jtczfl93BWlud2t3Q44KdC0EVJ3' }).select({ "_id": 0}).sort({ souraNb: 1 }).lean().exec();
+      const grids: GridType[] = await GridModel.find({ author: '3jtczfl93BWlud2t3Q44KdC0EVJ3' }).select({ "_id": 0 }).sort({ souraNb: 1 }).lean().exec();
 
       if (typeof grids !== 'undefined' && grids.length > 0) {
-      console.log(
-        {grids}
-      );
-      
+        console.log(
+          { grids }
+        );
+
         const souraName = grids.map((gr: GridType) => {
           return { souraName: gr.arabName, souraNb: parseInt(gr.souraNb.toString()) };
         })
@@ -40,7 +40,7 @@ const getGrids = async (): Promise<{ souraName: string, souraNb: number }[] | un
 export default async function SourasNav() {
   const grids = await getGrids()
   if (typeof grids !== 'undefined' && grids.length > 0) {
-    console.log({ grids });
+    //console.log({ grids });
 
     return (
       <GridsComponent grids={grids} />

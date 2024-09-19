@@ -23,7 +23,7 @@ type SprintGuest {
 type StageType  { 
       id: Int
       title: String
-      grids: [TabletGrid]
+      grids: [GridType]
       author: String
       startDate:String
       endDate:String
@@ -31,14 +31,6 @@ type StageType  {
   }
  
  
-input StageInput {
-  id:Int
-  title: String!
-  description:String
-  section:String
-  author: String
-  grids:[StageGridInput]
-  }
 
 input SprintInput {
   author:String!
@@ -65,18 +57,6 @@ input GetGridsByNbInput {
   author:String
   souraNb:Int
 }
-input GridInput {
-  arabName: String
-  author: String!
-  ayahs:[[AyahTabletInput]]
-  description: String
-  grid: Int
-  group: [Int]
-  souraName: String
-  souraNb: Int
-  tabletWords: [WordCommentInput]
-  title: String!
- }
 
 type SprintOutput{
   success:Boolean
@@ -101,7 +81,7 @@ type GridsPlusOutput{
   } 
 type GetGridsByNbOutput{
   success:Boolean
-  grids:[StageGridJsoned!]
+  grids:[GridType!]
 }
 type StageGridJsoned{
   souraName: String
@@ -121,14 +101,12 @@ type SuccessMessageOutput {
 
 type Query {
     getGrids(author:String): GridsOutput
-    getGridsByNb(input:GetGridsByNbInput): GetGridsByNbOutput
-    getGridsPlus(author:String): GridsPlusOutput
     sprints(author:String): [SprintType]
     guests(author:String): [Guest]
     sprint(titleSlug:String): SprintType
     sprintsByAuthor(author:String): [SprintType]
     sprintsByMenu(menu:String): [SprintType]
-    gridsByMenu(input:GridsByMenuInput):[TabletGrid]
+    gridsByMenu(input:GridsByMenuInput):[GridType]
     }
 
 type Mutation {

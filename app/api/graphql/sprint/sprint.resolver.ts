@@ -1,9 +1,5 @@
 import {
-  GetGridsBySouraNbInput,
-  GridAyahsJson,
-  GridBrut,
-  GridType,
-  SprintPrismaType
+  GridType
 } from '@/api/graphql/stage/stage.types';
 const getGrids = async (
   _: undefined,
@@ -25,85 +21,8 @@ const getGrids = async (
     throw error;
   }
 };
-//getGridsByNb
-const getGridsByNb = async (
-  _: undefined,
-  { input }: { input: GetGridsBySouraNbInput },
-  { GridModel, _lodash }: { GridModel: any, _lodash: { filter: any } }
-): Promise<{
-  success: boolean, grids: Array<GridAyahsJson>
-} | undefined> => {
-
-  const { author, souraNb } = input
-  console.log({ author, souraNb })
-  try {
-    const grids = await GridModel.find({ souraNb }).sort({ souraNb: 1 }).lean().exec();
-    console.log({ grids });
-
-    if (typeof grids !== 'undefined' && grids.length > 0) {
-      const _grids = await _lodash.filter(grids, (grid: GridBrut) => (grid.souraNb === souraNb || grid.souraNb.toString() === souraNb.toString()))
-      const _gridToJson = _grids.map((grd: GridBrut) => {
-
-        const _ayahsStringified = JSON.stringify(grd.ayahs);
-        const grp = grd?.group[0];
-        const idStringify = JSON.stringify(grd.id);
-        console.log(` grp :: ${grp} --- idStringify ${idStringify} `);
-        return {
-          //id: grd._id,
-          author: grd.author,   //'3jtczfl93BWlud2t3Q44KdC0EVJ3',
-          title: grd.title, //"6-Al-An'aam-grid:4 -grp: All groups selected",
-
-          arabName: grd.arabName,//'سورة الأنعام',
-          ayahs: _ayahsStringified,
-          createdAt: grd.createdAt,
-          description: grd.description,//"6-Al-An'aam-grid:4 -grp: All groups selected",
-          grid: grd.grid,//4,
-          group: grp,
-          souraName: grd.souraName,//"Al-An'aam",
-          souraNb: grd.souraNb, //6,
-          //tabletWords: [],
-          //  updatedAt: grd.updatedAt,//2024-04 - 29T13: 31: 48.632Z
-        }
-
-      })
 
 
-      return { success: true, grids: _gridToJson }
-    } else {
-      return { success: false, grids: [] };
-    }
-  } catch (error: unknown) {
-    throw error;
-  }
-};
-const getGridsPlus = async (
-  _: undefined,
-  { author }: { author: string },
-  { GridModel, _lodash }: { GridModel: any, _lodash: { uniqBy: (arg: any) => [any] } }
-): Promise<{
-  success: boolean, grids: Array<{
-    arabName: string,
-    nb: number
-  }>
-} | undefined> => {
-
-
-  try {
-    const grids = await GridModel.find({ author: "3jtczfl93BWlud2t3Q44KdC0EVJ3" }).sort({ souraNb: 1 }).lean().exec();
-    if (typeof grids !== 'undefined' && grids.length > 0) {
-      const gridsId = await grids.map((gr: GridType) => {
-        return { arabName: gr.arabName, nb: gr.souraNb }
-      })
-      const uniqGridsId = _lodash.uniqBy(gridsId, 'nb')
-
-      return { success: true, grids: uniqGridsId }
-    } else {
-      return { success: false, grids: [] };
-    }
-  } catch (error: unknown) {
-    throw error;
-  }
-};
 const sprints = async (
   _: undefined,
   { input }: { input: { menu: string; author: string } },
@@ -456,8 +375,6 @@ const removeSprint = async (
 const SprintResolver = {
   Query: {
     getGrids,
-    getGridsByNb,
-    getGridsPlus,
     sprints,
     sprint,
     sprintsByAuthor,

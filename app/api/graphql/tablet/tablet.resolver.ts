@@ -1,8 +1,6 @@
 import { AddTabletOutput, TabletInput, TabletTypeData, TemplateInput, ValidateTabletInput } from './tablet.types';
 
 import { Firestore } from 'firebase-admin/firestore';
-
-import { GridsInput } from '../sprint/sprint.types';
 export const tablets = async (
   _: undefined,
   __: undefined,

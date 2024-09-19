@@ -1,5 +1,5 @@
 export const tabletDefs = `
-#scalar type
+
 scalar DateTime
 type Tablet {
     id: String!

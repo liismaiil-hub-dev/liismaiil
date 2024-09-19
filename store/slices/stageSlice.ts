@@ -1,6 +1,6 @@
 
 // third-party
-import { Ayah, EVAL_STATE, GridJsoned, GridMenu, SprintPrismaType, StageStateProps, StageTypeData } from '@/api/graphql/stage/stage.types';
+import { Ayah, EVAL_STATE, GridJsoned, GridMenu, SprintPrismaType, StageStateProps, StagePrismaType } from '@/api/graphql/stage/stage.types';
 import { createSlice, current, PayloadAction } from '@reduxjs/toolkit';
 const initialState: StageStateProps = {
   spaceGridsSelected: [{
@@ -21,6 +21,17 @@ const initialState: StageStateProps = {
     souraNb: -1,
     arabName: '',
     souraName: '',
+    ayahs: [''],
+    id: 0
+  },
+
+  stageGridSelected: {
+    grid: -1,
+    group: -1,
+    title: '',
+    souraNb: -1,
+    arabName: '',
+    souraName: '',
     ayahs: '',
     id: 0
   },
@@ -35,7 +46,20 @@ const initialState: StageStateProps = {
     text: ''
   }
   ],
+  stageOrderedAyahsContext: [{
+    id: 0,
+    juz: 0,
+    order: 0,
+    text: ''
+  }
+  ],
   shuffeledAyahsContext: [{
+    id: 0,
+    juz: 0,
+    order: 0,
+    text: ''
+  }],
+  stageShuffeledAyahsContext: [{
     id: 0,
     juz: 0,
     order: 0,
@@ -47,6 +71,27 @@ const initialState: StageStateProps = {
     order: 0,
     text: ''
   }],
+
+  stageShuffeledFirstAyahsContext: [{
+    id: 0,
+    juz: 0,
+    order: 0,
+    text: ''
+  }],
+  stageGridsContext: [{
+    id: -1,
+    stageId: '',
+    createdAt: '',
+    souraName: '',
+    souraNb: -1,
+    grid: -1,
+    startOn: '',
+    createdById: '',
+    ayahs: '',
+    guests: []
+  }],
+  
+
   gridIndexContext: 0,
   hideNbContext: false,
   faultsNbContext: 0,
@@ -54,9 +99,9 @@ const initialState: StageStateProps = {
   evalContext: EVAL_STATE.ORDER,
   validContext: false,
   menuSouraNb: [{ souraName: '', souraNb: -1 }],
-  gridsContext : [[
+  gridsContext: [[
     {
-      id:-1,
+      id: -1,
       juz: 0,
       order: 0,
       text: ''
@@ -117,13 +162,37 @@ const stageSlice = createSlice({
     setShuffeledFirstAyahsContext(state: StageStateProps, action: PayloadAction<{ ayahs: Ayah[] }>) {
       state.shuffeledFirstAyahsContext = action.payload.ayahs
     },
+    //@begin
+    setStageGridsContext(state: StageStateProps,
+      action: PayloadAction<{ stages: StagePrismaType[] }>) {
+      console.log({ grid: action.payload.stages })
+      state.stageGridsContext = action.payload.stages
+    },
+
+    setStageGridSelected(state: StageStateProps,
+      action: PayloadAction<{ grid: StagePrismaType }>) {
+      //      console.log({ gridSelected: action.payload.grid });
+      state.stageGridSelected = action.payload.grid
+    },
+
+    setStageOrderedAyahsContext(state: StageStateProps, action: PayloadAction<{ ayahs: Ayah[] }>) {
+      state.stageOrderedAyahsContext = action.payload.ayahs
+    },
+
+    setStageShuffeledAyahsContext(state: StageStateProps, action: PayloadAction<{ ayahs: Ayah[] }>) {
+      state.stageShuffeledAyahsContext = action.payload.ayahs
+    },
+    setStageShuffeledFirstAyahsContext(state: StageStateProps, action: PayloadAction<{ ayahs: Ayah[] }>) {
+      state.stageShuffeledFirstAyahsContext = action.payload.ayahs
+    },
+    //@end
     setGridIndexContext(state: StageStateProps,
       action: PayloadAction<{ index: number }>) {
       console.log({ grid: action.payload.index })
       state.gridIndexContext = action.payload.index
     },
     setGridsContext(state: StageStateProps,
-      action: PayloadAction<{ grids: [Ayah][] }>) {
+      action: PayloadAction<{ grids: [[Ayah]] }>) {
       console.log({ grid: action.payload.grids })
       state.gridsContext = action.payload.grids
     },

@@ -4,7 +4,6 @@ import {
   ViewerTypeData,
 } from '@/api/graphql/viewer/viewer.types';
 import { Firestore } from 'firebase-admin/firestore';
-import { DateTimeResolver } from 'graphql-scalars';
 
 
 
@@ -110,7 +109,6 @@ const Viewer = {
 }
 // eslint-disable-next-line no-undef
 const viewerResolver = {
-  DateTime: DateTimeResolver,
   Viewer,
   Query: {
     viewer,

@@ -1,21 +1,43 @@
 
-import GridModel from '@/api/graphql/sprint/Grid.model';
-import { Ayah, GridType } from '@/api/graphql/stage/stage.types';
+import { dbFirestore } from '@/app/api/graphql/fb-utils-admin';
+import { GridTypeData } from '@/app/api/graphql/tablet/tablet.types';
 import GridsComponent from "@/components/stage/Grids";
-import connectMongoose from "@/lib/mongoose-db";
 
 import _ from 'lodash';
 
 const getGrids = async (): Promise<{ souraName: string, souraNb: number }[] | undefined> => {
-  await connectMongoose()
 
   try {
-    const grids: GridType[] = await GridModel.find({ author: '3jtczfl93BWlud2t3Q44KdC0EVJ3' }).sort({ souraNb: 1 }).lean().exec();
+    const grids: GridTypeData[] = [];
+    const querySnapshot = await dbFirestore.collection('grids').orderBy('souraNb').get();
+    querySnapshot.forEach((doc: any) => {
+      const {
+        title,
+        souraNb,
+        author,
+        arabName,
+        souraName,
+        description,
+        grid,
+        group,
+        ayahs, } = doc.data()
+      grids.push({
+        title,
+        souraNb,
+        author,
+        arabName,
+        souraName,
+        description,
+        grid,
+        group,
+        ayahs,
+      });
+    });
 
     if (typeof grids !== 'undefined' && grids.length > 0) {
-      //console.log({grids});
+      //console.log({ grids });
 
-      const souraName = grids.map((gr: GridType) => {
+      const souraName = grids.map((gr: GridTypeData) => {
         return { souraName: gr.arabName, souraNb: parseInt(gr.souraNb.toString()) };
       })
       const uniqGrids = _.uniqBy(souraName, 'souraNb')
@@ -33,10 +55,10 @@ const getGrids = async (): Promise<{ souraName: string, souraNb: number }[] | un
 export default async function SourasNav() {
   const grids = await getGrids()
   if (typeof grids !== 'undefined' && grids.length > 0) {
-    //console.log(`grids stages ${grids}` );
+    console.log(`grids ${grids}`);
     return (
-        <GridsComponent grids={grids} />
-     )
+      <GridsComponent grids={grids} />
+    )
   } else {
     return (<GridsComponent grids={['']} />)
 

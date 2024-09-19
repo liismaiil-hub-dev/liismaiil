@@ -1,8 +1,8 @@
 
 'use client'
 
-import { GridMenu } from "@/app/api/graphql/stage/stage.types";
-import { GET_GRIDS_BY_NB } from "@/graphql/sprint/queries";
+import { GridMenu, StagePrismaType } from "@/app/api/graphql/stage/stage.types";
+import { GET_GRIDS_BY_NB } from "@/graphql/stage/queries";
 import { GRIDS_NAME, GRIDS_TLD } from "@/store/constants/constants";
 import { stageActions } from "@/store/slices/stageSlice";
 import { useLazyQuery } from "@apollo/client";
@@ -19,13 +19,13 @@ const TiwalAccordion = ({ grids, handleSelectedSouraNb }: {
   grids: GridMenu[],
   handleSelectedSouraNb: (arg: number) => void
 }) => {
-  // console.log({ gridsTiWal: grids });
+  console.log({ gridsTiWal: grids });
   return (
     <section id='tiwal_accordion' className="flex flex-col justify-start items-center ">
       {grids?.map((grd) => {
 
-        return <Button onClick={() => { handleSelectedSouraNb(grd.souraNb) }} key={`${grd.souraName}-${grd.souraNb}`} aria-label={`${grd.souraName}`} title={`${grd.souraName}`}>
-          <div className="flex justify-center  text-center">
+        return <Button className="flex flex-col justify-center  w-full items-center " onClick={() => { handleSelectedSouraNb(grd.souraNb) }} key={`${grd.souraName}-${grd.souraNb}`} aria-label={`${grd.souraName}`} title={`${grd.souraName}`}>
+          <div className="flex justify-center w-full  text-center">
             {`  ${grd.souraName}   :  ${grd.souraNb}`}
 
           </div>
@@ -44,8 +44,8 @@ const MiinAccordion = ({ grids, handleSelectedSouraNb }: {
     <section id='miin_accordion' className="flex flex-col justify-start items-center ">
       {grids?.map((grd) => {
 
-        return <Button onClick={() => { handleSelectedSouraNb(grd.souraNb) }} key={`${grd.souraName}-${grd.souraNb}`} aria-label={`${grd.souraName}`} title={`${grd.souraName}`}>
-          <div className="flex justify-center  text-center">
+        return <Button className="flex flex-col justify-center  w-full items-center " onClick={() => { handleSelectedSouraNb(grd.souraNb) }} key={`${grd.souraName}-${grd.souraNb}`} aria-label={`${grd.souraName}`} title={`${grd.souraName}`}>
+          <div className="flex w-full justify-center  text-center">
             {`  ${grd.souraName}   :  ${grd.souraNb}`}
 
           </div>
@@ -63,8 +63,7 @@ const MathaniAccordion = ({ grids, handleSelectedSouraNb }: {
   return (
     <section id='tiwal_accordion' className="flex flex-col justify-start items-center ">
       {grids?.map((grd) => {
-
-        return <Button onClick={() => { handleSelectedSouraNb(grd.souraNb) }} key={`${grd.souraName}-${grd.souraNb}`} aria-label={`${grd.souraName}`} title={`${grd.souraName}`}>
+        return <Button className="flex flex-col justify-center  w-full items-center " onClick={() => { handleSelectedSouraNb(grd.souraNb) }} key={`${grd.souraName}-${grd.souraNb}`} aria-label={`${grd.souraName}`} title={`${grd.souraName}`}>
           <div className="flex justify-center  text-center">
             {`  ${grd.souraName}   :  ${grd.souraNb}`}
 
@@ -83,7 +82,7 @@ const MofasalAccordion = ({ grids, handleSelectedSouraNb }: {
     <section id='tiwal_accordion' className="flex flex-col justify-start items-center ">
       {grids?.map((grd) => {
 
-        return <Button onClick={() => { handleSelectedSouraNb(grd.souraNb) }} key={`${grd.souraName}-${grd.souraNb}`} aria-label={`${grd.souraName}`} title={`${grd.souraName}`}>
+        return <Button className="flex flex-col justify-center  w-full items-center " onClick={() => { handleSelectedSouraNb(grd.souraNb) }} key={`${grd.souraName}-${grd.souraNb}`} aria-label={`${grd.souraName}`} title={`${grd.souraName}`}>
           <div className="flex justify-center  text-center">
             {`  ${grd.souraName}   :  ${grd.souraNb}`}
 
@@ -96,57 +95,39 @@ const MofasalAccordion = ({ grids, handleSelectedSouraNb }: {
 }
 //             _____COMPONENT_____________
 
-const Grids = ({ grids }: { grids: GridMenu[] }) => {
-  console.log({ grids });
+const Grids = ({ stages }: { stages: StagePrismaType[] }) => {
+  console.log({ stages });
   Cookies.remove("souraMenu");
-  console.log(`grids de stage --------${grids?.length}`);
+  console.log(`grids de stage --------${stages?.length}`);
 
   const dispatch = useDispatch()
-  const [GetGridsByNb, { data: dataGetGridsByNb, loading: loadingGetGridsByNb, error: errorGetGridsByNb }] = useLazyQuery(GET_GRIDS_BY_NB)
+ 
   const { setSpaceGrids, setGridMenuSouraNb } = stageActions
   //const { grids } = useSelector((state: RootStateType) => state.stage)
-  useEffect(() => {
-    dispatch(setGridMenuSouraNb({ menuSouraNb: grids }))
-  }, []);
-
+  
   // creating chunks 
-  const newTiwal: GridMenu[] = useMemo(() => grids.filter((gr: GridMenu) => {
+  const newTiwal: GridMenu[] = useMemo(() => stages.filter((gr: StagePrismaType) => {
     return gr.souraNb <= 7
-  }), [grids])
-  const newMiin = useMemo(() => grids.filter((gr: GridMenu) => {
+  }), [stages])
+  const newMiin = useMemo(() => stages.filter((gr: StagePrismaType) => {
     return gr.souraNb > 7 && gr.souraNb <= 18;
-  }), [grids])
+  }), [stages])
 
 
-  const newMathani = useMemo(() => grids.filter((gr: GridMenu) => {
+  const newMathani = useMemo(() => stages.filter((gr: StagePrismaType) => {
     return gr.souraNb > 18 && gr.souraNb <= 50;
-  }), [grids])
+  }), [stages])
 
-  const newMofasal = useMemo(() => grids.filter((gr: GridMenu) => {
+  const newMofasal = useMemo(() => stages.filter((gr: StagePrismaType) => {
     return gr.souraNb > 50;
-  }), [grids])
+  }), [stages])
 
-  useEffect(() => {
-    console.log({ dataGetGridsByNb });
-
-    if (dataGetGridsByNb && dataGetGridsByNb.getGridsByNb && dataGetGridsByNb.getGridsByNb.success && dataGetGridsByNb.getGridsByNb.grids.length > 0) {
-      dispatch(setSpaceGrids({ grids: dataGetGridsByNb.getGridsByNb.grids }))
-
-    } else if (errorGetGridsByNb || !dataGetGridsByNb?.getGridsByNb.success) {
-      console.log({ errorGetGridsByNb });
-    }
-  }, [dataGetGridsByNb, loadingGetGridsByNb, errorGetGridsByNb]);
-
+ 
   const selectSouraHandler = (souraNb: number) => {
+    console.log({ souraNb });
+
     try {
-      GetGridsByNb({
-        variables: {
-          input: {
-            author: "O6cKgXEsuPNAuzCMTGeblWW9sWI3",
-            souraNb: souraNb
-          }
-        }
-      })
+ dispatch(setStageGridSelected)
     } catch (error) {
       console.log(error);
     }

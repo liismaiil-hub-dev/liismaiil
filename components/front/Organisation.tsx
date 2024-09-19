@@ -1,9 +1,9 @@
 'use client'
 import { CoordsType } from '@/api/graphql/profile/profile.types'
-import { CollaboratorProfileType, profileActions } from '@/store/slices/profileSlice'
+import { CollaboratorProfileType } from '@/store/slices/profileSlice'
 import { RootStateType } from '@/store/store'
 import { useRouter } from 'next/navigation'
-import react, { useState } from 'react'
+import { useState } from 'react'
 import { useSelector } from 'react-redux'
 
 // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -18,12 +18,9 @@ type CountryCityCoords = {
 
 // -----------------------------COMPONENT-------------------------//
 function Organisation({ profile }: { profile: CollaboratorProfileType }) {
+  const [countries, setCountries] = useState(() => ['DZ', 'MA', 'FR']);
 
-    useSelector((state: RootStateType) => state.profile)
-    const [countries, setCountries] = useState(() => ['DZ', 'MA', 'FR']);
-
-    const { setCollaboratorProfiles } = profileActions
-    console.log({ profile: profile?.name!.slice(0, 10).padEnd(11, '.') });
+    console.log({ profile });
 
     const router = useRouter()
 
@@ -34,7 +31,7 @@ function Organisation({ profile }: { profile: CollaboratorProfileType }) {
 
 
     return (
-        <div key={profile?.tokenId} className='border  cursor-pointer hover:animate-zoomIn
+        <div className='border  cursor-pointer hover:animate-zoomIn
                     border-green-300  shadow-md shadow-green-300/30 
                     hover:border-indigo-300 
                       transition-all duration-300 ease-in-out
@@ -50,14 +47,14 @@ function Organisation({ profile }: { profile: CollaboratorProfileType }) {
 
             </div>
             <div className={`px-auto   text-center  text-xl   w-full font-light`}>
-                {profile?.name!.split(' ')[0]}
+                {profile?.name?.split(' ')[0]}
             </div>
             <div className={`px-auto   text-center  text-xl   w-full font-light`}>
-                {profile?.addressGeo!.split(' ')[-1]}
+                {profile?.addressGeo?.split(' ')[-1]}
             </div>
             <div className='px-auto  text-xl text-center  capitalize w-full font-light'>
                 {profile?.phone}
             </div>
         </div>)
 }
-export default react.memo(Organisation)
+export default Organisation

@@ -12,7 +12,7 @@ function GridCard() {
 
     const { setGridSelected } = stageActions
     useEffect(() => {
-        console.log({ spaceGridsSelected });
+        console.log({ spaceGridsSelected, gridSelected });
 
     }, [spaceGridsSelected]);
 

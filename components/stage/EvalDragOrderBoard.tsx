@@ -1,6 +1,5 @@
 'use client'
-import { AyahTabletType } from '@/api/graphql/sprint/sprint.types';
-import { useEffect, useState } from 'react';
+import { Ayah } from '@/api/graphql/stage/stage.types';
 
 import { Draggable } from '@/components/shared/Draggable';
 import { Droppable } from '@/components/shared/Droppable';
@@ -20,16 +19,11 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
+import { stageActions } from '@/store/slices/stageSlice';
 import * as _ from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
-type AyahWithId = {
-    order: number;
-    text: string;
-    juz: number;
-    slice?: string;
-    id: number
-}
-const SortableGrid = ({ ay, id }: { ay: AyahWithId, id: number }) => {
+
+const SortableGrid = ({ ay, id }: { ay: Ayah, id: number }) => {
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id })
     const style = {
         transition,
@@ -42,27 +36,16 @@ const SortableGrid = ({ ay, id }: { ay: AyahWithId, id: number }) => {
         </div>)
 }
 
-// Order 
-export default function EvalDragOrderBoard({ evalIndex, hideNb, arabName }: {
-    evalIndex: number, hideNb: boolean,
-    arabName: string
-}) {
+// Order Components space exercide
+export default function EvalDragOrderBoard() {
 
     const dispatch = useDispatch()
-    const { gridsAyahsSelected } = useSelector((state: RootStateType) => state.stage)
+    const { gridSelected, evalIndex, shuffeledAyahsContext, orderedAyahsContext, hideNbContext } = useSelector((state: RootStateType) => state.stage)
+    const { setShuffeledAyahsContext, setOrderedAyahsContext } = stageActions
 
-    const [orderedAyahs, setOrderedAyahs] = useState<AyahTabletType[]>(() => _.sortBy(gridsAyahsSelected, 'order'))
-
-    const [orderedGridForDnd, setOrderedGridForDnd] = useState<AyahWithId[]>(() =>
-        orderedAyahs.map((ordG: AyahTabletType, index) => ({ ...ordG, id: index + 1 })));
-
-    const [shuffeledAyahs, setShuffeleddAyahs] = useState<AyahTabletType[]>(() => _.shuffle(orderedAyahs))
-
-    const [gridState, setGridState] = useState<AyahWithId[]>(() => shuffeledAyahs.map((shuff: AyahTabletType, index) => ({
-        ...shuff, id: index + 1
-    })));
-
-    const [shuffeledGridForDnd, setShuffeledGridForDnd] = useState<AyahWithId[]>(() => _.shuffle(orderedGridForDnd))
+    function shuffelHandler() {
+        dispatch(setShuffeledAyahsContext({ ayahs: [..._.shuffle(orderedAyahsContext)] }))
+    }
 
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -71,9 +54,6 @@ export default function EvalDragOrderBoard({ evalIndex, hideNb, arabName }: {
             coordinateGetter: sortableKeyboardCoordinates,
         })
     );
-    useEffect(() => {
-        console.log({ gridsAyahsSelected })
-    }, [gridsAyahsSelected]);
 
     function handleDragOver(event) {
         console.log({ event })
@@ -83,54 +63,62 @@ export default function EvalDragOrderBoard({ evalIndex, hideNb, arabName }: {
         const { active, over } = event;
         console.log({ active, over })
         if (active?.id === over?.id) {
-            setShuffeledGridForDnd(_.filter(shuffeledGridForDnd, function (sh: AyahWithId) {
-                return sh.id !== active.id
+            dispatch(setShuffeledAyahsContext({
+                ayahs: [..._.filter(shuffeledAyahsContext, function (sh: Ayah) {
+                    return sh.id !== active.id
+                })]
             }))
-            setOrderedGridForDnd(_.filter(orderedGridForDnd, function (sh: AyahWithId) {
-                return sh.id !== active.id
+            dispatch(setOrderedAyahsContext({
+                ayahs: [..._.filter(orderedAyahsContext, function (sh: Ayah) {
+                    return sh.id !== active.id
+                })]
             }))
-
         }
-
     }
+    console.log({ evalIndex });
+
 
     function handleShuffle() {
-        const newGrid = _.shuffle(gridState)
-        console.log({ newGrid })
-        setGridState(newGrid)
+        const newGrid = _.shuffle(orderedAyahsContext)
+        dispatch(setShuffeledAyahsContext({ ayahs: [..._.shuffle(orderedAyahsContext)] }))
     }
     function handleValidate() {
-        const newGrid = _.shuffle(gridState)
-        console.log({ newGrid })
-        setGridState(newGrid)
+        //  const newGrid = _.shuffle(gridState)
+
+        //    setGridState(newGrid)
     }
     const randomColor = Math.floor(Math.random() * 16777215).toString(16);
 
-    return (<div className="flex flex-col flex-none  items-stretch   w-full   h-full " >
-        <div className="flex   flex-auto justify-between items-center   w-full   h-full " >
+    return (<div className="flex flex-col justify-items-start items-stretch  mt-3 w-full   h-full " >
+        <div className="flex   flex-row justify-between items-center   w-full   h-32  " >
             <div className="flex   justify-center items-center   w-full   h-full " >
-                Soura  :&nbsp;&nbsp;{arabName}
+                Soura  :&nbsp;&nbsp;{gridSelected.arabName}
+            </div>
+            <div className="flex   justify-center items-center   w-full   h-full " >
+                groups  :&nbsp;&nbsp;{gridSelected.group}
             </div>
             <div className="flex   justify-center items-center   w-full   h-full " >Eval :&nbsp;&nbsp;{evalIndex}
             </div>
-
-            <div className="flex   justify-center items-center   w-full   h-full " >Nb Ayah left :&nbsp;&nbsp;{orderedGridForDnd.length}
-
+            <div className="flex   justify-center items-center   w-full   h-full " >grids :&nbsp;&nbsp;{gridSelected.grid * gridSelected.grid}
+            </div>
+            <div className="flex   justify-center items-center   w-full   h-full " >Nb Faults :&nbsp;&nbsp;{orderedAyahsContext?.length}
+            </div>
+            <div className="flex   justify-center items-center   w-full   h-full " >Nb Corrects :&nbsp;&nbsp;{orderedAyahsContext?.length}
             </div>
         </div>
         <DndContext sensors={sensors}
             collisionDetection={closestCenter}
             autoScroll={true} onDragOver={handleDragOver} onDragEnd={handleDragEnd}>
-            <div className="flex flex-initial grid-cols-1 md:grid-cols-2 gap-2 justify-between items-stretch   w-full   h-full " >
-
-                <div className="flex flex-grow-0   flex-col w-full items-stretch  gap-2">
-                    {shuffeledGridForDnd && shuffeledGridForDnd.map((ayd: AyahWithId, index: number) => {
-                        return (<Draggable key={`${ayd.order}-${index}`} id={ayd.id} gridAyah={ayd} hideNb={hideNb} />)
+            <div className="flex flex-row justify-between items-stretch   w-full  border-blue-600 border-3 
+                 h-full " >
+                <div className="flex   flex-col w-full items-center justify-start  gap-2">
+                    {shuffeledAyahsContext && shuffeledAyahsContext.map((ayd: AyahWithId, index: number) => {
+                        return (<Draggable key={`${ayd.order}-${index}`} id={ayd.id} gridAyah={ayd} hideNb={hideNbContext} />)
                     })}
                 </div>
-                <div className="flex flex-col items-end justify-center h-full  w-full  gap-2  border-emerald-500  " >
-                    {orderedGridForDnd && orderedGridForDnd?.length > 0 &&
-                        orderedGridForDnd.map((ayd: AyahWithId) => {
+                <div className="flex flex-col items-center justify-start   h-full  w-full  gap-2  border-emerald-500  " >
+                    {orderedAyahsContext && orderedAyahsContext?.length > 0 &&
+                        orderedAyahsContext.map((ayd: Ayah) => {
                             return (<Droppable key={`${ayd.id}`} id={ayd.id} ayd={ayd} />)
                         })}</div>
             </div>

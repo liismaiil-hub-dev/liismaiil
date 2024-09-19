@@ -11,63 +11,111 @@ datasource db {
 }
 
 model Guest {
-  id  Int    @id @default(autoincrement()) 
-  tokenId        Int       @unique 
+  id             Int        @id @default(autoincrement())
+  tokenId        Int        @unique
   host           Int
   flag           String
   password       String
-  guestPassword  String 
+  guestPassword  String
   collaboratorId String
   //status    Role     @default(GUEST)
   country        String
-  status       String
+  status         String
   onLine         Boolean
-  startDate      DateTime @default(now())
+  startDate      DateTime   @default(now())
   endDate        String
-  stages        Stage[]
-  sprints        Sprint[]
-  favorites         Favorite[]
-  @@index([tokenId]) 
-  }
-model Favorite {
-  id  Int    @id @default(autoincrement()) 
-  hostId Int
-  guestId Int 
-  Guest Guest[]
-  
-  @@unique([hostId, guestId])
+  favorites      Favorite[]
+  stages GuestStage[]
+  @@index([tokenId])
+  GuestSprint GuestSprint[]
+   @@map("guests")
+
 }
 
+model Favorite {
+  id      Int     @id @default(autoincrement())
+  hostId  Int
+  guestId Int
+  
+   @@map("favorites")
+
+  //@@unique([hostId, guestId])
+  Guest Guest[]
+}
 
 model Stage {
-  id  Int    @id @default(autoincrement()) 
-  stageId     String   @unique
-  createdAt   DateTime @default(now())
+  id          Int       @id @default(autoincrement())
+  stageId     String    @unique
+  createdAt   DateTime  @default(now())
   souraName   String
+  arabName   String
   souraNb     Int
   grid        Int
   startOn     DateTime?
   createdById String
   ayahs       String
-  sprints     Sprint[]
-  Guest Guest[]
-  @@unique([ createdById,stageId])
-@@index([stageId])
+
+  // @@unique([ createdById,stageId])
+  @@index([stageId])
+  GuestStage GuestStage[]
+  StageSprint StageSprint[]
+   @@map("stages")
+
 }
 
-
 model Sprint {
-  id  Int    @id @default(autoincrement()) 
-  sprintId    String  @unique 
+  id          Int      @id @default(autoincrement())
+  sprintId    String   @unique
   createdAt   DateTime @default(now())
   souraName   String
+  arabName   String
   souraNb     Int
   grid        Int
   startOn     DateTime
   createdById String
   published   Boolean
-  guests      Guest[]
-  stages      Stage[]
-  @@unique([createdById, souraNb ])
-@@index([sprintId])
+  //  @@unique([createdById, souraNb ])
+  @@index([sprintId])
+  GuestSprint GuestSprint[]
+  StageSprint StageSprint[]
+   @@map("sprints")
+
 }
+
+
+
+model GuestStage {
+  guest     Guest    @relation(fields: [tokenId], references: [tokenId])
+  tokenId   Int   @map("tokenId")
+  stage      Stage     @relation(fields: [stageId], references: [stageId])
+  stageId    String   @map("stageId")
+  rate      Int?
+  review    String?
+  addedAt   DateTime @default(now()) @map("added_at")
+  @@id([tokenId, stageId])
+   @@map("guest_stages")
+ 
+}
+model GuestSprint {
+  guest     Guest    @relation(fields: [tokenId], references: [tokenId])
+  tokenId   Int   @map("tokenId")
+  sprint      Sprint     @relation(fields: [sprintId], references: [sprintId])
+  sprintId    String   @map("sprintId")
+  rate      Int?
+  review    String?
+  addedAt   DateTime @default(now()) @map("added_at")
+ @@id([sprintId, tokenId])
+   @@map("guest_sprints")
+
+ }
+ model StageSprint {
+  stage     Stage    @relation(fields: [stageId], references: [stageId])
+  stageId   String   @map("tokenId")
+  sprint     Sprint     @relation(fields: [sprintId], references: [sprintId])
+  sprintId    String   @map("sprintId")
+  
+  addedAt   DateTime @default(now()) @map("added_at")
+ @@id([sprintId, stageId])
+   @@map("sprint_stages")
+ 
+ }

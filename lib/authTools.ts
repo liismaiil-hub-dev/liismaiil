@@ -19,6 +19,8 @@ export const createTokenForGuest = ({ tokenId, host, collaboratorId, country, fl
   tokenId: number, host: number, collaboratorId: string, country: string, flag: string, status: LIISMAIIL_STATUS_ENUM, onLine: boolean
 }) => {
   const token = jwt.sign({ tokenId, host, collaboratorId, country, flag, status, onLine }, SECRET, { expiresIn: '1d' });
+  console.log({ token });
+
   return token
 }
 export const logoutGuestFromPrisma = async (tokenId: number) => {
@@ -91,7 +93,7 @@ export const getGuestFromTokenPrisma = async (token: number) => {
         }
       } else {
         return null
-}
+      }
 
     } catch (error) {
       console.log({ error });
@@ -202,6 +204,7 @@ export const signinPrisma = async ({ tokenId, password }: {
   const _guest = await prisma.guest.findFirst({ where: { tokenId } });
   try {
     if (_guest) {
+      console.log({ _guest });
 
       const { tokenId, collaboratorId, flag, host, password: dbPassword } = _guest;
       const verif = await verifyPassword(password, dbPassword)
@@ -236,7 +239,9 @@ export const registerPrisma = async ({
   country: string,
   collaboratorId: string,
 }): Promise<{ message: string } | undefined> => {
+
   const guestInDb = await prisma.guest.findFirst({ where: { tokenId: tokenId } });
+  console.log({ regPrisma: tokenId });
 
   try {
 
@@ -273,6 +278,7 @@ export const registerPrisma = async ({
       return {
         message: JSON.stringify({
           message: 'success registration',
+
           success: true,
           tokenId,
           country,

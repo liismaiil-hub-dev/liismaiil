@@ -18,7 +18,7 @@ const GuestsFrontComp = ({ guests }: { guests: GuestPrismaType[] }) => {
     shadow-md shadow-blue-400 rounded-sm w-full h-full flex-wrap' >
         {guests?.map((gust, index) => {
             return (<Link key={`${gust.tokenId}_${index}`} href={`/stage/${gust.tokenId}`} scroll={false}>
-                <div className={cn(gust?.tokenId !== 0 && guest?.tokenId === gust.tokenId && 'bg-green-300 shadow-md shadow-green-200',
+                <div className={cn(gust?.tokenId !== 0 && gust?.tokenId === gust.tokenId && 'bg-green-300 shadow-md shadow-green-200',
                     "cursor-pointer hover:animate-zoomIn border-2 border-green-400 hover:border-indigo-600 flex items-stretch justify-stretch   rounded-full h-14 w-14")}>
                     <Image width={70} height={100} className='flex justify-center items-center rounded-full object-cover' src={`/img/flags/${gust.flag ? gust.flag : 'pt.png'}`} alt={'avatar flalg '} />
                 </div>
@@ -30,18 +30,18 @@ const GuestsFrontComp = ({ guests }: { guests: GuestPrismaType[] }) => {
     </div>
 }
 function Guests(): ReactElement {
-    const { guestsPrisma, guestPrisma } = useSelector((state: RootStateType) => state.guestPrisma)
+    const { guestsOnline, guestPrisma } = useSelector((state: RootStateType) => state.guestPrisma)
     const router = useRouter()
-    const [guestFoundState, setGuestFoundState] = useState();
+    const [guestFoundState, setGuestFoundState] = useState(-1);
     const [searchId, setSearchId] = useState(-1);
-    console.log({ guestsPrisma });
+    console.log({ guestsOnline });
 
     const handleGuestSearch = () => {
-        const guestFound = _.find(guestsPrisma, (e) => {
+        const guestFound = _.find(guestsOnline, (e) => {
             return e.tokenId === searchId
         })
         if (typeof guestFound !== 'undefined') {
-            setGuestFoundState(guestFound.tokenId)
+            setGuestFoundState(guestFound?.tokenId)
         } else {
             setGuestFoundState('none')
 
@@ -54,9 +54,9 @@ function Guests(): ReactElement {
                 <input type='text' onChange={(e) => setSearchId(parseInt(e.target.value))}
                     placeholder='tokenId' className="px-3 text-center w-full flex justify-center h-11 ring-1 ring-emerald-200/30 rounded-md" />
                 <button onClick={() => handleGuestSearch()} className='btn rounded-md'  > Find guest</button>
-            </div>{typeof guestsPrisma !== 'undefined' && guestsPrisma ?
+            </div>{typeof guestsOnline !== 'undefined' && guestsOnline ?
                 <div className="flex  justify-start  items-center w-full  h-full    ">
-                    <GuestsFrontComp guests={guestsPrisma} />
+                    <GuestsFrontComp guests={guestsOnline} />
                 </div> : <div className="flex  justify-center  items-center w-full  h-full ">
                     You must connect to your account to see your tokenId there
                 </div>}

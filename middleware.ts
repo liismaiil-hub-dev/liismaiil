@@ -1,13 +1,24 @@
-import { COOKIE_NAME } from '@/store/constants/constants';
 import { cookies } from 'next/headers';
-import { NextResponse, userAgent, type NextRequest } from 'next/server';
+import { NextRequest, NextResponse, userAgent } from 'next/server';
+import { COOKIE_NAME } from './store/constants/constants';
 
 // This function can be marked `async` if using `await` inside
+
+//export default clerkMiddleware();
+/* 
+const isPublicRoute = createRouteMatcher(["/:path*", "/guests", "/space", "/stages", "/sprints", "/sign-in(.*)", "/sign-up(.*)"])
+
+export default clerkMiddleware((auth, request) => {
+    if (!isPublicRoute(request)) {
+        auth().protect()
+    }
+}) */
+
 export function middleware(request: NextRequest) {
     //
     const token = cookies().get(COOKIE_NAME)
     console.log({ middleWaretoken: token });
-   const { isBot } = userAgent(request)
+    const { isBot } = userAgent(request)
     if (isBot) {
 
         console.log({ isBot })
@@ -15,7 +26,7 @@ export function middleware(request: NextRequest) {
 
     }
 
-    if (request.nextUrl.pathname.startsWith('/stages')) {
+    if (request.nextUrl.pathname.startsWith('/sprints')) {
         console.log({ pathName: request.nextUrl.pathname });
 
         if (!token) {
@@ -26,7 +37,8 @@ export function middleware(request: NextRequest) {
     const response = NextResponse.next();
     response.headers.set('Access-Control-Allow-Origin', '*')
     if ((!token)) {
-        return NextResponse.redirect(new URL('/', request.url))
+        return response;
+       // return NextResponse.redirect(new URL('/', request.url))
 
     } else {
 
@@ -34,8 +46,15 @@ export function middleware(request: NextRequest) {
     }
 
 }
-
 // See "Matching Paths" below to learn more
 export const config = {
-    matcher: ['/sprints/:path*', '/stages/:path*',]
+    matcher: [
+        /* '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+ */
+        '/sprints/:path*',
+        //      '/stages/:path*',
+        // Skip Next.js internals and all static files, unless found in search params
+
+    ]
 }
+

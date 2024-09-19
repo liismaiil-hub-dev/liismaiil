@@ -4,31 +4,35 @@ type Stage {
   title: String
   published: Boolean
   authorId: Int
-  grids: [StageGrid]
+  grids: [GridType]
   categories: [String]
   sprints: [String]
   createdAt: String
   }
-type StageGrid {
-  id: Int
+
+ input GridInput {
+  title: String!
   arabName: String
-  title: String
-  souraNb: Int
-  souraName: String
-  ayahs: [Ayah]
+  author: String!
+  ayahs:[String]
+  description: String
   grid: Int
   group: Int
-}
-input StageGridInput {
-  id: Int
-  arabName: String
-  title: String
-  souraNb: Int
   souraName: String
-  ayahs: [AyahTabletInput]
+  souraNb: Int
+ }
+  type GridType {
+  title: String!
+  arabName: String
+  author: String!
+  ayahs:[String]
+  description: String
   grid: Int
   group: Int
-}
+  souraName: String
+  souraNb: Int
+ } 
+   
 type SprintPrismaType  {
   sprintId: String
   createdAt: String
@@ -81,7 +85,7 @@ input UpdateStageInput {
   title: String
   published: Boolean
   authorId: Int
-  grids: [StageGridInput]
+  grids: [GridInput]
   categories: [String]
   sprints: [String]
   createdAt: String
@@ -98,7 +102,7 @@ input StageInput {
   title: String
   published: Boolean
   authorId: Int
-  grids: [StageGridInput]
+  grids: [GridInput]
   categories: [String]
   sprints: [String]
   createdAt: String
@@ -128,6 +132,7 @@ type  AddGuestPrismaOutput {
   flag: String
   host:Int
   country: String
+  status: String
   success:Boolean
  }
 
@@ -139,6 +144,10 @@ input RemoveStageInput  {
 type RegisterPrismaGridsMenuOutput{
     souraName:String
     souraNb:Int
+}
+type GetGridsByNbOutput{
+    success:Boolean
+    grids:[GridType]
 }
 
 
@@ -152,6 +161,8 @@ type SuccessOutput {
 }
 type Query {
     stages: [Stage!]
+    getGridsByNb(souraNb:Int): GetGridsByNbOutput
+
     hostsForDashboard: [GuestPrismaType!]
     stagesById(id:Int): [Stage!]
     stagesByToken(token:Int): [Stage!]

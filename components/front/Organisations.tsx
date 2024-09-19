@@ -17,7 +17,7 @@ function Organisations({ collaborators, hosts, guestPrisma, localOnline }: { col
     const dispatch = useDispatch()
 
     const { setCollaboratorProfiles } = profileActions
-    const { setHostsPrisma, setGuestPrisma, } = guestPrismaActions
+    const { setHostsPrisma, setGuestPrisma, setGuestsOnLine } = guestPrismaActions
     const { collaboratorProfiles } = useSelector((state: RootStateType) => state.profile)
 
 
@@ -42,9 +42,11 @@ function Organisations({ collaborators, hosts, guestPrisma, localOnline }: { col
             }
 
         })
+        console.log({ colProfiles, hosts, guestPrisma });
+
         dispatch(setCollaboratorProfiles({ profiles: colProfiles }))
         dispatch(setHostsPrisma({ hostsPrismas: hosts }))
-        console.log({ collaborators, hosts, guestPrisma });
+        dispatch(setGuestsOnLine({ guestsPrisma: localOnline }))
 
         // dispatch(setOrgCoords({ orgCoords: collaboratorsCoords }))
         if (typeof guestPrisma != 'undefined' && guestPrisma) {
@@ -83,12 +85,11 @@ function Organisations({ collaborators, hosts, guestPrisma, localOnline }: { col
                 </div>
 
                 <div className="CENTER justify-start ">
-                    {typeof collaboratorProfiles !== 'undefined' && collaboratorProfiles.length > 0 &&
+                    {typeof collaboratorProfiles !== 'undefined' && collaboratorProfiles && collaboratorProfiles.length > 0 && collaboratorProfiles[0].name !== '' &&
                         collaboratorProfiles.map((org: CollaboratorProfileType) => {
                             console.log({ org });
 
                             return (<div key={org.tokenId} className="p-3 ">
-
                                 <Organisation profile={org} />
                             </div>
 

@@ -64,9 +64,10 @@ export default async function Home() {
   const hosts = await getHosts()
   const guest = await getGuestFromCookies()
   //console.log({ hosts, collaborators });
-  const localOnline = await getLocalGuests();
-  console.log({ localOnline, guest });
-
+  const localsOnline = await getLocalGuests() as GuestType[];
+  console.log({ localsOnline, guest, collaborators });
+  /*   const newToken = await createTokenForGuest({ tokenId:localOnline.tokenId, host, collaboratorId, country, flag, status, onLine
+  }) */
   const hostsPrisma = hosts.map((guest: GuestType) => {
 
     return {
@@ -90,7 +91,7 @@ export default async function Home() {
        )
   } else { */
   return (
-    <Organisations guestPrisma={guest} localOnline={localOnline} hosts={hostsPrisma} collaborators={collaborators} />
+    <Organisations guestPrisma={guest} localOnline={localsOnline} hosts={hostsPrisma} collaborators={collaborators} />
   )
 }
 async function getGuestFromCookies() {
@@ -140,7 +141,7 @@ export async function getLocalGuests() {
   try {
     //console.log({ firestore });
     const _onlinGuests = await prisma.guest.findMany({ where: { onLine: true } });
-    return _onlinGuests;
+    return _onlinGuests as GuestType[];
   } catch (error: any) {
     console.log({ error });
     throw new Error(error);

@@ -13,7 +13,7 @@ export type GuestStateType = {
   guestPrisma: GuestPrismaType,
   guestsPrisma: GuestPrismaType[],
   hostsPrisma: GuestPrismaType[],
-
+  guestsOnline: GuestPrismaType[],
 
 }
 
@@ -26,6 +26,12 @@ export const initialGuestState: GuestStateType = {
     country: ''
   },
   guestsPrisma: [{
+    tokenId: 0, collaboratorId: '', status: LIISMAIIL_STATUS_ENUM.GUEST,
+    flag: '', startDate: '', endDate: '',
+    host: 0,
+    country: ''
+  }],
+  guestsOnline: [{
     tokenId: 0, collaboratorId: '', status: LIISMAIIL_STATUS_ENUM.GUEST,
     flag: '', startDate: '', endDate: '',
     host: 0,
@@ -49,6 +55,10 @@ const guestPrismaSlice = createSlice({
     setGuestsPrisma(state, action: PayloadAction<{ guestsPrisma: GuestPrismaType[] }>) {
       state.guestsPrisma = action.payload.guestsPrisma
     },
+    setGuestsOnLine(state, action: PayloadAction<{ guestsPrisma: GuestPrismaType[] }>) {
+      state.guestsOnline = action.payload.guestsPrisma
+    },
+
     setHostsPrisma(state, action: PayloadAction<{ hostsPrismas: GuestPrismaType[] }>) {
       state.hostsPrisma = action.payload.hostsPrismas
     },

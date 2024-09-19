@@ -7717,6 +7717,11 @@ next-absolute-url@^1.2.2:
   resolved "https://registry.npmjs.org/next-absolute-url/-/next-absolute-url-1.2.2.tgz"
   integrity sha512-Z2+LZXQTthhw2je9u4eq8QWXxXd57a6b54x9exBfQX4Dct6YxaMjcXZWNLHd9AOlCue84EsMpdSGP7wACqUnPg==
 
+next-safe-action@^7.9.3:
+  version "7.9.3"
+  resolved "https://registry.yarnpkg.com/next-safe-action/-/next-safe-action-7.9.3.tgz#74df2030cbb5a05ff48b3a258297fefa3c4d2c68"
+  integrity sha512-2GH7/iRiM5R/y6sIQZsNHGeRr/iKQJsg8ejP63WhTS7fXS9KzxVbEKrWwLNNhL33V9cn0448cPSI/aiSK/PUbA==
+
 next-seo@^6.5.0:
   version "6.5.0"
   resolved "https://registry.npmjs.org/next-seo/-/next-seo-6.5.0.tgz"

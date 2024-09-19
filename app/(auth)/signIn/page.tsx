@@ -44,8 +44,6 @@ const SignIn = () => {
   const [host, setHost] = useState<number | undefined>(0);
   const [country, setCountry] = useState<string | undefined>('OM');
   const [password, setPassword] = useState('');
-
-  const [open, setOpen] = useState(true);
   const handleValidate = () => {
     try {
       const guest = {

@@ -4,8 +4,20 @@ export type StageStateProps = {
   sprints: SprintPrismaType[],
   spaceGridsSelected: GridJsoned[],
   gridSelected: GridJsoned,
-  stageSelected: StageTypeData,
+  stageSelected: StagePrismaType,
+
   evalIndex: number,
+  // stage
+
+  stageOrderedAyahsContext: Ayah[],
+  stageShuffeledAyahsContext: Ayah[],
+  stageShuffeledFirstAyahsContext: Ayah[],
+  stageGridSelected: StagePrismaType,
+  stageGridsContext: StagePrismaType[],
+
+
+
+  // space
   orderedAyahsContext: Ayah[],
   shuffeledAyahsContext: Ayah[],
   shuffeledFirstAyahsContext: Ayah[],
@@ -14,7 +26,7 @@ export type StageStateProps = {
   faultsNbContext: number,
   correctsNbContext: number,
   spaceSprint: SprintPrismaType,
-  spaceStage: StageTypeData,
+  spaceStage: StagePrismaType,
   validStages: [string],
   evalContext: EVAL_STATE,
   validContext: boolean,
@@ -35,6 +47,7 @@ export type SprintPrismaType = {
   sprintId: string,
   createdAt: string,
   souraName: string
+  arabName?: string
   souraNb: number,
   grid: number,
   startOn: string,
@@ -78,7 +91,7 @@ export type GridJsoned = {
   title: string;
   souraNb: number;
   souraName: string;
-  ayahs: string;
+  ayahs: [string];
   grid: number;
   group: number;
 };
@@ -112,23 +125,14 @@ export type PromoteStageInput = {
   category: STAGE_CATEGORY_ENUM
 };
 
-export type StageTypeData = {
-  id: number;
-  title: string;
-  published: boolean;
-  authorId: number;
-  grids: [String];
-  categories: [String];
-  sprints: [String];
-  createdAt?: string;
-}
 
 
 export type StagePrismaType = {
   id: number;
-  stageId: number;
+  stageId: string;
   createdAt: string;
   souraName: string;
+  arabName?: string;
   souraNb: number;
   grid: number;
   startOn: string
@@ -164,7 +168,7 @@ export type GuestPrismaType = {
   onLine?: boolean;
   startDate?: string;
   endDate?: string;
-  stage?: StagePrismaType[];
+  stages?: StagePrismaType[];
   sprints?: SprintPrismaType[];
 };
 export type RegisterPrismaGridsMenuInput = {
@@ -195,3 +199,9 @@ export enum STAGE_CATEGORY_ENUM {
 }
 
 
+export type GuestStageRel = {
+  tokenId: number,
+  stageId: string,
+  rate?: number,
+  review?: string,
+}

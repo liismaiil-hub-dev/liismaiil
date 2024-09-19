@@ -853,7 +853,6 @@ const Profile = {
 };
 
 module.exports = {
-  DateTime: DateTimeResolver,
   Profile,
   Query: {
     profile,

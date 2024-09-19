@@ -160,9 +160,9 @@ function Navigation() {
                 <div className={cn(isRoute('space') && ' nav-selected', 'CENTER nav-element')}  >
                     <Link prefetch={true} key={`space`} href='/space'> Space </Link>
                 </div>
-                <div className={cn(isRoute('stage') && ' nav-selected', 'CENTER nav-element')}  >
+                <div className={cn(isRoute('stages') && ' nav-selected', 'CENTER nav-element')}  >
 
-                    <Link prefetch={true} key={`stage`} href='/stages'> Stages </Link>
+                    <Link prefetch={true} key={`stages`} href='/stages'> Stages </Link>
                 </div>
                 <div className={cn(isRoute('sprints') && ' nav-selected', 'CENTER nav-element')}  >
 

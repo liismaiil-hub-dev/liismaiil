@@ -117,20 +117,3 @@ export const GET_STATS = gql`
     }
   }
 `;
-export const GET_GRIDS_BY_NB = gql`
-  query GetGridsByNb($input: GetGridsByNbInput) {
-    getGridsByNb(input: $input) {
-      success
-      grids{
-          grid
-          title
-          souraNb
-          arabName
-          group
-          souraName
-          ayahs
-          }
-  }
-          }
-  
-`;

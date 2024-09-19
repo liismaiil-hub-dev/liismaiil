@@ -8,14 +8,14 @@ import { dbFirestore, FieldValue, timeStamp } from './fb-utils-admin';
 
 import { guestDefs } from "@/api/graphql/guest/guest.graphql.js";
 import guestResolver from "@/api/graphql/guest/guest.resolver";
-import GridModel from "@/api/graphql/sprint/Grid.model";
+//import GridModel from "@/api/graphql/sprint/Grid.model";
 import { sprintDefs } from "@/api/graphql/sprint/sprint.graphql.js";
 import SprintModel from "@/api/graphql/sprint/Sprint.model";
 import sprintResolver from "@/api/graphql/sprint/sprint.resolver";
 import { stageDefs } from "@/api/graphql/stage/stage.graphql.js";
 import stageResolver from "@/api/graphql/stage/stage.resolver";
-import { tabletDefs } from "@/api/graphql/tablet/tablet.graphql.js";
-import tabletResolver from "@/api/graphql/tablet/tablet.resolver";
+//import { tabletDefs } from "@/api/graphql/tablet/tablet.graphql.js";
+//import tabletResolver from "@/api/graphql/tablet/tablet.resolver";
 import { mergeResolvers, mergeTypeDefs } from "@graphql-tools/merge";
 import fs from "fs";
 import path from "path";
@@ -34,13 +34,13 @@ const typesArray = [
   sprintDefs,
   stageDefs,
   guestDefs,
-  tabletDefs
+  // tabletDefs
 ];
 const resolversArray = [
   sprintResolver,
   stageResolver,
   guestResolver,
-  tabletResolver
+  //tabletResolver
 ];
 
 // eslint-disable-next-line new-cap
@@ -144,7 +144,7 @@ const handler = startServerAndCreateNextHandler<NextRequest>(apolloServer, {
       _lodash,
       slug,
       SprintModel,
-      GridModel,
+      //      GridModel,
       req,
       res,
       mongoose,

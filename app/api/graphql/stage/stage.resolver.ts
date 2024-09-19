@@ -2,12 +2,13 @@ import { GuestRegisterSchema } from "@/api/graphql/tools";
 import { PrismaClient } from '@prisma/client';
 import { Firestore } from 'firebase-admin/firestore';
 import { LIISMAIIL_STATUS_ENUM } from '../profile/profile.types';
-import { AddGuestPrismaInput, AddGuestPrismaOutput, GuestPrismaType, STAGE_CATEGORY_ENUM, StageTypeData } from './stage.types';
+import { GridTypeData } from '../tablet/tablet.types';
+import { AddGuestPrismaInput, AddGuestPrismaOutput, GuestPrismaType, STAGE_CATEGORY_ENUM, StagePrismaType } from './stage.types';
 
 
-const stages = async (_: undefined, __: undefined, { dbFirestore }: { dbFirestore: Firestore }): Promise<Array<StageTypeData> | null> => {
+const stages = async (_: undefined, __: undefined, { dbFirestore }: { dbFirestore: Firestore }): Promise<Array<StagePrismaType> | null> => {
   try {
-    const stages: Array<StageTypeData> | null = [];
+    const stages: Array<StagePrismaType> | null = [];
     const querySnapshot = await dbFirestore.collection('stages').orderBy('createdAt', 'desc').get();
     querySnapshot.forEach((doc: any) => {
       stages.push({ id: doc?.id, ...doc?.data() });
@@ -16,6 +17,48 @@ const stages = async (_: undefined, __: undefined, { dbFirestore }: { dbFirestor
   } catch (error) {
     console.log({ error });
     return Promise.reject(error);
+  }
+};
+const getGridsByNb = async (
+  _: undefined,
+  { souraNb }: { souraNb: number },
+  { dbFirestore }: { dbFirestore: Firestore, _lodash: { filter: any } }
+): Promise<{
+  success: boolean, grids: Array<GridTypeData>
+} | undefined> => {
+  try {
+    const grids: GridTypeData[] = [];
+    console.log({ souraNb });
+
+    const querySnapshot = await dbFirestore.collection('grids').where('souraNb', '==', souraNb).orderBy('grid').get();
+    querySnapshot.forEach((doc: any) => {
+      //console.log({ doc });
+
+      const {
+        title,
+        souraNb,
+        author,
+        arabName,
+        souraName,
+        description,
+        grid,
+        group,
+        ayahs, } = doc.data()
+      grids.push({
+        title,
+        souraNb,
+        author,
+        arabName,
+        souraName,
+        description,
+        grid,
+        group,
+        ayahs,
+      });
+    })
+    return { success: true, grids: grids as Array<GridTypeData> }
+  } catch (error: unknown) {
+    throw error;
   }
 };
 const hostsForDashboard = async (_: undefined, __: undefined, { prisma }: { prisma: PrismaClient }): Promise<Array<GuestPrismaType> | null> => {
@@ -32,9 +75,9 @@ const stagesById = async (
   _: undefined,
   { id }: { id: number },
   { dbFirestore }: { dbFirestore: Firestore }
-): Promise<Array<StageTypeData> | null> => {
+): Promise<Array<StagePrismaType> | null> => {
   try {
-    const stages: Array<StageTypeData> = [];
+    const stages: Array<StagePrismaType> = [];
     return dbFirestore
       .collection('stages')
       .where('id', '==', `${id}`)
@@ -57,9 +100,9 @@ const stagesByToken = async (
   _: undefined,
   { token }: { token: number },
   { dbFirestore }: { dbFirestore: Firestore }
-): Promise<Array<StageTypeData> | null> => {
+): Promise<Array<StagePrismaType> | null> => {
   try {
-    const stages: Array<StageTypeData> = [];
+    const stages: Array<StagePrismaType> = [];
     return dbFirestore
       .collection('stages')
       .where('authorId', '==', `${token}`)
@@ -80,7 +123,7 @@ const stagesByCategory = async (
   _: undefined,
   { category }: { category: STAGE_CATEGORY_ENUM },
   { dbFirestore }: { dbFirestore: Firestore }
-): Promise<StageTypeData | null> => {
+): Promise<StagePrismaType | null> => {
   try {
     return dbFirestore
       .collection('stage')
@@ -99,13 +142,13 @@ const stagesByCategory = async (
 
 const addStage = async (
   _: undefined,
-  { input }: { input: StageTypeData },
+  { input }: { input: StagePrismaType },
   {
     dbFirestore,
     slug,
     timeStamp
   }: { dbFirestore: Firestore; slug: (arg: string) => string; storageRef: any; currentProfile: any; timeStamp: any; req: any }
-): Promise<StageTypeData | undefined> => {
+): Promise<StagePrismaType | undefined> => {
   const { authorId, id, title, sprints, grids, published, categories } = input;
   const titleSlug = slug(title);
   const createdAt = timeStamp;
@@ -136,13 +179,13 @@ const addStage = async (
 /**@todo modify to prisma */
 const addStagePrisma = async (
   _: undefined,
-  { input }: { input: StageTypeData },
+  { input }: { input: StagePrismaType },
   {
     dbFirestore,
     slug,
     timeStamp
   }: { dbFirestore: Firestore; slug: (arg: string) => string; storageRef: any; currentProfile: any; timeStamp: any; req: any }
-): Promise<StageTypeData | undefined> => {
+): Promise<StagePrismaType | undefined> => {
   const { authorId, id, title, sprints, grids, published, categories } = input;
   const titleSlug = slug(title);
   const createdAt = timeStamp;
@@ -178,56 +221,47 @@ const addGuestPrisma = async (
   { registerPrisma, dbFirestore }: { registerPrisma: (arg: any) => any, dbFirestore: Firestore; }
 ): Promise<AddGuestPrismaOutput | undefined> => {
   try {
-    console.log({ input });
+    // console.log({ input });
     const { collaboratorId, host, country, password, tokenId, } = input;
     const data = GuestRegisterSchema.parse({ tokenId, host, country, password, collaboratorId })
-    console.log({ data });
+    // console.log({ data });
+
     try {
-      try {
 
-        const docRef = dbFirestore.collection('guests').doc(`${data.tokenId}`);
-        const snapshot = await docRef.get();
-        if (snapshot.exists) {
-          const { success, tokenId, country, host, flag, status } = await registerPrisma({ ...data, collaboratorId: collaboratorId ? collaboratorId : 'O6cKgXEsuPNAuzCMTGeblWW9sWI3', status: LIISMAIIL_STATUS_ENUM.HOST })
-          if (success) {
-            return ({ tokenId, country, host, success, flag, status })
-          } else {
-            return {
-              tokenId, country, host, success, flag, status
-            }
-          }
+      const docRef = dbFirestore.collection('guests').doc(`${data.tokenId}`);
+      const snapshot = await docRef.get();
+      if (snapshot.exists) {
+        const { success, tokenId, country, host, flag, status } = await registerPrisma({ ...data, collaboratorId: collaboratorId ? collaboratorId : 'O6cKgXEsuPNAuzCMTGeblWW9sWI3', status: LIISMAIIL_STATUS_ENUM.HOST })
+        if (success) {
+          return ({ tokenId, country, host, success, flag, status })
         } else {
-          const { success, tokenId, country, host, flag, status } = await registerPrisma({ ...data, collaboratorId: collaboratorId ? collaboratorId : 'O6cKgXEsuPNAuzCMTGeblWW9sWI3', status: LIISMAIIL_STATUS_ENUM.GUEST })
-
-          if (success) {
-            return ({ tokenId, country, host, success, flag, status })
-          } else {
-            return {
-              tokenId, country, host, success, flag, status
-            }
+          return {
+            tokenId, country, host, success, flag, status
           }
         }
+      } else {
+        const { success, tokenId, country, host, flag, status } = await registerPrisma({ ...data, collaboratorId: collaboratorId ? collaboratorId : 'O6cKgXEsuPNAuzCMTGeblWW9sWI3', status: LIISMAIIL_STATUS_ENUM.GUEST })
 
-      } catch (error) {
-        console.error(error)
-
-        return {
-          tokenId: -1,
-          host: -1,
-          flag: '',
-          success: false,
-          country: ''
+        if (success) {
+          return ({ tokenId, country, host, success, flag, status })
+        } else {
+          return {
+            tokenId, country, host, success, flag, status
+          }
         }
       }
+
+
     } catch (e) {
       console.error(e)
       return {
-        
+
         tokenId: -1,
         host: -1,
         flag: '',
         success: false,
-        country: ''
+        country: '',
+        status: ''
       }
     }
   } catch (error: any) {
@@ -301,6 +335,7 @@ const promoteStages = async (
 const ProductResolver = {
   Query: {
     stages,
+    getGridsByNb,
     hostsForDashboard,
     stagesById,
     stagesByCategory,

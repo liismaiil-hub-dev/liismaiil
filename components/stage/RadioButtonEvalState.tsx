@@ -1,19 +1,33 @@
-import { Checkbox } from "@nextui-org/react";
-import { EVAL_STATE } from "./Board";
+'use client'
+import { EVAL_STATE } from "@/api/graphql/stage/stage.types";
+import { stageActions } from "@/store/slices/stageSlice";
+import { RootStateType } from '@/store/store';
+import { useDispatch, useSelector } from 'react-redux';
 
 
-export default function RadioButtonEvalState({handleRadioCheck, title, evalState, actualState}: {handleRadioCheck: any, 
-    title:string, evalState:EVAL_STATE,  actualState:EVAL_STATE}) {
-  
-    return (
-    <div className="flex  justify-center items-center  border border-green-400 text-center font-sans " 
-    onClick={handleRadioCheck}>
-         <input onChange={()  => {handleRadioCheck(evalState)}} className="flex  justify-center items-center  border border-green-100"
-          type="radio" 
-         id={evalState} name={evalState} value={evalState} checked={actualState === evalState} />
-    <label htmlFor={evalState} className="text-sm">{title}</label>
-  </div>
- 
+export default function RadioButtonEvalState({ title, evalState, }: {
+  title: string, evalState: EVAL_STATE
+}) {
+  const dispatch = useDispatch();
+  const { evalContext } = useSelector((state: RootStateType) => state.stage)
+
+  //const [_actualGrid, setActualGrid] = useState(() => JSON.parse(gridSelected.ayahs)[gridIndex])
+  const { setEvalContext } = stageActions
+
+  function handleRadioCheck() {
+    dispatch(setEvalContext({ eval: evalState }))
+  }
+
+
+  return (
+    <div className="flex  justify-center items-center  border border-green-400 text-center font-sans "
+      onClick={handleRadioCheck}>
+      <input onChange={() => { handleRadioCheck() }} className={`flex  justify-center items-center  border-3 ${evalContext === evalState ? 'border-green-400' : 'border-grey-400'}`}
+        type="radio"
+        id={evalState} name={evalState} value={evalState} checked={evalContext === evalState} />
+      <label htmlFor={evalState} className="text-sm">{title}</label>
+    </div>
+
   );
 }
 
