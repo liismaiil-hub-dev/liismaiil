@@ -1,33 +1,35 @@
 'use client'
-import { SprintPrismaType } from "@/api/graphql/stage/stage.types";
+import { SprintSpaceType } from "@/api/graphql/stage/stage.types";
 
-import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
+import Link from "next/link";
+import { useRouter } from 'next/navigation';
 import { useTransition } from "react";
 
+const Sprints = ({ sprints }: { sprints: unknown }) => {
+  console.log(JSON.stringify(sprints));
+  const router = useRouter()
 
-const Sprints = () => {
+  const [isPending, startTransition] = useTransition();
 
-        useTransition()
+  const sprintSessionHandler = (sprId: string) => {
+    router.push(`/sprints/${sprId}`)
+    /* startTransition(() => {
+      setSprintSession(sprId)
+    }) */
+  }
 
   return (
-    <section className="flex flex-col  justify-start items-center w-full h-full">
-      <div className="flex justify-content-center ">
-        <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
-          {typeof sprints !== 'undefined' && sprints.length > 0 &&
-            <Autocomplete
-              label="Select an animal"
-              className="max-w-xs">
-              {sprints?.map((sprint: SprintPrismaType) => (
-                <AutocompleteItem key={sprint.souraNb} value={sprint.sprintId}>
-                  {sprint.souraName}
-                </AutocompleteItem>
-              ))}
-            </Autocomplete>
-          }
+    <section className="flex flex-col  justify-start items-start w-full h-full">
+      <div className="flex w-full flex-wrap  gap-2">
+        {typeof sprints !== 'undefined' && sprints && sprints?.length > 0 && sprints?.map((sprint: SprintSpaceType) => (
+          <Link key={sprint.sprintId} href={`/sprints/${sprint.sprintId}`} target="_blank">{sprint.stage.souraName}
+          </Link>
 
-        </div>
+        ))
+        }
       </div>
-    </section>)
+    </section>
+  )
 
 }
 export default Sprints

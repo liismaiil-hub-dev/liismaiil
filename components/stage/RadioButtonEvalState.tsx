@@ -9,22 +9,22 @@ export default function RadioButtonEvalState({ title, evalState, }: {
   title: string, evalState: EVAL_STATE
 }) {
   const dispatch = useDispatch();
-  const { evalContext } = useSelector((state: RootStateType) => state.stage)
+  const { stageEvalContext } = useSelector((state: RootStateType) => state.stage)
 
   //const [_actualGrid, setActualGrid] = useState(() => JSON.parse(gridSelected.ayahs)[gridIndex])
-  const { setEvalContext } = stageActions
+  const { setStageEvalContext } = stageActions
 
   function handleRadioCheck() {
-    dispatch(setEvalContext({ eval: evalState }))
+    dispatch(setStageEvalContext({ eval: evalState }))
   }
 
 
   return (
-    <div className="flex  justify-center items-center  border border-green-400 text-center font-sans "
+    <div className="flex  justify-center items-center   text-center font-sans "
       onClick={handleRadioCheck}>
-      <input onChange={() => { handleRadioCheck() }} className={`flex  justify-center items-center  border-3 ${evalContext === evalState ? 'border-green-400' : 'border-grey-400'}`}
+      <input onChange={() => { handleRadioCheck() }} className={`flex  justify-center items-center  border-3 mx-2 ${stageEvalContext === evalState ? 'border-green-400 text-green-600' : 'border-grey-400'}`}
         type="radio"
-        id={evalState} name={evalState} value={evalState} checked={evalContext === evalState} />
+        id={evalState} name={evalState} value={evalState} checked={stageEvalContext === evalState} />
       <label htmlFor={evalState} className="text-sm">{title}</label>
     </div>
 

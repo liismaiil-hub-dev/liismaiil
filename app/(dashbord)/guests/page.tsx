@@ -1,8 +1,8 @@
+import { getGuestFromCookies } from "@/actions/guest";
 import GuestsComponents from "@/components/front/Guests";
-import { getCurrentGuest } from "@/lib/guests";
 
 export default async function Guests() {
-    const guest = getCurrentGuest()
+    const guest = await getGuestFromCookies()
     console.log({ guestFromGuests: guest });
 
     //   const {credential} = guest;

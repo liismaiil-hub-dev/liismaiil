@@ -52,7 +52,7 @@ export const GET_GRIDS_BY_NB = gql`
           group
           souraName
           ayahs
-          }
+      }
   }
   }
   `;

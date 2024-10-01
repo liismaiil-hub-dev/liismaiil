@@ -14,15 +14,31 @@ import "server-only";
 
 const SECRET = process.env.NEXT_PUBLIC_JWT_SECRET!
 
+export function getGuestFromCookies(): GuestType | null {
+  try {
+    const token = cookies().get(COOKIE_NAME)
+    if (typeof token !== 'undefined') {
+      const _guest = jwt.verify(token.value, SECRET)
+      console.log({ _guest });
+      //  const guest = await getGuestFromTokenPrisma(_guest?.tokenId!)
+      return _guest as GuestType
+    }
+    return null
+  } catch (e) {
+    console.error(e)
+    return null
+    //redirect(`/liismaiil/${slug(data.host)}`)
+  }
+}
+
 export const createTokenForGuest = ({ tokenId, host, collaboratorId, country, flag, status, onLine
 }: {
   tokenId: number, host: number, collaboratorId: string, country: string, flag: string, status: LIISMAIIL_STATUS_ENUM, onLine: boolean
 }) => {
   const token = jwt.sign({ tokenId, host, collaboratorId, country, flag, status, onLine }, SECRET, { expiresIn: '1d' });
-  console.log({ token });
-
   return token
 }
+
 export const logoutGuestFromPrisma = async (tokenId: number) => {
   try {
     console.log({ tokenGetGuestFromToken: tokenId });
@@ -42,7 +58,8 @@ export const logoutGuestFromPrisma = async (tokenId: number) => {
     return { success: false }
   }
 }
-export const getGuestFromToken = async (token: string) => {
+
+export const getGuestFromFirestoreGuestId = async (token: string) => {
   try {
     console.log({ tokenGetGuestFromToken: token });
 
@@ -74,37 +91,7 @@ export const getGuestFromToken = async (token: string) => {
     return null
   }
 }
-export const getGuestFromTokenPrisma = async (token: number) => {
-  try {
-    console.log({ tokenGetGuestFromToken: token });
 
-    //const tokenId = jwt.verify(token,SECRET)
-
-    const _guest = await prisma.guest.findFirst({ where: { tokenId: token } })
-    try {
-      if (_guest) {
-        const randomFlag = _.random(FLAG_FILES.length)
-
-        const { tokenId, collaboratorId, flag = FLAG_FILES[randomFlag], host, } = _guest
-        if (typeof tokenId === 'undefined' || tokenId === 0) {
-          return null
-        } else {
-          return ({ collaboratorId, flag, host, tokenId, status: LIISMAIIL_STATUS_ENUM.GUEST });
-        }
-      } else {
-        return null
-      }
-
-    } catch (error) {
-      console.log({ error });
-      return null
-    }
-
-  } catch (error) {
-    console.log({ error });
-    return null
-  }
-}
 
 export const signin = async ({ tokenId, password }: {
   tokenId: string,

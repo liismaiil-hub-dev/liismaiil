@@ -1,11 +1,12 @@
-
+'use server'
 import { dbFirestore } from '@/app/api/graphql/fb-utils-admin';
+import { GridMenu } from '@/app/api/graphql/stage/stage.types';
 import { GridTypeData } from '@/app/api/graphql/tablet/tablet.types';
-import GridsComponent from "@/components/stage/Grids";
-
+import GridsComponent from "@/components/space/Grids";
 import _ from 'lodash';
+import { memoize } from "nextjs-better-unstable-cache";
 
-const getGrids = async (): Promise<{ souraName: string, souraNb: number }[] | undefined> => {
+export const getSpaceGrids = memoize(async () => {
 
   try {
     const grids: GridTypeData[] = [];
@@ -33,35 +34,40 @@ const getGrids = async (): Promise<{ souraName: string, souraNb: number }[] | un
         ayahs,
       });
     });
-
     if (typeof grids !== 'undefined' && grids.length > 0) {
-      //console.log({ grids });
-
-      const souraName = grids.map((gr: GridTypeData) => {
+      const souraName = await grids.map((gr: GridTypeData) => {
         return { souraName: gr.arabName, souraNb: parseInt(gr.souraNb.toString()) };
       })
       const uniqGrids = _.uniqBy(souraName, 'souraNb')
       const sortedGrids = _.sortBy(uniqGrids, ['souraNb'])
-      return sortedGrids as [{ souraName: string, souraNb: number }]
+      return sortedGrids as GridMenu[]
     } else {
       return
     }
   } catch (err) {
-
     console.log({ err });
     return
   }
+}, {
+  persist: true,
+  revalidateTags: () => ['space'],
+  log: ['datacache', 'verbose', 'dedupe'],
+  logid: 'spaceMenu'
 }
+)
 export default async function SourasNav() {
-  const grids = await getGrids()
-  if (typeof grids !== 'undefined' && grids.length > 0) {
-    console.log(`grids ${grids}`);
-    return (
-      <GridsComponent grids={grids} />
-    )
-  } else {
-    return (<GridsComponent grids={['']} />)
+  const grids = await getSpaceGrids()
+ // console.log({ gridsSouraNav: grids });
 
+  try {
+    if (typeof grids !== 'undefined' && grids.length > 0) {
+      return (
+        <GridsComponent grids={grids} />
+      )
+    }
+
+  } catch (error) {
+    throw error
   }
 }
 

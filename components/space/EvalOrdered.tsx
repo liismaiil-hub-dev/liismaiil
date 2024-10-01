@@ -11,14 +11,14 @@ import SpaceButton from './SpaceButton';
 function EvalOrdered() {
 
     const dispatch = useDispatch()
-    const { gridSelected, validContext, hideNbContext, orderedAyahsContext, gridIndexContext, gridsContext } = useSelector((state: RootStateType) => state.stage)
-    const { setOrderedAyahsContext, } = stageActions
+    const { gridSelected, blurContext, validContext, hideNbContext, orderedAyahsContext, gridIndexContext, gridsContext } = useSelector((state: RootStateType) => state.stage)
+    const { setBlurContext, } = stageActions
     console.log();
+    function blurHandler() {
 
-    function orderHandler() {
-        dispatch(setOrderedAyahsContext({ ayahs: orderedAyahsContext }))
+        dispatch(setBlurContext({ blur: !blurContext }))
     }
-    return <div className={cn((typeof validContext !== 'undefined' && validContext === true) && 'blur-lg', `flex  border-2 border-blue-400 rounded-md flex-col w-full justify-start p-2  space-y-2 items-stretch `)} >
+    return <div className={cn((typeof blurContext !== 'undefined' && blurContext === true) && 'blur-lg', `flex  border-2 border-blue-400 rounded-md flex-col w-full justify-start p-2  space-y-2 items-stretch `)} >
         <div className="flex-col justify-center items-center mb-2  ">
 
             <p className='text-center'>{gridSelected.arabName}</p>
@@ -34,7 +34,7 @@ function EvalOrdered() {
                 </p>
             </div>
             <div className="CENTER  my-2">
-                <SpaceButton handlePress={orderHandler} title='Order Grid' />
+                <SpaceButton handlePress={blurHandler} title='Blur Grid' />
             </div>
         </div>
         <div className="flex flex-col justify-start items-stretch py-1 space-y-2">
@@ -42,9 +42,9 @@ function EvalOrdered() {
                 if (typeof hideNbContext !== 'undefined' && !hideNbContext) {
 
                     return <div key={`${ayag.order}_${ayag.juz}`} className=" flex p-2 bg-emerald-100/30 justify-between 
-        items-center space-x-2
+        items-center space-x-2 
         border-b-1 border-green-300/25 ">
-                        <div className='flex justify-center focus:border-red-500 items-center'>{ayag.order + 1}</div>
+                        <div className='flex justify-center focus:border-red-500 items-center'>{ayag.numberInSurah}</div>
                         <div className=' flex text-right justify-end items-center
            hover:bg-emerald-200 
            hover:cursor-pointer 
@@ -53,7 +53,7 @@ function EvalOrdered() {
                 } else {
 
                     return (
-                        <div key={`${ayag.order}_${ayag.juz}`} className='flex justify-end  w-full   bg-emerald-100/30  text-right space-x-2
+                        <div key={`${ayag.order}_${ayag.juz}`} className='flex justify-end  w-full   bg-emerald-100/30  text-right space-x-2 p-2
         border-b-1 border-green-300/25
            hover:cursor-pointer 
            items-center   focus:border-red-500'>{ayag.text}</div>

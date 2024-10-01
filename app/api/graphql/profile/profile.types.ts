@@ -40,6 +40,7 @@ export type CoordsType = {
   lat: number
 }
 
+
 export type GuestType = {
   tokenId: number; //112
   host: number;

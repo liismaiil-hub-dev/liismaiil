@@ -93,12 +93,12 @@ export const registerGuestPrisma = async (formData: FormData,): Promise<{ messag
   });
   const hashedPass = await hashPassword(data.password) as string;
   try {
-    const { message } = await registerPrisma({ ...data, collaboratorId: 'O6cKgXEsuPNAuzCMTGeblWW9sWI3' })
-    const { tokenId } = JSON.parse(message)
+    const rep = await registerPrisma({ ...data, collaboratorId: 'O6cKgXEsuPNAuzCMTGeblWW9sWI3' })
+    const { tokenId } = JSON.parse(rep?.message!)
     console.log({ tokenId });
 
     cookies().set(COOKIE_NAME, createTokenForGuest(tokenId))
-    return { message }
+    return { message: rep?.message! }
 
     //redirect(`/space/${slug(data.host)}`)
   } catch (e) {

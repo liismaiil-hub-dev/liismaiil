@@ -1,11 +1,11 @@
 'use client'
-import { createNewStage } from '@/actions/sprint';
+import { createNewStage } from '@/actions/stage';
 import { Ayah } from '@/app/api/graphql/stage/stage.types';
 import { stageActions } from "@/store/slices/stageSlice";
 import { RootStateType } from '@/store/store';
 import { cn } from '@nextui-org/react';
 import _ from 'lodash';
-import { memo, useCallback, useEffect, useState, useTransition } from "react";
+import { memo, useEffect, useState, useTransition } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import SpaceButton from './SpaceButton';
@@ -19,7 +19,6 @@ function EvalSuits({ first }: { first: boolean }) {
     const [firstState, setFirstState] = useState(() => first);
     const [reorderedAyahs, setReorderedAyahs] = useState([-1]);
     const [errorNb, setErrorNb] = useState(0);
-    const [validGrid, setValidGrid] = useState(false);
 
     function shuffleHandler() {
         setFirstState(false)
@@ -32,6 +31,7 @@ function EvalSuits({ first }: { first: boolean }) {
         setFirstState(true);
         setErrorNb(0)
         setReorderedAyahs([-1])
+        dispatch(setGridIndexContext({ index: 0 }))
         console.log({ firstState });
     }
     /**
@@ -44,21 +44,6 @@ function EvalSuits({ first }: { first: boolean }) {
         return reorderedAyahs.some((el) => el === ord)
     }
 
-    const firstAyahIndex = useCallback(() => {
-        if (firstState) {
-            return (_.findIndex(shuffeledFirstAyahsContext, function (ay) {
-                const minOrder = _.minBy(shuffeledFirstAyahsContext, 'order')!['order']
-                console.log({ minOrder });
-
-                return ay['order'] === minOrder
-            }))
-        } else {
-            return (_.findIndex(shuffeledAyahsContext, function (ay) {
-                const minOrder = _.minBy(shuffeledAyahsContext, 'order')!['order']
-                return ay['order'] === minOrder
-            }))
-        }
-    }, [firstState, shuffeledAyahsContext, shuffeledFirstAyahsContext]);
 
     useEffect(() => {
         console.log({ reorderedAyahs });
@@ -66,41 +51,43 @@ function EvalSuits({ first }: { first: boolean }) {
     }, [reorderedAyahs]);
 
     function validAyahHandler(reord: number) {
+        console.log({ reord, reorderedAyahs });
+
         if (firstState && reorderedAyahs.length + 1 === shuffeledFirstAyahsContext.length) {
             toast.success(`It s  your last ayah on that grid of  ${shuffeledFirstAyahsContext.length} values`)
         }
 
-        console.log({
-            reord,
-            shuffeledAyahsContextLEngth: shuffeledAyahsContext.length,
-            shuffeledFirstAyahsContextLength: shuffeledFirstAyahsContext.length
-        });
-
-        if (reorderedAyahs[0] == -1 && reord !== 0) {
-            toast.error(`You made a mistake on the first ayah its ${firstAyahIndex() + 1} ayahs in the grid`)
+        if (reorderedAyahs[0] == -1 && reord !== orderedAyahsContext[0].numberInSurah) {
+            toast.error(`You made a mistake on the first ayah its ${orderedAyahsContext[0].numberInSurah}in the grid`)
 
         }
         else if (reorderedAyahs[0] == -1) {
+
             //console.log({ firstReord: reorderedAyahs[0] });
             setReorderedAyahs([reord])
         } else if (ayahInReordered(reord)) {
-            toast.success(`You already selected ayah ${reord + 1}`)
+            toast.success(`You already selected ayah ${reord}`)
+        } else if (reord === reorderedAyahs[reorderedAyahs.length - 1] + 1) {
 
+            setReorderedAyahs([...reorderedAyahs, reord])
+        } else {
+
+            toast.warning(`you must select 
+                 ${orderedAyahsContext[reorderedAyahs.length].text} 
+                 is next ayah `, {
+                closeOnClick: true,
+                autoClose: false
+            })
+            setErrorNb((prev) => prev + 1)
         }
-        else if (errorNb < 4) {
-            if (reorderedAyahs[reorderedAyahs.length - 1]! + 1 !== reord) {
-                console.log({ lastReordr: reorderedAyahs[reorderedAyahs.length - 1]! + 1, reord });
-                toast.warning(`you must try again its  ${reord + 1} ayahs you have selected !!! `)
-                setErrorNb((prev) => prev + 1)
-            } else {
-                console.log({ lastReordr: reorderedAyahs[reorderedAyahs.length - 1]! + 1, reord });
+        if (errorNb < 4) {
+            console.log({ reorderedAyahs, shuffeledAyahsContext });
 
-                setReorderedAyahs([...reorderedAyahs, reord])
-                if (reord === shuffeledAyahsContext.length - 1 || reord === shuffeledFirstAyahsContext.length - 1) {
-                    toast.success('it was the last ayas for that grid')
+            if ((firstState && reorderedAyahs.length === shuffeledFirstAyahsContext.length && reorderedAyahs[0] !== -1) || (!firstState && reorderedAyahs.length === shuffeledAyahsContext.length && reorderedAyahs[0] !== -1)) {
+                toast.success('it was the last ayas for that grid you can stage it')
 
-                }
             }
+
         } else {
             toast.warning(`you must rehearsal  !!! `)
             dispatch(setValidContext({ validCtxt: false }))
@@ -116,29 +103,29 @@ function EvalSuits({ first }: { first: boolean }) {
     }, [shuffeledAyahsContext]);
 
     function nextGridHandler() {
+        if (gridIndexContext < gridSelected.group) {
+            dispatch(setGridIndexContext({ index: gridIndexContext + 1 }))
+            setReorderedAyahs([-1])
 
-        dispatch(setGridIndexContext({ index: gridIndexContext + 1 }))
-
-    }
-    function getMax() {
-        const gridLength = gridsContext[gridIndexContext]?.length
-        return getMin() + gridLength - 1
-    }
-    function getMin() {
-        // console.log({ orderedAyahsContext, gridIndexContext, gridsLength: gridsContext.length });
-        if (gridIndexContext + 1 < gridsContext.length) {
-            const firstAy = orderedAyahsContext[0];
-            const firstOrd = firstAy?.order;
-            return (firstOrd * gridIndexContext) + 1
         } else {
-            const _minAy = _.orderBy(gridsContext[gridIndexContext], ['order'])
-            //   console.log({ _minAy });
-            const ordr = _minAy[0]
-            // console.log({ ordr, order: ordr ? ordr['order'] : 0 });
+            dispatch(setGridIndexContext({ index: 0 }))
+            setReorderedAyahs([-1])
 
-            return ordr ? ordr['order'] + 1 : 0;
         }
     }
+    function prevGridHandler() {
+        if (gridIndexContext >= 1) {
+            dispatch(setGridIndexContext({ index: gridIndexContext - 1 }))
+            setReorderedAyahs([-1])
+
+        } else {
+            dispatch(setGridIndexContext({ index: 0 }))
+            setReorderedAyahs([-1])
+
+        }
+
+    }
+
 
 
     function stageHandler() {
@@ -176,12 +163,12 @@ function EvalSuits({ first }: { first: boolean }) {
                 <p className='text-center inline-flex'>&nbsp; Grid &nbsp;{gridSelected.grid}</p>
             </div>
 
-            <p className='text-center'>reordered suits &nbsp;{reorderedAyahs[0] != -1 && reorderedAyahs.map((e: number) => e + 1).join(', ')}</p>
+            <p className='text-center'>reordered suits &nbsp;{reorderedAyahs[0] != -1 && reorderedAyahs.map((e: number) => `[${e}]`).join(', ')}</p>
             <div className="flex justify-center items-center  ">
 
-                <p className={cn(errorNb == 1 && 'text-red-200', ' text-center text-emerald-200')}>errors &nbsp;
+                <p className={cn(errorNb < 1 ? 'text-green-200 !important' : errorNb > 2 ? 'text-red-400 !important' : 'text-red-500 !important')}>errors &nbsp;
                 </p>
-                <p className={cn(errorNb == 2 && ' text-red-300', ' text-center text-emerald-400')}>
+                <p className={cn(errorNb < 1 ? 'text-green-200 !important' : errorNb > 2 ? 'text-red-400 !important' : 'text-red-500 !important')}>
                     {errorNb}
                 </p>
             </div>
@@ -199,7 +186,7 @@ function EvalSuits({ first }: { first: boolean }) {
                 <p className=' text-center text-emerald-200'> Ayahs &nbsp;
                 </p>
                 <p className=' text-center text-blue-400'>
-                    From {getMin()} To  {getMax()}
+                    From {orderedAyahsContext[0]['numberInSurah'] ? orderedAyahsContext[0]['numberInSurah'] : 0} To  {orderedAyahsContext ? orderedAyahsContext[orderedAyahsContext.length - 1]['numberInSurah'] : 1}
                 </p>
             </div>
 
@@ -210,6 +197,7 @@ function EvalSuits({ first }: { first: boolean }) {
                 <SpaceButton handlePress={() => firstHandler()} title='First Grid' />
             </div>
             <SpaceButton handlePress={shuffleHandler} title='Shuffel Grid' />
+            <SpaceButton handlePress={prevGridHandler} title='Prev Grid' />
             <SpaceButton handlePress={nextGridHandler} title='Next Grid' />
             <SpaceButton handlePress={stageHandler} title='Stage Grid' />
         </div>
@@ -217,10 +205,10 @@ function EvalSuits({ first }: { first: boolean }) {
             {firstState && shuffeledFirstAyahsContext ? shuffeledFirstAyahsContext?.map((ayag: Ayah) => {
                 if (typeof hideNbContext !== 'undefined' && !hideNbContext) {
 
-                    return <div onClick={() => { validAyahHandler(ayag.order) }} key={`${ayag.order}_${ayag.juz}`} className=" flex p-2 bg-emerald-100/30 justify-between px-2
+                    return <div onClick={() => { validAyahHandler(ayag?.numberInSurah!) }} key={`${ayag.order}_${ayag.juz}`} className=" flex p-2 bg-emerald-100/30 justify-between px-2
         items-center space-x-2
         border-b-1 border-green-300/25 ">
-                        <div className='flex justify-center focus:border-red-500 items-center'>{ayag.order + 1}</div>
+                        <div className='flex justify-center focus:border-red-500 items-center'>{ayag?.numberInSurah!}</div>
                         <div className=' flex text-right justify-end items-center
            hover:bg-emerald-200 
            hover:cursor-pointer 
@@ -229,16 +217,16 @@ function EvalSuits({ first }: { first: boolean }) {
                 }
                 else {
                     return (
-                        <div onClick={() => { validAyahHandler(ayag.order) }} key={`${ayag.order}_${ayag.juz}`} className={'flex justify-end  w-full   bg-emerald-100/30  text-right space-x-2 border-b-1 border-green-300/25 hover:cursor-pointer  items-center   hover:border-red-500 hover:bg-emerald-100/70'}>{ayag.text}</div>
+                        <div onClick={() => { validAyahHandler(ayag?.numberInSurah!) }} key={`${ayag?.numberInSurah!}_${ayag.juz}`} className={'flex justify-end  w-full   bg-emerald-100/30  text-right space-x-2 border-b-1 p-2 border-green-300/25 hover:cursor-pointer  items-center   hover:border-red-500 hover:bg-emerald-100/70'}>{ayag.text}</div>
                     )
                 }
             }) : shuffeledAyahsContext?.map((ayag: Ayah) => {
 
                 if (typeof hideNbContext !== 'undefined' && !hideNbContext) {
-                    return <div onClick={() => { validAyahHandler(ayag.order) }} key={`${ayag.order}_${ayag.juz}`} className=" flex p-2 bg-emerald-100/30 justify-between 
+                    return <div onClick={() => { validAyahHandler(ayag?.numberInSurah!) }} key={`${ayag?.numberInSurah!}_${ayag.juz}`} className=" flex p-2 bg-emerald-100/30 justify-between 
         items-center space-x-2
         border-b-1 border-green-300/25 ">
-                        <div className='flex justify-center focus:border-red-500 items-center'>{ayag.order + 1}</div>
+                        <div className='flex justify-center focus:border-red-500 items-center'>{ayag?.numberInSurah!}</div>
                         <div className=' flex text-right justify-end items-center
            hover:bg-emerald-200 
            hover:cursor-pointer 
@@ -246,7 +234,7 @@ function EvalSuits({ first }: { first: boolean }) {
                     </div>
                 } else {
                     return (
-                        <div onClick={() => { validAyahHandler(ayag.order) }} key={`${ayag.order}_${ayag.juz}`} className='  flex justify-end  w-full   bg-emerald-100/30  text-right space-x-2 border-1 border-green-300/25 hover:cursor-pointer items-center   focus:border-red-500'>{ayag.text}</div>
+                        <div onClick={() => { validAyahHandler(ayag?.numberInSurah!) }} key={`${ayag?.numberInSurah!}_${ayag.juz}`} className='   p-2 flex justify-end  w-full   bg-emerald-100/30  text-right space-x-2 border-1 border-green-300/25 hover:cursor-pointer items-center   focus:border-red-500'>{ayag.text}</div>
                     )
                 }
             })}

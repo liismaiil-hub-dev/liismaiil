@@ -14,8 +14,11 @@ export type StageStateProps = {
   stageShuffeledFirstAyahsContext: Ayah[],
   stageGridSelected: StagePrismaType,
   stageGridsContext: StagePrismaType[],
-
-
+  stageHideNbContext: boolean,
+  stageEvalContext: EVAL_STATE,
+  stageValidContext: boolean,
+  stepIndexContext: number,
+  stageEvalIndexContext: number,
 
   // space
   orderedAyahsContext: Ayah[],
@@ -23,6 +26,7 @@ export type StageStateProps = {
   shuffeledFirstAyahsContext: Ayah[],
   gridIndexContext: number,
   hideNbContext: boolean,
+  blurContext: boolean,
   faultsNbContext: number,
   correctsNbContext: number,
   spaceSprint: SprintPrismaType,
@@ -46,17 +50,20 @@ export enum EVAL_STATE {
 export type SprintPrismaType = {
   sprintId: string,
   createdAt: string,
-  souraName: string
-  arabName?: string
-  souraNb: number,
-  grid: number,
   startOn: string,
-  createdById: string,
+  finishOn: string,
+  createdById?: string,
   published: boolean,
-  guests: [GuestPrismaType],
-  stages: [StagePrismaType],
+  guests: GuestPrismaType[],
+  stage: StagePrismaType,
 
 }
+export type SprintSpaceType = {
+  sprintId:string,
+  guests: GuestPrismaType[],
+  stage: StagePrismaType,
+}
+
 
 export type PromoteRateType = {
   guest: number;
@@ -135,10 +142,12 @@ export type StagePrismaType = {
   arabName?: string;
   souraNb: number;
   grid: number;
-  startOn: string
-  createdById: string;
-  guests: GuestPrismaType[];
+  group?: number;
+  startOn?: string
+  createdById?: string;
+  guests?: GuestPrismaType[];
   ayahs: string;
+  sprints?: SprintPrismaType[]
 }
 export type AyahPrismaType = {
   index: number;
@@ -182,6 +191,7 @@ export type AyahTabletType = {
   slice?: string;
 };
 export type Ayah = {
+  numberInSurah?: number;
   id?: number;
   juz: number;
   order: number;

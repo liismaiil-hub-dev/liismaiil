@@ -4,14 +4,9 @@ import 'react-toastify/dist/ReactToastify.css';
 /* import { useEffect, useState } from 'react'; */
 import { RootStateType } from '@/store/store';
 import '@/styles/global.css';
-import { Inter } from 'next/font/google';
 import { usePathname } from 'next/navigation';
 import { ReactNode } from 'react';
 import { useSelector } from 'react-redux';
-
-const inter = Inter({ subsets: ['latin'] })
-
-//const Navigation = dynamic(()=> import('@/components/front/Navigation'),{ssr:false})
 
 function Spacelayout({ children, souras, sprint, grid }: {
     children: ReactNode, sprint: ReactNode,
@@ -19,7 +14,7 @@ function Spacelayout({ children, souras, sprint, grid }: {
     stage: ReactNode, board: ReactNode, grid: ReactNode
 }) {
 
-    const { gridSelected, hideNbContext, spaceGridsSelected, evalIndex, shuffeledAyahsContext, orderedAyahsContext, gridIndexContext, evalContext } = useSelector((state: RootStateType) => state.stage)
+    const { gridSelected, } = useSelector((state: RootStateType) => state.stage)
 
     const path = usePathname();
     return (
@@ -38,10 +33,6 @@ function Spacelayout({ children, souras, sprint, grid }: {
             <section className="container flex-col   w-full   ring-red-300/80 justify-center items-center" >
 
                 {gridSelected && gridSelected.arabName != "" && <div className=" flex-col justify-start items-center scroll-smooth   w-full h-full" >
-                    {/* 
-                            <div className="flex  justify-start   bg-orange-200 w-full h-full text-medium text-gray-500" >
-                            {board}
-                            </div> */}
 
                     {children}
 

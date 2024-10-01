@@ -1,14 +1,11 @@
 /* import { useEffect, useState } from 'react' */
 import Organisations from "@/components/front/Organisations";
 //import MapComponent from '@/components/maps/MapComponent';
+import { getGuestFromCookies } from "@/actions/guest";
 import { dbFirestore } from '@/api/graphql/fb-utils-admin';
-import { getGuestFromTokenPrisma } from "@/lib/authTools";
 import prisma from "@/lib/prisma-db";
-import { COOKIE_NAME } from '@/store/constants/constants';
 import { DocumentData, DocumentSnapshot } from 'firebase-admin/firestore';
-import jwt from 'jsonwebtoken';
 import { Metadata } from 'next';
-import { cookies } from 'next/headers';
 import { GuestType, ProfileTypeData } from "./api/graphql/profile/profile.types";
 
 const SECRET = process.env.NEXT_PUBLIC_JWT_SECRET!
@@ -93,30 +90,6 @@ export default async function Home() {
   return (
     <Organisations guestPrisma={guest} localOnline={localsOnline} hosts={hostsPrisma} collaborators={collaborators} />
   )
-}
-async function getGuestFromCookies() {
-
-  try {
-    const token = cookies().get(COOKIE_NAME)
-    if (typeof token !== 'undefined') {
-      const _guest = jwt.verify(token.value, SECRET)
-
-      console.log({ _guest });
-
-      const guest = await getGuestFromTokenPrisma(_guest.tokenId!)
-
-
-      return _guest
-    }
-    return null
-
-  } catch (e) {
-    console.error(e)
-    return null
-    //redirect(`/liismaiil/${slug(data.host)}`)
-  }
-
-
 }
 
 export async function getHosts() {

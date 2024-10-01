@@ -1,6 +1,6 @@
 
 // third-party
-import { Ayah, EVAL_STATE, GridJsoned, GridMenu, SprintPrismaType, StageStateProps, StagePrismaType } from '@/api/graphql/stage/stage.types';
+import { Ayah, EVAL_STATE, GridJsoned, GridMenu, SprintPrismaType, StagePrismaType, StageStateProps } from '@/api/graphql/stage/stage.types';
 import { createSlice, current, PayloadAction } from '@reduxjs/toolkit';
 const initialState: StageStateProps = {
   spaceGridsSelected: [{
@@ -28,12 +28,14 @@ const initialState: StageStateProps = {
   stageGridSelected: {
     grid: -1,
     group: -1,
-    title: '',
+
     souraNb: -1,
     arabName: '',
     souraName: '',
     ayahs: '',
-    id: 0
+    id: 0,
+    stageId: '',
+    createdAt: ''
   },
   evalIndex: 0,
   sprints: [
@@ -90,14 +92,20 @@ const initialState: StageStateProps = {
     ayahs: '',
     guests: []
   }],
-  
+
 
   gridIndexContext: 0,
+  stepIndexContext: 0,
+  stageEvalIndexContext: 0,
   hideNbContext: false,
+  blurContext: false,
+  stageHideNbContext: false,
   faultsNbContext: 0,
   correctsNbContext: 0,
   evalContext: EVAL_STATE.ORDER,
+  stageEvalContext: EVAL_STATE.ORDER,
   validContext: false,
+  stageValidContext: false,
   menuSouraNb: [{ souraName: '', souraNb: -1 }],
   gridsContext: [[
     {
@@ -162,7 +170,7 @@ const stageSlice = createSlice({
     setShuffeledFirstAyahsContext(state: StageStateProps, action: PayloadAction<{ ayahs: Ayah[] }>) {
       state.shuffeledFirstAyahsContext = action.payload.ayahs
     },
-    //@begin
+    //@begin stage 
     setStageGridsContext(state: StageStateProps,
       action: PayloadAction<{ stages: StagePrismaType[] }>) {
       console.log({ grid: action.payload.stages })
@@ -170,9 +178,9 @@ const stageSlice = createSlice({
     },
 
     setStageGridSelected(state: StageStateProps,
-      action: PayloadAction<{ grid: StagePrismaType }>) {
-      //      console.log({ gridSelected: action.payload.grid });
-      state.stageGridSelected = action.payload.grid
+      action: PayloadAction<{ stage: StagePrismaType }>) {
+      //      console.log({ stageSelected: action.payload.stage });
+      state.stageGridSelected = action.payload.stage
     },
 
     setStageOrderedAyahsContext(state: StageStateProps, action: PayloadAction<{ ayahs: Ayah[] }>) {
@@ -184,6 +192,28 @@ const stageSlice = createSlice({
     },
     setStageShuffeledFirstAyahsContext(state: StageStateProps, action: PayloadAction<{ ayahs: Ayah[] }>) {
       state.stageShuffeledFirstAyahsContext = action.payload.ayahs
+    },
+    setStepIndexContext(state: StageStateProps,
+      action: PayloadAction<{ index: number }>) {
+      console.log({ grid: action.payload.index })
+      state.stepIndexContext = action.payload.index
+    },
+    setStageEvalIndexContext(state: StageStateProps,
+      action: PayloadAction<{ index: number }>) {
+      console.log({ grid: action.payload.index })
+      state.stageEvalIndexContext = action.payload.index
+    },
+    setStageHideNbContext(state: StageStateProps,
+      action: PayloadAction<{ hide: boolean }>) {
+      state.stageHideNbContext = action.payload.hide
+    },
+    setStageValidContext(state: StageStateProps,
+      action: PayloadAction<{ validCtxt: boolean }>) {
+      state.stageValidContext = action.payload.validCtxt
+    },
+    setStageEvalContext(state: StageStateProps,
+      action: PayloadAction<{ eval: EVAL_STATE }>) {
+      state.stageEvalContext = action.payload.eval
     },
     //@end
     setGridIndexContext(state: StageStateProps,
@@ -201,6 +231,11 @@ const stageSlice = createSlice({
       action: PayloadAction<{ hide: boolean }>) {
       state.hideNbContext = action.payload.hide
     },
+    setBlurContext(state: StageStateProps,
+      action: PayloadAction<{ blur: boolean }>) {
+      state.blurContext = action.payload.blur
+    },
+
     setValidContext(state: StageStateProps,
       action: PayloadAction<{ validCtxt: boolean }>) {
       state.validContext = action.payload.validCtxt
@@ -226,10 +261,10 @@ const stageSlice = createSlice({
       state.spaceSprint = action.payload.sprint
     },
 
-    setSpaceStage(state: StageStateProps, action: PayloadAction<{ stage: StageTypeData }>) {
+    setSpaceStage(state: StageStateProps, action: PayloadAction<{ stage: StagePrismaType }>) {
       state.spaceStage = action.payload.stage
     },
-    setStageSelected(state: StageStateProps, action: PayloadAction<{ stage: StageTypeData }>) {
+    setStageSelected(state: StageStateProps, action: PayloadAction<{ stage: StagePrismaType }>) {
       console.log({ state: current(state), stage: action.payload.stage })
       state.stageSelected = action.payload.stage
     },

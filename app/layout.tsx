@@ -42,7 +42,7 @@ function RootLayout({ children }: { children: ReactNode }) {
           <PersistGate persistor={persistor}>
             <ErrorBoundary fallback={<ErrorBoundaryComp />}>
               <main className='container mx-auto w-screen  flex flex-col space-y-1 max-h-screen  justify-start items-center '>
-                <div className='container '>
+                <div className='container' >
                   <Navigation />
                 </div>
                 {pathname === '/' ?
