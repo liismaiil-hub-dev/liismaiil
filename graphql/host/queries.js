@@ -12,9 +12,9 @@ export const GET_VIEWERS = gql`
   }
 `;
 
-export const GET_VIEWER = gql`
-  query Viewer($id: String) {
-    viewer(id: $id) {
+export const GET_HOST_DASHBOARD = gql`
+  query GetHostDashboard($tokenId: String) {
+    getHostDashboard(tokenId: $tokenId) {
       login
       email
       token

@@ -7,6 +7,11 @@ import prisma from "@/lib/prisma-db";
 import { DocumentData, DocumentSnapshot } from 'firebase-admin/firestore';
 import { Metadata } from 'next';
 import { GuestType, ProfileTypeData } from "./api/graphql/profile/profile.types";
+import { GuestPrismaType } from "./api/graphql/stage/stage.types";
+import  GuestsComponent from "@/components/front/Guests";
+
+import Footer from "@/components/front/Footer";
+import { getHosts } from "@/actions/host";
 
 const SECRET = process.env.NEXT_PUBLIC_JWT_SECRET!
 const APP_NAME = "liismaiil-hub";
@@ -21,6 +26,7 @@ export const metadata: Metadata = {
     default: APP_DEFAULT_TITLE,
     template: APP_TITLE_TEMPLATE,
   },
+  metadataBase: new URL('https://liismaiil.org'),
   description: APP_DESCRIPTION,
   manifest: "/manifest.json",
   appleWebApp: {
@@ -61,14 +67,12 @@ export default async function Home() {
   const hosts = await getHosts()
   const guest = await getGuestFromCookies()
   //console.log({ hosts, collaborators });
-  const localsOnline = await getLocalGuests() as GuestType[];
+  const localsOnline = await getLocalGuests() as GuestPrismaType[];
   console.log({ localsOnline, guest, collaborators });
   /*   const newToken = await createTokenForGuest({ tokenId:localOnline.tokenId, host, collaboratorId, country, flag, status, onLine
   }) */
   const hostsPrisma = hosts.map((guest: GuestType) => {
-
     return {
-
       tokenId: guest.tokenId,
       host: guest.host,
       flag: guest.flag,
@@ -78,43 +82,46 @@ export default async function Home() {
     }
   }
   )
-  /* 
-  if (process.env.APP_ENV === APP_ENV.BOX) {
-    const parsedOrganisations = JSON.parse(organisations)
-    const parsedGuests = JSON.parse(guests)
-
-    return (
-        <Organisations guest={guest!} guests={parsedGuests} organisations={parsedOrganisations} />
-       )
-  } else { */
   return (
-    <Organisations guestPrisma={guest} localOnline={localsOnline} hosts={hostsPrisma} collaborators={collaborators} />
+    <div className=' container  flex flex-col gap-3 justify-start items-center'>
+      
+    <Organisations guestPrisma={guest}  hosts={hostsPrisma} collaborators={collaborators} />
+      <div className="flex flex-col  justify-start w-full items-start">
+        <GuestsComponent localsOnline={localsOnline} />
+      </div>
+      <div className="flex justify-center w-full items-center">
+        <Footer />
+      </div>
+    </div>
+
   )
 }
 
-export async function getHosts() {
-  try {
-    //console.log({ firestore });
-    const snapshot = await dbFirestore.collection('guests').get();
-
-    const guests: GuestType[] = [];
-    snapshot.forEach(async (doc: DocumentSnapshot<GuestType | DocumentData>) => {
-      const guest = await doc?.data()!;
-      guests.push(guest as GuestType);
-    });
-    console.log({ hosts: guests });
-
-    return guests;
-  } catch (error: any) {
-    console.log({ error });
-    throw new Error(error);
-  }
-}
 export async function getLocalGuests() {
   try {
     //console.log({ firestore });
     const _onlinGuests = await prisma.guest.findMany({ where: { onLine: true } });
-    return _onlinGuests as GuestType[];
+    let _guestsOnline: GuestPrismaType[] = _onlinGuests && _onlinGuests.length > 0 ? _onlinGuests.map((gst: GuestPrismaType) => {
+
+      return {
+        tokenId: gst.tokenId,
+        host: gst.host,
+        flag: gst.flag,
+        status: gst.status,
+        onLine: gst.onLine,
+        collaboratorId: gst.collaboratorId,
+        startDate: (gst.startDate && Number.isInteger(parseInt(gst.startDate))) ? new Date(parseInt(gst?.startDate!)).toISOString() : '',
+      }
+    })
+      : [{
+        tokenId: -1,
+        host: -1,
+        flag: '',
+        status: '',
+        startDate: '',
+        collaboratorId: ''
+      }]
+    return _guestsOnline
   } catch (error: any) {
     console.log({ error });
     throw new Error(error);
@@ -138,18 +145,3 @@ async function getCollaborators() {
     throw new Error(error);
   }
 }
-
-
-/**
- *  if (process.env.APP_ENV === APP_ENV.BOX) {
-   try {
-     const guests = await fs.readFile(process.cwd() + '/store/shares/guests.json', 'utf8');
-     return guests
-
-   } catch (error) {
-     console.log(error);
-     return `[]`
-   }
- }
- */
-

@@ -14,14 +14,11 @@ function Footer() {
             </Link>
             <div className='flex items-center '>
                 <FaInstagram size={30} />
-            </div>
-
+            </div>  
             <div>
-
-                <FaLinkedin size={30} />
+        <FaLinkedin size={30} />
             </div>
             <div>
-
                 <FaMailBulk size={30} />
             </div>
         </div>

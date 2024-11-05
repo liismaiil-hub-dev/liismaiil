@@ -3,7 +3,7 @@ export type ProfileTypeData = {
   _id: string;
   email: string;
   login: string;
-  
+
   tokenId: number;
   vierified?: boolean;
   phone?: string;
@@ -20,7 +20,7 @@ export type ProfileTypeData = {
       rate: number;
     }
   ];
-  
+
   avatar: ImageType;
   guests: GuestType[];
   messages?: MessageTypeData[];
@@ -47,8 +47,8 @@ export type GuestType = {
   flag: string;
   password?: string;
   price?: number;
-  collaboratorId: string;
-  status: LIISMAIIL_STATUS_ENUM;
+  collaboratorId?: string;
+  status: LIISMAIIL_STATUS_ENUM | string;
   enrollmentStatus?: string;
   country?: string;
   onLine?: boolean;

@@ -13,7 +13,7 @@ import SearchHost from "./SearchHost"
 // eslint-disable-next-line react-hooks/exhaustive-deps
 
 // -----------------------------COMPONENT-------------------------//
-function Organisations({ collaborators, hosts, guestPrisma, localOnline }: { collaborators: ProfileTypeData[], hosts: GuestPrismaType[], localOnline: GuestPrismaType[], guestPrisma: GuestPrismaType | null | undefined }) {
+function Organisations({ collaborators, hosts, guestPrisma }: { collaborators: ProfileTypeData[], hosts: GuestPrismaType[], localOnline: GuestPrismaType[], guestPrisma: GuestPrismaType | null | undefined }) {
     const dispatch = useDispatch()
 
     const { setCollaboratorProfiles } = profileActions
@@ -43,10 +43,9 @@ function Organisations({ collaborators, hosts, guestPrisma, localOnline }: { col
 
         })
         console.log({ colProfiles, hosts, guestPrisma });
-
         dispatch(setCollaboratorProfiles({ profiles: colProfiles }))
         dispatch(setHostsPrisma({ hostsPrismas: hosts }))
-        dispatch(setGuestsOnLine({ guestsPrisma: localOnline }))
+
 
         // dispatch(setOrgCoords({ orgCoords: collaboratorsCoords }))
         if (typeof guestPrisma != 'undefined' && guestPrisma) {

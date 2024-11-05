@@ -1,14 +1,47 @@
-import { DateTimeResolver } from 'graphql-scalars';
 
+import { FlagTokenType, PROFILE_STATUS_ENUM } from '@/api/graphql/profile/profile.types';
 import {
-  AddGuestInput,
-  GuestType,
   PromoteStageInput
 } from '@/api/graphql/stage/stage.types';
-import { FlagTokenType, PROFILE_STATUS_ENUM } from '@/api/graphql/profile/profile.types';
+import { GuestType}from "@/api/graphql/profile/profile.types";
+
 import { DocumentData, DocumentReference, DocumentSnapshot, FieldValue, Firestore } from 'firebase-admin/firestore';
 //import { FirebaseError } from '@firebase/util';
 const guest = async (
+  _: undefined,
+  { id }: { id: string },
+  {
+    dbFirestore
+  }: {
+    dbFirestore: Firestore;
+  }
+): Promise<GuestType | undefined> => {
+  if (id) {
+    try {
+      const dbGuests = dbFirestore.collection('guests');
+      const guestRef: DocumentReference = await dbGuests.doc(id);
+      const guestSnapshot = await guestRef.get();
+      if (guestSnapshot.exists) {
+        if (guestSnapshot?.data()?.status === 'HOST') {
+          return { ...guestSnapshot.data(), status: PROFILE_STATUS_ENUM.GUEST } as GuestType;
+          /* 
+            startDate: new Date().toISOString(),
+            endDate: new Date(moment(new Date()).add(1, 'months')).toISOString(),
+*/
+        } else {
+          return { ...guestSnapshot.data() } as GuestType;
+        }
+      } else {
+        return undefined;
+      }
+    } catch (error: any) {
+      throw error;
+    }
+  } else {
+    return undefined;
+  }
+};
+const getHost = async (
   _: undefined,
   { id }: { id: string },
   {
@@ -72,23 +105,7 @@ const addGuest = async (
   { input }: { input: AddGuestInput },
   { dbFirestore }: { dbFirestore: Firestore }
 ): Promise<GuestType | undefined> => {
-  try {
-    const { collaboratorId, flag, host, status, tokenId, startDate } = input;
-    const guestSnapshot = await dbFirestore.collection('guests').doc(`${tokenId}`).get();
-    if (guestSnapshot.exists) {
-      const { collaboratorId, host } = guestSnapshot.data() as GuestType;
-      if (typeof host === 'undefined' || typeof collaboratorId === 'undefined') {
-        dbFirestore.collection('profiles').doc(`${tokenId}`).set({ collaboratorId, flag, host, status, tokenId, startDate }, { merge: true });
-        return { collaboratorId, flag, host, status, tokenId, startDate };
-      }
-    } else {
-      dbFirestore.collection('profiles').doc(`${tokenId}`).set({ collaboratorId, flag, host, status, tokenId, startDate }, { merge: true });
-      return { collaboratorId, flag, host, status, tokenId, startDate };
-    }
-  } catch (error: any) {
-    console.error(error);
-    throw new Error(error);
-  }
+
 };
 
 const updateGuest = async (
@@ -192,7 +209,8 @@ const guestResolver = {
     guest,
     guests,
     flagToken,
-    signOut
+    signOut,
+
   },
   Mutation: {
     addGuest,

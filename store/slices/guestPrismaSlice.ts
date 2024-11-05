@@ -67,7 +67,7 @@ const guestPrismaSlice = createSlice({
     },
     logout(state) {
       state.guestPrisma = initialGuestState.guestPrisma
-
+      
     },
   }
 })

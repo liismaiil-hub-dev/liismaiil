@@ -1,21 +1,22 @@
 'use client'
 import Image from "next/image";
-import { memo } from "react";
-
-import { GuestType } from '@/api/graphql/sprint/sprint.types';
 import { RootStateType } from '@/store/store';
 import { cn } from "@nextui-org/react";
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ReactElement } from 'react';
 import { useSelector } from 'react-redux';
+import { useLazyQuery } from "@apollo/client";
+import second from "@/graphql/host";
 
-const HostsFrontComp = ({ hosts, handleGuestSpace, tokenId }: { hosts: GuestType[], handleGuestSpace: (arg: string) => void , tokenId: string}) => {
+const HostComponent = ({ tokenId }: { tokenId: string}) => {
     
+const [GuestHostDashboard] =  useLazyQuery(GET_HOST_DASHBOARD)
+
+
   return  <div className='flex flex-row border-2 gap-3 border-blue-600 items-center justify-start   
     shadow-md shadow-blue-400 rounded-sm w-full h-full flex-wrap' >
-                {hosts.map((gust, index) => {
-                    return (<Link key={`${gust.tokenId}_${index}`}  href={`/stage/${tokenId}`} scroll={false}>
+                <Link key={`${tokenId}_`}  href={`/stage/${tokenId}`} scroll={false}>
                     <div  className={cn(tokenId !== ''  && tokenId === gust.tokenId && 'bg-green-300 shadow-md shadow-green-200' ,
                     "cursor-pointer hover:animate-zoomIn border-2 border-green-400 hover:border-indigo-600 flex items-stretch justify-stretch   rounded-full h-14 w-14")}>
                         <Image width={70} height={100} className='flex justify-center items-center rounded-full object-cover' src={`/img/flags/${gust.flag}`} alt={'avatar flalg '}  /> 
@@ -53,5 +54,5 @@ function Hosts(): ReactElement {
 
     )
 }
-const MemoizedHosts = memo(Hosts)
-export default MemoizedHosts
+
+export default HostComponent 

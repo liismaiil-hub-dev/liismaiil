@@ -10,7 +10,7 @@ CREATE TABLE "guests" (
     "country" TEXT NOT NULL,
     "status" TEXT NOT NULL,
     "onLine" BOOLEAN NOT NULL,
-    "startDate" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "startDate" TEXT NOT NULL,
     "endDate" TEXT NOT NULL
 );
 
@@ -25,11 +25,12 @@ CREATE TABLE "favorites" (
 CREATE TABLE "stages" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "stageId" TEXT NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "createdAt" TEXT NOT NULL,
     "souraName" TEXT NOT NULL,
+    "arabName" TEXT,
     "souraNb" INTEGER NOT NULL,
     "grid" INTEGER NOT NULL,
-    "startOn" DATETIME,
+    "startOn" TEXT,
     "createdById" TEXT NOT NULL,
     "ayahs" TEXT NOT NULL
 );
@@ -38,13 +39,13 @@ CREATE TABLE "stages" (
 CREATE TABLE "sprints" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "sprintId" TEXT NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "souraName" TEXT NOT NULL,
-    "souraNb" INTEGER NOT NULL,
-    "grid" INTEGER NOT NULL,
-    "startOn" DATETIME NOT NULL,
-    "createdById" TEXT NOT NULL,
-    "published" BOOLEAN NOT NULL
+    "createdAt" TEXT NOT NULL,
+    "startOn" TEXT,
+    "finishOn" TEXT,
+    "createdById" TEXT,
+    "published" BOOLEAN,
+    "stageId" TEXT NOT NULL,
+    CONSTRAINT "sprints_stageId_fkey" FOREIGN KEY ("stageId") REFERENCES "stages" ("stageId") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -56,8 +57,8 @@ CREATE TABLE "guest_stages" (
     "added_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     PRIMARY KEY ("tokenId", "stageId"),
-    CONSTRAINT "guest_stages_tokenId_fkey" FOREIGN KEY ("tokenId") REFERENCES "guests" ("tokenId") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "guest_stages_stageId_fkey" FOREIGN KEY ("stageId") REFERENCES "stages" ("stageId") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "guest_stages_stageId_fkey" FOREIGN KEY ("stageId") REFERENCES "stages" ("stageId") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "guest_stages_tokenId_fkey" FOREIGN KEY ("tokenId") REFERENCES "guests" ("tokenId") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -69,19 +70,8 @@ CREATE TABLE "guest_sprints" (
     "added_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     PRIMARY KEY ("sprintId", "tokenId"),
-    CONSTRAINT "guest_sprints_tokenId_fkey" FOREIGN KEY ("tokenId") REFERENCES "guests" ("tokenId") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "guest_sprints_sprintId_fkey" FOREIGN KEY ("sprintId") REFERENCES "sprints" ("sprintId") ON DELETE RESTRICT ON UPDATE CASCADE
-);
-
--- CreateTable
-CREATE TABLE "sprint_stages" (
-    "tokenId" TEXT NOT NULL,
-    "sprintId" TEXT NOT NULL,
-    "added_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    PRIMARY KEY ("sprintId", "tokenId"),
-    CONSTRAINT "sprint_stages_tokenId_fkey" FOREIGN KEY ("tokenId") REFERENCES "stages" ("stageId") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "sprint_stages_sprintId_fkey" FOREIGN KEY ("sprintId") REFERENCES "sprints" ("sprintId") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "guest_sprints_sprintId_fkey" FOREIGN KEY ("sprintId") REFERENCES "sprints" ("sprintId") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "guest_sprints_tokenId_fkey" FOREIGN KEY ("tokenId") REFERENCES "guests" ("tokenId") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -99,6 +89,9 @@ CREATE UNIQUE INDEX "guests_tokenId_key" ON "guests"("tokenId");
 CREATE INDEX "guests_tokenId_idx" ON "guests"("tokenId");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "favorites_hostId_guestId_key" ON "favorites"("hostId", "guestId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "stages_stageId_key" ON "stages"("stageId");
 
 -- CreateIndex
@@ -108,10 +101,11 @@ CREATE INDEX "stages_stageId_idx" ON "stages"("stageId");
 CREATE UNIQUE INDEX "sprints_sprintId_key" ON "sprints"("sprintId");
 
 -- CreateIndex
-CREATE INDEX "sprints_sprintId_idx" ON "sprints"("sprintId");
+CREATE INDEX "sprints_sprintId_stageId_idx" ON "sprints"("sprintId", "stageId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_FavoriteToGuest_AB_unique" ON "_FavoriteToGuest"("A", "B");
 
 -- CreateIndex
 CREATE INDEX "_FavoriteToGuest_B_index" ON "_FavoriteToGuest"("B");
+

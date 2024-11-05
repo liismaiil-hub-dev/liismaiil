@@ -1,22 +1,18 @@
-'use client'
 import '@/styles/global.css';
 import 'react-toastify/dist/ReactToastify.css';
 /* import { useEffect, useState } from 'react'; */
-import { RootStateType } from '@/store/store';
+import { getGuestFromCookies } from '@/lib/authTools';
 import '@/styles/global.css';
-import { usePathname } from 'next/navigation';
 import { ReactNode } from 'react';
-import { useSelector } from 'react-redux';
 
-function Spacelayout({ children, souras, sprint, grid }: {
+async function Spacelayout({ children, souras, sprint, grid }: {
     children: ReactNode, sprint: ReactNode,
     souras: ReactNode,
     stage: ReactNode, board: ReactNode, grid: ReactNode
 }) {
 
-    const { gridSelected, } = useSelector((state: RootStateType) => state.stage)
-
-    const path = usePathname();
+    const _guest = await getGuestFromCookies();
+    console.log({ _guest });
     return (
         <main className='container mx-auto w-full  flex-col  justify-start items-center  min-h-screen gap-2 space-y-2 '>
             <section className="container flex justify-between  md:items-center shadow-sm w-full   ring-2 ring-yellow-300/80 " >
@@ -31,13 +27,7 @@ function Spacelayout({ children, souras, sprint, grid }: {
                 </div >
             </section>
             <section className="container flex-col   w-full   ring-red-300/80 justify-center items-center" >
-
-                {gridSelected && gridSelected.arabName != "" && <div className=" flex-col justify-start items-center scroll-smooth   w-full h-full" >
-
-                    {children}
-
-                </div >}
-
+                {children}
             </section>
         </main>
 

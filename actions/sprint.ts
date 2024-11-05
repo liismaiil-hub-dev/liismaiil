@@ -2,52 +2,119 @@
 import { GuestType } from "@/app/api/graphql/profile/profile.types";
 import { getGuestFromCookies } from "@/lib/authTools";
 import prisma from "@/lib/prisma-db";
+import moment from "moment";
 import { revalidateTag } from "next/cache";
 import { memoize } from "nextjs-better-unstable-cache";
-
-export const getOwnSprints = memoize(async (tokenId: number) => {
-    console.log({ tokenId });
-    const _sprintsRel = await prisma.guest.findUniqueOrThrow({
-        where: { tokenId },
-        select: {
-
-            sprints: {
-                select: {
-                    sprint: {
-                        select: {
-                            sprintId: true,
-                            createdAt: true,
-                            createdById: true,
-                            guests: {
-                                select: {
-                                    tokenId: true
-                                }
-                            },
-                            stage: true
-                        }
-                    }
-                },
-
-            },
-        }
+export const createNewSprint = async ({
+    sprintId,
+    stageId,
+    tokenId,
+    createdById,
+}: {
+    sprintId: string,
+    tokenId: number,
+    createdById: string
+    stageId: string
+}) => {
+    //const _guest = getCurrentGuest()
+    console.log({
+        sprintId,
+        createdById,
+        stageId,
+        tokenId
     });
-    console.log({ _sprintsRel: _sprintsRel.sprints });
     try {
-        if (_sprintsRel && _sprintsRel.sprints.length > 0) {
-            return {
-                success: true,
-                _sprints: _sprintsRel.sprints
-            }
+        const _sprint = await prisma.sprint.findUnique({ where: { sprintId } })
+        if (_sprint) {
+            await prisma.guestSprint.create({
+                data: {
+                    sprintId,
+                    tokenId,
+                    addedAt: new Date().toISOString(),
+                }
+            })
+            revalidateTag('sprints')
+            revalidateTag('stages')
+
+            return { success: true, message: JSON.stringify(_sprint) }
 
         } else {
-            return {
-                success: false,
-                _sprints: []
-            }
+            const _sprint = await prisma.sprint.create({
+                data: {
+                    createdAt: new Date().toISOString(),
+                    startOn: new Date().toISOString(),
+                    finishOn: moment().add(1, 'months').toISOString(),
+                    stageId,
+                    published: true,
+                    sprintId,
+                    createdById,
+                }
+            })
+            await prisma.guestSprint.create({
+                data: {
+                    sprintId,
+                    tokenId,
+                    addedAt: new Date().toISOString(),
+                }
+            })
+            revalidateTag('sprints')
+            revalidateTag('stages')
+            return { success: true, message: JSON.stringify(_sprint) }
         }
-    } catch (error: any) {
-        console.error(error);
-        throw new Error(error);
+
+    } catch (error) {
+
+        console.log({ ErrorCode: error.code, sprintActionError: error });
+        throw error
+    }
+    revalidateTag('sprints')
+}
+
+export const getOwnSprints = memoize(async () => {
+    const _localGuest = getGuestFromCookies();
+
+    if (typeof _localGuest !== 'undefined' && _localGuest?.tokenId) {
+        const _sprintsRel = await prisma.guest.findUniqueOrThrow({
+            where: { tokenId: _localGuest?.tokenId },
+            select: {
+                sprints: {
+                    select: {
+                        sprint: {
+                            select: {
+                                sprintId: true,
+                                createdAt: true,
+                                createdById: true,
+                                guests: {
+                                    select: {
+                                        tokenId: true
+                                    }
+                                },
+                                stage: true
+                            }
+                        }
+                    },
+
+                },
+            }
+        });
+        console.log({ _sprintsRel: _sprintsRel.sprints });
+        try {
+            if (_sprintsRel && _sprintsRel.sprints.length > 0) {
+                return {
+                    success: true,
+                    _sprints: _sprintsRel.sprints
+                }
+
+            } else {
+                return {
+                    success: false,
+                    _sprints: []
+                }
+            }
+        } catch (error: any) {
+            console.error(error);
+            throw new Error(error);
+        }
     }
 }, {
     persist: true,
@@ -73,7 +140,7 @@ export const sprintActivate = async (sprintId: string) => {
     revalidateTag('stages')
     revalidateTag('sprints')
 };
-export const getPublishedSprints = memoize(async () => {
+export const getPublishedSprints = memoize(async ({ page, limit }: { page: number, limit: number }) => {
     const sprintPublished = await prisma.sprint.findMany({
         where: { published: true },
         select: {
@@ -85,7 +152,9 @@ export const getPublishedSprints = memoize(async () => {
             },
             sprintId: true,
             createdById: true,
-        }
+        },
+        skip: page ?? 0,
+        take: limit ?? 50,
     });
     console.log({ sprintPublished: sprintPublished });
     return sprintPublished
@@ -146,26 +215,15 @@ export const setSprintSession = memoize(async (sprintId: string) => {
 })
 
 
-export const getAllStagesForDashboard = memoize(async () => {
-
-    const stages = await prisma.stage.groupBy({
-        by: 'souraNb',
-    })
-    return stages;
-}, {
-    persist: true,
-    revalidateTags: ['dashboard:stages'],
-    suppressWarnings: true,
-    log: ['datacache', 'verbose', 'dedupe'],
-    logid: 'dashboard: stages'
-})
 
 export const getAllSprintsForDashboard = memoize(async () => {
 
     const sprints = await prisma.sprint.findMany({
-        orderBy: { stage : {
-            souraNb:'asc'
-        }},
+        orderBy: {
+            stage: {
+                souraNb: 'asc'
+            }
+        },
     })
     return sprints;
 }, {

@@ -1,5 +1,7 @@
 'use client'
 //import Logo from '@/components/auth/Logo-ISM';
+import { logoutGuest } from "@/actions/guest";
+import { GuestTokenStorage } from "@/app/api/graphql/stage/stage.types";
 import Logo from '@/components/front/Logo';
 import { COOKIE_NAME } from '@/store/constants/constants';
 import { guestPrismaActions } from "@/store/slices/guestPrismaSlice";
@@ -8,33 +10,31 @@ import { cn } from '@nextui-org/react';
 import Cookies from "js-cookie";
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FaWaterLadder } from "react-icons/fa6";
 import { FiHome, FiLogIn, FiLogOut } from "react-icons/fi";
 import { PiHandsPrayingThin } from "react-icons/pi";
 import { SiCrunchyroll, SiMastercomfig, SiProgress } from "react-icons/si";
 import { useDispatch, useSelector } from 'react-redux';
+import { toast } from "react-toastify";
 import GuestModal from './GuestModal';
 import ThemeSelector from "./ThemeSelector";
 
-function Navigation() {
+function Navigation({ guest }: { guest: GuestTokenStorage }) {
     const [showMenu, setShowMenu] = useState<Boolean>(false)
     const dispatch = useDispatch()
     const { guestPrisma } = useSelector((state: RootStateType) => state.guestPrisma)
-    const { logout } = guestPrismaActions
+    const { logout, setGuestPrisma } = guestPrismaActions
     const pathname = usePathname()
     const isRoute = (route: string) => {
         return pathname.split('/')[1] === route
     }
-    useEffect(() => {
-        const _guest = Cookies.get(COOKIE_NAME)
-        console.log({ _guest });
-
-    }, []);
 
     useEffect(() => {
-        //    console.log(showMenu) 
-    }, [showMenu])
+        if (guest && guest.tokenId) {
+            dispatch(setGuestPrisma({ guestPrisma: guest }))
+        }
+    }, [guest])
     const [guestConnect, setGuestConnect] = useState(false)
     const SetGuestHandler = () => {
         setGuestConnect((guestConnect) => !guestConnect)
@@ -43,11 +43,28 @@ function Navigation() {
         setGuestConnect(false)
     }
 
-    const handleLogout = () => {
-        dispatch(logout())
-        setShowMenu(false)
+    const handleLogout = async () => {
+        if (guestPrisma.tokenId) {
+            console.log({ tokenId: guestPrisma.tokenId });
+
+            const { message, success } = await logoutGuest(guestPrisma.tokenId)
+            console.log({ message, success });
+
+            if (success) {
+
+                Cookies.remove(COOKIE_NAME)
+                dispatch(logout())
+                setShowMenu(false)
+            } else {
+                toast.warning('cookies persist!!! ')
+
+            }
+
+        } else {
+            toast.warning('some thing went wrong !!! ')
+        }
     }
-    console.log({ guestPrisma });
+    // console.log({ guestPrisma });
 
     return (
         <nav className={`container  flex  md:justify-between
@@ -186,9 +203,8 @@ function Navigation() {
 
                     :
                     <div className={cn((guestPrisma?.tokenId !== 0) && 'nav-selected', 'outline-none text-green-400 CENTER nav-element')}  >
-
-
-                        <Link prefetch={true} className='outline-none text-orange-400 ' key={`login`} href='/signIn'> Sign in </Link>
+                        <Link prefetch={true} className='outline-none text-orange-400 '
+                            key={`login`} href='/signIn'> Sign in </Link>
                     </div>
                 }
 
@@ -204,4 +220,4 @@ function Navigation() {
     )
 }
 
-export default React.memo(Navigation)
+export default Navigation

@@ -3,6 +3,7 @@ import { FormEvent, useEffect, useState } from 'react';
 //import organisations from "@/store/shares/organisations.json";
 
 
+import { registerGuestPrisma } from "@/actions/auth";
 import { ADD_GUEST_PRISMA } from "@/graphql/stage/mutations";
 import { guestPrismaActions } from '@/store/slices/guestPrismaSlice';
 import { RootStateType } from '@/store/store';
@@ -11,35 +12,26 @@ import Link from 'next/link';
 import { SiCrunchyroll, SiProgress } from 'react-icons/si';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from "react-toastify";
-import { z, ZodError } from "zod";
+import { z } from "zod";
 
-const initialState = {
-  message: null,
-  /*  success: false,
-   tokenId: null,
-   country: null,
-   host: null,
-  */
-}
+const TokenIdSchema = z.object({
+  tokenId: z.number().int().gte(0),
+});
+const HostSchema = z.object({
+  host: z.number().int().lt(1000),
+});
+const PasswordSchema = z.object({
+  password: z.string().min(3),
+});
 
-export const GuestRegisterSchema = z.object({
-  tokenId: z.number().int().lte(1000, "false tokenId"),
-  host: z.number().int().lte(100, 'false host'),
-  password: z.string().max(5, 'the password length is less than 5 characters'),
+
+const CountrySchema = z.object({
   country: z.string().max(3, 'the country code length is less than 3 characters'),
 });
 
 
 
 const SignUp = () => {
-  /* const [formState, action] = useFormState<{
-    message: string,
-    /*     success: boolean,
-        tokenId: number,
-        country: string,
-        host: number,
-   }>(registerGuestPrisma, initialState)
-   */
   const dispatch = useDispatch()
   const { guestPrisma, } = useSelector((state: RootStateType) => state.guestPrisma)
   const { setGuestPrisma } = guestPrismaActions
@@ -48,7 +40,45 @@ const SignUp = () => {
   const [host, setHost] = useState<number | null>(0);
   const [country, setCountry] = useState<string | null>('OM');
   const [password, setPassword] = useState('');
-  const [validationErrors, setValidationErrors] = useState<ZodError<{ tokenId: number; host: number; password: string; country: string; }>>({ tokenId: -1, host: -1, password: '', country: '' });
+
+  useEffect(() => {
+    console.log({ host });
+
+    if (host && host !== 0) {
+      const { success, error, data } = HostSchema.safeParse({ host })
+      if (error && !success) {
+        toast.warning(`${error.message}`)
+      }
+    }
+  }, [host]);
+  useEffect(() => {
+    console.log({ tokenId });
+
+    if (tokenId && tokenId !== -1) {
+      const { success, error, data } = TokenIdSchema.safeParse({ tokenId })
+      if (error && !success) {
+        toast.warning(`${error.message}`)
+      }
+    }
+  }, [tokenId]);
+  useEffect(() => {
+    console.log({ password });
+
+    if (password && password !== "") {
+      const { success, error, data } = PasswordSchema.safeParse({ password })
+      if (error && !success) {
+        toast.warning(`${error.message}`)
+      }
+    }
+  }, [password]);
+  useEffect(() => {
+    if (country && country !== "") {
+      const { success, error, data } = CountrySchema.safeParse({ country })
+      if (error && !success) {
+        toast.warning(`${error.message}`)
+      }
+    }
+  }, [country]);
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -59,28 +89,18 @@ const SignUp = () => {
         password,
         country
       }
-      console.log({ guest });
-      const { success, error, data } = GuestRegisterSchema.safeParse(guest)
-      console.log({ data: GuestRegisterSchema.safeParse(guest) });
-      if (!success) {
-        setValidationErrors(error)
-        toast.warning('please correct the input values')
 
-      } else {
-        AddGuestPrisma({
-          variables: {
-            input: {
-              tokenId,
-              host,
-              password,
-              country,
-              collaboratorId: 'O6cKgXEsuPNAuzCMTGeblWW9sWI3'
-            }
+      AddGuestPrisma({
+        variables: {
+          input: {
+            tokenId,
+            host,
+            password,
+            country,
+            collaboratorId: 'O6cKgXEsuPNAuzCMTGeblWW9sWI3'
           }
-        })
-        // toast.success('all fields are valid')
-      }
-      //  toast.success('all fields are valid')
+        }
+      })
 
     } catch (error) {
       console.log({ error });
@@ -105,36 +125,14 @@ const SignUp = () => {
 
   const [open, setOpen] = useState(true);
   const [isValid, setIsValid] = useState(false);
-  const handleValidate = () => {
-    try {
-      const guest = {
-        tokenId,
-        host,
-        password,
-        country
-      }
-      console.log({ guest });
 
-      const { success, error, data } = GuestRegisterSchema.safeParse(guest)
-      console.log({ data: GuestRegisterSchema.safeParse(guest) });
-      if (!success) {
-        console.log({ error });
-
-      } else {
-        setIsValid(true)
-        toast.success('all fields are valid')
-      }
-    } catch (error) {
-      console.log({ error });
-    }
-  }
   if (typeof guestPrisma != 'undefined' && guestPrisma.tokenId) {
 
     return (<div className='flex relative  flex-col w-full font-thin text-2xl h-screen justify-center items-center gap-3'>
       <Link prefetch={true} key={`stage`} href={`/stages/${guestPrisma.tokenId}`} >
         <div className={'navig-mobile-svg'}  >
           <SiProgress />
-          </div>
+        </div>
         <div className={'nanvig-mobile-txt'}  >
           Stages
         </div>
@@ -152,11 +150,14 @@ const SignUp = () => {
     )
   }
   return (<div className='flex relative  flex-col w-full h-screen justify-center items-center gap-3'>
-    <form onSubmit={(e) => handleSubmit(e)} /* action={action} */>
+    <div className='flex   justify-center items-center text-center rounded-md'>
+      Sign Up
+    </div>
+    <form action={registerGuestPrisma} /* action={action} */>
       <div className='flex border-1 border-emerald-700/50 p-7 rounded-md flex-col w-full h-full justify-center items-left gap-3 shadow-md '>
         {/* <SelectHost countryHandler={(country: string) => handleCountry(country)} hostHandler={(host: number) => handleHost(host)} /> */}
         <div className='flex   justify-between items-center  gap-6 rounded-md'>
-          <label htmlFor={'tokenId'} className="text-left w-28"> token: </label>
+          <label htmlFor={'tokenId'} className="text-left w-28"> tokenId: </label>
           <input onChange={(e) => setTokenId(parseInt(e.target.value))} type="text" name={'tokenId'} id={'tokenId'} className="px-3  w-full flex justify-end h-11 ring-1 ring-emerald-200/30 rounded-md " required />
         </div>
         <div className='flex justify-between items-center  gap-6 rounded-md'>
@@ -169,7 +170,7 @@ const SignUp = () => {
         </div>
         <div className={`${open ? 'flex justify-between items-center gap-6 rounded-md' : 'hidden'}`}>
           <label htmlFor={'country'} className="text-left w-28 "> Country: </label>
-          <input type="text" name={'country'} id={'country'} placeholder='2 character ISO code' onChange={(e) => setCountry(e.target.value)} className="h-11 ring-1 ring-emerald-200/30 px-3 w-full flex justify-end  rounded-md " required />
+          <input type="text" name={'country'} id={'country'} placeholder='2 character country ISO code' onChange={(e) => setCountry(e.target.value)} className="h-11 ring-1 ring-emerald-200/30 px-3 w-full flex justify-end  rounded-md " required />
         </div>
         <div className='flex justify-center gap-3 items-center '>
           {/* <button onClick={() => handleValidate()} disabled={pending} className='btn bg-emerald-300 

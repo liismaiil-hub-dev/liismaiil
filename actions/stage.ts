@@ -1,11 +1,10 @@
 'use server'
-import { GuestPrismaType } from '@/app/api/graphql/stage/stage.types';
 import prisma from '@/lib/prisma-db';
-import moment from 'moment';
 import { memoize } from "nextjs-better-unstable-cache";
 
 import { revalidateTag } from 'next/cache';
-export const getStages = memoize(async (tokenId: number): Promise<{ success: boolean, stages: [] } | undefined | null> => {
+
+export const getOwnStages = memoize(async (tokenId: number): Promise<{ success: boolean, stages: [] } | undefined | null> => {
   console.log({ tokenId });
   const _stagesRel = await prisma.guestStage.findMany({
     where: { tokenId }, include: {
@@ -36,6 +35,20 @@ export const getStages = memoize(async (tokenId: number): Promise<{ success: boo
 }
 )
 
+export const getAllStagesForDashboard = memoize(async () => {
+
+  const stages = await prisma.stage.groupBy({
+    by: 'souraNb',
+  })
+
+  return stages;
+}, {
+  persist: true,
+  revalidateTags: ['dashboard:stages'],
+  suppressWarnings: true,
+  log: ['datacache', 'verbose', 'dedupe'],
+  logid: 'dashboard: stages'
+})
 export const createNewStage = async ({
   stageId,
   createdAt,
@@ -70,16 +83,10 @@ export const createNewStage = async ({
     tokenId
   });
   try {
-    const _stage = await prisma.stage.findUnique({ where: { stageId } })
-    const _guest: GuestPrismaType = await prisma.guest.findUnique({ where: { tokenId } });
-    if (_stage && _guest) {
+    const _stage = await prisma.guestStage.findFirst({ where: { stageId, tokenId } })
+    if (_stage) {
+      return { success: true, message: JSON.stringify(_stage) }
 
-      await prisma.guestStage.create({
-        data: {
-          stageId,
-          tokenId,
-        }
-      })
     } else {
       const _stage = await prisma.stage.create({
         data: {
@@ -99,76 +106,15 @@ export const createNewStage = async ({
           tokenId,
         }
       })
+      return { success: true, message: JSON.stringify(_stage) }
+
     }
 
   } catch (error: unknown) {
+    return { success: false, message: JSON.stringify(error) }
 
-    console.log({ ErrorCode: error?.code, sprintActionError: error });
-    throw error
+
+    return
   }
   revalidateTag('stages')
-}
-export const createNewSprint = async ({
-  sprintId,
-  stageId,
-  tokenId,
-  createdById,
-}: {
-  sprintId: string,
-  tokenId: number,
-  createdById: string
-  stageId: string
-}) => {
-  //const _guest = getCurrentGuest()
-  console.log({
-    sprintId,
-    createdById,
-    stageId,
-    tokenId
-  });
-  try {
-    const _sprint = await prisma.sprint.findUnique({ where: { sprintId } })
-    if (_sprint) {
-      await prisma.guestSprint.create({
-        data: {
-          sprintId,
-          tokenId,
-          addedAt: new Date().toISOString(),
-        }
-      })
-      revalidateTag('sprints')
-      revalidateTag('stages')
-
-      return { success: true, message: JSON.stringify(_sprint) }
-
-    } else {
-      const _sprint = await prisma.sprint.create({
-        data: {
-          stageId,
-          createdAt: new Date().toISOString(),
-          startOn: new Date().toISOString(),
-          finishOn: moment().add(1, 'months').toISOString(),
-          published: true,
-          sprintId,
-          createdById,
-        }
-      })
-      await prisma.guestSprint.create({
-        data: {
-          sprintId,
-          tokenId,
-          addedAt: new Date().toISOString(),
-        }
-      })
-      revalidateTag('sprints')
-      revalidateTag('stages')
-      return { success: true, message: JSON.stringify(_sprint) }
-    }
-
-  } catch (error) {
-
-    console.log({ ErrorCode: error.code, sprintActionError: error });
-    throw error
-  }
-  revalidateTag('sprints')
 }

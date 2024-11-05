@@ -1,16 +1,17 @@
 'use server'
 import { getSprint } from "@/actions/sprint";
-import { LIISMAIIL_STATUS_ENUM } from "@/app/api/graphql/profile/profile.types";
 import Board from "@/components/sprint/Board";
 import prisma from "@/lib/prisma-db";
 
 export async function generateStaticParams() {
   try {
-    const _sprints = await prisma.sprint.findMany({where:{
-      published:true
-    }});
+    const _sprints = await prisma.sprint.findMany({
+      where: {
+        published: true
+      }
+    });
 
-    const _allSprints = _sprints.map((host) => ({ sprintId: host.sprintId.toString() }))
+    const _allSprints = _sprints.map((spr) => ({ sprintId: spr.sprintId }))
     return _allSprints.slice(0, 50)
 
   } catch (error: any) {
@@ -26,7 +27,7 @@ export default async function GuestSptintPage({ params }: { params: { sprintId: 
   if (params && params.sprintId) {
     const { sprintId } = params
     const sprint = await getSprint(sprintId)
-    if ( sprint && sprint.success) {
+    if (sprint && sprint.success) {
       console.log({ sprint });
 
 

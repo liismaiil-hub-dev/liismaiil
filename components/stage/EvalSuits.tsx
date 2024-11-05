@@ -1,6 +1,6 @@
 'use client'
 
-import { createNewSprint } from "@/actions/stage";
+import { createNewSprint } from "@/actions/sprint";
 import { Ayah } from '@/app/api/graphql/stage/stage.types';
 import { stageActions } from "@/store/slices/stageSlice";
 import { RootStateType } from '@/store/store';

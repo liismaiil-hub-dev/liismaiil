@@ -38,9 +38,11 @@ const initialState: StageStateProps = {
     createdAt: ''
   },
   evalIndex: 0,
-  sprints: [
-    { id: 0, author: '', description: '', endDate: '', stages: [''], startDate: '', title: '' }
+  sprintsContext: [
+    { sprintId: '', published: false, }
   ],
+  sprintSelected: { sprintId: '', published: false, }
+  ,
   orderedAyahsContext: [{
     id: 0,
     juz: 0,
@@ -115,28 +117,8 @@ const initialState: StageStateProps = {
       text: ''
     }
   ]],
-  //____________________________________
 
 
-  ayHided: [{ id: -1, order: -1 }],
-  ayahArraySelected: undefined,
-
-  dueDate: '',
-  gridName: '',
-  author: 'kazdhicham@gmail.com',
-  title: '',
-  newBoard: true,
-  openSprint: false,
-  guests: [{
-    collaboratorId: '', flag: '', tokenId: '',
-    startDate: '',
-    endDate: ''
-  }],
-  description: '',
-  sprintStages: [],
-  selectedTablet: '',
-  selectedStageId: 0,
-  selectedStage: ''
 };
 
 
@@ -145,9 +127,18 @@ const stageSlice = createSlice({
   initialState,
   reducers: {
 
-    setSprints(state: StageStateProps, action: PayloadAction<{ sprints: [SprintPrismaType] }>) {
-      state.sprints = action.payload.sprints
+    setSprintsContext(state: StageStateProps, action: PayloadAction<{ sprints: SprintPrismaType[] }>) {
+      state.sprintsContext = action.payload.sprints
     },
+
+    setSprintSelected(state: StageStateProps, action: PayloadAction<{ sprint: SprintPrismaType }>) {
+      state.sprintSelected = action.payload.sprint
+    },
+
+    emptySprintsContext(state) {
+      state.sprintsContext = initialState.sprintsContext
+    },
+
     setGridMenuSouraNb(state: StageStateProps, action: PayloadAction<{ menuSouraNb: GridMenu[] }>) {
       state.menuSouraNb = action.payload.menuSouraNb
     },
@@ -274,9 +265,6 @@ const stageSlice = createSlice({
     },
 
 
-    emptySprint(state) {
-      state.sprints = initialState.sprints
-    },
   },
 });
 

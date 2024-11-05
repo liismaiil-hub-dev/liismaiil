@@ -7,7 +7,7 @@ import { DocumentData } from '@google-cloud/firestore';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import _ from 'lodash';
-import moment from 'moment';
+
 import { cookies } from 'next/headers';
 import "server-only";
 
@@ -33,7 +33,7 @@ export function getGuestFromCookies(): GuestType | null {
 
 export const createTokenForGuest = ({ tokenId, host, collaboratorId, country, flag, status, onLine
 }: {
-  tokenId: number, host: number, collaboratorId: string, country: string, flag: string, status: LIISMAIIL_STATUS_ENUM, onLine: boolean
+  tokenId: number, host: number, collaboratorId: string, country: string, flag: string, status: string, onLine: boolean
 }) => {
   const token = jwt.sign({ tokenId, host, collaboratorId, country, flag, status, onLine }, SECRET, { expiresIn: '1d' });
   return token
@@ -182,11 +182,22 @@ export const signup = async ({
   }
 }
 
-export const signinPrisma = async ({ tokenId, password }: {
+export const signinPrisma = async ({ tokenId, password, host }: {
   tokenId: number,
-  password: string
+  password: string,
   host: number
-}) => {
+}): Promise<{
+  success: boolean,
+  tokenId: number,
+  flag: string,
+  host: number,
+  collaboratorId: string
+} | undefined> => {
+  console.log({
+    tokenId,
+    password,
+    host
+  });
 
   const _guest = await prisma.guest.findFirst({ where: { tokenId } });
   try {
@@ -202,14 +213,16 @@ export const signinPrisma = async ({ tokenId, password }: {
 
     } else {
       return {
-        tokenId: -1, collaboratorId: 0, flag: '', host: -1, success: false,
-        message: 'tokenId dont exist '
+        tokenId: -1, collaboratorId: '', flag: '', host: -1, success: false,
       }
     }
 
   } catch (error: any) {
-    console.error(error);
-    throw new Error(error);
+    console.log({ error });
+
+    return {
+      tokenId: -1, collaboratorId: '', flag: '', host: -1, success: false,
+    }
   }
 }
 
@@ -217,81 +230,60 @@ export const registerPrisma = async ({
   host,
   tokenId,
   country,
-  collaboratorId,
+  status,
   password,
+  flag,
+  collaboratorId, startDate, endDate
 }: {
   tokenId: number,
   password: string,
   host: number,
   country: string,
+  flag: string,
   collaboratorId: string,
-}): Promise<{ message: string } | undefined> => {
+  status: string,
+  startDate: string,
+  endDate: string,
+
+}): Promise<{ success: boolean } | undefined> => {
 
   const guestInDb = await prisma.guest.findFirst({ where: { tokenId: tokenId } });
   console.log({ regPrisma: tokenId });
-
   try {
-
     if (!guestInDb) {
-      const randomFlag = FLAG_FILES[_.random(FLAG_FILES.length)]
-      const hashedPass = await hashPassword(password) as string;
-
-      const guestPassword = await hashPassword('123') as string;
-      const collaborator = collaboratorId ? collaboratorId : 'O6cKgXEsuPNAuzCMTGeblWW9sWI3';
-      const status = collaborator === 'O6cKgXEsuPNAuzCMTGeblWW9sWI3' ? LIISMAIIL_STATUS_ENUM.HOST :
-        LIISMAIIL_STATUS_ENUM.GUEST;
+      const statusVerif = tokenId >= 100 && tokenId < 1000 ? LIISMAIIL_STATUS_ENUM.HOST as string :
+        LIISMAIIL_STATUS_ENUM.GUEST as string;
       const countryTmp = country ? country : 'OM';
-
       const newGuest = await prisma.guest.create({
         data: {
           tokenId: tokenId,
           host: host,
-          password: hashedPass,
-          collaboratorId: collaborator,
-          country: countryTmp,
-          flag: randomFlag,
-          guestPassword: guestPassword,
-          status,
+          password,
+          collaboratorId: collaboratorId,
+          country: country ?? countryTmp,
+          flag,
+          guestPassword: '123',
+          status: statusVerif === status ? statusVerif : status,
           onLine: true,
-          startDate: new Date().toISOString(),
-          endDate: moment(Date()).add(1, 'years').toISOString(),
+          startDate,
+          endDate,
         }
       })
       console.log({ newGuest });
       cookies().set(COOKIE_NAME, createTokenForGuest({
-        tokenId, host, collaboratorId: collaborator, country: countryTmp, flag: randomFlag, status,
+        tokenId, host, collaboratorId, country: country ?? countryTmp, flag, status: statusVerif === status ? statusVerif as string : status as string,
         onLine: true
       }))
-      return {
-        message: JSON.stringify({
-          message: 'success registration',
-
-          success: true,
-          tokenId,
-          country,
-          host
-        })
-      }
+      return ({
+        success: true,
+      })
     } else {
-      const { tokenId, host, password: passRegistred } = guestInDb
-      const verif = await verifyPassword(password, passRegistred)
-      if (verif) {
-        if (typeof tokenId != 'undefined') {
-          return { message: JSON.stringify({ tokenId: 0, collaboratorId: 0, flag: '', host: 0, success: false, message: 'you already registred please sign in ' }) }
-        } else {
-          return {
-            message: JSON.stringify({ success: false, message: 'already regIstred try to sign in again', tokenId: 0, collaboratorId: 0, flag: '', host: 0 })
-          };
-        }
-      }
+      return { success: false }
     }
   } catch (error: any) {
     console.error(error);
-    return {
-      message: JSON.stringify({
-        tokenId: 0, collaboratorId: 0, flag: '', host: 0
-      })
-    }
+    return { success: false }
+
   }
 }
 

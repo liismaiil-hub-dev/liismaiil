@@ -1,8 +1,47 @@
+'use server'
+import { dbFirestore } from "@/app/api/graphql/fb-utils-admin";
+import { GuestType, LIISMAIIL_STATUS_ENUM } from "@/app/api/graphql/profile/profile.types";
+import prisma from "@/lib/prisma-db";
 import organisations from "@/store/shares/organisations.json";
+import { DocumentData, DocumentSnapshot } from "@google-cloud/firestore";
 import _ from "lodash";
+import { memoize } from "nextjs-better-unstable-cache";
 
 const hostSearch = organisations.map((org) => {
     return ({ login: org.login, uid: org.uid, geoCoords: { lat: org.coords.lat, long: org.coords.long } })
+})
+
+
+export async function getHosts() {
+    try {
+        //console.log({ firestore });
+        const snapshot = await dbFirestore.collection('guests').get();
+
+        const guests: GuestType[] = [];
+        snapshot.forEach(async (doc: DocumentSnapshot<GuestType | DocumentData>) => {
+            const guest = await doc?.data()!;
+            guests.push(guest as GuestType);
+        });
+        console.log({ hosts: guests });
+
+        return guests;
+    } catch (error: any) {
+        console.log({ error });
+        throw new Error(error);
+    }
+}
+export const getHostsForDashboard = memoize(async () => {
+
+    const guests = await prisma.guest.findMany({
+        where: { status: LIISMAIIL_STATUS_ENUM.HOST }
+    })
+    return guests;
+}, {
+    persist: true,
+    revalidateTags: ['dashboard:guests'],
+    suppressWarnings: true,
+    log: ['datacache', 'verbose', 'dedupe'],
+    logid: 'dashboard: guests'
 })
 
 /**
@@ -23,7 +62,7 @@ export async function getDataLayerUrls({ country = 'SE', host = "3jtczfl93BWlud2
 
 
     const hostForSearch: any = await _.filter(organisations, function (org) {
-       return  org.uid === hostState
+        return org.uid === hostState
     })
     console.log({ hostState, hostForSearch, organisationsUIDS: organisations.map((org) => org.uid) });
 

@@ -1,7 +1,6 @@
 import { LIISMAIIL_STATUS_ENUM } from './../profile/profile.types';
 
 export type StageStateProps = {
-  sprints: SprintPrismaType[],
   spaceGridsSelected: GridJsoned[],
   gridSelected: GridJsoned,
   stageSelected: StagePrismaType,
@@ -19,7 +18,9 @@ export type StageStateProps = {
   stageValidContext: boolean,
   stepIndexContext: number,
   stageEvalIndexContext: number,
-
+  // sprint
+  sprintsContext: SprintPrismaType[],
+  sprintSelected: SprintPrismaType,
   // space
   orderedAyahsContext: Ayah[],
   shuffeledAyahsContext: Ayah[],
@@ -49,17 +50,17 @@ export enum EVAL_STATE {
 
 export type SprintPrismaType = {
   sprintId: string,
-  createdAt: string,
-  startOn: string,
-  finishOn: string,
+  createdAt?: string,
+  startOn?: string,
+  finishOn?: string,
   createdById?: string,
   published: boolean,
-  guests: GuestPrismaType[],
-  stage: StagePrismaType,
+  guests?: GuestPrismaType[],
+  stage?: StagePrismaType,
 
 }
 export type SprintSpaceType = {
-  sprintId:string,
+  sprintId: string,
   guests: GuestPrismaType[],
   stage: StagePrismaType,
 }
@@ -165,13 +166,22 @@ export type AddGuestPrismaOutput = {
   flag: string,
   status: LIISMAIIL_STATUS_ENUM,
 }
+export type GuestTokenStorage = {
+  tokenId: number,
+  host: number,
+  collaboratorId?: string,
+  country?: string,
+  status: string,
+  onLine: boolean,
+  flag: string
+}
 export type GuestPrismaType = {
   id?: number;
   tokenId: number;
   host: number;
   flag: string;
   password?: string;
-  collaboratorId: string;
+  collaboratorId?: string;
   status: LIISMAIIL_STATUS_ENUM | string;
   country?: string;
   onLine?: boolean;

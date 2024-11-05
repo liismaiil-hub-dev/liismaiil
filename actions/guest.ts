@@ -2,6 +2,7 @@
 import { GuestType, LIISMAIIL_STATUS_ENUM } from '@/app/api/graphql/profile/profile.types';
 import prisma from "@/lib/prisma-db";
 import { COOKIE_NAME } from '@/store/constants/constants';
+
 import jwt from 'jsonwebtoken';
 import { cookies } from 'next/headers';
 import { memoize } from "nextjs-better-unstable-cache";
@@ -14,7 +15,7 @@ export const getGuestFromCookies = memoize(async (): Promise<GuestType | undefin
     const token = await cookies().get(COOKIE_NAME)
     if (typeof token !== 'undefined') {
       const _guest = jwt.verify(token.value, SECRET)
-      //    console.log({ _guest });
+      console.log({ _guest });
       return _guest as GuestType
     }
     return null
@@ -40,11 +41,11 @@ export const getGuestFromTokenPrisma = async (token: number) => {
       if (_guest) {
         // const randomFlag = _.random(FLAG_FILES.length)
 
-        const { tokenId, collaboratorId, host,flag } = _guest
+        const { tokenId, collaboratorId, host, flag } = _guest
         if (typeof tokenId === 'undefined' || tokenId === 0) {
           return null
         } else {
-          return ({ collaboratorId, flag , host, tokenId, status: LIISMAIIL_STATUS_ENUM.GUEST });
+          return ({ collaboratorId, flag, host, tokenId, status: LIISMAIIL_STATUS_ENUM.GUEST });
         }
       } else {
         return null
@@ -58,5 +59,21 @@ export const getGuestFromTokenPrisma = async (token: number) => {
   } catch (error) {
     console.log({ error });
     return null
+  }
+}
+
+export const logoutGuest = async (tokenId: number) => {
+  try {
+    console.log({ tokenGetGuestFromToken: tokenId });
+    const _guest = await prisma.guest.update({
+      where: { tokenId: tokenId }, data: {
+        onLine: true
+      }
+    })
+    cookies().delete(COOKIE_NAME);
+    return { success: true, message: 'deconnected' }
+  } catch (error) {
+    return { success: false, message: `guest ${tokenId} cant be disconnected due to ${error}` }
+
   }
 }

@@ -22,14 +22,15 @@ const initialState = {
 
 }
 
-const GeoForm = ({ hosts }: { hosts: GuestPrismaType[] }) => {
+const GeoForm = ({ tokenId }: { tokenId: string }) => {
 
   const dispatch = useDispatch()
 
-  const { token, host } = useSelector((state: RootStateType) => state.guest)
-  const [hostsState, setHostsState] = useState(() => hosts.map((host) => {
-    return ({ tokenId: host.tokenId, flag: host.flag, country: host.country, onLine: host.onLine, })
-  }));
+  const {
+    guestPrisma,
+    guestsPrisma,
+    hostsPrisma,
+    guestsOnline, } = useSelector((state: RootStateType) => state.guestPrisma)
   const [hostState, setHostState] = useState(100);
   //const [GetAllHosts, { data, loading, error}] =  useQuery(GET_ALL_HOSTS)
   const [countryState, setCountryState] = useState(() => organisations[0]?.country);

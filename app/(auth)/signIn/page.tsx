@@ -2,79 +2,79 @@
 
 import { signinGuestPrisma } from "@/actions/auth";
 import Link from 'next/link';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { useDispatch } from 'react-redux';
 import { toast } from "react-toastify";
 import { z } from "zod";
 
-const initialState = {
-  message: null
-}
-
-
-export const GuestSignInSchema = z.object({
-  tokenId: z.number().int().lte(100),
-  host: z.number().int().lte(100),
-  password: z.string(),
-
+const TokenIdSchema = z.object({
+  tokenId: z.number().int().gte(0),
+});
+const HostSchema = z.object({
+  host: z.number().int().lt(1000),
+});
+const PasswordSchema = z.object({
+  password: z.string().min(3),
 });
 
 
-
-
+//______COMPONENT _______\\\
 const SignIn = () => {
-  /* 
-  const [formState, action] = useFormState<{
+
+  /* const [formState, action] = useFormState<{
     message: string,
   }>(signinGuestPrisma, initialState)
- */
+  */
   const dispatch = useDispatch()
-  const { pending } = useFormStatus()
+  const { pending, data } = useFormStatus()
   const [guest, setGuest] = useState({
     tokenId: 0, host: 0, password: ""
   });
-  /* useEffect(() => {
+  useEffect(() => {
 
-    console.log({ formState });
+    console.log({ dataFromAction: data, pending });
 
-  }, [formState]);
- */
-  const [tokenId, setTokenId] = useState<number | undefined>();
+  }, [data, pending]);
+
+  const [tokenId, setTokenId] = useState<number | undefined>(-1);
   const [host, setHost] = useState<number | undefined>(0);
   const [country, setCountry] = useState<string | undefined>('OM');
   const [password, setPassword] = useState('');
-  const handleValidate = () => {
-    try {
-      const guest = {
-        tokenId,
-        host,
-        password,
-
+  useEffect(() => {
+    if (host && host !== 0) {
+      const { success, error, data } = HostSchema.safeParse({ host })
+      if (error && !success) {
+        toast.warning(`tokenId must be a number `)
       }
-      console.log({ guest });
-
-      const { success, error, data } = GuestSignInSchema.safeParse(guest)
-      console.log({ data: GuestSignInSchema.safeParse(guest) });
-      if (!success) {
-        console.log({ error });
-
-      } else {
-        console.log({ data });
-
-        toast.success('all fields are valid')
-      }
-    } catch (error) {
-      console.log({ error });
     }
-  }
+  }, [host]);
+  useEffect(() => {
+    if (tokenId && tokenId !== -1) {
+      const { success, error, data } = TokenIdSchema.safeParse({ tokenId })
+      if (error && !success) {
+        toast.warning(`tokenId must be a number inferior to 1000`)
+      }
+    }
+  }, [tokenId]);
+  useEffect(() => {
+    if (password && password !== "") {
+      const { success, error, data } = PasswordSchema.safeParse({ password })
+      if (error && !success) {
+        toast.warning(`password must be superior or equal to 3`)
+      }
+    }
+  }, [password]);
 
   return (<div className='flex relative  flex-col w-full h-screen justify-center items-center gap-3'>
     <form action={signinGuestPrisma}>
-      <div className='flex border-1 border-emerald-700/50 p-7 rounded-md flex-col w-full h-full justify-center items-left gap-3 shadow-md '>
 
+      <div className='flex border-1 border-emerald-700/50 p-7 rounded-md flex-col w-full h-full justify-center items-left gap-3 shadow-md '>
+        <div className='flex   justify-center items-center text-center rounded-md'>
+          Sign In
+        </div>
         <div className='flex   justify-between items-center  gap-6 rounded-md'>
-          <label htmlFor={'token'} className="text-left w-28 "> token: </label>
+          <label htmlFor={'token'} className="text-left w-28 "> tokenId: </label>
           <input onChange={(e) => setTokenId(parseInt(e.target.value))} type="text" name={'tokenId'} id={'token'} className="px-3  w-full flex justify-end h-11 ring-1 ring-emerald-200/30 rounded-md " required />
         </div>
         <div className='flex justify-between items-center  gap-6 rounded-md'>

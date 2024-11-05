@@ -1,19 +1,20 @@
 
 import Sprints from "@/components/space/Sprints";
 
-import { getCurrentGuest, getOwnSprintsForDashboard, getOwnStagesForDashboard } from "@/lib/guests";
-
+import { getGuestFromCookies } from "@/actions/guest";
+import { getOwnSprints, } from "@/actions/sprint";
+import { getOwnStages } from "@/actions/stage";
 import { Button } from '@nextui-org/react';
 
 
 export default async function Sprint() {
-  const guest = await getCurrentGuest();
+  const guest = await getGuestFromCookies();
   let sprints;
   let stages;
   if (guest) {
 
-    sprints = await getOwnSprintsForDashboard(guest.tokenId)
-    stages = await getOwnStagesForDashboard(guest.tokenId)
+    sprints = await getOwnSprints()
+    stages = await getOwnStages(guest.tokenId)
     console.log({ sprints, stages });
   }
 

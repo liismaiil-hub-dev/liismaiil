@@ -1,31 +1,32 @@
 'use client'
 import { StagePrismaType } from "@/api/graphql/stage/stage.types";
+import { guestPrismaActions } from "@/store/slices/guestPrismaSlice";
 import { stageActions } from '@/store/slices/stageSlice';
 import { RootStateType } from '@/store/store';
 import { Button, Card, CardBody, ScrollShadow } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 
+
 function StepsCaroussel() {
     const dispatch = useDispatch()
     const { stageGridSelected, stageGridsContext } = useSelector((state: RootStateType) => state.stage)
-
+    const { guestPrisma } = useSelector((state: RootStateType) => state.guestPrisma)
+    const { setGuestPrisma } = guestPrismaActions
     // console.log({ stageGridsContext });
     const [stagesState, setStagesState] = useState({
         grid: -1,
         group: -1,
-
         souraNb: -1,
         arabName: '',
         souraName: '',
         ayahs: '',
         id: 0
     });
-
     const { setStageGridSelected } = stageActions
     useEffect(() => {
         console.log({ stageGridSelected });
-        setStagesState(stageGridSelected)
+        // setStagesState(stageGridSelected)
 
     }, [stageGridSelected]);
     const handleSetStageGridSelected = (grid: StagePrismaType) => {

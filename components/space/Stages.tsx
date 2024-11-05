@@ -1,5 +1,5 @@
 'use client'
-import { getAllStagesForDashboard } from "@/lib/sprints";
+import { getStages } from "@/actions/stage";
 import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
 import { useEffect, useState, useTransition } from "react";
 

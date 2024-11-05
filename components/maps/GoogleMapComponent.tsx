@@ -21,11 +21,7 @@ const center = {
 };
 const GoogleMapComponent = () => {
   const markerRef = useRef(null);
-
-  const map = useMap();
-
-  const { collaboratorProfiles } = useSelector((state: RootStateType) => state.profile)
-  //console.log({orgCoords});
+ const { collaboratorProfiles } = useSelector((state: RootStateType) => state.profile)
 
   return (<APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAP_KEY!}>
     <Map

@@ -56,64 +56,7 @@ const StageBoard = ({ stages }: { stages: StagesStagePrismaType[] }) => {
       dispatch(setStepIndexContext({ index: 0 }))
     }
   }, []);
-  /*   useEffect(() => {
-      if (typeof stageGridSelected !== 'undefined' && typeof stageGridSelected.ayahs !== 'undefined' && stageGridSelected.ayahs[0] != '' && stageGridsContext.length > stageGridIndexContext) {
-        const shuffeleledFirst = stageGridsContext[stageGridIndexContext].map((ordG: Ayah, index: number) => ({ ...ordG, index: stageGridIndexContext ? ordG.order + stageGridIndexContext : ordG.order }));
-  
-        const orderedAy = [..._.sortBy(stageGridsContext.stage[stageGridIndexContext], ['order'])].map((ordG: Ayah, index) => ({ ...ordG, index: stageGridIndexContext ? ordG.order + stageGridIndexContext : ordG.order }))
-        dispatch(setStageShuffeledFirstAyahsContext({ ayahs: shuffeleledFirst }))
-  
-        dispatch(setStageOrderedAyahsContext({ ayahs: orderedAy }))
-  
-        setFirst(false)
-  
-      } else {
-        const shuffeleledFirst = stageGridsContext[0].map((ordG: Ayah, index: number) => ({ ...ordG, index: stageGridIndexContext ? ordG.order + stageGridIndexContext : ordG.order }));
-  
-        const orderedAy = [..._.sortBy(stageGridsContext[stageGridIndexContext ?? 0], ['order'])].map((ordG: Ayah, index) => ({ ...ordG, index: stageGridIndexContext ? ordG.order + stageGridIndexContext : ordG.order }))
-        dispatch(setStepIndexContext({ index: 0 }))
-  
-        dispatch(setStageShuffeledFirstAyahsContext({ ayahs: shuffeleledFirst }))
-  
-        dispatch(setStageOrderedAyahsContext({ ayahs: orderedAy }))
-  
-        setFirst(false)
-  
-      }
-  
-    }, [stageGridIndexContext]);
-   */
-  /* 
-    useEffect(() => {
-  
-      if (typeof stageGridSelected !== 'undefined' && stageGridSelected?.ayahs[0] != '' && typeof stageGridSelected.ayahs !== 'undefined') {
-        const _grids = stageGridSelected.ayahs?.map((ay: string) => JSON.parse(ay))
-  
-        const gridSelectedLength = _grids?.length
-  
-       
-        dispatch(setStageShuffeledFirstAyahsContext({ ayahs: shuffeleledFirst }))
-  
-        dispatch(setStageOrderedAyahsContext({ ayahs: orderedAy }))
-  
-        setFirst(false)
-  
-      }
-    }, [stageGridsContext]);
-   */
-  /* useEffect(() => {
-    console.log({ stageGridIndexContext, stageGridsContext });
-    if (typeof stageGridSelected !== 'undefined' && stageGridIndexContext >= 0 && (stageGridsContext[stageGridIndexContext]?.length <= stageGridSelected.grid * stageGridSelected.grid)) {
-      const firstAy = [...stageGridsContext[stageGridIndexContext].map((ay: Ayah, index: number) => ({ ...ay, index: stageGridIndexContext != 0 ? ay.order + index : stageGridIndexContext * ay.order + index }))]
-      const orderedAy = [..._.sortBy(stageGridsContext[stageGridIndexContext], ['order'])].map((ordG: Ayah, index) => ({ ...ordG, index: index + stageGridIndexContext }))
-      console.log({ orderedAy });
-      dispatch(setStageOrderedAyahsContext({ ayahs: orderedAy }))
-      dispatch(setStageShuffeledFirstAyahsContext({ ayahs: firstAy }))
-    }
-    setFirst(false)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stageGridIndexContext]);
- */
+
   useEffect(() => {
     if (typeof stageGridSelected !== 'undefined' && stageGridSelected.ayahs != '' && typeof stageGridSelected.ayahs !== 'undefined') {
       console.log({ stageGridSelected });
