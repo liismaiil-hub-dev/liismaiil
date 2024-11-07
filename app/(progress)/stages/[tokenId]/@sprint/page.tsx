@@ -1,42 +1,29 @@
 
-import { dbFirestore } from '@/api/graphql/fb-utils-admin';
-import { SprintType } from "@/api/graphql/stage/stage.types";
-
-import Sprints from "@/components/space/Sprints";
-
-import { DocumentData, DocumentSnapshot } from '@google-cloud/firestore';
-
+import { getPublishedSprints } from '@/actions/sprint';
+import SprintComponent from "@/components/space/Sprint";
 import { Button } from '@nextui-org/react';
 
-const getSprints = async (): Promise<SprintType[] | undefined> => {
-try{
-  
-
-    //console.log({ firestore });
-    const snapshot = await dbFirestore.collection('sprints').get();
-
-    const sprints: SprintType[] = [];
-    snapshot.forEach(async (doc: DocumentSnapshot<SprintType | DocumentData>) => {
-      const guest = await doc?.data()!;
-      sprints.push(guest as SprintType);
-    });
-
-    return sprints;
-  } catch (error: any) {
-    console.log({ error });
-    throw new Error(error);
-  }
-}
 
 export default async function Sprint() {
-  const sprints = await getSprints()
-console.log({sprints});
+  const sprints = await getPublishedSprints({ page: 1, limit: 50 })
+  console.log({ sprints });
 
-  if(typeof sprints != 'undefined' && sprints?.length > 0)return <Sprints  />
-  return   (
-   <Button  type="submit"  className='btn bg-blue-400
+  if (typeof sprints != 'undefined' && sprints?.length > 0) {
+    return <section className="flex flex-col  justify-start items-start w-full h-full">
+      <div className="flex w-full flex-wrap  gap-2">
+        {sprints.map((sprint) => (
+          <SprintComponent key={sprint.sprintId} sprint={sprint} />
+        ))}
+      </div>
+    </section>
+  }
+  return (
+    <Button type="submit" className='btn bg-blue-400
              text-yellow-100  text-center text-md p-1 
               rounded-md'>
       No sprint projected
     </Button>)
+
+
+
 }

@@ -1,7 +1,7 @@
 import '@/styles/global.css';
 import 'react-toastify/dist/ReactToastify.css';
 /* import { useEffect, useState } from 'react'; */
-import { getGuestFromCookies } from '@/lib/authTools';
+//import { getGuestFromCookies } from '@/lib/authTools';
 import '@/styles/global.css';
 import { ReactNode } from 'react';
 
@@ -11,8 +11,6 @@ async function Spacelayout({ children, souras, sprint, grid }: {
     stage: ReactNode, board: ReactNode, grid: ReactNode
 }) {
 
-    const _guest = await getGuestFromCookies();
-    console.log({ _guest });
     return (
         <main className='container mx-auto w-full  flex-col  justify-start items-center  min-h-screen gap-2 space-y-2 '>
             <section className="container flex justify-between  md:items-center shadow-sm w-full   ring-2 ring-yellow-300/80 " >
@@ -30,8 +28,6 @@ async function Spacelayout({ children, souras, sprint, grid }: {
                 {children}
             </section>
         </main>
-
-
     )
 }
 

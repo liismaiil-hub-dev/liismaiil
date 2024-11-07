@@ -1,4 +1,4 @@
-'use server'
+
 import { dbFirestore } from '@/app/api/graphql/fb-utils-admin';
 import { GridMenu } from '@/app/api/graphql/stage/stage.types';
 import { GridTypeData } from '@/app/api/graphql/tablet/tablet.types';
@@ -6,7 +6,7 @@ import GridsComponent from "@/components/space/Grids";
 import _ from 'lodash';
 import { memoize } from "nextjs-better-unstable-cache";
 
-export const getSpaceGrids = memoize(async () => {
+const getSpaceGrids = memoize(async () => {
 
   try {
     const grids: GridTypeData[] = [];
@@ -70,4 +70,3 @@ export default async function SourasNav() {
     throw error
   }
 }
-

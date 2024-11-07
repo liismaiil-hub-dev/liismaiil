@@ -30,6 +30,7 @@ export async function getHosts() {
         throw new Error(error);
     }
 }
+
 export const getHostsForDashboard = memoize(async () => {
 
     const guests = await prisma.guest.findMany({

@@ -1,18 +1,12 @@
 'use client'
-import { getStages } from "@/actions/stage";
+
 import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
-import { useEffect, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 
 const Stages = () => {
   const [isPending, startTransition] = useTransition();
   const [stages, setStages] = useState([]);
 
-  useEffect(() => {
-    startTransition(async () => {
-      const _stages = await getAllStagesForDashboard()
-      setStages(_stages);
-    });
-  }, []);
 
   return (
     <section className="flex flex-col  justify-start items-center w-screen h-screen">

@@ -69,7 +69,7 @@ model Sprint {
   guests      GuestSprint[]
   stage       Stage         @relation(fields: [stageId], references: [stageId], onDelete: Cascade)
 
-  @@index([sprintId, stageId])
+  @@unique([sprintId, stageId])
   @@map("sprints")
 }
 
@@ -82,7 +82,7 @@ model GuestStage {
   stage   Stage    @relation(fields: [stageId], references: [stageId], onDelete: Cascade)
   guest   Guest    @relation(fields: [tokenId], references: [tokenId], onDelete: Cascade)
 
-  @@id([tokenId, stageId])
+  @@unique([tokenId, stageId])
   @@map("guest_stages")
 }
 
@@ -95,6 +95,6 @@ model GuestSprint {
   sprint   Sprint   @relation(fields: [sprintId], references: [sprintId])
   guest    Guest    @relation(fields: [tokenId], references: [tokenId])
 
-  @@id([sprintId, tokenId])
+  @@unique([sprintId, tokenId, addedAt])
   @@map("guest_sprints")
 }

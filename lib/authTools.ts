@@ -9,7 +9,7 @@ import jwt from 'jsonwebtoken';
 import _ from 'lodash';
 
 import { cookies } from 'next/headers';
-import "server-only";
+//import "server-only";
 
 
 const SECRET = process.env.NEXT_PUBLIC_JWT_SECRET!

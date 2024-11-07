@@ -54,7 +54,7 @@ export type SprintPrismaType = {
   startOn?: string,
   finishOn?: string,
   createdById?: string,
-  published: boolean,
+  published?: boolean,
   guests?: GuestPrismaType[],
   stage?: StagePrismaType,
 
