@@ -1,10 +1,7 @@
 'use client'
-import { CoordsType } from '@/api/graphql/profile/profile.types'
-import { CollaboratorProfileType } from '@/store/slices/profileSlice'
-import { RootStateType } from '@/store/store'
+import { CoordsType, ProfileTypeData } from '@/api/graphql/profile/profile.types'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-import { useSelector } from 'react-redux'
 
 // eslint-disable-next-line react-hooks/exhaustive-deps
 
@@ -17,19 +14,16 @@ type CountryCityCoords = {
 }
 
 // -----------------------------COMPONENT-------------------------//
-function Organisation({ profile }: { profile: CollaboratorProfileType }) {
-  const [countries, setCountries] = useState(() => ['DZ', 'MA', 'FR']);
+function OrganisationComponent({ profile }: { profile: ProfileTypeData }) {
+    const [countries, setCountries] = useState(() => ['DZ', 'MA', 'FR']);
 
     console.log({ profile });
 
     const router = useRouter()
 
-    function selectOrganisationHandler(org: CollaboratorProfileType) {
+    function selectOrganisationHandler(org: ProfileTypeData) {
         router.push(`/stages/${org.tokenId}`)
     }
-
-
-
     return (
         <div className='border  cursor-pointer hover:animate-zoomIn
                     border-green-300  shadow-md shadow-green-300/30 
@@ -43,11 +37,11 @@ function Organisation({ profile }: { profile: CollaboratorProfileType }) {
                      rounded-lg
                      ' onClick={() => selectOrganisationHandler(profile)} >
             <div className='size-40 w-full  rounded-lg'
-                style={{ "backgroundImage": `url(${profile?.flag})` }} >
+                style={{ "backgroundImage": `url(${profile?.avatar.url!})` }} >
 
             </div>
             <div className={`px-auto   text-center  text-xl   w-full font-light`}>
-                {profile?.name?.split(' ')[0]}
+                {profile?.login?.split(' ')[0]}
             </div>
             <div className={`px-auto   text-center  text-xl   w-full font-light`}>
                 {profile?.addressGeo?.split(' ')[-1]}
@@ -57,4 +51,4 @@ function Organisation({ profile }: { profile: CollaboratorProfileType }) {
             </div>
         </div>)
 }
-export default Organisation
+export default OrganisationComponent

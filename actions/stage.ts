@@ -10,6 +10,7 @@ export const getAllStagesForDashboard = memoize(async () => {
   const stages = await prisma.stage.groupBy({
     by: 'souraNb',
   })
+  console.log({ stages });
 
   return stages;
 }, {

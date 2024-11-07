@@ -1,7 +1,7 @@
 'use server'
 import { dbFirestore } from '@/api/graphql/fb-utils-admin';
-import { createTokenForGuest, hashPassword, registerPrisma, signin, signinPrisma, signup } from '@/lib/authTools';
 import { GuestType } from '@/app/api/graphql/profile/profile.types';
+import { createTokenForGuest, hashPassword, registerPrisma, signin, signinPrisma, signup } from '@/lib/authTools';
 import { COOKIE_NAME } from '@/store/constants/constants';
 import moment from 'moment';
 import { cookies } from 'next/headers';
@@ -113,6 +113,8 @@ export const registerGuestPrisma = async (formData: FormData,) => {
 }
 
 export const signinGuestPrisma = async (formData: FormData) => {
+  console.log({ formData });
+
   const data = GuestSignInSchema.parse({
     tokenId: parseInt(formData.get('tokenId') as unknown as string),
     password: formData.get('password'),
@@ -127,7 +129,7 @@ export const signinGuestPrisma = async (formData: FormData) => {
 
       if (tokenId !== -1 && collaboratorId !== -1 && host !== -1) {
         cookies().set(COOKIE_NAME, createTokenForGuest(tokenId).toString())
-        direction = '/stages'
+        direction = `/stages/${tokenId}`
         // return { message: JSON.stringify({ collaboratorId, flag, host, tokenId }) }
       }
     } else {

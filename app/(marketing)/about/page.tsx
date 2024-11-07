@@ -1,5 +1,15 @@
 'use client'
-import { Canvas, ThreeElements, useFrame } from '@react-three/fiber'
+
+
+function About() {
+  return <div>About</div>;
+}
+
+export default About;
+
+
+
+/* mport { Canvas, ThreeElements, useFrame } from '@react-three/fiber'
 import { useEffect, useRef, useState } from 'react'
 import * as THREE from 'three'
 
@@ -46,7 +56,4 @@ const Domain = () => {
 }
 /* 
 
-Domain.getLayout = function getLayout({ page, pageProps }: { page: ReactElement, pageProps: any }) {
-  return (<AppLayout title='liismaiil domain tools' {...pageProps}> {page}</AppLayout>)
 } */
-export default Domain

@@ -21,7 +21,7 @@ const GuestsFrontComp = ({ localsOnline }: { localsOnline: GuestPrismaType[] }) 
 
 
     return <div className='flex flex-row border-2 gap-3 border-blue-600 items-center justify-start p-3    shadow-md shadow-blue-400 rounded-sm w-full h-full flex-wrap' >
-        {guests?.map((gust, index) => {
+        {localsOnline?.map((gust, index) => {
             console.log({ gust });
 
             return (<div key={`${gust.tokenId}`} className="flex-col justify-center items-center">

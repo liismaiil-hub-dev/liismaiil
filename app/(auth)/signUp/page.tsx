@@ -126,7 +126,7 @@ const SignUp = () => {
   const [open, setOpen] = useState(true);
   const [isValid, setIsValid] = useState(false);
 
-  if (typeof guestPrisma != 'undefined' && guestPrisma.tokenId) {
+  if (typeof guestPrisma != 'undefined' && guestPrisma?.tokenId) {
 
     return (<div className='flex relative  flex-col w-full font-thin text-2xl h-screen justify-center items-center gap-3'>
       <Link prefetch={true} key={`stage`} href={`/stages/${guestPrisma.tokenId}`} >

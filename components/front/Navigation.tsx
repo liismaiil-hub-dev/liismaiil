@@ -1,7 +1,6 @@
 'use client'
 //import Logo from '@/components/auth/Logo-ISM';
 import { logoutGuest } from "@/actions/guest";
-import { GuestTokenStorage } from "@/app/api/graphql/stage/stage.types";
 import Logo from '@/components/front/Logo';
 import { COOKIE_NAME } from '@/store/constants/constants';
 import { guestPrismaActions } from "@/store/slices/guestPrismaSlice";
@@ -20,7 +19,7 @@ import { toast } from "react-toastify";
 import GuestModal from './GuestModal';
 import ThemeSelector from "./ThemeSelector";
 
-function Navigation({ guest }: { guest: GuestTokenStorage }) {
+function Navigation() {
     const [showMenu, setShowMenu] = useState<Boolean>(false)
     const dispatch = useDispatch()
     const { guestPrisma } = useSelector((state: RootStateType) => state.guestPrisma)
@@ -31,10 +30,10 @@ function Navigation({ guest }: { guest: GuestTokenStorage }) {
     }
 
     useEffect(() => {
-        if (guest && guest.tokenId) {
-            dispatch(setGuestPrisma({ guestPrisma: guest }))
+        if (guestPrisma && guestPrisma.tokenId) {
+            dispatch(setGuestPrisma({ guestPrisma: guestPrisma }))
         }
-    }, [guest])
+    }, [guestPrisma])
     const [guestConnect, setGuestConnect] = useState(false)
     const SetGuestHandler = () => {
         setGuestConnect((guestConnect) => !guestConnect)

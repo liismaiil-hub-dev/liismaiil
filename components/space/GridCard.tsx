@@ -20,7 +20,7 @@ function GridCard() {
         dispatch(setGridSelected({ grid: grid }))
     }
 
-    return <div className="flex justify-evenly gap-1 items-center"> {spaceGridsSelected && spaceGridsSelected.map((grid: GridJsoned) => {
+    return <div className="flex justify-evenly gap-1 py-2 items-center"> {spaceGridsSelected && spaceGridsSelected.map((grid: GridJsoned) => {
         return (
             <Card className="mx-1 border-2 border-blue-600/50 rounded-md px-3" key={grid.grid} shadow="sm" isPressable onPress={() => handleSetGridSelected(grid)}>
                 <CardBody className="flex justify-start items-center  overflow-visible p-0 h-[140px]">

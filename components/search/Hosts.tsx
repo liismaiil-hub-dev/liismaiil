@@ -16,16 +16,6 @@ type CountryCityCoords = {
     coords: CoordsType
 }
 
-/*        const reg = new RegExp(organisationRef.current.value, 'g')
-       const searchFilter = _.filter(organisations, (org: ViewerTypeData) => {
-           console.log({ org })
-           return (reg.test(org?.login) || reg.test(org.email))
-
-       })
-       href={{ pathname: 'about', query: { name: 'leangchhean' } }}>
-       console.log({ searchFilter })
-       setOrganisationsFront(searchFilter) */
-// -----------------------------COMPONENT-------------------------//
 export default function Hosts({ hosts }) {
     const { push } = useRouter()
     const dispatch = useDispatch()

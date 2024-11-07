@@ -1,5 +1,5 @@
 'use client'
-import { StagePrismaType } from "@/api/graphql/stage/stage.types";
+import { GuestPrismaType, StagePrismaType } from "@/api/graphql/stage/stage.types";
 import { guestPrismaActions } from "@/store/slices/guestPrismaSlice";
 import { stageActions } from '@/store/slices/stageSlice';
 import { RootStateType } from '@/store/store';
@@ -8,12 +8,14 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 
 
-function StepsCaroussel() {
+function StepsCaroussel({ currentGuest }: { currentGuest: GuestPrismaType }) {
     const dispatch = useDispatch()
     const { stageGridSelected, stageGridsContext } = useSelector((state: RootStateType) => state.stage)
     const { guestPrisma } = useSelector((state: RootStateType) => state.guestPrisma)
     const { setGuestPrisma } = guestPrismaActions
     // console.log({ stageGridsContext });
+    console.log({ guestPrisma, currentGuest });
+
     const [stagesState, setStagesState] = useState({
         grid: -1,
         group: -1,
@@ -33,8 +35,8 @@ function StepsCaroussel() {
         dispatch(setStageGridSelected({ stage: grid }))
     }
 
-    return <ScrollShadow orientation="vertical" className="h-full flex-wrap">
-        <div className="flex justify-between items-center"> {stageGridsContext && stageGridsContext.map((grid: StagePrismaType, index) => {
+    return <ScrollShadow orientation="horizontal" className="h-full grid grid-cols-5 gap-1 p-2 flex-wrap">
+        {stageGridsContext && stageGridsContext.map((grid: StagePrismaType, index) => {
             return (
 
                 <Card className="mx-6 border-2 border-blue-600 rounded-md px-6" key={grid.stageId} shadow="sm" isPressable onPress={() => handleSetStageGridSelected(grid)}>
@@ -50,7 +52,7 @@ function StepsCaroussel() {
                 </Card>
             );
         })}
-        </div>
+
     </ScrollShadow>
 }
 

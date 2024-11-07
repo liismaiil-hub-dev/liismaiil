@@ -187,8 +187,8 @@ export type GuestPrismaType = {
   onLine?: boolean;
   startDate?: string;
   endDate?: string;
-  stages?: StagePrismaType[];
-  sprints?: SprintPrismaType[];
+  stages?: StagePrismaType[] | [string];
+  sprints?: SprintPrismaType[] | [string];
 };
 export type RegisterPrismaGridsMenuInput = {
   souraName: string;

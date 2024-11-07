@@ -13,11 +13,11 @@ async function Spacelayout({ children, souras, sprint, grid }: {
 
     return (
         <main className='container mx-auto w-full  flex-col  justify-start items-center  min-h-screen gap-2 space-y-2 '>
-            <section className="container flex justify-between  md:items-center shadow-sm w-full   ring-2 ring-yellow-300/80 " >
+            <section className="container flex justify-between  items-center shadow-sm w-full   ring-2 ring-yellow-300/80 " >
                 <div className="h-52  flex-1  bg-green-100/70 border border-red-400 flex justify-center items-center shadow-md " >
                     {souras}
                 </div >
-                <div className=" bg-emerald-300/30 h-52 flex-2 shadow-md " >
+                <div className=" bg-emerald-300/30 h-52 flex justify-center flex-2 shadow-md items-center " >
                     {grid}
                 </div >
                 <div className="hidden flex-1 md:flex h-52 md:justify-center md:items-center bg-green-100/50   shadow-md " >

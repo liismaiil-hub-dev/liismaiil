@@ -21,11 +21,6 @@ const PasswordSchema = z.object({
 
 //______COMPONENT _______\\\
 const SignIn = () => {
-
-  /* const [formState, action] = useFormState<{
-    message: string,
-  }>(signinGuestPrisma, initialState)
-  */
   const dispatch = useDispatch()
   const { pending, data } = useFormStatus()
   const [guest, setGuest] = useState({

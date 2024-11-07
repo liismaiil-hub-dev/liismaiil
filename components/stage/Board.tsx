@@ -12,13 +12,6 @@ import _ from 'lodash';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-
-// REPERE
-//EVAL
-
-/**
- * Board PRINCIPAL Component
- */
 type StagesStagePrismaType = {
   stage: StagePrismaType
 }
@@ -29,8 +22,6 @@ export enum EVAL_STATE {
 }
 const StageBoard = ({ stages }: { stages: StagesStagePrismaType[] }) => {
   const dispatch = useDispatch()
-
-
   const { stageGridSelected, stageEvalContext, stageEvalIndexContext, stageHideNbContext, stageShuffeledFirstAyahsContext, stageValidContext, stepIndexContext, } = useSelector((state: RootStateType) => state.stage)
   const { guestPrisma } = useSelector((state: RootStateType) => state.guestPrisma)
 
@@ -41,13 +32,13 @@ const StageBoard = ({ stages }: { stages: StagesStagePrismaType[] }) => {
     if (typeof stages !== 'undefined' && typeof stages[0] != 'undefined' && stages?.length > 0) {
       console.log({ stages });
       const _stages = stages.map((st) => ({
-        stageId: st.stage!.stageId,
-        createdAt: st.stage!.createdAt ? st.stage!.createdAt.toString() : new Date().toISOString(),
-        souraName: st.stage!.souraName,
-        souraNb: st.stage!.souraNb,
-        grid: st.stage!.grid,
-        group: st.stage!.group,
-        ayahs: st.stage!.ayahs,
+        stageId: st.stage?.stageId,
+        createdAt: st.stage?.createdAt ? st.stage?.createdAt.toString() : new Date().toISOString(),
+        souraName: st.stage?.souraName,
+        souraNb: st.stage?.souraNb,
+        grid: st.stage?.grid,
+        group: st.stage?.group,
+        ayahs: st.stage?.ayahs,
 
       }))
       console.log({ _stages });
@@ -112,9 +103,9 @@ const StageBoard = ({ stages }: { stages: StagesStagePrismaType[] }) => {
 
   return (
     <div className=" flex-col justify-start space-y-2 h-full py-2 items-center w-full ">
-      <div className="flex  justify-between  items-center  gap-3  ">
-        <div className="flex  justify-between items-center  gap-3 text-center font-sans " >
+      <div className="flex-col   justify-start  items-stretch  gap-3  ">
 
+        <div className="flex  justify-between items-center  gap-3 text-center font-sans " >
           <SpaceButton handlePress={prevStepHandler} title='Prev Step' />
           <SpaceButton handlePress={nextIndexHandler} title='Next Step' />
           <SpaceButton handlePress={shuffelHandler} title='Random Step' />
@@ -122,36 +113,34 @@ const StageBoard = ({ stages }: { stages: StagesStagePrismaType[] }) => {
           <SpaceButton handlePress={sprintHandler} title='Sprint On' />
         </div>
 
+        <div className="flex  justify-between items-center  gap-3 text-center font-sans " >
 
-        <div className="flex  justify-between items-center p-2  border border-green-300 rounded-md text-center font-sans " >
-          <input className="flex border-blue-800 text-green-300 justify-center items-center  border "
-            type="checkbox"
-            id='HIDE_NB' name='HIDE_NB' value='HIDE_NB' checked={stageHideNbContext} onChange={() => stageHideNbHandler()} />
-          <label className='px-2' htmlFor='HIDE_NB'  >Hide nb</label>
-        </div>
-        <div className="flex  justify-between items-center p-2 border border-green-300 rounded-md text-center font-sans " >
-          <input className="flex  justify-center items-center  border border-blue-800 text-green-300"
-            type="checkbox"
-            id='VALID_CTXT' name='VALID_CTXT' value='HIDE_NB' checked={stageValidContext} onChange={() => stageValidHandler()} />
-          <label className='px-2' htmlFor='HIDE_NB' >valid</label>
-        </div>
-        <div className="flex  justify-between  gap-3 items-center   text-center font-sans " >
-          <div className="CENTER border border-green-300 rounded-md  p-2 text-center font-sans " >
-
-            <RadioButtonEvalState
-              evalState={EVAL_STATE.EVAL} title='Eval board' />
+          <div className="flex  justify-between items-center p-2  border border-green-300 rounded-md text-center font-sans " >
+            <input className="flex border-blue-800 text-green-300 justify-center items-center  border "
+              type="checkbox"
+              id='HIDE_NB' name='HIDE_NB' value='HIDE_NB' checked={stageHideNbContext} onChange={() => stageHideNbHandler()} />
+            <label className='px-2' htmlFor='HIDE_NB'  >Hide nb</label>
           </div>
-
-          <div className="CENTER  border border-blue-300 rounded-md p-2 text-center font-sans " >
-
-            <RadioButtonEvalState
-              evalState={EVAL_STATE.ORDER} title='Order Grid' />
+          <div className="flex  justify-between items-center p-2 border border-green-300 rounded-md text-center font-sans " >
+            <input className="flex  justify-center items-center  border border-blue-800 text-green-300"
+              type="checkbox"
+              id='VALID_CTXT' name='VALID_CTXT' value='HIDE_NB' checked={stageValidContext} onChange={() => stageValidHandler()} />
+            <label className='px-2' htmlFor='HIDE_NB' >valid</label>
           </div>
+          <div className="flex  justify-between  gap-3 items-center   text-center font-sans " >
+            <div className="CENTER border border-green-300 rounded-md  p-2 text-center font-sans " >
 
-          <div className="CENTER  border border-violet-300 rounded-md p-2 text-center font-sans " >
-
-            <RadioButtonEvalState
-              evalState={EVAL_STATE.CLICK} title='Click Grid' />
+              <RadioButtonEvalState
+                evalState={EVAL_STATE.EVAL} title='Eval board' />
+            </div>
+            <div className="CENTER  border border-blue-300 rounded-md p-2 text-center font-sans " >
+              <RadioButtonEvalState
+                evalState={EVAL_STATE.ORDER} title='Order Grid' />
+            </div>
+            <div className="CENTER  border border-violet-300 rounded-md p-2 text-center font-sans " >
+              <RadioButtonEvalState
+                evalState={EVAL_STATE.CLICK} title='Click Grid' />
+            </div>
           </div>
 
         </div>

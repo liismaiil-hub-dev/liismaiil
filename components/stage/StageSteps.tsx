@@ -5,7 +5,7 @@ import { StagePrismaType } from "@/app/api/graphql/stage/stage.types";
 import { GRIDS_NAME, GRIDS_TLD } from "@/store/constants/constants";
 import { stageActions } from "@/store/slices/stageSlice";
 import { RootStateType } from "@/store/store";
-import { Accordion, AccordionItem, Button, ScrollShadow } from "@nextui-org/react";
+import { Accordion, AccordionItem, Button } from "@nextui-org/react";
 import { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 
@@ -97,7 +97,7 @@ const StageSteps = () => {
 
   const dispatch = useDispatch()
 
-  const { setSpaceGrids, setGridMenuSouraNb, setStageGridSelected } = stageActions
+  const { setStageGridSelected } = stageActions
   const { stageGridsContext, } = useSelector((state: RootStateType) => state.stage)
 
   // creating chunks 
@@ -134,13 +134,9 @@ const StageSteps = () => {
 
 
   return (
-    <section className=" flex-col text-blue-800 justify-start overflow-scroll items-center w-full   max-h-1/2 ">
+    <section className=" flex-col text-blue-800 justify-start overflow-scroll items-center  text-center w-full  ">
       <div className={`flex-col justify-start  items-center gap-6 rounded-md`}>
-        <Accordion className="overflow-y-auto "
-        /* selectedKeys={selectedKeys}
-        onSelectionChange={()  => setSelectedKeys() }
-       */
-        >
+        <Accordion className="overflow-y-auto ">
           <AccordionItem key={`${GRIDS_TLD.TIWAL}`} className="font-light" aria-label="souar tiwal"
             title={`${GRIDS_NAME[GRIDS_TLD.TIWAL]}`}>
             <TiwalAccordion grids={newTiwal} handleSelectedStage={(arg) => selectStageHandler(arg)} />
@@ -152,10 +148,10 @@ const StageSteps = () => {
             <MathaniAccordion grids={newMathani} handleSelectedStage={(arg: StagePrismaType) => selectStageHandler(arg)} />
           </AccordionItem>
           <AccordionItem key={`${GRIDS_TLD.MOFASAL}`} className="font-light" aria-label={`souar ${GRIDS_NAME[GRIDS_TLD.MOFASAL]}`} title={`${GRIDS_NAME[GRIDS_TLD.MOFASAL]}`}>
-            <ScrollShadow className=" h-[calc(100vh-20rem)]">
-              <MofasalAccordion grids={newMofasal}
-                handleSelectedStage={(arg) => selectStageHandler(arg)} />
-            </ScrollShadow>
+
+            <MofasalAccordion grids={newMofasal}
+              handleSelectedStage={(arg) => selectStageHandler(arg)} />
+
           </AccordionItem>
         </Accordion >
       </div>

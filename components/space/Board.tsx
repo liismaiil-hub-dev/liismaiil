@@ -1,5 +1,5 @@
 'use client'
-import { Ayah } from '@/app/api/graphql/stage/stage.types';
+import { Ayah, GuestPrismaType } from '@/app/api/graphql/stage/stage.types';
 import EvalOrderedComp from "@/components/space/EvalOrdered";
 import EvalSuits from "@/components/space/EvalSuits";
 import { stageActions } from "@/store/slices/stageSlice";
@@ -24,7 +24,7 @@ export enum EVAL_STATE {
   ORDER = 'ORDER',
   CLICK = 'CLICK',
 }
-const SpaceBoard = () => {
+const SpaceBoard = ({ currentGuest }: { currentGuest: GuestPrismaType }) => {
   const dispatch = useDispatch()
 
   const { gridsContext, gridSelected, evalIndex, evalContext, hideNbContext, shuffeledFirstAyahsContext, orderedAyahsContext, validContext, gridIndexContext, } = useSelector((state: RootStateType) => state.stage)
@@ -35,29 +35,24 @@ const SpaceBoard = () => {
 
   useEffect(() => {
     if (typeof gridSelected !== 'undefined' && typeof gridSelected.ayahs !== 'undefined' && gridSelected.ayahs && gridSelected?.ayahs[0] != '' && gridSelected?.ayahs.length > 0) {
-      console.log({ grdSelectedZ: gridSelected?.ayahs[0] });
+      console.log({ grdSelected: gridSelected?.ayahs[0] });
 
       const _grids: [[Ayah]] = gridSelected?.ayahs?.map((ay: string) => JSON.parse(ay) as [Ayah])
       // dispatch(setGridsContext({ grids: _grids }))
       dispatch(setGridIndexContext({ index: 0 }))
-      console.log({ guestPrisma });
 
-
+      console.log({ currentGuest, guestPrisma });
     }
   }, []);
 
   useEffect(() => {
     if (typeof gridSelected !== 'undefined' && gridSelected.ayahs[0] != '' && typeof gridSelected.ayahs !== 'undefined') {
-
       const _grids = gridSelected.ayahs?.map((ay: string) => JSON.parse(ay))
       dispatch(setGridsContext({ grids: _grids }))
       dispatch(setGridIndexContext({ index: 0 }))
-
     }
   }, [gridSelected]);
   useEffect(() => {
-    //console.log({ gridIndexContext });
-
     if (typeof gridSelected !== 'undefined' && typeof gridSelected.ayahs !== 'undefined' && gridSelected.ayahs[0] != '' && gridsContext.length > gridIndexContext) {
       const shuffeleledFirst = gridsContext[gridIndexContext].map((ordG: Ayah, index: number) => ({ ...ordG, index: gridIndexContext ? ordG.order + gridIndexContext : ordG.order }));
 
@@ -79,14 +74,10 @@ const SpaceBoard = () => {
       dispatch(setOrderedAyahsContext({ ayahs: orderedAy }))
 
       setFirst(false)
-
     }
-
   }, [gridIndexContext]);
 
-
   useEffect(() => {
-
     if (typeof gridSelected !== 'undefined' && gridSelected?.ayahs[0] != '' && typeof gridSelected.ayahs !== 'undefined') {
       const _grids = gridSelected.ayahs?.map((ay: string) => JSON.parse(ay))
 
@@ -99,9 +90,7 @@ const SpaceBoard = () => {
       dispatch(setShuffeledFirstAyahsContext({ ayahs: shuffeleledFirst }))
 
       dispatch(setOrderedAyahsContext({ ayahs: orderedAy }))
-
       setFirst(false)
-
     }
   }, [gridsContext]);
 
@@ -140,7 +129,7 @@ const SpaceBoard = () => {
   }
 
   function sprintHandler() {
-   
+
   }
 
 
@@ -153,7 +142,7 @@ const SpaceBoard = () => {
       <div className="flex  justify-around  items-center  py-2 ">
         <SpaceButton handlePress={prevSouraHandler} title='Prev Soura' />
         <SpaceButton handlePress={nextSouraHandler} title='Next Soura' />
-        
+
         <SpaceButton handlePress={sprintHandler} title='Sprint On' />
 
         <div className="flex  justify-between items-center  border border-green-400 text-center font-sans " >
@@ -162,7 +151,7 @@ const SpaceBoard = () => {
             id='HIDE_NB' name='HIDE_NB' value='HIDE_NB' checked={validContext || hideNbContext} onChange={() => hideNbHandler()} />
           <label htmlFor='HIDE_NB' className='text-sm' >Hide nb</label>
         </div>
-       {/*  <div className="flex  justify-between items-center  border border-green-400 text-center font-sans " >
+        {/*  <div className="flex  justify-between items-center  border border-green-400 text-center font-sans " >
           <input className="flex  justify-center items-center  border border-blue-800 text-green-300"
             type="checkbox"
             id='VALID_CTXT' name='VALID_CTXT' value='HIDE_NB' checked={validContext} onChange={() => blurHandler()} />
@@ -177,11 +166,10 @@ const SpaceBoard = () => {
       </div>
       {gridSelected && evalContext === EVAL_STATE.EVAL ?
         <div className="flex justify-between  tems-start w-full ">
-          <div className=" -order-last md:order-first flex justify-stretch w-full flex-1 items-start m-1 ">
+          <div className="  md:order-first flex justify-stretch w-full flex-1 items-start m-1 ">
             <EvalOrderedComp />
           </div>
           <div className=" flex justify-stretch w-full flex-1 items-start m-1">
-
             <EvalSuits first={first} />
           </div> </div> :
         evalContext === EVAL_STATE.ORDER ?

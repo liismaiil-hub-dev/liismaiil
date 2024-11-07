@@ -1,9 +1,9 @@
+'use client'
 import { CollaboratorProfileType } from '@/store/slices/profileSlice';
 import { RootStateType } from '@/store/store';
 import {
   APIProvider, Map,
-  Marker,
-  useMap
+  Marker
 } from '@vis.gl/react-google-maps';
 import { useRef } from 'react';
 import { useSelector } from 'react-redux';
@@ -21,7 +21,7 @@ const center = {
 };
 const GoogleMapComponent = () => {
   const markerRef = useRef(null);
- const { collaboratorProfiles } = useSelector((state: RootStateType) => state.profile)
+  const { collaboratorProfiles } = useSelector((state: RootStateType) => state.profile)
 
   return (<APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAP_KEY!}>
     <Map
