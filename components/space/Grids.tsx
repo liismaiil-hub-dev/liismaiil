@@ -67,7 +67,7 @@ const Grids = ({ grids }: { grids: GridMenu[] }) => {
         {typeof newTiwal !== 'undefined' && newTiwal && newTiwal.length > 0 &&
           <section className="flex flex-col justify-start items-start ">
             {newTiwal?.map((grid: GridMenu) => {
-              console.log({ grid });
+//              console.log({ grid });
               return <Button className="text-center bg-emerald-300/80 text-pretty w-3/4" onClick={() => { selectGridHandler(grid.souraNb) }} key={`${grid.souraName}-${grid.souraNb}`} aria-label={`${grid.souraName}`} title={`${grid.souraName}`}>
                 <div className="flex justify-center  text-center">
                   {`  ${grid.souraName}   :  ${grid.souraNb}`}

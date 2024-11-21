@@ -10,7 +10,7 @@ const initialState: StageStateProps = {
     souraNb: -1,
     arabName: '',
     souraName: '',
-    ayahs: '',
+    ayahs: [''],
     id: 0
   }
   ],
@@ -24,7 +24,8 @@ const initialState: StageStateProps = {
     ayahs: [''],
     id: 0
   },
-
+  isDraggedContext: false,
+  isDroppedContext: false,
   stageGridSelected: {
     grid: -1,
     group: -1,
@@ -41,8 +42,8 @@ const initialState: StageStateProps = {
   sprintsContext: [
     { sprintId: '', published: false, }
   ],
-  sprintSelected: { sprintId: '', published: false, }
-  ,
+  sprintSelected: { sprintId: '', published: false, },
+
   orderedAyahsContext: [{
     id: 0,
     juz: 0,
@@ -94,7 +95,10 @@ const initialState: StageStateProps = {
     ayahs: '',
     guests: []
   }],
-
+  //space drag & drop
+  draggedIndex: 0,
+  errorNbContext: 0,
+  firstStateContext: false,
 
   gridIndexContext: 0,
   stepIndexContext: 0,
@@ -117,8 +121,47 @@ const initialState: StageStateProps = {
       text: ''
     }
   ]],
-
-
+  stageSelected: {
+    id: 0,
+    stageId: '',
+    createdAt: '',
+    souraName: '',
+    arabName: undefined,
+    souraNb: 0,
+    grid: 0,
+    group: undefined,
+    startOn: undefined,
+    createdById: undefined,
+    guests: undefined,
+    ayahs: '',
+    sprints: undefined
+  },
+  spaceSprint: {
+    sprintId: '',
+    createdAt: undefined,
+    startOn: undefined,
+    finishOn: undefined,
+    createdById: undefined,
+    published: undefined,
+    guests: undefined,
+    stage: undefined
+  },
+  spaceStage: {
+    id: 0,
+    stageId: '',
+    createdAt: '',
+    souraName: '',
+    arabName: undefined,
+    souraNb: 0,
+    grid: 0,
+    group: undefined,
+    startOn: undefined,
+    createdById: undefined,
+    guests: undefined,
+    ayahs: '',
+    sprints: undefined
+  },
+  validStages: ['']
 };
 
 
@@ -145,6 +188,12 @@ const stageSlice = createSlice({
     setEvalIndex(state: StageStateProps, action: PayloadAction<{ index: number }>) {
       state.evalIndex = action.payload.index
     },
+    setIsDraggedContext(state: StageStateProps, action: PayloadAction<{ drag: boolean }>) {
+      state.isDraggedContext = action.payload.drag
+    },
+    setIsDroppedContext(state: StageStateProps, action: PayloadAction<{ drop: boolean }>) {
+      state.isDroppedContext = action.payload.drop
+    },
     setGridSelected(state: StageStateProps,
       action: PayloadAction<{ grid: GridJsoned }>) {
       //      console.log({ gridSelected: action.payload.grid });
@@ -152,6 +201,8 @@ const stageSlice = createSlice({
     },
 
     setOrderedAyahsContext(state: StageStateProps, action: PayloadAction<{ ayahs: Ayah[] }>) {
+      console.log({ordrdAyhsCon: action.payload.ayahs});
+      
       state.orderedAyahsContext = action.payload.ayahs
     },
 
@@ -179,6 +230,10 @@ const stageSlice = createSlice({
     },
 
     setStageShuffeledAyahsContext(state: StageStateProps, action: PayloadAction<{ ayahs: Ayah[] }>) {
+      console.log({
+        filteredAyahs: action.payload.ayahs
+      });
+      
       state.stageShuffeledAyahsContext = action.payload.ayahs
     },
     setStageShuffeledFirstAyahsContext(state: StageStateProps, action: PayloadAction<{ ayahs: Ayah[] }>) {
@@ -207,6 +262,22 @@ const stageSlice = createSlice({
       state.stageEvalContext = action.payload.eval
     },
     //@end
+    // space - drag & drop
+    setDraggedIndex(state: StageStateProps,
+      action: PayloadAction<{ index: number }>) {
+      console.log({ grid: action.payload.index })
+      state.draggedIndex = action.payload.index
+    },
+    setErrorNbContext(state: StageStateProps,
+      action: PayloadAction<{ errorNb: number }>) {
+      console.log({ nb: action.payload.errorNb })
+      state.errorNbContext = action.payload.errorNb
+    },
+    setFirstStateContext(state: StageStateProps,
+      action: PayloadAction<{ first: boolean }>) {
+      console.log({ nb: action.payload.first})
+      state.firstStateContext = action.payload.first
+    },
     setGridIndexContext(state: StageStateProps,
       action: PayloadAction<{ index: number }>) {
       console.log({ grid: action.payload.index })
@@ -214,7 +285,7 @@ const stageSlice = createSlice({
     },
     setGridsContext(state: StageStateProps,
       action: PayloadAction<{ grids: [[Ayah]] }>) {
-      console.log({ grid: action.payload.grids })
+      console.log({ gridsContext: action.payload.grids })
       state.gridsContext = action.payload.grids
     },
 

@@ -7,7 +7,7 @@ import { ReactNode } from "react";
 const inter = Inter({ subsets: ['latin'] })
 
 
-async function Stageslayout({ children, steps, sprints }: {
+function Stageslayout({ children, steps, sprints }: {
     children: ReactNode, steps: ReactNode, sprints: ReactNode
 }) {
     return (
@@ -17,7 +17,7 @@ async function Stageslayout({ children, steps, sprints }: {
                 <div className="flex flex-col justify-start items-stretch bg-green-50/50 border-sky-200 shadow-md  h-1/3 " >
                     {steps}
                 </div >
-               {/*  <div className="flex flex-col justify-start items-stretch bg-green-50/50 border-lime-100 shadow-md  h-1/3 " >
+                {/*  <div className="flex flex-col justify-start items-stretch bg-green-50/50 border-lime-100 shadow-md  h-1/3 " >
                     {sprints}
                 </div > */}
             </aside>

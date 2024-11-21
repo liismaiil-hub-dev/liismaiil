@@ -24,12 +24,12 @@ if (process.env.APP_ENV === 'LOC') {
 
 } else if (process.env.APP_ENV === 'WEB') {
 
-    libsql = createClient({
+    const libsql = createClient({
         url: process.env.TURSO_DATABASE_URL,
         authToken: process.env.TURSO_AUTH_TOKEN,
     });
     const adapter = new PrismaLibSQL(libsql);
-    prisma = new PrismaClient(adapter);
+    prisma = new PrismaClient({adapter});
 }
 
 //const adapter = new PrismaLibSQL(turso)//

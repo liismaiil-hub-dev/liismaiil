@@ -5,7 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import '@/styles/global.css';
 import { ReactNode } from 'react';
 
-async function Spacelayout({ children, souras, sprint, grid }: {
+function Spacelayout({ children, souras, sprint, grid }: {
     children: ReactNode, sprint: ReactNode,
     souras: ReactNode,
     stage: ReactNode, board: ReactNode, grid: ReactNode

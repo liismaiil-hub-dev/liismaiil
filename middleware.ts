@@ -33,6 +33,7 @@ export function middleware(request: NextRequest) {
     }
     if (request.nextUrl.pathname.startsWith('/signIn') || request.nextUrl.pathname.startsWith('/signUp')) {
         if (token) {
+           
             return NextResponse.redirect(new URL(`stages`, request.url))
         }
     }

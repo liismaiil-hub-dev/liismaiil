@@ -85,9 +85,6 @@ export default function EvalClickBoard() {
         //    setGridState(newGrid)
     }
 
-
-
-
     return (<div id="Eval Board " className="flex flex-col 
     justify-between items-stretch   w-full   h-full " >
         <div id="Eval Board " className="flex grid-cols-1 md:grid-cols-2 

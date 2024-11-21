@@ -4,7 +4,8 @@ export type StageStateProps = {
   spaceGridsSelected: GridJsoned[],
   gridSelected: GridJsoned,
   stageSelected: StagePrismaType,
-
+  isDraggedContext: boolean,
+  isDroppedContext: boolean,
   evalIndex: number,
   // stage
 
@@ -37,6 +38,10 @@ export type StageStateProps = {
   validContext: boolean,
   menuSouraNb: GridMenu[],
   gridsContext: [[Ayah]],
+  // drag & drop
+  draggedIndex: number,
+  errorNbContext: number,
+  firstStateContext: boolean,
 }
 export type GridMenu = {
   souraName: string;

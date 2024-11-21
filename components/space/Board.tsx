@@ -27,19 +27,22 @@ export enum EVAL_STATE {
 const SpaceBoard = ({ currentGuest }: { currentGuest: GuestPrismaType }) => {
   const dispatch = useDispatch()
 
-  const { gridsContext, gridSelected, evalIndex, evalContext, hideNbContext, shuffeledFirstAyahsContext, orderedAyahsContext, validContext, gridIndexContext, } = useSelector((state: RootStateType) => state.stage)
+  const { gridsContext, gridSelected, evalIndex, evalContext, hideNbContext,blurContext, 
+    shuffeledFirstAyahsContext, orderedAyahsContext, validContext, gridIndexContext, } = useSelector((state: RootStateType) => state.stage)
   const { guestPrisma } = useSelector((state: RootStateType) => state.guestPrisma)
 
-  const { setShuffeledFirstAyahsContext, setOrderedAyahsContext, setShuffeledAyahsContext, setEvalContext, setEvalIndex, setValidContext, setGridsContext, setHideNbContext, setGridIndexContext } = stageActions
+  const { setShuffeledFirstAyahsContext, setOrderedAyahsContext, setShuffeledAyahsContext, setErrorNbContext, 
+   setBlurContext, setEvalContext, setEvalIndex, setValidContext, setGridsContext, setHideNbContext, setGridIndexContext } = stageActions
   const [first, setFirst] = useState(() => true);
 
   useEffect(() => {
     if (typeof gridSelected !== 'undefined' && typeof gridSelected.ayahs !== 'undefined' && gridSelected.ayahs && gridSelected?.ayahs[0] != '' && gridSelected?.ayahs.length > 0) {
       console.log({ grdSelected: gridSelected?.ayahs[0] });
 
-      const _grids: [[Ayah]] = gridSelected?.ayahs?.map((ay: string) => JSON.parse(ay) as [Ayah])
+//      const _grids: [[Ayah]] = gridSelected?.ayahs?.map((ay: string) => JSON.parse(ay) as [Ayah])
       // dispatch(setGridsContext({ grids: _grids }))
-      dispatch(setGridIndexContext({ index: 0 }))
+      dispatch(setGridIndexContext({ index: 0 })) 
+      dispatch(setErrorNbContext({errorNb:0  }))
 
       console.log({ currentGuest, guestPrisma });
     }
@@ -47,7 +50,7 @@ const SpaceBoard = ({ currentGuest }: { currentGuest: GuestPrismaType }) => {
 
   useEffect(() => {
     if (typeof gridSelected !== 'undefined' && gridSelected.ayahs[0] != '' && typeof gridSelected.ayahs !== 'undefined') {
-      const _grids = gridSelected.ayahs?.map((ay: string) => JSON.parse(ay))
+      const _grids:[[Ayah]] = gridSelected.ayahs?.map((ay: string) => JSON.parse(ay))
       dispatch(setGridsContext({ grids: _grids }))
       dispatch(setGridIndexContext({ index: 0 }))
     }
@@ -124,6 +127,10 @@ const SpaceBoard = ({ currentGuest }: { currentGuest: GuestPrismaType }) => {
   function hideNbHandler() {
     dispatch(setHideNbContext({ hide: !hideNbContext }))
   }
+
+  function blurHandler() {
+    dispatch(setBlurContext({ blur: !blurContext }))
+  }
   function shuffelHandler() {
     dispatch(setShuffeledAyahsContext({ ayahs: _.shuffle(orderedAyahsContext) }))
   }
@@ -131,7 +138,6 @@ const SpaceBoard = ({ currentGuest }: { currentGuest: GuestPrismaType }) => {
   function sprintHandler() {
 
   }
-
 
   useEffect(() => {
     console.log({ hideNbContext, evalContext, gridIndexContext, evalIndex, gridSelected, first });
@@ -151,12 +157,13 @@ const SpaceBoard = ({ currentGuest }: { currentGuest: GuestPrismaType }) => {
             id='HIDE_NB' name='HIDE_NB' value='HIDE_NB' checked={validContext || hideNbContext} onChange={() => hideNbHandler()} />
           <label htmlFor='HIDE_NB' className='text-sm' >Hide nb</label>
         </div>
-        {/*  <div className="flex  justify-between items-center  border border-green-400 text-center font-sans " >
+        
+          <div className="flex  justify-between items-center  border border-green-400 text-center font-sans " >
           <input className="flex  justify-center items-center  border border-blue-800 text-green-300"
             type="checkbox"
-            id='VALID_CTXT' name='VALID_CTXT' value='HIDE_NB' checked={validContext} onChange={() => blurHandler()} />
+            id='VALID_CTXT' name='VALID_CTXT' value='HIDE_NB' checked={blurContext} onChange={() => blurHandler()} />
           <label htmlFor='HIDE_NB' className='text-sm' >Blur</label>
-        </div> */}
+        </div> 
         <RadioButtonEvalState
           evalState={EVAL_STATE.EVAL} title='Eval board' />
         <RadioButtonEvalState
