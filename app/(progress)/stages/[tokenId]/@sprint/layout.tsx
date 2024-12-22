@@ -2,8 +2,8 @@ import { Inter } from 'next/font/google';
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
-    title: 'space liismaiil',
-    description: 'space liismaiil board stages '
+    title: 'stages',
+    description: 'stages progress '
 }
 
 function Spacelayout({ children, sprint, board }:

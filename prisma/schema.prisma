@@ -1,11 +1,11 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
   provider = "sqlite"
-  url      =  env("DATABASE_URL")
+  url      = env("DATABASE_URL")
 }
 
 model Guest {
@@ -14,11 +14,11 @@ model Guest {
   host           Int
   flag           String
   password       String
-  guestPassword  String
+  guestPassword  String?
   collaboratorId String
   country        String
   status         String
-  onLine         Boolean
+  onLine         Boolean?      @default(false)
   startDate      String
   endDate        String
   sprints        GuestSprint[]
@@ -47,10 +47,11 @@ model Stage {
   arabName    String?
   souraNb     Int
   grid        Int
+  group       Int?
   startOn     String?
   createdById String
   ayahs       String
-  guets       GuestStage[]
+  guests       GuestStage[]
   sprints     Sprint[]
 
   @@index([stageId])
@@ -79,8 +80,8 @@ model GuestStage {
   rate    Int?
   review  String?
   addedAt DateTime @default(now()) @map("added_at")
-  stage   Stage    @relation(fields: [stageId], references: [stageId], onDelete: Cascade)
   guest   Guest    @relation(fields: [tokenId], references: [tokenId], onDelete: Cascade)
+  stage   Stage    @relation(fields: [stageId], references: [stageId], onDelete: Cascade)
 
   @@unique([tokenId, stageId])
   @@map("guest_stages")
@@ -92,8 +93,8 @@ model GuestSprint {
   rate     Int?
   review   String?
   addedAt  DateTime @default(now()) @map("added_at")
-  sprint   Sprint   @relation(fields: [sprintId], references: [sprintId])
   guest    Guest    @relation(fields: [tokenId], references: [tokenId])
+  sprint   Sprint   @relation(fields: [sprintId], references: [sprintId])
 
   @@unique([sprintId, tokenId, addedAt])
   @@map("guest_sprints")

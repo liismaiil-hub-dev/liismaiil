@@ -1,8 +1,8 @@
 
 import { SprintPrismaType } from "@/app/api/graphql/stage/stage.types";
-import SprintComponent from "@/components/space/Sprint";
-import { getOwnSprints, } from "@/lib/utils/sprint";
-import { getOwnStages } from "@/lib/utils/stage";
+import SprintComponent from "@/components/space/Staged";
+import { getOwnSprints, } from "@/app/api/lib/sprint";
+import { getOwnStages } from "@/actions/host";
 import { Button } from '@nextui-org/react';
 
 
@@ -11,7 +11,7 @@ export default async function Sprint() {
 
   const sprintsResp = await getOwnSprints();
   const stagesResp = await getOwnStages();
-  console.log({ sprints, stages });
+  console.log({ sprintsResp, stagesResp });
 
 
   if (typeof sprintsResp != 'undefined' && sprintsResp.success && sprintsResp.sprints?.length > 0) {

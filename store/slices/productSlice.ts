@@ -1,11 +1,11 @@
-import {ProductStatusEnum,  } from '@/api/product/product.types'
+import {PRODUCT_STATUS_ENUM  } from '@/api/graphql/product/product.types'
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 export type ProductProductType = {
   title: string, titleSlug: string,
   description: string, price: number,
   offerPrice: number,
   author: string, image: { url: string, public_id: '' },
-  productStatus: ProductStatusEnum.FRONT,
+  productStatus: PRODUCT_STATUS_ENUM.ORGA,
   selection: string,
   stock: number,
   promo: number,

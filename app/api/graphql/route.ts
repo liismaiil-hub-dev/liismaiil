@@ -3,8 +3,9 @@ import { ApolloServer } from "@apollo/server";
 import { startServerAndCreateNextHandler } from "@as-integrations/next";
 import { NextRequest } from "next/server";
 
-import { registerPrisma } from "@/api/graphql/tools";
+import {  createTokenForGuest, hashPassword, verifyPassword } from "@/api/graphql/tools";
 import { dbFirestore, FieldValue, timeStamp } from './fb-utils-admin';
+import { cookies } from 'next/headers';
 
 import { guestDefs } from "@/api/graphql/guest/guest.graphql.js";
 import guestResolver from "@/api/graphql/guest/guest.resolver";
@@ -17,16 +18,18 @@ import stageResolver from "@/api/graphql/stage/stage.resolver";
 //import { tabletDefs } from "@/api/graphql/tablet/tablet.graphql.js";
 //import tabletResolver from "@/api/graphql/tablet/tablet.resolver";
 import { mergeResolvers, mergeTypeDefs } from "@graphql-tools/merge";
+
 import fs from "fs";
 import path from "path";
 
 
 import _lodash from "lodash";
 
-import connectMongoose from "@/lib/mongoose-db";
+//import connectMongoose from "@/api/lib/mongoose-db";
 //import runCoranDb from './coran/database'
 import moment from "moment";
 import slug from "slug";
+import prisma from "../lib/prisma-db";
 
 
 const typesArray = [
@@ -131,11 +134,14 @@ const handler = startServerAndCreateNextHandler<NextRequest>(apolloServer, {
       "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version"
     );
 */
-    const mongoose = await connectMongoose();
+  //  const mongoose = await connectMongoose();
     return {
 
-
-      registerPrisma,
+      verifyPassword,
+      hashPassword, 
+      createTokenForGuest,
+      prisma, 
+      
       dbFirestore,
       FieldValue,
       timeStamp,
@@ -147,7 +153,7 @@ const handler = startServerAndCreateNextHandler<NextRequest>(apolloServer, {
       //      GridModel,
       req,
       res,
-      mongoose,
+      //mongoose,
       moment,
     };
   },

@@ -38,16 +38,14 @@ function HostLayout({ children, stages, sprints, guests }: {
             </section> */}
             <section className="container flex-col   w-full  h-full  ring-2 ring-red-300/80 justify-start items-center" >
 
-                {gridSelected && gridSelected.arabName != "" && <div className="flex flex-col justify-start items-center scroll-smooth   w-full max-h-[calc(100vh-5rem)]]" >
-                    {/* 
+                   {/* 
                             <div className="flex  justify-start   bg-orange-200 w-full h-full text-medium text-gray-500" >
                             {board}
                             </div> */}
 
                     {children}
 
-                </div >}
-
+                
             </section>
         </main>
 

@@ -1,17 +1,60 @@
 'use server'
 import { dbFirestore } from "@/app/api/graphql/fb-utils-admin";
 import { GuestType, LIISMAIIL_STATUS_ENUM } from "@/app/api/graphql/profile/profile.types";
-import prisma from "@/lib/prisma-db";
+import prisma from "@/api/lib/prisma-db";
 import organisations from "@/store/shares/organisations.json";
 import { DocumentData, DocumentSnapshot } from "@google-cloud/firestore";
 import _ from "lodash";
 import { memoize } from "nextjs-better-unstable-cache";
+import { getGuestFromCookies } from "./guest";
+import { GiftType } from "@/app/api/graphql/stage/stage.types";
+import { Firestore } from "firebase-admin/firestore";
 
 const hostSearch = organisations.map((org) => {
     return ({ login: org.login, uid: org.uid, geoCoords: { lat: org.coords.lat, long: org.coords.long } })
 })
 
+export const getOwnStages = memoize(async (): Promise<{ success: boolean, stages: [] } | undefined | null> => {
+    try {
+        const _localGuest: GuestType | null = await getGuestFromCookies() ?? null ;
+        if(typeof _localGuest !== 'undefined' && _localGuest) {
+            const { tokenId } = _localGuest ?? { tokenId:-1}
+           console.log({ tokenId });
+           
+           const _stagesRel = await prisma.guestStage.findMany({
+               where: { tokenId }, include: {
+                   stage: true,
+               }
+           });
+           if (_stagesRel && _stagesRel.length > 0) {
+   
+               return { success: true, stages: _stagesRel }
+   
+           } else {
+               return {
+                   success: false,
+                   stages: []
+               }
+           }
 
+        }
+        else {
+            return {
+                success: false,
+                stages: []
+            }
+        }
+    } catch (error: any) {
+        console.error(error);
+        throw new Error(error);
+    }
+}, {
+    persist: true,
+    revalidateTags: () => ['stages', 'sprints'],
+    log: ['datacache', 'verbose', 'dedupe'],
+    logid: 'stages'
+}
+)
 export async function getHosts() {
     try {
         //console.log({ firestore });
@@ -22,7 +65,7 @@ export async function getHosts() {
             const guest = await doc?.data()!;
             guests.push(guest as GuestType);
         });
-        console.log({ hosts: guests });
+       // console.log({ hosts: guests });
 
         return guests;
     } catch (error: any) {
@@ -39,10 +82,30 @@ export const getHostsForDashboard = memoize(async () => {
     return guests;
 }, {
     persist: true,
-    revalidateTags: ['dashboard:guests'],
+    revalidateTags: ['dashboard:guests', 'hosts'],
     suppressWarnings: true,
     log: ['datacache', 'verbose', 'dedupe'],
     logid: 'dashboard: guests'
+})
+export const getAllGifts = memoize(async () => {
+
+      try {
+        const gifts: Array<GiftType> | null = [];
+        const querySnapshot = await dbFirestore.collection('gifts').orderBy('createdAt', 'desc').get();
+        querySnapshot.forEach((doc: any) => {
+          gifts.push({ id: doc?.id, ...doc?.data() });
+        });
+        return gifts;
+      } catch (error) {
+        console.log({ error });
+        return Promise.reject(error);
+      }
+}, {
+    persist: true,
+    revalidateTags: [ 'hosts'],
+    suppressWarnings: true,
+    log: ['datacache', 'verbose', 'dedupe'],
+    logid: 'hosts: get all gifts'
 })
 
 /**
@@ -94,6 +157,7 @@ export async function getDataLayerUrls({ country = 'SE', host = "3jtczfl93BWlud2
         },
     );
 }
+
 /**
  * Fetches the building insights information from the Solar API.
  *   https://developers.google.com/maps/documentation/solar/building-insights

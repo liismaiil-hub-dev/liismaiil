@@ -1,7 +1,11 @@
 
 import GridsComponent from "@/components/stage/StageGrids";
-import { getGuestFromCookies } from '@/lib/authTools';
-import prisma from "@/lib/prisma-db";
+import prisma from "@/api/lib/prisma-db";
+import { redirect } from "next/navigation";
+import { getHostsForDashboard } from "@/actions/host";
+import { getAllStagesForDashboard } from "@/actions/stage";
+import StageSteps from "@/components/stage/StageSteps";
+
 
 async function getStages(tokenId: number) {
   console.log({ tokenId });
@@ -13,7 +17,7 @@ async function getStages(tokenId: number) {
       }
     }
   });
-  console.log({ _stagesRel: _stagesRel.stages });
+  //console.log({ _stagesRel: _stagesRel.stages });
   try {
 
     if (_stagesRel && _stagesRel.stages.length > 0) {
@@ -38,24 +42,27 @@ async function getStages(tokenId: number) {
 
 export default async function StepsNav() {
   try {
-    const _ImGuest = await getGuestFromCookies();
-    console.log({ _ImGuest });
-    if (_ImGuest && _ImGuest.tokenId) {
-
-      const stages = await getStages(parseInt(_ImGuest?.tokenId!))
-      if (stages && stages.success) {
-        console.log({ stages });
+      const stages = await getAllStagesForDashboard() //(parseInt(_ImGuest?.tokenId!))
+      console.log({stages});
+      
+      if (typeof stages !== 'undefined' && stages ) {
+       // console.log({ stages });
+       //h-[calc(100vh-7rem)]
 
         return (
-          <div className="flex flex-col justify-start items-center space-y-1 border-3   w-full h-[calc(100vh-7rem)] " >
-            <GridsComponent stages={stages._stages} />
-            <SprintsComponent />
+          <div className="flex flex-col justify-start items-center     w-full h-full  " >
+            <StageSteps stages={stages} />
+            {/* <SprintsComponent /> */}
           </div>
         )
       }
+/*     }else {
+      redirect('/')
     }
-  } catch (error) {
-    throw error
+ */  } catch (error) {
+   console.log({error});
+  return null
+   
   }
 
 }

@@ -1,7 +1,7 @@
 'use server'
 import { getHosts } from "@/actions/host";
 import { GuestType } from "@/app/api/graphql/profile/profile.types";
-import HostComponent from "@/components/hosts/Host";
+import HostComponent from "@/components/hosts/Hosts";
 import prisma from "@/lib/prisma-db";
 export async function generateStaticParams() {
     const hosts = await getHosts();

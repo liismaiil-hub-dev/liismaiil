@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from 'react-redux'
 // eslint-disable-next-line react-hooks/exhaustive-deps
 
 // -----------------------------COMPONENT-------------------------//
-function OrganisationsPagination({ collaborators, guestPrisma }: { collaborators: ProfileTypeData[], guestPrisma: GuestPrismaType | null | undefined }) {
+function OrganisationsPagination({ collaborators}: { collaborators: ProfileTypeData[], }) {
     const dispatch = useDispatch()
 
     const { setCollaboratorProfiles } = profileActions
@@ -31,11 +31,11 @@ function OrganisationsPagination({ collaborators, guestPrisma }: { collaborators
             }
 
         })
-        console.log({ colProfiles, guestPrisma });
+        console.log({ colProfiles,  });
         dispatch(setCollaboratorProfiles({ profiles: colProfiles }))
-        if (typeof guestPrisma != 'undefined' && guestPrisma) {
+       /*  if (typeof guestPrisma != 'undefined' && guestPrisma) {
             dispatch(setGuestPrisma({ guestPrisma: guestPrisma }))
-        }
+        } */
     }, [])
 
 

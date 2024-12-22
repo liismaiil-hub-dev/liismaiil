@@ -3,7 +3,7 @@
 import { getGuestFromCookies } from "@/actions/guest";
 import { dbFirestore } from '@/api/graphql/fb-utils-admin';
 import GuestsComponent from "@/components/front/Guests";
-import prisma from "@/lib/prisma-db";
+import prisma from "@/api/lib/prisma-db";
 import { DocumentData, DocumentSnapshot } from 'firebase-admin/firestore';
 import { Metadata } from 'next';
 import { GuestType, ProfileTypeData } from "./api/graphql/profile/profile.types";
@@ -67,7 +67,7 @@ export const revalidate = 5;
 export default async function Home() {
   const collaborators = await getCollaborators()
   //const hosts = await getHosts()
-  const guest = await getGuestFromCookies()
+//  const guest = await getGuestFromCookies()
   //console.log({ hosts, collaborators });
   const localsOnline = await getLocalGuests() as GuestPrismaType[];
   //  console.log({ localsOnline, guest, collaborators });
@@ -93,7 +93,7 @@ export default async function Home() {
           </div>
 
           {collaborators && collaborators.length > 4 &&
-            <OrganisationsPagination guestPrisma={guest} collaborators={collaborators} />}
+            <OrganisationsPagination  collaborators={collaborators} />}
         </div>
       </section >
 
@@ -126,10 +126,14 @@ export async function getLocalGuests() {
         tokenId: -1,
         host: -1,
         flag: '',
+        onLine: false,
+      
         status: '',
         startDate: '',
         collaboratorId: ''
       }]
+      //console.log({_guestsOnline});
+      
     return _guestsOnline
   } catch (error: any) {
     console.log({ error });

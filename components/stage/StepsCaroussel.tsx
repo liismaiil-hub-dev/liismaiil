@@ -38,9 +38,8 @@ function StepsCaroussel({ currentGuest }: { currentGuest: GuestPrismaType }) {
     return <ScrollShadow orientation="horizontal" className="h-full grid grid-cols-5 gap-1 p-2 flex-wrap">
         {stageGridsContext && stageGridsContext.map((grid: StagePrismaType, index) => {
             return (
-
-                <Card className="mx-6 border-2 border-blue-600 rounded-md px-6" key={grid.stageId} shadow="sm" isPressable onPress={() => handleSetStageGridSelected(grid)}>
-                    <CardBody className="flex justify-start items-center  overflow-visible p-0 h-[140px]">
+       <Card  className="mx-6 border-2 border-blue-600 rounded-md px-6" key={grid.stageId} shadow="sm" isPressable onPress={() => handleSetStageGridSelected(grid)}>
+                    <CardBody key={grid.stageId} className="flex justify-start items-center  overflow-visible p-0 h-[140px]">
                         <p>{grid.stageId}. </p>
                         <p>{grid.souraName}. </p>
                         <p>grids : {grid.grid}. </p>

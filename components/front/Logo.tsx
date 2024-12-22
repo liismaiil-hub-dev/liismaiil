@@ -7,10 +7,6 @@ import {FiSun, FiMoon } from "react-icons/fi";
 
 function Logo() {
    const {setTheme, resolvedTheme} =  useTheme()
-    
-function toggle(){
-    setTheme()
-}
 
     return (
         <div className='flex justify-between items-center' >

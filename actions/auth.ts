@@ -1,26 +1,16 @@
+import { revalidate } from './../app/page';
 'use server'
-import { dbFirestore } from '@/api/graphql/fb-utils-admin';
 import { GuestType } from '@/app/api/graphql/profile/profile.types';
-import { createTokenForGuest, hashPassword, registerPrisma, signin, signinPrisma, signup } from '@/lib/authTools';
+import { createTokenForGuest, hashPassword,  signin, signinPrisma, signup } from '@/api/lib/authTools';
 import { COOKIE_NAME } from '@/store/constants/constants';
+import { dbFirestore } from '@/api/graphql/fb-utils-admin';
 import moment from 'moment';
+import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
 
-const GuestRegisterSchema = z.object({
-  tokenId: z.number().int().gte(1000),
-  host: z.number().int().gte(100).lt(1000),
-  password: z.string(),
-  country: z.string().max(3),
-});
 
-const GuestSignInSchema = z.object({
-  tokenId: z.number().int().gte(1000),
-  host: z.number().int().gte(100).lt(1000),
-  password: z.string(),
-
-});
 
 
 export const registerGuest = async (prevState: any, formData: FormData) => {
@@ -74,71 +64,5 @@ export const signinGuest = async (prevState: any, formData: FormData) => {
   }
 }
 // prisma seeding
-export const registerGuestPrisma = async (formData: FormData,) => {
-  const data = GuestRegisterSchema.parse({
-    tokenId: parseInt(formData?.get('tokenId') as string),
-    host: parseInt(formData?.get('host') as string),
-    country: formData.get('country'),
-    password: formData.get('password'),
-  })
-  console.log({ data, formData });
 
-  let redirection = '/'
-  const hashedPass = await hashPassword(data.password) as string;
-  try {
-    const { host: dataHost, tokenId, country: dataCountry, password } = data;
-    const guestRef = await dbFirestore.collection('guests').doc(`${tokenId}`).get();
-    console.log({ data: guestRef.data(), exists: guestRef.exists });
 
-    if (guestRef.exists) {
-      try {
-        const { host, tokenId, country, status, flag, startDate, endDate, collaboratorId } = guestRef.data() as GuestType
-        if (host == dataHost) {
-          const rep = await registerPrisma({ host, tokenId, country: country ?? dataCountry, password: hashedPass, collaboratorId: collaboratorId ?? 'O6cKgXEsuPNAuzCMTGeblWW9sWI3', status, flag, startDate: startDate ? startDate : new Date().toISOString(), endDate: endDate ? endDate : new Date(moment().add(3, 'months').toISOString()).toISOString() })
-          if (rep?.success) {
-            redirection = '/stages'
-          }
-        }
-        //redirect(`/space/${slug(data.host)}`)
-      } catch (e) {
-        console.log({ e });
-      }
-    }
-  } catch (e) {
-    console.log({ e });
-
-  } finally {
-    redirect(redirection)
-  }
-}
-
-export const signinGuestPrisma = async (formData: FormData) => {
-  console.log({ formData });
-
-  const data = GuestSignInSchema.parse({
-    tokenId: parseInt(formData.get('tokenId') as unknown as string),
-    password: formData.get('password'),
-    host: parseInt(formData.get('host') as unknown as string),
-  })
-  console.log({ data });
-  let direction = '/'
-  try {
-    const { tokenId, collaboratorId, host, flag, success } = await signinPrisma(data)
-    if (typeof success == 'boolean' && success) {
-      console.log({ flag, success });
-
-      if (tokenId !== -1 && collaboratorId !== -1 && host !== -1) {
-        cookies().set(COOKIE_NAME, createTokenForGuest(tokenId).toString())
-        direction = `/stages/${tokenId}`
-        // return { message: JSON.stringify({ collaboratorId, flag, host, tokenId }) }
-      }
-    } else {
-      direction = '/signUp'
-    }
-  } catch (e) {
-    console.error(e)
-
-  } finally {
-    redirect(direction)
-  }
-}

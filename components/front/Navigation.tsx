@@ -28,12 +28,8 @@ function Navigation() {
     const isRoute = (route: string) => {
         return pathname.split('/')[1] === route
     }
+//    console.log({guestPrisma});
 
-    useEffect(() => {
-        if (guestPrisma && guestPrisma.tokenId) {
-            dispatch(setGuestPrisma({ guestPrisma: guestPrisma }))
-        }
-    }, [guestPrisma])
     const [guestConnect, setGuestConnect] = useState(false)
     const SetGuestHandler = () => {
         setGuestConnect((guestConnect) => !guestConnect)
@@ -48,15 +44,16 @@ function Navigation() {
 
             const { message, success } = await logoutGuest(guestPrisma.tokenId)
             console.log({ message, success });
-
             if (success) {
+            toast.success('Loged out successfully !!! ')
 
-                Cookies.remove(COOKIE_NAME)
+    //                Cookies.remove(COOKIE_NAME)
                 dispatch(logout())
                 setShowMenu(false)
             } else {
-                toast.warning('cookies persist!!! ')
-
+                toast.warning( `You are diconnected from liismaiil plateform`)
+                Cookies.remove(COOKIE_NAME)
+                dispatch(logout())
             }
 
         } else {
@@ -148,11 +145,11 @@ function Navigation() {
                             <Link prefetch={true} onClick={handleLogout} key={`logout`} href='/'>
                                 Sign out
                             </Link>
-                        </div> : <div className={cn(isRoute('signIn') && 'borde-3 border-yellow-200 shadow-lg', 'text-center font-tight')} >
+                        </div> : <div className={cn(isRoute('signin') && 'borde-3 border-yellow-200 shadow-lg', 'text-center font-tight')} >
                             <div className={'navig-mobile-svg'}  >
                                 < FiLogIn />
                             </div>
-                            <Link prefetch={true} key={`login`} href='/signIn'> Sign in
+                            <Link prefetch={true} key={`login`} href='/signin'> Sign in
                             </Link>
                         </div>
 
@@ -203,7 +200,7 @@ function Navigation() {
                     :
                     <div className={cn((guestPrisma?.tokenId !== 0) && 'nav-selected', 'outline-none text-green-400 CENTER nav-element')}  >
                         <Link prefetch={true} className='outline-none text-orange-400 '
-                            key={`login`} href='/signIn'> Sign in </Link>
+                            key={`login`} href='/signin'> Sign in </Link>
                     </div>
                 }
 

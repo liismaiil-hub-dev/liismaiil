@@ -1,9 +1,12 @@
+import { verifyPassword } from './../tools';
+import { hashPassword} from "@/api/graphql/tools";
+
+import { GuestType, LIISMAIIL_STATUS_ENUM, ProfileTypeData } from './../profile/profile.types';
 import { GuestRegisterSchema } from "@/api/graphql/tools";
 import { PrismaClient } from '@prisma/client';
 import { Firestore } from 'firebase-admin/firestore';
-import { LIISMAIIL_STATUS_ENUM } from '../profile/profile.types';
 import { GridTypeData } from '../tablet/tablet.types';
-import { AddGuestPrismaInput, AddGuestPrismaOutput, GuestPrismaType, STAGE_CATEGORY_ENUM, StagePrismaType } from './stage.types';
+import { AddGuestPrismaInput, GuestPrismaType, SignInPrismaInput, STAGE_CATEGORY_ENUM, StagePrismaType, SuccessMessageOutput } from './stage.types';
 
 
 const stages = async (_: undefined, __: undefined, { dbFirestore }: { dbFirestore: Firestore }): Promise<Array<StagePrismaType> | null> => {
@@ -218,90 +221,128 @@ const addStagePrisma = async (
 const addGuestPrisma = async (
   _: undefined,
   { input }: { input: AddGuestPrismaInput },
-  { registerPrisma, dbFirestore }: { registerPrisma: (arg: any) => any, dbFirestore: Firestore; }
-): Promise<AddGuestPrismaOutput | undefined> => {
-  try {
-    // console.log({ input });
-    const { collaboratorId, host, country, password, tokenId, } = input;
+  { prisma, moment, dbFirestore }: 
+  {  prisma: PrismaClient,  moment: () => any, dbFirestore: Firestore }
+): Promise<SuccessMessageOutput | undefined> => {
+  
+    
+    const { collaboratorId, host, country, password, tokenId,guestPassword } = input;
     const data = GuestRegisterSchema.parse({ tokenId, host, country, password, collaboratorId })
-    // console.log({ data });
-
     try {
-
+      if(data.tokenId > 1000  && data.host != 0){
       const docRef = dbFirestore.collection('guests').doc(`${data.tokenId}`);
       const snapshot = await docRef.get();
       if (snapshot.exists) {
-        const { success, tokenId, country, host, flag, status } = await registerPrisma({ ...data, collaboratorId: collaboratorId ? collaboratorId : 'O6cKgXEsuPNAuzCMTGeblWW9sWI3', status: LIISMAIIL_STATUS_ENUM.HOST })
-        if (success) {
-          return ({ tokenId, country, host, success, flag, status })
+        const { tokenId, host,country  } = snapshot.data()as GuestType; 
+       console.log({ host: data.host , 
+           tokenId: data.tokenId,
+           password: data.password,
+          
+           guestPassword,
+           startDate:new Date().toISOString(),
+            collaboratorId:collaboratorId ?? 'O6cKgXEsuPNAuzCMTGeblWW9sWI3',
+             country: data.country,
+             status: LIISMAIIL_STATUS_ENUM.GUEST , 
+             flag:`${(data.country).toLowerCase}.png`,
+             
+             endDate:  new Date(moment().add(3, 'months').toISOString()).toISOString() 
+       });
+        const _newGuest=  await prisma.guest.create({
+               data:{ host: data.host , 
+                tokenId: data.tokenId,
+                password: data?.password,
+                guestPassword: guestPassword,
+                startDate:new Date().toISOString(),
+                 collaboratorId:collaboratorId ?? 'O6cKgXEsuPNAuzCMTGeblWW9sWI3',
+                  country: data.country,
+                  status: LIISMAIIL_STATUS_ENUM.GUEST , 
+                  flag:`${(data.country).toLowerCase}.png`,
+                  endDate:  new Date(moment().add(3, 'months').toISOString()).toISOString() ,
+                  /* sprints:[{sprintId:`sprint-${data.tokenId}`}],
+                  stages:[{stageId:`stage-${data.tokenId}`}],
+                  favorites:[{stageId:`stage-${data.tokenId}`}],               */  }
+              })
+              return {success: true, message:JSON.stringify(_newGuest) } 
         } else {
-          return {
-            tokenId, country, host, success, flag, status
-          }
+        return{success:false, message:'this tokenId is not provided'}
         }
-      } else {
-        const { success, tokenId, country, host, flag, status } = await registerPrisma({ ...data, collaboratorId: collaboratorId ? collaboratorId : 'O6cKgXEsuPNAuzCMTGeblWW9sWI3', status: LIISMAIIL_STATUS_ENUM.GUEST })
-
-        if (success) {
-          return ({ tokenId, country, host, success, flag, status })
-        } else {
-          return {
-            tokenId, country, host, success, flag, status
-          }
+    }else {
+      if(data.host === 0  && data.tokenId  < 1000  ){
+        const profilesRef = dbFirestore.collection('profiles');
+        const snapshot = await  profilesRef.where('tokenId', '==', data.tokenId).orderBy('tokenId').limit(1).get();
+        if (snapshot.empty) {
+        return{success:false, message:'this tokenId is not provided'}
         }
-      }
-
-
-    } catch (e) {
-      console.error(e)
-      return {
-
-        tokenId: -1,
-        host: -1,
-        flag: '',
-        success: false,
-        country: '',
-        status: ''
-      }
-    }
-  } catch (error: any) {
-    console.error(error);
-    throw new Error(error);
+        snapshot.forEach(async (doc) => {
+          
+              const {updatedAt }  = doc.data() as ProfileTypeData; 
+              //const hashedPass = await hashPassword(data.password) as string;
+              console.log({ docId: doc.id, data:doc.data(),  updatedAt}) ;
+              const _flag = data.country.toLowerCase()
+            try {
+              console.log({ host: data.host , 
+                tokenId: data.tokenId,
+                password: data.password,
+                guestPassword: guestPassword,
+                startDate:updatedAt ? new Date(updatedAt).toISOString(): new Date().toISOString(),
+                 collaboratorId:doc.id,
+                 country: data.country,
+                 status: LIISMAIIL_STATUS_ENUM.HOST , 
+                 flag:`${_flag}.png`,
+                 endDate:  new Date(moment().add(3, 'months').toISOString()).toISOString() 
+               });
+              const _newGuest=  await prisma.guest.create({
+                      data:{ host: data.host , 
+                       tokenId: data.tokenId,
+                       password: data.password,
+                       guestPassword: guestPassword,
+                       startDate:updatedAt ? new Date(updatedAt).toISOString(): new Date().toISOString(),
+                        collaboratorId:doc.id,
+                        country: data.country,
+                        status: LIISMAIIL_STATUS_ENUM.HOST , 
+                        flag:`${_flag}.png`,
+                        endDate:  new Date(moment().add(3, 'months').toISOString()).toISOString() },
+                      })
+              console.log({  _newGuest}) ;
+                return {success: true, message:JSON.stringify(_newGuest) } 
+              } catch (error) {
+              console.log({error});
+              
+                return {success:false,message:`You can not register to rooming db ${error}`}
+              }
+        
+      })
+    }else {
+      return ({success: false, message: 'you can not register with that tokenId' })}
+    } 
+  }catch (e) {
+    return ({success: false, message: `you cant register with that tokenId due to ${e}` })
   }
+ 
 };
 
-const updateGuestPrisma = async (
+const signInPrisma = async (
   _: undefined,
-  { input }: { input: AddGuestPrismaInput },
-  { dbFirestore, timeStamp }: { dbFirestore: Firestore; timeStamp: unknown }
-): Promise<GuestPrismaType | undefined> => {
+  { input }: { input: SignInPrismaInput },
+  { prisma,  verifyPassword }: { prisma: PrismaClient, verifyPassword:(arg: string, arg2: string ) => boolean}
+): Promise<SuccessMessageOutput | undefined> => {
   try {
-    const { tokenId, host, collaboratorId, country } = input;
+    const { tokenId, host, password,  country } = input;
+    const _signed: GuestPrismaType = prisma.guest.findFirst({where:{
+      tokenId
+    }})
+    // (passwordAttempt: string, hashedPassword: string) => {
+    if(_signed.password === password){
+        console.log({_signed});
+    const _signedUpdated = await prisma.guest.update({
+      where:{tokenId},data:{onLine:true}
+    })
+        return({success:true, message:JSON.stringify(_signedUpdated)})
+      } else {
+        return({success:false, message: 'Sorry you can not signin'})
 
-    const updatedAt = timeStamp;
-    const docRef = dbFirestore.collection('guests').doc(`${tokenId}`);
-    docRef
-      .get()
-      .then((snapshot: any) => {
-        if (snapshot.exists) {
-          return docRef
-            .set({ host, collaboratorId, stages, sprints }, { merge: true })
-            .then(() => {
-              return { tokenId, host, collaboratorId, stages, sprints }
-            })
-            .catch((error: any) => {
-              throw new Error(error);
-            });
-        } else {
-          throw new Error('can t find profile in database');
-        }
-      })
-      .catch((error: any) => {
-        throw new Error(error);
-      });
-    return {
-      tokenId, host, collaboratorId, stages, sprints
-    }
+      }
+
   } catch (error: any) {
     throw new Error(error);
   }
@@ -334,6 +375,7 @@ const promoteStages = async (
 
 const ProductResolver = {
   Query: {
+    signInPrisma,
     stages,
     getGridsByNb,
     hostsForDashboard,

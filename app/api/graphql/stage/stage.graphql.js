@@ -95,7 +95,6 @@ input PromoteStageInput {
   title: String
   published: Boolean
   authorId: Int
-  
 }
 input StageInput {
   id: Int
@@ -116,16 +115,23 @@ input StagePrismaInput {
   grid: Int
   startOn: String
   createdById: String
-  
   ayahs: String
   }
 
 input AddGuestPrismaInput {
-  tokenId: Int!
+  tokenId : Int!
   password: String
+  guestPassword: String
   host:Int
   country: String
   collaboratorId:String
+}
+
+input SignInPrismaInput {
+  tokenId : Int!
+  password: String
+  host:Int
+  country: String
 }
 type  AddGuestPrismaOutput {
   tokenId: Int!
@@ -160,19 +166,19 @@ type SuccessOutput {
   message: String
 }
 type Query {
+    signInPrisma(input:SignInPrismaInput): SuccessOutput
     stages: [Stage!]
     getGridsByNb(souraNb:Int): GetGridsByNbOutput
-
     hostsForDashboard: [GuestPrismaType!]
     stagesById(id:Int): [Stage!]
     stagesByToken(token:Int): [Stage!]
     stagesByCategory(category:String): [Stage!]
-   }
+}
 
 type Mutation {
     addStage(input: StageInput): Stage!
     addStagePrisma(input: StagePrismaInput): StagePrismaType!
-    addGuestPrisma(input: AddGuestPrismaInput) : AddGuestPrismaOutput
+    addGuestPrisma(input: AddGuestPrismaInput) :SuccessOutput 
     }
 enum StageCategory {
   SOBH

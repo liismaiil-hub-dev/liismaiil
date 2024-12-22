@@ -1,5 +1,6 @@
 'use client'
 
+import { STAGE_CATEGORY_ENUM } from "@/app/api/graphql/stage/stage.types";
 import { GET_GRIDS_BY_NB } from "@/graphql/stage/queries";
 import { GRIDS_TLD } from "@/store/constants/constants";
 import { stageActions } from "@/store/slices/stageSlice";
@@ -14,12 +15,13 @@ type GridMenu = {
 }
 //             _____COMPONENT_____________
 
-const Grids = ({ grids }: { grids: GridMenu[] }) => {
+const SpaceMenu = ({ grids }: { grids: GridMenu[] }) => {
   const dispatch = useDispatch()
   const [GetGridsByNb, { data: dataGetGridsByNb, loading: loadingGetGridsByNb, error: errorGetGridsByNb }] = useLazyQuery(GET_GRIDS_BY_NB)
 
   const [selectedKeys, setSelectedKeys] = useState(new Set([GRIDS_TLD.MOFASAL]));
   const [selectedGrid, setSelectedGrid] = useState(0);
+//console.log({grids});
 
   const { setSpaceGrids } = stageActions
   const newTiwal = useMemo(() => grids?.filter((gr: GridMenu) => {
@@ -66,8 +68,9 @@ const Grids = ({ grids }: { grids: GridMenu[] }) => {
       <ScrollShadow >
         {typeof newTiwal !== 'undefined' && newTiwal && newTiwal.length > 0 &&
           <section className="flex flex-col justify-start items-start ">
+            <div className="flex justify-center items-center bg-orange-200/90 rounded-md w-full "> {STAGE_CATEGORY_ENUM.TIWAL} &nbsp; [ 2 - 7 ]&nbsp; </div>
             {newTiwal?.map((grid: GridMenu) => {
-//              console.log({ grid });
+//console.log({ grid });
               return <Button className="text-center bg-emerald-300/80 text-pretty w-3/4" onClick={() => { selectGridHandler(grid.souraNb) }} key={`${grid.souraName}-${grid.souraNb}`} aria-label={`${grid.souraName}`} title={`${grid.souraName}`}>
                 <div className="flex justify-center  text-center">
                   {`  ${grid.souraName}   :  ${grid.souraNb}`}
@@ -76,11 +79,13 @@ const Grids = ({ grids }: { grids: GridMenu[] }) => {
             })}
           </section>}
         {typeof newMiin !== 'undefined' && newMiin && newMiin.length > 0 &&
-          <section className="flex flex-col justify-start items-center ">
+
+        <section className="flex flex-col justify-start items-center ">
+            <div className="flex justify-center items-center bg-orange-200/70 rounded-md w-full "> {STAGE_CATEGORY_ENUM.MIIN} &nbsp; [ 8 - 18 ]&nbsp; </div>
             {newMiin?.map((grid) => {
               return <Button className="text-center text-pretty bg-emerald-300/60  w-3/4" onClick={() => { selectGridHandler(grid.souraNb) }} key={`${grid.souraName}-${grid.souraNb}`} aria-label={`${grid.souraName}`} title={`${grid.souraName}`}>
-                <div className="flex justify-center  text-center">
-                  {`  ${grid.souraName}   :  ${grid.souraNb}`}
+                <div className="flex justify-center items-center text-center">
+                  {`[ ${grid.souraNb} ]   ${grid.souraName}  `}
                 </div>
               </Button>
             }
@@ -89,6 +94,8 @@ const Grids = ({ grids }: { grids: GridMenu[] }) => {
         }
         {typeof newMathani !== 'undefined' && newMathani && newMathani.length > 0 &&
           <section className="flex flex-col justify-start items-end ">
+            <div className="flex justify-center items-center bg-orange-200/50 rounded-md w-full "> {STAGE_CATEGORY_ENUM.MATHANI} &nbsp; [ 19 - 50 ]&nbsp;</div>
+
             {newMathani?.map((grid) => {
               return <Button className="text-center text-pretty bg-emerald-300/40 w-3/4" onClick={() => { selectGridHandler(grid.souraNb) }} key={`${grid.souraName}-${grid.souraNb}`} aria-label={`${grid.souraName}`} title={`${grid.souraName}`}>
                 <div className="flex justify-center  text-center">
@@ -102,13 +109,14 @@ const Grids = ({ grids }: { grids: GridMenu[] }) => {
         {newMofasal && newMofasal.length > 0 &&
 
           <section className="flex flex-col justify-start items-start ">
+            <div className="flex justify-center items-center bg-orange-200/30 rounded-md w-full "> {STAGE_CATEGORY_ENUM.MOFASAL} &nbsp; [ 51 - 114 ] &nbsp; </div>
+
             {newMofasal?.map((grid) => {
               return <Button className="text-center text-pretty w-full" onClick={() => { selectGridHandler(grid.souraNb) }} key={`${grid.souraName}-${grid.souraNb}`} aria-label={`${grid.souraName}`} title={`${grid.souraName}`}>
                 <div className="flex justify-center  text-center">
                   {`  ${grid.souraName}   :  ${grid.souraNb}`}
                 </div>
-              </Button>
-            }
+              </Button>}
             )}
           </section>
         }
@@ -116,4 +124,4 @@ const Grids = ({ grids }: { grids: GridMenu[] }) => {
     </section>)
 }
 
-export default Grids
+export default SpaceMenu

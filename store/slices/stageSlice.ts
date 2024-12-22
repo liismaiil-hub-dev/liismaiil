@@ -1,8 +1,11 @@
 
 // third-party
-import { Ayah, EVAL_STATE, GridJsoned, GridMenu, SprintPrismaType, StagePrismaType, StageStateProps } from '@/api/graphql/stage/stage.types';
+import { Ayah, EVAL_STATE, GiftType, GridJsoned, GridMenu, PRODUCT_STATUS_ENUM, SprintPrismaType, StagePrismaType, StageStateProps } from '@/api/graphql/stage/stage.types';
 import { createSlice, current, PayloadAction } from '@reduxjs/toolkit';
+import { GRIDS_NAME, GRIDS_TLD } from '../constants/constants';
 const initialState: StageStateProps = {
+  
+  categoryContext:GRIDS_NAME[GRIDS_TLD.TIWAL],
   spaceGridsSelected: [{
     grid: -1,
     group: -1,
@@ -14,6 +17,7 @@ const initialState: StageStateProps = {
     id: 0
   }
   ],
+
   gridSelected: {
     grid: -1,
     group: -1,
@@ -26,11 +30,11 @@ const initialState: StageStateProps = {
   },
   isDraggedContext: false,
   isDroppedContext: false,
+
   stageGridSelected: {
     grid: -1,
     group: -1,
-
-    souraNb: -1,
+   souraNb: -1,
     arabName: '',
     souraName: '',
     ayahs: '',
@@ -39,6 +43,9 @@ const initialState: StageStateProps = {
     createdAt: ''
   },
   evalIndex: 0,
+  stagedContext: false,
+  reorderedAyahsContext:[-1],
+  stageReorderedAyahsContext:[-1],
   sprintsContext: [
     { sprintId: '', published: false, }
   ],
@@ -95,16 +102,57 @@ const initialState: StageStateProps = {
     ayahs: '',
     guests: []
   }],
+  catStages: [{
+    id: -1,
+    stageId: '',
+    createdAt: '',
+    souraName: '',
+    souraNb: -1,
+    grid: -1,
+    startOn: '',
+    createdById: '',
+    ayahs: '',
+    guests: []
+  }],
+  localStages: [{
+    id: -1,
+    stageId: '',
+    createdAt: '',
+    souraName: '',
+    souraNb: -1,
+    grid: -1,
+    startOn: '',
+    createdById: '',
+    ayahs: '',
+    guests: []
+  }],
   //space drag & drop
   draggedIndex: 0,
   errorNbContext: 0,
   firstStateContext: false,
-
+  showStepsContext: false,
+  gridsStaged:[''],
+  selectedGifts:[{
+    author: '',
+    title: '',
+    titleSlug: '',
+    selection: '',
+    stock: -1,
+    price: -1,
+    productStatus: PRODUCT_STATUS_ENUM.ORGA,
+    description: '',
+    image: {
+      public_id: '',
+      url: ''
+    },
+    rate: 0
+  }],
   gridIndexContext: 0,
-  stepIndexContext: 0,
+  stepIndexContext:0,
   stageEvalIndexContext: 0,
   hideNbContext: false,
   blurContext: false,
+  firstGridContext: false,
   stageHideNbContext: false,
   faultsNbContext: 0,
   correctsNbContext: 0,
@@ -197,13 +245,21 @@ const stageSlice = createSlice({
     setGridSelected(state: StageStateProps,
       action: PayloadAction<{ grid: GridJsoned }>) {
       //      console.log({ gridSelected: action.payload.grid });
-      state.gridSelected = action.payload.grid
+      state.gridSelected = action.payload.grid;
+      state.reorderedAyahsContext = [-1];
+      state.firstGridContext = true;
     },
 
     setOrderedAyahsContext(state: StageStateProps, action: PayloadAction<{ ayahs: Ayah[] }>) {
       console.log({ordrdAyhsCon: action.payload.ayahs});
       
       state.orderedAyahsContext = action.payload.ayahs
+    },
+    setReorderedAyahsContext(state: StageStateProps, action: PayloadAction<{ reorderedAyahsContext: number[] }>) {
+      state.reorderedAyahsContext = action.payload.reorderedAyahsContext
+    },
+    setStageReorderedAyahsContext(state: StageStateProps, action: PayloadAction<{ reorderedAyahsContext: number[] }>) {
+      state.stageReorderedAyahsContext = action.payload.reorderedAyahsContext
     },
 
     setShuffeledAyahsContext(state: StageStateProps, action: PayloadAction<{ ayahs: Ayah[] }>) {
@@ -215,16 +271,53 @@ const stageSlice = createSlice({
     //@begin stage 
     setStageGridsContext(state: StageStateProps,
       action: PayloadAction<{ stages: StagePrismaType[] }>) {
-      console.log({ grid: action.payload.stages })
+      console.log({ stageGrids: action.payload.stages })
       state.stageGridsContext = action.payload.stages
     },
-
+    setCategoryContext(state: StageStateProps,
+      action: PayloadAction<{ cat: GRIDS_NAME }>) {
+      console.log({ categoryContext: action.payload.cat })
+      state.categoryContext = action.payload.cat
+      state.showStepsContext = true
+    },
+    setShowStepsContext(state: StageStateProps,
+      action: PayloadAction<{ show: boolean }>) {
+      console.log({ showStepsContext: action.payload.show })
+      state.showStepsContext = action.payload.show
+    },
+    setFirstGridContext(state: StageStateProps,
+      action: PayloadAction<{ first: boolean }>) {
+      state.firstGridContext = action.payload.first
+    },
     setStageGridSelected(state: StageStateProps,
       action: PayloadAction<{ stage: StagePrismaType }>) {
-      //      console.log({ stageSelected: action.payload.stage });
-      state.stageGridSelected = action.payload.stage
+          console.log({ stageSelected: action.payload.stage, gridsContext:current(state).gridsContext });
+      state.stageGridSelected = action.payload.stage;
+      state.showStepsContext = false;
+       state.errorNbContext = initialState.errorNbContext;
+       state.reorderedAyahsContext =  initialState.reorderedAyahsContext;
+       state.gridSelected =  initialState.gridSelected;
+       state.gridsContext =  initialState.gridsContext;
+       state.orderedAyahsContext =  initialState.orderedAyahsContext;
+       state.shuffeledFirstAyahsContext =  initialState.shuffeledFirstAyahsContext;
+       state.shuffeledAyahsContext =  initialState.shuffeledAyahsContext;
     },
+    setCatStages(state: StageStateProps,
+      action: PayloadAction<{ stages: StagePrismaType[] }>) {
+          console.log({ stages: action.payload.stages, gridsContext:current(state).gridsContext });
+      state.catStages = action.payload.stages;
+    },
+    setLocalStages(state: StageStateProps,
+      action: PayloadAction<{ stages: StagePrismaType[] }>) {
 
+      state.localStages = action.payload.stages;
+    },
+    setGridsStaged(state: StageStateProps,
+      action: PayloadAction<{ stageIds: string[] }>) {
+        console.log({gridsStaged : current(state).gridsStaged});
+         
+      state.gridsStaged = action.payload.stageIds;
+    },
     setStageOrderedAyahsContext(state: StageStateProps, action: PayloadAction<{ ayahs: Ayah[] }>) {
       state.stageOrderedAyahsContext = action.payload.ayahs
     },
@@ -241,12 +334,17 @@ const stageSlice = createSlice({
     },
     setStepIndexContext(state: StageStateProps,
       action: PayloadAction<{ index: number }>) {
-      console.log({ grid: action.payload.index })
+      console.log({ stepIndex: action.payload.index })
       state.stepIndexContext = action.payload.index
+    },
+        setStageContext(state: StageStateProps,
+      action: PayloadAction<{ stagedContext: boolean }>) {
+    
+      state.stagedContext = action.payload.stagedContext
     },
     setStageEvalIndexContext(state: StageStateProps,
       action: PayloadAction<{ index: number }>) {
-      console.log({ grid: action.payload.index })
+      console.log({ stageEvalIndexContextInput: action.payload.index })
       state.stageEvalIndexContext = action.payload.index
     },
     setStageHideNbContext(state: StageStateProps,
@@ -261,8 +359,11 @@ const stageSlice = createSlice({
       action: PayloadAction<{ eval: EVAL_STATE }>) {
       state.stageEvalContext = action.payload.eval
     },
+  
     //@end
     // space - drag & drop
+  
+ 
     setDraggedIndex(state: StageStateProps,
       action: PayloadAction<{ index: number }>) {
       console.log({ grid: action.payload.index })
@@ -275,7 +376,7 @@ const stageSlice = createSlice({
     },
     setFirstStateContext(state: StageStateProps,
       action: PayloadAction<{ first: boolean }>) {
-      console.log({ nb: action.payload.first})
+      console.log({ first: action.payload.first})
       state.firstStateContext = action.payload.first
     },
     setGridIndexContext(state: StageStateProps,
@@ -334,7 +435,15 @@ const stageSlice = createSlice({
 
       state.validStages.push(action.payload.stage)
     },
-
+// host
+    selecteGifts(state: StageStateProps, action: PayloadAction<{ gift: GiftType }>) {
+      if(current(state).selectedGifts.length === 1 && current(state).selectedGifts[0].title === '' ) {
+      state.selectedGifts = [action.payload.gift]
+      
+      }else {
+      state.selectedGifts = [...current(state).selectedGifts,action.payload.gift ]
+      }
+},
 
   },
 });

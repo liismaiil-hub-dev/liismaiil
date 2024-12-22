@@ -24,16 +24,16 @@ export enum EVAL_STATE {
   ORDER = 'ORDER',
   CLICK = 'CLICK',
 }
-const SpaceBoard = ({ currentGuest }: { currentGuest: GuestPrismaType }) => {
+const SpaceBoard = () => {
   const dispatch = useDispatch()
 
   const { gridsContext, gridSelected, evalIndex, evalContext, hideNbContext,blurContext, 
-    shuffeledFirstAyahsContext, orderedAyahsContext, validContext, gridIndexContext, } = useSelector((state: RootStateType) => state.stage)
+    stagedContext, validContext, gridIndexContext, firstGridContext} = useSelector((state: RootStateType) => state.stage)
   const { guestPrisma } = useSelector((state: RootStateType) => state.guestPrisma)
 
-  const { setShuffeledFirstAyahsContext, setOrderedAyahsContext, setShuffeledAyahsContext, setErrorNbContext, 
-   setBlurContext, setEvalContext, setEvalIndex, setValidContext, setGridsContext, setHideNbContext, setGridIndexContext } = stageActions
-  const [first, setFirst] = useState(() => true);
+  const { setShuffeledFirstAyahsContext, setOrderedAyahsContext, setErrorNbContext, 
+   setBlurContext, setStageContext, setGridsContext, setHideNbContext, setGridIndexContext, setFirstGridContext, setGridsStaged } = stageActions
+
 
   useEffect(() => {
     if (typeof gridSelected !== 'undefined' && typeof gridSelected.ayahs !== 'undefined' && gridSelected.ayahs && gridSelected?.ayahs[0] != '' && gridSelected?.ayahs.length > 0) {
@@ -44,19 +44,25 @@ const SpaceBoard = ({ currentGuest }: { currentGuest: GuestPrismaType }) => {
       dispatch(setGridIndexContext({ index: 0 })) 
       dispatch(setErrorNbContext({errorNb:0  }))
 
-      console.log({ currentGuest, guestPrisma });
+      dispatch(setFirstGridContext({first:true}))
+      dispatch(setGridsStaged({stageIds:['']}))
+     // console.log({ currentGuest, guestPrisma });
     }
   }, []);
 
   useEffect(() => {
     if (typeof gridSelected !== 'undefined' && gridSelected.ayahs[0] != '' && typeof gridSelected.ayahs !== 'undefined') {
-      const _grids:[[Ayah]] = gridSelected.ayahs?.map((ay: string) => JSON.parse(ay))
+      const _grids:Ayah[][]|[[Ayah]] = gridSelected.ayahs?.map((ay: string) => JSON.parse(ay) as Ayah[])
       dispatch(setGridsContext({ grids: _grids }))
       dispatch(setGridIndexContext({ index: 0 }))
     }
   }, [gridSelected]);
+
   useEffect(() => {
-    if (typeof gridSelected !== 'undefined' && typeof gridSelected.ayahs !== 'undefined' && gridSelected.ayahs[0] != '' && gridsContext.length > gridIndexContext) {
+    console.log({gridIndexContext, gridSelected, firstGridContext});
+    
+    if (typeof gridSelected !== 'undefined' && typeof gridSelected.ayahs !== 'undefined' && gridSelected.ayahs[0] != '' && 
+      gridsContext.length > gridIndexContext) {
       const shuffeleledFirst = gridsContext[gridIndexContext].map((ordG: Ayah, index: number) => ({ ...ordG, index: gridIndexContext ? ordG.order + gridIndexContext : ordG.order }));
 
       const orderedAy = [..._.sortBy(gridsContext[gridIndexContext], ['numberInSurah'])].map((ordG: Ayah, index) => ({ ...ordG, index: gridIndexContext ? ordG.order + gridIndexContext : ordG.order }))
@@ -64,7 +70,7 @@ const SpaceBoard = ({ currentGuest }: { currentGuest: GuestPrismaType }) => {
 
       dispatch(setOrderedAyahsContext({ ayahs: orderedAy }))
 
-      setFirst(false)
+      dispatch(setFirstGridContext({first:true}))
 
     } else {
       const shuffeleledFirst = gridsContext[0].map((ordG: Ayah, index: number) => ({ ...ordG, index: gridIndexContext ? ordG.order + gridIndexContext : ordG.order }));
@@ -76,15 +82,13 @@ const SpaceBoard = ({ currentGuest }: { currentGuest: GuestPrismaType }) => {
 
       dispatch(setOrderedAyahsContext({ ayahs: orderedAy }))
 
-      setFirst(false)
+      dispatch(setFirstGridContext({first:true}))
     }
   }, [gridIndexContext]);
 
   useEffect(() => {
     if (typeof gridSelected !== 'undefined' && gridSelected?.ayahs[0] != '' && typeof gridSelected.ayahs !== 'undefined') {
       const _grids = gridSelected.ayahs?.map((ay: string) => JSON.parse(ay))
-
-      const gridSelectedLength = _grids?.length
 
       const shuffeleledFirst = gridsContext[gridIndexContext ?? 0]?.map((ordG: Ayah, index: number) => ({ ...ordG, index: gridIndexContext ? ordG.order + gridIndexContext : ordG.order }));
 
@@ -93,10 +97,10 @@ const SpaceBoard = ({ currentGuest }: { currentGuest: GuestPrismaType }) => {
       dispatch(setShuffeledFirstAyahsContext({ ayahs: shuffeleledFirst }))
 
       dispatch(setOrderedAyahsContext({ ayahs: orderedAy }))
-      setFirst(false)
+      dispatch(setFirstGridContext({first:true}))
     }
   }, [gridsContext]);
-
+/* 
   useEffect(() => {
     //    console.log({ gridIndexContext, gridsContext });
     if (typeof gridSelected !== 'undefined' && gridIndexContext >= 0 && (gridsContext[gridIndexContext]?.length <= gridSelected.grid * gridSelected.grid)) {
@@ -104,12 +108,12 @@ const SpaceBoard = ({ currentGuest }: { currentGuest: GuestPrismaType }) => {
       const orderedAy = [..._.sortBy(gridsContext[gridIndexContext], ['numberInSurah'])].map((ordG: Ayah, index) => ({ ...ordG, index: index + gridIndexContext }))
       console.log({ orderedAy });
       dispatch(setOrderedAyahsContext({ ayahs: orderedAy }))
-      dispatch(setShuffeledFirstAyahsContext({ ayahs: firstAy }))
+      dispatch(setShuffeledAyahsContext({ ayahs: firstAy }))
     }
-    setFirst(false)
+    dispatch(setFirstGridContext({first:false}))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gridIndexContext]);
-
+ */
 
   function nextSouraHandler() {
     //  console.log({ gridIndexContext });
@@ -131,25 +135,20 @@ const SpaceBoard = ({ currentGuest }: { currentGuest: GuestPrismaType }) => {
   function blurHandler() {
     dispatch(setBlurContext({ blur: !blurContext }))
   }
-  function shuffelHandler() {
-    dispatch(setShuffeledAyahsContext({ ayahs: _.shuffle(orderedAyahsContext) }))
+  function stageContextHandler() {
+    dispatch(setStageContext({ stagedContext: !stagedContext }))
   }
-
-  function sprintHandler() {
-
-  }
-
-  useEffect(() => {
-    console.log({ hideNbContext, evalContext, gridIndexContext, evalIndex, gridSelected, first });
+  
+  
+  /* useEffect(() => {
+//    console.log({ hideNbContext, evalContext, gridIndexContext, evalIndex, gridSelected, first });
   }, [hideNbContext, evalIndex, gridIndexContext, evalContext, gridSelected]);
-
+ */
   return (
     <div className=" flex-col justify-start space-y-2 h-full items-center w-full ">
       <div className="flex  justify-around  items-center  py-2 ">
-        <SpaceButton handlePress={prevSouraHandler} title='Prev Soura' />
-        <SpaceButton handlePress={nextSouraHandler} title='Next Soura' />
-
-        <SpaceButton handlePress={sprintHandler} title='Sprint On' />
+        <SpaceButton disabled={false} handlePress={prevSouraHandler} title='Prev Soura' />
+        <SpaceButton disabled={false} handlePress={nextSouraHandler} title='Next Soura' />
 
         <div className="flex  justify-between items-center  border border-green-400 text-center font-sans " >
           <input className="flex  justify-center items-center  border border-blue-800 text-green-300"
@@ -163,22 +162,28 @@ const SpaceBoard = ({ currentGuest }: { currentGuest: GuestPrismaType }) => {
             type="checkbox"
             id='VALID_CTXT' name='VALID_CTXT' value='HIDE_NB' checked={blurContext} onChange={() => blurHandler()} />
           <label htmlFor='HIDE_NB' className='text-sm' >Blur</label>
+        </div>
+        
+        <div className="flex  justify-between items-center  border border-green-400 text-center font-sans " >
+          <input className="flex  justify-center items-center  border border-blue-800 text-green-300"
+            type="checkbox"
+            id='STAGED_CTXT' name='STAGED_CTXT' value='STAGED_CTXT' checked={stagedContext} onChange={() => stageContextHandler()} />
+          <label htmlFor='STAGED_CTXT' className='text-sm' >Stageable</label>
         </div> 
         <RadioButtonEvalState
           evalState={EVAL_STATE.EVAL} title='Eval board' />
         <RadioButtonEvalState
           evalState={EVAL_STATE.ORDER} title='Order Grid' />
-        <RadioButtonEvalState
-          evalState={EVAL_STATE.CLICK} title='Click Grid' />
-      </div>
+        </div>
       {gridSelected && evalContext === EVAL_STATE.EVAL ?
-        <div className="flex justify-between  tems-start w-full ">
-          <div className="  md:order-first flex justify-stretch w-full flex-1 items-start m-1 ">
+        <div className="grid  grid-cols-1 md:grid-cols-2 w-full ">
+          <div className=" md:order-first  flex justify-stretch w-full flex-1 items-start m-1 ">
             <EvalOrderedComp />
           </div>
-          <div className=" flex justify-stretch w-full flex-1 items-start m-1">
-            <EvalSuits first={first} />
-          </div> </div> :
+          <div className=" order-first flex justify-stretch w-full flex-1 items-start m-1">
+            <EvalSuits  />
+          </div> 
+          </div> :
         evalContext === EVAL_STATE.ORDER ?
           <EvalDragOrderBoardComp />
           : evalContext === EVAL_STATE.CLICK && <EvalClickBoardComp

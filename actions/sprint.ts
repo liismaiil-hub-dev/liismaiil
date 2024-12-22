@@ -2,9 +2,9 @@
 import { GuestType } from "@/app/api/graphql/profile/profile.types";
 import moment from "moment";
 import { revalidateTag } from "next/cache";
-import prisma from "@/lib/prisma-db";
-import { getGuestFromCookies } from "@/lib/authTools";
+import prisma from "@/api/lib/prisma-db";
 import { memoize } from "nextjs-better-unstable-cache";
+import { getGuestFromCookies} from "@/actions/guest";
 
 
 export const createNewSprint = async ({
@@ -111,7 +111,7 @@ export const getPublishedSprints = memoize(async ({ page, limit }: { page: numbe
     return sprintPublished
 }, {
     persist: true,
-    revalidateTags: () => ['stages', `sprints`],
+    revalidateTags: () => [ `sprints`],
     log: ['datacache', 'verbose', 'dedupe'],
     logid: `getPublishedSprints `
 })

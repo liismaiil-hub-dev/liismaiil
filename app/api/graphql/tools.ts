@@ -1,6 +1,6 @@
 import { dbFirestore } from '@/api/graphql/fb-utils-admin';
 import { GuestType, LIISMAIIL_STATUS_ENUM, PROFILE_STATUS_ENUM } from '@/app/api/graphql/profile/profile.types';
-import prisma from "@/lib/prisma-db";
+import prisma from "@/api/lib/prisma-db";
 import { COOKIE_NAME } from '@/store/constants/constants';
 import { FLAG_FILES } from '@/store/constants/flagArray';
 import { DocumentData } from '@google-cloud/firestore';
@@ -10,6 +10,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import { cookies } from 'next/headers';
 import { z } from "zod";
+import { SuccessMessageOutput } from './stage/stage.types';
 
 const SECRET = process.env.NEXT_PUBLIC_JWT_SECRET!
 
@@ -25,8 +26,8 @@ const initialState = {
 }
 
 export const GuestRegisterSchema = z.object({
-    tokenId: z.number().int().lte(100),
-    host: z.number().int().lte(100),
+    tokenId: z.number().int(),
+    host: z.number().int().lt(1000),
     password: z.string(),
     country: z.string().max(3),
     collaboratorId: z.string().max(35),
@@ -224,94 +225,6 @@ export const signinPrisma = async ({ tokenId, password }: {
     }
 }
 
-export const registerPrisma = async ({
-    host,
-    status,
-    tokenId,
-    country,
-    collaboratorId,
-    password,
-}: {
-    tokenId: number,
-    password: string,
-    host: number,
-    status: LIISMAIIL_STATUS_ENUM,
-    country: string,
-    collaboratorId: string,
-}): Promise<{
-    success: boolean,
-    tokenId: number,
-    host: number
-    status: LIISMAIIL_STATUS_ENUM,
-    country: string,
-    flag: string,
-} | undefined> => {
-    console.log({
-        host,
-        tokenId,
-        country,
-        collaboratorId,
-        password,
-    });
-
-    const guestInDb = await prisma.guest.findFirst({ where: { tokenId: tokenId } });
-
-    try {
-        if (!guestInDb) {
-            const randomFlag = FLAG_FILES[_.random(FLAG_FILES.length)]
-            const hashedPass = await hashPassword(password) as string;
-
-            const guestPassword = await hashPassword('123') as string;
-            const collaborator = collaboratorId ? collaboratorId : 'O6cKgXEsuPNAuzCMTGeblWW9sWI3';
-            
-            const countryTmp = country ? country : 'OM';
-
-            const newGuest = await prisma.guest.create({
-                data: {
-                    tokenId: tokenId,
-                    host: host,
-                    password: hashedPass,
-                    collaboratorId: collaborator,
-                    country: countryTmp,
-                    flag: randomFlag,
-                    guestPassword: guestPassword,
-                    status,
-                    onLine: true,
-                    startDate: moment().toISOString(),
-                    endDate: moment().add(1, 'years').toISOString(),
-                }
-            })
-            console.log({ newGuest });
-            cookies().set(COOKIE_NAME, createTokenForGuest({
-                tokenId, host, collaboratorId: collaborator, country: countryTmp, flag: randomFlag, status,
-                onLine: true
-            }))
-            return {
-                success: true,
-                tokenId,
-                country,
-                status,
-                host, flag: randomFlag,
-            }
-        }
-        else {
-            const { tokenId, host, password: passRegistred, country, flag } = guestInDb
-            const verif = await verifyPassword(password, passRegistred)
-            if (verif) {
-                if (typeof tokenId != 'undefined') {
-                    return ({ tokenId, host, success: true, country, flag, status })
-                }
-            } else {
-                return { success: false, tokenId: 0, host: 0, country: '', flag: '', status:LIISMAIIL_STATUS_ENUM.GUEST }
-            };
-        }   
-    } catch (error: any) {
-        console.error(error);
-        return { tokenId: 0, country: '', flag: '', host: 0, success: false, status: LIISMAIIL_STATUS_ENUM.GUEST }
-    }
-
-}
-
 export const hashPassword = async (password: string) => {
     return new Promise((resolve, reject) => {
         // Generate a salt at level 12 strength
@@ -329,6 +242,6 @@ export const hashPassword = async (password: string) => {
     });
 };
 
-const verifyPassword = (passwordAttempt: string, hashedPassword: string) => {
+export const verifyPassword = (passwordAttempt: string, hashedPassword: string) => {
     return bcrypt.compare(passwordAttempt, hashedPassword);
 };

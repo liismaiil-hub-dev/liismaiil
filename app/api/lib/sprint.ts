@@ -1,9 +1,11 @@
-import { getGuestFromCookies } from "@/lib/authTools";
-import prisma from "@/lib/prisma-db";
+import { getGuestFromCookies } from "@/actions/guest";
+import prisma from "@/api/lib/prisma-db";
 import { memoize } from "nextjs-better-unstable-cache";
+import { GuestType } from "../graphql/profile/profile.types";
 
 export const getOwnSprints = memoize(async () => {
-    const _localGuest = getGuestFromCookies();
+const SECRET = process.env.NEXT_PUBLIC_JWT_SECRET!
+    const _localGuest:GuestType = getGuestFromCookies();
 
     if (typeof _localGuest !== 'undefined' && _localGuest?.tokenId) {
         const _sprintsRel = await prisma.guest.findUniqueOrThrow({

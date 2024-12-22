@@ -1,24 +1,52 @@
 'use server'
-import prisma from '@/lib/prisma-db';
+import prisma from '@/api/lib/prisma-db';
 import { memoize } from "nextjs-better-unstable-cache";
 
 import { revalidateTag } from 'next/cache';
-
+import { GridTypeData } from '@/app/api/graphql/tablet/tablet.types';
+import { GridMenu } from '@/app/api/graphql/stage/stage.types';
+import { dbFirestore } from '@/app/api/graphql/fb-utils-admin';
+import _ from 'lodash';
 
 export const getAllStagesForDashboard = memoize(async () => {
 
-  const stages = await prisma.stage.groupBy({
-    by: 'souraNb',
+  const stages = await prisma.stage.findMany({
+    orderBy: {souraNb: 'asc'},include:{guests:{orderBy:{tokenId:'asc'}}}
   })
-  console.log({ stages });
-
+//  console.log({allStagesAction: stages });
   return stages;
 }, {
+  duration:60,
   persist: true,
-  revalidateTags: ['dashboard:stages'],
+  additionalCacheKey: ['stages'],
+  revalidateTags: ['stages'],
   suppressWarnings: true,
   log: ['datacache', 'verbose', 'dedupe'],
-  logid: 'dashboard: stages'
+  logid: 'stages'
+})
+export const getOwnStages = memoize(async ({
+  tokenId,
+  }:{
+    tokenId:number,
+    }) => {
+
+  const _stages = await prisma.guest.findUnique({
+    where: {
+   tokenId
+    } ,
+    include: {
+      stages:{orderBy: {stageId: 'asc'}},
+    }})
+//  console.log({allStagesAction: stages });
+  return _stages;
+}, {
+  duration:60,
+  persist: true,
+  additionalCacheKey: ['space'],
+  revalidateTags: ['space'],
+  suppressWarnings: true,
+  log: ['datacache', 'verbose', 'dedupe'],
+  logid: 'ownStaged'
 })
 export const createNewStage = async ({
   stageId,
@@ -29,63 +57,175 @@ export const createNewStage = async ({
   startOn,
   createdById,
   ayahs,
-  tokenId
+  tokenId,
+  arabName,
+  group
 }: {
   stageId: string,
   createdAt: string
   souraName: string,
+  arabName: string,
   souraNb: number,
   tokenId: number,
   grid: number,
+  group: number,
   startOn: string,
   createdById: string
   ayahs: string
 }) => {
-  //const _guest = getCurrentGuest()
   console.log({
     stageId,
     createdAt,
     souraName,
+    arabName,
     souraNb,
     grid,
+    group,
     startOn,
     createdById,
     ayahs,
     tokenId
   });
+  
   try {
-    const _stage = await prisma.guestStage.findFirst({ where: { stageId, tokenId } })
-    if (_stage) {
-      return { success: true, message: JSON.stringify(_stage) }
-
-    } else {
-      const _stage = await prisma.stage.create({
-        data: {
+    const _stage = await prisma.stage.upsert({where:{
+      stageId:stageId
+    },
+          create: {
+            stageId,
+            createdAt,
+            souraName,
+            arabName,
+            souraNb,
+            grid,
+            group,
+            startOn,
+            createdById,
+            ayahs,
+          },
+          update: {
+            stageId,
+            createdAt,
+            souraName,
+            arabName,
+            souraNb,
+            grid,
+            group,
+            startOn,
+            createdById,
+            ayahs,
+          }})
+          console.log({_stage});
+          const _stToken =  await prisma.guestStage.upsert({
+      where: {
+        tokenId_stageId:{
+          tokenId: tokenId,
+          stageId: stageId,
+          }},
+        create: {
           stageId,
-          createdAt,
-          souraName,
-          souraNb,
-          grid,
-          startOn,
-          createdById,
-          ayahs,
-        }
-      })
-      await prisma.guestStage.create({
-        data: {
+          tokenId,
+        },
+        update: {
           stageId,
           tokenId,
         }
       })
-      return { success: true, message: JSON.stringify(_stage) }
-
-    }
-
-  } catch (error: unknown) {
+      console.log({_stToken});
+      revalidateTag('stages')
+      revalidateTag('space')
+      return { success: true, message: JSON.stringify(_stToken) }
+  
+} catch (error: unknown) {
     return { success: false, message: JSON.stringify(error) }
+  }
+}
+export const addGuestToStage = async ({
+  stageId,
+  tokenId,
+}: {
+  stageId: string,
+  tokenId: number,
+  
+}) => {
+  console.log({
+    stageId,
+    
+    tokenId
+  });
+  try {
+      const _stToken =  await prisma.guestStage.upsert({
+        where: {
+          tokenId_stageId:{
+            tokenId: tokenId,
+            stageId: stageId,
+            }},
+          create: {
+            stageId,
+            tokenId,
+          },
+          update: {
+            stageId,
+            tokenId,
+          }
+        }) 
+        revalidateTag('stages')
+        revalidateTag('space')
+        return { success: true, message: JSON.stringify(_stToken) }
 
+    
+} catch (error: unknown) {
+    return { success: false, message: JSON.stringify(error) }
+  }
+}
+export const getSpaceGrids = memoize(async () => {
 
+  try {
+    const grids: GridTypeData[] = [];
+    const querySnapshot = await dbFirestore.collection('grids').orderBy('souraNb').get();
+    querySnapshot.forEach((doc: any) => {
+      const {
+        title,
+        souraNb,
+        author,
+        arabName,
+        souraName,
+        description,
+        grid,
+        group,
+        ayahs, } = doc.data()
+      grids.push({
+        title,
+        souraNb,
+        author,
+        arabName,
+        souraName,
+        description,
+        grid,
+        group,
+        ayahs,
+      });
+    });
+    if (typeof grids !== 'undefined' && grids.length > 0) {
+      const souraName = grids.map((gr: GridTypeData) => {
+        return { souraName: gr.arabName, souraNb: parseInt(gr.souraNb.toString()) };
+      })
+      const uniqGrids = _.uniqBy(souraName, 'souraNb')
+      const sortedGrids = _.sortBy(uniqGrids, ['souraNb'])
+      console.log({sortedGrids});
+      
+      return sortedGrids as GridMenu[]
+    } else {
+      return
+    }
+  } catch (err) {
+    console.log({ err });
     return
   }
-  revalidateTag('stages')
+}, {
+  persist: true,
+  revalidateTags: ['space'],
+  log: ['datacache', 'verbose', 'dedupe'],
+  logid: 'spaceMenu'
 }
+)

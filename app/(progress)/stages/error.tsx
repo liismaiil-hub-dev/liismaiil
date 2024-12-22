@@ -1,6 +1,6 @@
 'use client'
 
-function HomeError({ reset }) {
+function HomeError({ reset } : { reset: unknown }) {
     return (
         <div className="flex justify-center items-center">
             <button onClick={() => {

@@ -1,7 +1,7 @@
 
 import { SprintPrismaType } from '@/app/api/graphql/stage/stage.types';
 import SprintComponent from "@/components/stage/Sprint";
-import { getOwnSprints } from '@/lib/utils/sprint';
+import { getOwnSprints } from '@/app/api/lib/sprint';
 
 export default async function SprintStepsNav() {
   try {

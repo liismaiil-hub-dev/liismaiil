@@ -2,9 +2,10 @@ import { Inter } from 'next/font/google';
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
-    title: 'space liismaiil',
-    description: 'space liismaiil board stages '
+    title: 'Hosts',
+    description: 'Hosts space '
 }
+
 
 function Spacelayout({ children, sprint, board }:
     { children: React.ReactNode, sprint: React.ReactNode, stage: React.ReactNode, board: React.ReactNode }) {

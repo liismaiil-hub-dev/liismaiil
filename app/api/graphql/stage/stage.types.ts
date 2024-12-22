@@ -1,5 +1,40 @@
+import { GRIDS_NAME } from '@/store/constants/constants';
 import { LIISMAIIL_STATUS_ENUM } from './../profile/profile.types';
+export type ImageType = {
+  public_id: string;
+  url: string;
+};
 
+export enum PRODUCT_STATUS_ENUM {
+  ORGA = 'ORGA',
+  FAMI = 'FAMI',
+  LIBRARY = 'LIBRARY',
+  VRAC = 'VRAC',
+  DISC = 'DISC'
+}
+
+export enum PRODUCT_STATUS_NAME_ENUM {
+
+  ORGA = 'Organisator',
+  FAMI = 'Familly',
+  LIBRARY = 'Library',
+  VRAC = 'Vrac',
+  DISC = 'Discount'
+}
+
+export type GiftType = {
+    title: string;
+    titleSlug: string;
+    description: string;
+    price: number;
+    author: string;
+    image: ImageType;
+    productStatus: PRODUCT_STATUS_ENUM;
+    selection: string;
+    stock: number;
+    rate: number;
+    quantity?: number;
+  } 
 export type StageStateProps = {
   spaceGridsSelected: GridJsoned[],
   gridSelected: GridJsoned,
@@ -7,22 +42,32 @@ export type StageStateProps = {
   isDraggedContext: boolean,
   isDroppedContext: boolean,
   evalIndex: number,
-  // stage
-
+  stagedContext: boolean,
+  firstGridContext: boolean,
+  categoryContext:GRIDS_NAME,
   stageOrderedAyahsContext: Ayah[],
   stageShuffeledAyahsContext: Ayah[],
   stageShuffeledFirstAyahsContext: Ayah[],
   stageGridSelected: StagePrismaType,
+  catStages: StagePrismaType[],
+  localStages: StagePrismaType[],
+  gridsStaged: string[],
   stageGridsContext: StagePrismaType[],
   stageHideNbContext: boolean,
   stageEvalContext: EVAL_STATE,
   stageValidContext: boolean,
+  showStepsContext: boolean,
   stepIndexContext: number,
   stageEvalIndexContext: number,
+  //host
+  selectedGifts:GiftType[], 
+  
   // sprint
   sprintsContext: SprintPrismaType[],
   sprintSelected: SprintPrismaType,
   // space
+  reorderedAyahsContext:number[],
+  stageReorderedAyahsContext:number[],
   orderedAyahsContext: Ayah[],
   shuffeledAyahsContext: Ayah[],
   shuffeledFirstAyahsContext: Ayah[],
@@ -124,10 +169,17 @@ export type AddGuestPrismaInput = {
   tokenId: number;
   host: number;
   password: string;
+  guestPassword?: string;
   collaboratorId: string;
   country: string;
 };
-;
+export type SignInPrismaInput = {
+  tokenId: number;
+  host: number;
+  password: string;
+  country: string;
+};
+
 export type UpdateGuestInput = AddGuestPrismaInput;
 export type GetGridsBySouraNbInput = {
   author: string,
@@ -163,13 +215,9 @@ export type AyahPrismaType = {
   stages: StagePrismaType[]
   slice?: string;
 };
-export type AddGuestPrismaOutput = {
+export type SuccessMessageOutput = {
   success: boolean,
-  tokenId: number,
-  country: string,
-  host: number,
-  flag: string,
-  status: LIISMAIIL_STATUS_ENUM,
+  message :string,
 }
 export type GuestTokenStorage = {
   tokenId: number,
@@ -221,6 +269,11 @@ export enum STAGE_CATEGORY_ENUM {
   LOW = 'LOW',
   MEDIUM = 'MEDIUM',
   HIGH = 'HIGH',
+  TIWAL = 'TIWAL',
+  MIIN = 'MIIN',
+  MATHANI = 'MATHANI',
+  MOFASAL = 'MOFASAL',
+
 }
 
 

@@ -7,7 +7,7 @@ import {
   AddStatusInput,
   AddStatusOutput,
   FlagTokenOutput,
- 
+  PROFILE_STATUS_ENUM ,
   GuestType,
   ProfileTypeData,
   PromoteInputType,
@@ -16,8 +16,8 @@ import {
   UpdateProductsCartsInput,
   UpdateProfileAddressGeoCoordsInput,
   UpdateProfileInput
-} from '@/api/profile/profile.types';
-import { OkSuccess, PROFILE_STATUS_ENUM } from '@/api/viewer/viewer.types';
+} from '@/api/graphql/profile/profile.types';
+
 import { DocumentData, DocumentReference, DocumentSnapshot, Firestore } from 'firebase-admin/firestore';
 const profile = async (
   _: undefined,

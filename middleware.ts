@@ -49,7 +49,7 @@ export const config = {
         '/signIn',
         '/signUP/',
         '/sprints/:path*',
-        '/stages/:path*',
+       // '/stages/:path*',
         // Skip Next.js internals and all static files,  unless found in search params
 
     ]

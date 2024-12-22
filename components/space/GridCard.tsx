@@ -14,6 +14,7 @@ function GridCard() {
     useEffect(() => {
         console.log({ spaceGridsSelected, gridSelected });
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [spaceGridsSelected]);
 
     const handleSetGridSelected = (grid: GridJsoned) => {
@@ -28,7 +29,8 @@ function GridCard() {
                     <p>grid : {grid.grid}. </p>
                     <p>groups : {grid.group}. </p>
 
-                    <Button onPress={() => handleSetGridSelected(grid)} color="primary" variant="bordered" className={`border-2 border-blue-600 rounded-md  ${grid.grid === gridSelected.grid ? 'bg-orange-200' : 'bg-slate-400'} `}>
+                    <Button onPress={() => handleSetGridSelected(grid)} color="primary" 
+                    variant="bordered" className={`border-2 border-blue-600 rounded-md  ${grid.grid === gridSelected.grid ? 'bg-orange-200' : 'bg-slate-400'} `}>
                         On board
                     </Button>
                 </CardBody>

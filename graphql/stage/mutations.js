@@ -3,12 +3,18 @@ import { gql } from '@apollo/client';
 export const ADD_GUEST_PRISMA = gql`
   mutation AddGuestPrisma($input:AddGuestPrismaInput ) {
     addGuestPrisma(input: $input) {
-      tokenId
-      host
-      flag
-      country
-      success
-      status
+     message
+     success
+      
+    }
+  }
+`;
+export const SIGN_IN_PRISMA = gql`
+  mutation SignInPrisma($input:AddGuestPrismaInput ) {
+    signInPrisma(input: $input) {
+     message
+     success
+      
     }
   }
 `;

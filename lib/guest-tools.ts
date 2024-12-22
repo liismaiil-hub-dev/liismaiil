@@ -5,8 +5,6 @@ import { GuestPrismaType } from '@/app/api/graphql/stage/stage.types';
 /* import randToken from 'rand-token';
  */
 export const createToken = (guest:GuestPrismaType) => {
-  // Sign the JWT
-
   return jwt.sign(
     {
       id: guest.id,
@@ -31,7 +29,7 @@ export const verifyToken = async (token) => {
   });
 };
 
-export const hashPassword = (password) => {
+export const hashPassword = (password: string) => {
   return new Promise((resolve, reject) => {
     // Generate a salt at level 12 strength
     bcrypt.genSalt(12, (err, salt) => {
@@ -48,7 +46,7 @@ export const hashPassword = (password) => {
   });
 };
 
-export const verifyPassword = (passwordAttempt, hashedPassword) => {
+export const verifyPassword = (passwordAttempt:string, hashedPassword: string) => {
   return bcrypt.compare(passwordAttempt, hashedPassword);
 };
 

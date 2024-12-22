@@ -1,6 +1,6 @@
 
 import { getPublishedSprints } from '@/actions/sprint';
-import SprintComponent from "@/components/space/Sprint";
+import SprintComponent from "@/components/space/Staged";
 import { Button } from '@nextui-org/react';
 
 

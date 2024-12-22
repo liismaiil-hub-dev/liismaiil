@@ -1,43 +1,37 @@
 
 'use client'
-import { Ayah } from '@/app/api/graphql/stage/stage.types';
+import { Ayah, StagePrismaType } from '@/app/api/graphql/stage/stage.types';
 import { stageActions } from "@/store/slices/stageSlice";
 import { RootStateType } from '@/store/store';
 import { cn } from '@nextui-org/react';
 import { memo } from "react";
-import { useDispatch, useSelector } from 'react-redux';
-import SpaceButton from './SpaceButton';
+import {  useSelector } from 'react-redux';
+
 
 function EvalOrdered() {
 
-    const dispatch = useDispatch()
-    const { gridSelected, blurContext, validContext, hideNbContext, orderedAyahsContext, gridIndexContext, gridsContext } = useSelector((state: RootStateType) => state.stage)
-    const { setBlurContext, } = stageActions
-    console.log();
-    function blurHandler() {
-
-        dispatch(setBlurContext({ blur: !blurContext }))
-    }
-    return <div className={cn((typeof blurContext !== 'undefined' && blurContext === true) && 'blur-lg', `flex  border-2 border-blue-400 rounded-md flex-col w-full justify-start p-2  space-y-2 items-stretch `)} >
-        <div className="flex-col justify-center items-center mb-2  ">
-
-            <p className='text-center'>{gridSelected.arabName}</p>
-            <p className='text-center'>Nb of groups &nbsp;{gridSelected.group}</p>
-            <p className='text-center'>Grid &nbsp;{gridSelected.grid}</p>
-
-            <div className="flex justify-center items-center  ">
-
-                <p className=' text-center text-emerald-200'>Grid Index &nbsp;
-                </p>
-                <p className=' text-center text-blue-400'>
-                    {gridIndexContext + 1}/ {gridsContext.length}
-                </p>
-            </div>
-            <div className="CENTER  my-2">
-                <SpaceButton handlePress={blurHandler} title='Blur Grid' />
+    const { gridSelected,localStages, gridsContext,gridIndexContext,gridsStaged, blurContext, reorderedAyahsContext, hideNbContext, orderedAyahsContext,stagedContext }
+     = useSelector((state: RootStateType) => state.stage)
+     
+     console.log({stagedContext, reorderedAyahsContext, gridsStaged});
+     
+     const  stageId = `${gridSelected.souraNb}-${gridSelected.grid}-${gridsContext.length}-${gridIndexContext}`;
+    const _localStageIds = localStages.map((stage : StagePrismaType)  => stage.stageId)
+    return (<div className={cn((typeof blurContext !== 'undefined' && blurContext === true) && 'blur-lg', `flex  border-1 border-blue-400/20 rounded-md flex-col w-full justify-start p-2  space-y-2 items-stretch `)} >
+        <div className="flex-col justify-start items-center mb-2  ">
+        {_localStageIds.includes(stageId) ? <div className="flex justify-center items-center   ">
+        Stage persisted : &nbsp;[ {stageId} ]&nbsp;
+        </div>:<div className="flex justify-center items-center   ">
+        First time   : &nbsp;[ {stageId} ]&nbsp; will be persisted
+        </div>
+        }
+        <div className="flex justify-start items-center  min-h-36 flex-wrap overflow-hidden  overflow-x-scroll">
+          { gridsStaged && gridsStaged.length > 0 && gridsStaged[0]!= '' && gridsStaged.map((stage)  => <div key={stage} className="flex justify-center items-center  ">
+          &nbsp;{`[ ${stage}]`}&nbsp;
+            </div>)}
             </div>
         </div>
-        <div className="flex flex-col justify-start items-stretch py-1 space-y-2">
+        {!stagedContext ?<div className="flex flex-col justify-start w-full items-stretch py-1 space-y-2">
             {orderedAyahsContext && orderedAyahsContext?.map((ayag: Ayah) => {
                 if (typeof hideNbContext !== 'undefined' && !hideNbContext) {
 
@@ -54,15 +48,31 @@ function EvalOrdered() {
 
                     return (
                         <div key={`${ayag.order}_${ayag.juz}`} className='flex justify-end  w-full   bg-emerald-100/30  text-right space-x-2 p-2
-        border-b-1 border-green-300/25
-           hover:cursor-pointer 
-           items-center   focus:border-red-500'>{ayag.text}</div>
+        border-b-1 border-green-300/25 hover:cursor-pointer  items-center   focus:border-red-500'>{ayag.text}</div>
                     )
                 }
 
             })
-            }</div>
+            }</div>:
+            <div className="flex flex-col justify-start w-full items-stretch py-1 space-y-2">
+            {orderedAyahsContext && orderedAyahsContext?.map((ayag: Ayah) => {
+               
+                    if(reorderedAyahsContext.includes(ayag.numberInSurah!)){
+                        return <div key={`${ayag.order}_${ayag.juz}`} className=" flex p-2 bg-emerald-100/30 justify-between 
+        items-center space-x-2 
+        border-b-1 border-green-300/25 ">
+                        <div className='flex justify-center focus:border-red-500 items-center'>{ayag.numberInSurah}</div>
+                        <div className=' flex text-right justify-end items-center
+           hover:bg-emerald-200 
+           hover:cursor-pointer 
+            focus:border-red-500'>{ayag.text}</div>
+                    </div>
+                }
+                    })
+                 }
     </div>
+}
+</div>)
 }
 
 export default memo(EvalOrdered)
