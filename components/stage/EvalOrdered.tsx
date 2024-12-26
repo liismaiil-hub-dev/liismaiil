@@ -13,9 +13,9 @@ function EvalOrdered() {
     const { stageReorderedAyahsContext, stageValidContext,  stageOrderedAyahsContext} = useSelector((state: RootStateType) => state.stage)
     
     useEffect(() => {
-        console.log({stageReorderedAyahsContext });
+        console.log({stageReorderedAyahsContext, stageOrderedAyahsContext });
       
-    }, [stageReorderedAyahsContext]);
+    }, [stageReorderedAyahsContext, stageOrderedAyahsContext]);
     
     
     return <div className={cn((typeof stageValidContext !== 'undefined' && stageValidContext === true) && 'blur-lg', `flex  border-2 border-blue-400 rounded-md 

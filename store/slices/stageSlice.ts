@@ -46,49 +46,62 @@ const initialState: StageStateProps = {
   stagedContext: false,
   reorderedAyahsContext:[-1],
   stageReorderedAyahsContext:[-1],
+  sprintRandomHidden:[-1],
   sprintsContext: [
-    { sprintId: '', published: false, }
+    {
+      sprintId: '', published: false,
+      stageId: ''
+    }
   ],
-  sprintSelected: { sprintId: '', published: false, },
+  sprintSelected: {
+    sprintId: '', published: false,
+    stageId: ''
+  },
 
   orderedAyahsContext: [{
     id: 0,
     juz: 0,
     order: 0,
-    text: ''
+    text: '',
+    numberInSurah: 0
   }
   ],
   stageOrderedAyahsContext: [{
     id: 0,
     juz: 0,
     order: 0,
-    text: ''
+    text: '',
+    numberInSurah: 0
   }
   ],
   shuffeledAyahsContext: [{
     id: 0,
     juz: 0,
     order: 0,
-    text: ''
+    text: '',
+    numberInSurah: 0
   }],
   stageShuffeledAyahsContext: [{
     id: 0,
     juz: 0,
     order: 0,
-    text: ''
+    text: '',
+    numberInSurah: 0
   }],
   shuffeledFirstAyahsContext: [{
     id: 0,
     juz: 0,
     order: 0,
-    text: ''
+    text: '',
+    numberInSurah: 0
   }],
 
   stageShuffeledFirstAyahsContext: [{
     id: 0,
     juz: 0,
     order: 0,
-    text: ''
+    text: '',
+    numberInSurah: 0
   }],
   stageGridsContext: [{
     id: -1,
@@ -166,7 +179,8 @@ const initialState: StageStateProps = {
       id: -1,
       juz: 0,
       order: 0,
-      text: ''
+      text: '',
+      numberInSurah: 0
     }
   ]],
   stageSelected: {
@@ -304,7 +318,7 @@ const stageSlice = createSlice({
     },
     setCatStages(state: StageStateProps,
       action: PayloadAction<{ stages: StagePrismaType[] }>) {
-          console.log({ stages: action.payload.stages, gridsContext:current(state).gridsContext });
+         // console.log({ stages: action.payload.stages, gridsContext:current(state).gridsContext });
       state.catStages = action.payload.stages;
     },
     setLocalStages(state: StageStateProps,
@@ -314,7 +328,7 @@ const stageSlice = createSlice({
     },
     setGridsStaged(state: StageStateProps,
       action: PayloadAction<{ stageIds: string[] }>) {
-        console.log({gridsStaged : current(state).gridsStaged});
+        console.log({currentGridsStaged : current(state).gridsStaged, stageIds:action.payload.stageIds});
          
       state.gridsStaged = action.payload.stageIds;
     },
@@ -324,7 +338,7 @@ const stageSlice = createSlice({
 
     setStageShuffeledAyahsContext(state: StageStateProps, action: PayloadAction<{ ayahs: Ayah[] }>) {
       console.log({
-        filteredAyahs: action.payload.ayahs
+        shuffeledAyahs: action.payload.ayahs
       });
       
       state.stageShuffeledAyahsContext = action.payload.ayahs
@@ -337,7 +351,7 @@ const stageSlice = createSlice({
       console.log({ stepIndex: action.payload.index })
       state.stepIndexContext = action.payload.index
     },
-        setStageContext(state: StageStateProps,
+        setStagedContext(state: StageStateProps,
       action: PayloadAction<{ stagedContext: boolean }>) {
     
       state.stagedContext = action.payload.stagedContext
@@ -359,7 +373,11 @@ const stageSlice = createSlice({
       action: PayloadAction<{ eval: EVAL_STATE }>) {
       state.stageEvalContext = action.payload.eval
     },
-  
+  // sprint
+  setSprintRandomHiddenContext(state: StageStateProps,
+    action: PayloadAction<{ randomHidden: number[] }>) {
+    state.sprintRandomHidden = action.payload.randomHidden
+  },
     //@end
     // space - drag & drop
   

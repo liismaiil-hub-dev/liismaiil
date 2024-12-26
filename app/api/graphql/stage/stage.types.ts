@@ -55,6 +55,7 @@ export type StageStateProps = {
   stageGridsContext: StagePrismaType[],
   stageHideNbContext: boolean,
   stageEvalContext: EVAL_STATE,
+  sprintRandomHidden: number[],
   stageValidContext: boolean,
   showStepsContext: boolean,
   stepIndexContext: number,
@@ -105,10 +106,24 @@ export type SprintPrismaType = {
   finishOn?: string,
   createdById?: string,
   published?: boolean,
-  guests?: GuestPrismaType[],
-  stage?: StagePrismaType,
+  guests?: GuestSprintType[],
+  stageId: string,
 
 }
+
+export type SprintPrismaSessionInputType = {
+  sprintId: string,
+  guests: number[],
+  stageId: string,
+}
+export type GuestSprintType = {  
+  tokenId: number,
+sprintId:string,
+rate?:number,
+review?:string,
+addedAt? :string,
+}
+
 export type SprintSpaceType = {
   sprintId: string,
   guests: GuestPrismaType[],
@@ -254,7 +269,7 @@ export type AyahTabletType = {
   slice?: string;
 };
 export type Ayah = {
-  numberInSurah?: number;
+  numberInSurah: number;
   id?: number;
   juz: number;
   order: number;

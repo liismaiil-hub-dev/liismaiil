@@ -1,8 +1,4 @@
 'use server'
-import { getAllStagesForDashboard } from "@/actions/stage";
-import Board from "@/components/stage/Board";
-//import CarousselComponent from "@/components/stage/StepsCaroussel";
-
 import { redirect } from "next/navigation";
 import StateOpenBoard from "@/components/stage/StateOpenBoard";
 import OpenBoard from "@/components/stage/OpenBoard";

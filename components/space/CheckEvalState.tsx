@@ -1,4 +1,4 @@
-import { EVAL_STATE } from "./Board";
+import { EVAL_STATE } from "./SpaceBoard";
 
 
 export default function CheckEvalState({handleRadioCheck, title, evalState, actualState}: {handleRadioCheck: any, 

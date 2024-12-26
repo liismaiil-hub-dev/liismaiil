@@ -87,26 +87,12 @@ setGridAyahs(JSON.parse(stageGridSelected.ayahs))
             dispatch(setStageGridSelected({ stage: stageGridsContext[0] }))
         }
     }, [stepIndexContext]);
-    console.log({ stageReorderedAyahsContext, stageHideNbContext });
+  //  console.log({ stageReorderedAyahsContext, stageHideNbContext });
 
     return <div className={`flex  border-2 border-blue-400 rounded-md flex-col justify-start p-2  space-y-2 items-stretch w-full`} >
         <div className="flex flex-col justify-start items-stretch  space-y-2">
-            {firstStateContext && stageShuffeledFirstAyahsContext && typeof stageReorderedAyahsContext !== 'undefined'  ? 
-            stageShuffeledFirstAyahsContext?.map((ayag: Ayah) => {
-                console.log({ stageReorderedAyahsContext, stageShuffeledAyahsContext });
-               
-               if(!stageReorderedAyahsContext.includes(ayag.numberInSurah!)){
-                   
-                  return <button onClick={() => { validAyahHandler(ayag.numberInSurah!) }}  key={`${ayag.numberInSurah}_${ayag.juz}`} 
-                  className={ " flex p-2 bg-emerald-100/30 justify-between px-2 items-center space-x-2 border-b-1 border-green-300/25 " }>
-                              <div className='flex justify-center focus:border-red-500 items-center'>{ayag.numberInSurah! }</div>
-                              <div className=' flex text-right justify-end items-center
-                 hover:bg-emerald-800 hover:text-yellow-200 hover:scale-125 hover:-translate-x-3 hover:-translate-y-1 ease-in 
-                 hover:cursor-pointer  active:border-red-500'>{ayag.text}</div>
-                    </button>
-                }
-            }) : typeof stageReorderedAyahsContext !== 'undefined' && stageShuffeledAyahsContext?.map((ayag: Ayah) => {
-                console.log({ stageReorderedAyahsContext });
+            { stageShuffeledAyahsContext && typeof stageReorderedAyahsContext !== 'undefined' && stageShuffeledAyahsContext?.map((ayag: Ayah) => {
+                //console.log({ stageReorderedAyahsContext, ayag });
                 if(!stageReorderedAyahsContext.includes(ayag.numberInSurah!)){
 
                 if (typeof stageHideNbContext !== 'undefined' && !stageHideNbContext) {
@@ -127,7 +113,7 @@ setGridAyahs(JSON.parse(stageGridSelected.ayahs))
                                      p-2 bg-emerald-100/30  px-2
                      space-x-2 border-b-1 border-green-300/25 
                                     hover:bg-emerald-800 hover:text-yellow-200 hover:scale-110
-                                    hover:-translate-x-3 hover:-translate-y-1 ease-in 
+                                    hover:-translate-x-5 hover:-translate-y-1 ease-in 
                                     hover:cursor-pointer '>{ayag.text}</button>)
                             }}})}
         </div>

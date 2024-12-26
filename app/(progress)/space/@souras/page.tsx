@@ -5,10 +5,9 @@ import SpaceMenu from "@/components/space/SpaceMenu";
 
 
 export default async function SourasNav() {
-  const grids = await getSpaceGrids()
-  console.log({ spaceGridsInSourasNav: grids });
-
+  
   try {
+    const grids = await getSpaceGrids()
     if (typeof grids !== 'undefined' && grids.length > 0) {
       return (
         <SpaceMenu grids={grids} />

@@ -13,7 +13,7 @@ export const getAllStagesForDashboard = memoize(async () => {
   const stages = await prisma.stage.findMany({
     orderBy: {souraNb: 'asc'},include:{guests:{orderBy:{tokenId:'asc'}}}
   })
-//  console.log({allStagesAction: stages });
+ // console.log({allStagesAction: stages });
   return stages;
 }, {
   duration:60,
@@ -24,6 +24,64 @@ export const getAllStagesForDashboard = memoize(async () => {
   log: ['datacache', 'verbose', 'dedupe'],
   logid: 'stages'
 })
+export const getAllStageIdsForSprints = memoize(async () => {
+try {
+  
+  const stages = await prisma.stage.findMany({
+    orderBy: {souraNb: 'asc'}}
+  )
+
+  const sprintIds = await stages.map( (stage) => {
+const gridNb = stage.stageId.split('-')[1];
+
+if(parseInt(gridNb) === 5) {
+  console.log({stageId:stage.stageId});
+    return stage.stageId
+}
+}
+)
+const _sprintIds = _.compact(sprintIds);
+console.log({sprintIds});
+
+  if(_sprintIds && _sprintIds.length>0){
+
+    return _sprintIds
+  }else return null
+} catch (error) {
+  
+}
+}, {
+  duration:60,
+  persist: true,
+  additionalCacheKey: ['sprints'],
+  revalidateTags: ['stages'],
+  suppressWarnings: true,
+  log: ['datacache', 'verbose', 'dedupe'],
+  logid: 'sprints'
+})
+export const getStageForSprint = memoize(async (stageId: string) => {
+  try {
+    
+    const _stage = await prisma.stage.findFirstOrThrow({
+      where:{stageId},
+      }
+    )
+  if(_stage  && typeof _stage !== 'undefined') {
+      return {sucess: true, stage:_stage}
+  }else {
+    return {sucess: false, stage:null}
+    }} catch (error) {
+      return {sucess: false, error}
+    }
+  }, {
+    duration:60,
+    persist: true,
+    additionalCacheKey: ['sprint'],
+    revalidateTags: ['stages'],
+    suppressWarnings: true,
+    log: ['datacache', 'verbose', 'dedupe'],
+    logid: 'sprint'
+  })
 export const getOwnStages = memoize(async ({
   tokenId,
   }:{
@@ -194,7 +252,7 @@ export const getSpaceGrids = memoize(async () => {
         grid,
         group,
         ayahs, } = doc.data()
-      grids.push({
+        grids.push({
         title,
         souraNb,
         author,
@@ -206,13 +264,13 @@ export const getSpaceGrids = memoize(async () => {
         ayahs,
       });
     });
+
     if (typeof grids !== 'undefined' && grids.length > 0) {
       const souraName = grids.map((gr: GridTypeData) => {
         return { souraName: gr.arabName, souraNb: parseInt(gr.souraNb.toString()) };
       })
       const uniqGrids = _.uniqBy(souraName, 'souraNb')
       const sortedGrids = _.sortBy(uniqGrids, ['souraNb'])
-      console.log({sortedGrids});
       
       return sortedGrids as GridMenu[]
     } else {

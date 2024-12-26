@@ -43,7 +43,7 @@ async function getStages(tokenId: number) {
 export default async function StepsNav() {
   try {
       const stages = await getAllStagesForDashboard() //(parseInt(_ImGuest?.tokenId!))
-      console.log({stages});
+      //console.log({stages});
       
       if (typeof stages !== 'undefined' && stages ) {
        // console.log({ stages });

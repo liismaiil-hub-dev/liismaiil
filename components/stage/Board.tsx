@@ -23,18 +23,18 @@ export enum EVAL_STATE {
 const StageBoard = ({ stages }: { stages:StagePrismaType[] }) => {
   const dispatch = useDispatch()
   
-  const { stageGridSelected, stageEvalContext, reorderedAyahs, firstStateContext, stageEvalIndexContext, stageHideNbContext, errorNbContext,
+  const { stageGridSelected, stageEvalContext, reorderedAyahsContext, firstStateContext, stageEvalIndexContext, stageHideNbContext, errorNbContext,
      stageShuffeledFirstAyahsContext, stageValidContext, stepIndexContext,   stageOrderedAyahsContext, stageShuffeledAyahsContext, stageGridsContext, } = useSelector((state: RootStateType) => state.stage)
   const { guestPrisma } = useSelector((state: RootStateType) => state.guestPrisma)
 
   const { setStageOrderedAyahsContext, setStageShuffeledFirstAyahsContext, setStageHideNbContext, setStageGridsContext,  setStageShuffeledAyahsContext, setStageGridSelected ,
-     setStageValidContext, setStepIndexContext, setFirstStateContext,setReorderedAyahs, setErrorNbContext } = stageActions
+     setStageValidContext, setStepIndexContext, setFirstStateContext,setReorderedAyahsContext, setErrorNbContext } = stageActions
   
 
       
   useEffect(() => {
     if (typeof stages !== 'undefined' && typeof stages[0] != 'undefined' && stages?.length > 0) {
-      console.log({ stages });
+     // console.log({ stages });
       const _stages = stages.map((st) => ({
         stageId: st?.stageId,
         createdAt: st?.createdAt ? st?.createdAt.toString() : new Date().toISOString(),

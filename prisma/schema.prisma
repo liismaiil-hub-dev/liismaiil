@@ -68,9 +68,9 @@ model Sprint {
   published   Boolean?
   stageId     String
   guests      GuestSprint[]
-  stage       Stage         @relation(fields: [stageId], references: [stageId], onDelete: Cascade)
+  stage       Stage         @relation(fields: [stageId], references: [stageId], onDelete: NoAction)
 
-  @@unique([sprintId, stageId])
+  @@unique([sprintId, id])
   @@map("sprints")
 }
 

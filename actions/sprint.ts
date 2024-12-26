@@ -1,3 +1,4 @@
+import { SprintPrismaSessionInputType } from './../app/api/graphql/stage/stage.types';
 'use server'
 import { GuestType } from "@/app/api/graphql/profile/profile.types";
 import moment from "moment";
@@ -5,6 +6,7 @@ import { revalidateTag } from "next/cache";
 import prisma from "@/api/lib/prisma-db";
 import { memoize } from "nextjs-better-unstable-cache";
 import { getGuestFromCookies} from "@/actions/guest";
+import { SprintPrismaType } from "@/app/api/graphql/stage/stage.types";
 
 
 export const createNewSprint = async ({
@@ -139,25 +141,66 @@ export const getSprint = memoize(async (sprId: string) => {
     logid: `getPublishedSprints `
 })
 
-export const setSprintSession = memoize(async (sprintId: string) => {
-    const _guest: GuestType = await getGuestFromCookies()
-    const _allGuest = await prisma.sprint.findUnique({
-        where: { sprintId },
-        select: {
-            guests: true
-        }
-    });
-    if (_guest && _guest.tokenId) {
-        const sprintPublished = await prisma.sprint.update({
-            where: { sprintId },
-            data: {
-                guests: [..._allGuest, { tokenId: _guest.tokenId, sprintId }]
-            }
+export const setSprintSession = memoize(async (sprint: SprintPrismaSessionInputType) => {
+    const {sprintId,guests,stageId} = sprint
+    const _now = new Date()
+    try {
+        const _guest_sprint1 = await prisma.guestSprint.create({
+            data: { sprintId, tokenId: parseInt(guests[0]) , },
+            
         });
-        console.log({ sprintPublished: sprintPublished });
-        return sprintPublished
+        const _guest_sprint2 = await prisma.guestSprint.create({
+            data: { sprintId, tokenId: parseInt(guests[1])  },
+            });
+        if(_guest_sprint1 && _guest_sprint2) {
+            try {
+                const _sprint = await prisma.sprint.create({
+                    data: { sprintId, createdAt :  _now.toISOString(),guests:[_guest_sprint1, _guest_sprint2],stageId,published },
+                    
+                });
+                if(_sprint ){
+                    
+                    return { success: true, message: JSON.stringify(_sprint)}
+                }else {
+                    return { success: false, message: JSON.stringify(_sprint)}
+            
+                }  
+                
+            } catch (error) {
+                return { success: false, message: JSON.stringify(error)}
+                
+            }
+        }    
+    } catch (error) {
+        return { success: false, message: JSON.stringify(error)}
+        
     }
+    
+    
+}, {
+    persist: true,
+    revalidateTags: () => ['stages', `sprints`],
+    log: ['datacache', 'verbose', 'dedupe'],
+    logid:`setSprint `
+})
 
+
+export const deleteSprint = memoize(async (sprintId: string, stageId: string) => {
+   try {
+
+    const _delStage = await prisma.stage.delete({
+        where: { stageId },
+        
+    });
+    const _delSprint = await prisma.sprint.delete({
+        where: { sprintId },
+        
+    });
+    return{message:JSON.stringify(_delSprint), success:true}
+   } catch (error) {
+    return{message:JSON.stringify({error}), success:false}
+    
+   }
 }, {
     persist: true,
     revalidateTags: () => ['stages', `sprints`],

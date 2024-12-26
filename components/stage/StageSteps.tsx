@@ -43,7 +43,7 @@ type StagesStagePrismaType = {
 const StageSteps = ({stages}:{stages: StagePrismaType[]}) => {
 
   const dispatch = useDispatch()
-  console.log({stages});
+ //console.log({stages});
   
 
   const { setStageGridSelected, setStageGridsContext, setCatStages, setCategoryContext } = stageActions
@@ -59,11 +59,11 @@ const StageSteps = ({stages}:{stages: StagePrismaType[]}) => {
 
 
   const newMathani = useMemo(() => stageGridsContext?.filter((gr: StagePrismaType) => {
-    return gr.souraNb > 18 && gr.souraNb <= 50;
+    return gr.souraNb > 18 && gr.souraNb <= 48;
   }), [stageGridsContext])
 
   const newMofasal = useMemo(() => stageGridsContext?.filter((gr: StagePrismaType) => {
-    return gr.souraNb > 50;
+    return gr.souraNb > 48;
   }), [stageGridsContext])
 
 
@@ -129,7 +129,8 @@ const categoryHandler = (cat:GRIDS_NAME ) => {
                 " ,"flex justify-center py-1 w-full  rounded-md items-center bg-blue-300 \
                text-green-700 ")}
              onClick={() => { categoryHandler(GRIDS_NAME[GRIDS_TLD.TIWAL]) }} 
-             aria-label=  {`${GRIDS_NAME[GRIDS_TLD.TIWAL]}`} title=  {`${GRIDS_NAME[GRIDS_TLD.TIWAL]}   `}>
+             aria-label=  {`${GRIDS_NAME[GRIDS_TLD.TIWAL]}`} 
+             title=  {`${GRIDS_NAME[GRIDS_TLD.TIWAL]}   `}>
           {`${GRIDS_NAME[GRIDS_TLD.TIWAL]} [ 2 - 7 ]`}
 
         </Button>
@@ -144,11 +145,12 @@ const categoryHandler = (cat:GRIDS_NAME ) => {
        </Button>
        </div>
        <div className="flex justify-center w-full col-span-1 items-center text-center  ">
-       <Button className={cn(categoryContext === GRIDS_NAME[GRIDS_TLD.MATHANI] && "border-3 shadow-md shadow-green-300  border-green-200 \
+       <Button className={cn(categoryContext === GRIDS_NAME[GRIDS_TLD.MATHANI] 
+       && "border-3 shadow-md shadow-green-300  border-green-200 \
                 " ,"flex justify-center py-1 w-full  rounded-md items-center bg-blue-300 \
                text-green-700 ")} onClick={() => { categoryHandler(GRIDS_NAME[GRIDS_TLD.MATHANI]) }} 
          aria-label=  {`${GRIDS_NAME[GRIDS_TLD.MATHANI]}`} title=  {`${GRIDS_NAME[GRIDS_TLD.MATHANI]} `}>
-      {`${GRIDS_NAME[GRIDS_TLD.MATHANI]} [ 19 - 50 ]`}
+      {`${GRIDS_NAME[GRIDS_TLD.MATHANI]} [ 19 - 48 ]`}
 
     </Button>
     </div>
@@ -157,7 +159,7 @@ const categoryHandler = (cat:GRIDS_NAME ) => {
                 " ,"flex justify-center py-1 w-full  rounded-md items-center bg-blue-300 \
                text-green-700 ")} onClick={() => { categoryHandler(GRIDS_NAME[GRIDS_TLD.MOFASAL]) }} 
        aria-label=  {`${GRIDS_NAME[GRIDS_TLD.MOFASAL]}`} title=  {`${GRIDS_NAME[GRIDS_TLD.MOFASAL]}  `}>
-    {`${GRIDS_NAME[GRIDS_TLD.MOFASAL]} [ 51 - 114 ]`}
+    {`${GRIDS_NAME[GRIDS_TLD.MOFASAL]} [ 49 - 114 ]`}
     </Button>
   </div>
   </section>

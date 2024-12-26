@@ -15,14 +15,18 @@ import { toast } from 'react-toastify';
 import { cn } from '@nextui-org/react';
 import * as d3 from "d3";
 import StateGrids from './StateGrids';
+import { useSearchParams } from 'next/navigation';
 
 export enum EVAL_STATE {
   EVAL = 'EVAL',
   ORDER = 'ORDER',
   CLICK = 'CLICK',
 }
-const OpenBoard = ( ) => {
+const StateOpenBoard = ( ) => {
   const dispatch = useDispatch()
+  const searchParams = useSearchParams()
+  const stageId = searchParams.get('stageId');
+  console.log({stageId});
   
   const { stageGridSelected, stageEvalContext,  stageEvalIndexContext, stageHideNbContext, categoryContext,
       stageValidContext, stepIndexContext,   stageOrderedAyahsContext, stageShuffeledAyahsContext, stageGridsContext,catStages } = useSelector((state: RootStateType) => state.stage)
@@ -57,4 +61,4 @@ const OpenBoard = ( ) => {
 
   )
 }
-export default OpenBoard
+export default StateOpenBoard

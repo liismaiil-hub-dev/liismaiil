@@ -32,7 +32,7 @@ const SpaceBoard = () => {
   const { guestPrisma } = useSelector((state: RootStateType) => state.guestPrisma)
 
   const { setShuffeledFirstAyahsContext, setOrderedAyahsContext, setErrorNbContext, 
-   setBlurContext, setStageContext, setGridsContext, setHideNbContext, setGridIndexContext, setFirstGridContext, setGridsStaged } = stageActions
+   setBlurContext, setStagedContext, setGridsContext, setHideNbContext, setGridIndexContext, setFirstGridContext, setGridsStaged } = stageActions
 
 
   useEffect(() => {
@@ -136,7 +136,7 @@ const SpaceBoard = () => {
     dispatch(setBlurContext({ blur: !blurContext }))
   }
   function stageContextHandler() {
-    dispatch(setStageContext({ stagedContext: !stagedContext }))
+    dispatch(setStagedContext({ stagedContext: !stagedContext }))
   }
   
   

@@ -36,19 +36,19 @@ function EvalOrdered() {
                 if (typeof hideNbContext !== 'undefined' && !hideNbContext) {
 
                     return <div key={`${ayag.order}_${ayag.juz}`} className=" flex p-2 bg-emerald-100/30 justify-between 
-        items-center space-x-2 
+        items-center space-x-2 hover:text-2xl hover:bg-sky-700 hover:text-natWarmheader
         border-b-1 border-green-300/25 ">
-                        <div className='flex justify-center focus:border-red-500 items-center'>{ayag.numberInSurah}</div>
+                        <div className='flex justify-center  items-center'>{ayag.numberInSurah}</div>
                         <div className=' flex text-right justify-end items-center
-           hover:bg-emerald-200 
+           
            hover:cursor-pointer 
-            focus:border-red-500'>{ayag.text}</div>
+            '>{ayag.text}</div>
                     </div>
                 } else {
 
                     return (
-                        <div key={`${ayag.order}_${ayag.juz}`} className='flex justify-end  w-full   bg-emerald-100/30  text-right space-x-2 p-2
-        border-b-1 border-green-300/25 hover:cursor-pointer  items-center   focus:border-red-500'>{ayag.text}</div>
+                        <div key={`${ayag.order}_${ayag.juz}`} className='flex justify-end  w-full  hover:text-2xl   bg-emerald-100/30  text-right space-x-2 p-2
+        border-b-1 border-green-300/25 hover:cursor-pointer  items-center   '>{ayag.text}</div>
                     )
                 }
 
@@ -59,13 +59,13 @@ function EvalOrdered() {
                
                     if(reorderedAyahsContext.includes(ayag.numberInSurah!)){
                         return <div key={`${ayag.order}_${ayag.juz}`} className=" flex p-2 bg-emerald-100/30 justify-between 
-        items-center space-x-2 
+        items-center space-x-2 hover:text-2xl hover:bg-sky-700 hover:text-natWarmheader
         border-b-1 border-green-300/25 ">
-                        <div className='flex justify-center focus:border-red-500 items-center'>{ayag.numberInSurah}</div>
+                        <div className='flex justify-center  items-center'>{ayag.numberInSurah}</div>
                         <div className=' flex text-right justify-end items-center
            hover:bg-emerald-200 
            hover:cursor-pointer 
-            focus:border-red-500'>{ayag.text}</div>
+            '>{ayag.text}</div>
                     </div>
                 }
                     })

@@ -153,11 +153,13 @@ const [stageReady, setStageReady] = useState(false);
                 console.log({message, success});
                 
                 if(success) {
-                    if(typeof gridsStaged !== 'undefined' && gridsStaged && gridsStaged.length === 1 && gridsStaged[0] === ''){
+                    if(typeof gridsStaged !== 'undefined' && gridsStaged && 
+                        gridsStaged.length === 1 && gridsStaged[0] === ''){
                 console.log({message, success, gridsStaged});
                     dispatch(setGridsStaged({stageIds:[stageId ]}))
 
-                    }else if(typeof gridsStaged !== 'undefined' &&  gridsStaged && gridsStaged.length > 1){
+                    }else if(typeof gridsStaged !== 'undefined' && 
+                         gridsStaged && gridsStaged[0] !== ''){
                     dispatch(setGridsStaged({stageIds:[...gridsStaged,stageId ]}))
                 }
             }else {
@@ -174,7 +176,8 @@ const [stageReady, setStageReady] = useState(false);
                         console.log({message, success, gridsStaged});
                     dispatch(setGridsStaged({stageIds:[stageId ]}))
 
-                    }else if(typeof gridsStaged !== 'undefined' &&  gridsStaged && gridsStaged.length > 1){
+                    }else if(typeof gridsStaged !== 'undefined' &&
+                          gridsStaged && gridsStaged[0] !== ''){
                     dispatch(setGridsStaged({stageIds:[...gridsStaged,stageId ]}))
                 }
             }else {
@@ -187,6 +190,11 @@ const [stageReady, setStageReady] = useState(false);
             toast.error(`${error}`)
         }
     }
+    useEffect(() => {
+     console.log({stageReady, stagedContext});
+     
+    }, [stageReady, stagedContext]);
+    
 
     return <div className={`flex  border-2 border-blue-400 rounded-md flex-col justify-start p-2  space-y-2 items-stretch w-full`} >
         <div className="flex-col justify-center items-center  ">
@@ -194,8 +202,7 @@ const [stageReady, setStageReady] = useState(false);
             <div className="flex justify-center items-center  ">
                 
             <p className='text-center inline-flex '>{gridSelected.arabName}</p>
-
-                <p className='text-center inline-flex '>&nbsp; &nbsp; {gridSelected.souraNb}</p>
+                  <p className='text-center inline-flex '>&nbsp; &nbsp; {gridSelected.souraNb}</p>
                 <p className='text-center inline-flex' > &nbsp; &nbsp; Nb of groups &nbsp;{gridSelected.group}</p>
                 <p className='text-center inline-flex'>&nbsp; Grid &nbsp;{gridSelected.grid}</p>
             </div>
@@ -240,11 +247,9 @@ const [stageReady, setStageReady] = useState(false);
             <SpaceButton disabled={false} handlePress={shuffleHandler} title='Shuffel Grid' />
             <SpaceButton disabled={false} handlePress={prevGridHandler} title='Prev Grid' />
             <SpaceButton disabled={false} handlePress={nextGridHandler} title='Next Grid' />
-            { stageReady && stagedContext ? <div className={'shadow-lg shadow-emerald-300 CENTER'}>
+            { (stageReady || stagedContext) && <div className={'shadow-lg shadow-emerald-300 CENTER'}>
                     <SpaceButton disabled={pending} handlePress={stageHandler} title='Stage Grid' />
-            </div>: stagedContext ? <div className={'shadow-lg  CENTER'}>
-            <SpaceButton disabled={!stagedContext} handlePress={stageHandler} title='Stage Grid' />
-            </div>: null
+            </div>
             }
         </div>
         <div className="flex flex-col justify-start items-stretch  space-y-2">
@@ -254,10 +259,10 @@ const [stageReady, setStageReady] = useState(false);
                     console.log({ayagFirst: ayag});
                     
                 if (typeof hideNbContext !== 'undefined' && !hideNbContext) {
-                    return <div onClick={() => { validAyahHandler(ayag?.numberInSurah!) }} key={`${ayag.order}_${ayag.juz}`} className={cn(reorderedAyahsContext.includes(ayag?.numberInSurah!) && "flex p-2 bg-emerald-100/30 justify-between px-2\
-        items-center space-x-2 hover:bg-sky-700 hover:text-natWarmheader hover:cursor-pointer hover:scale-110 border-2  border-red-500 ","flex p-2 bg-emerald-100/30 justify-between px-2\
-        items-center space-x-2 hover:bg-sky-700 hover:text-natWarmheader hover:cursor-pointer hover:scale-110 border-b-1 border-green-300/25  ")   }>
-                        <div className='flex justify-center focus:border-red-500 items-center'>{ayag?.numberInSurah!}</div>
+                    return <div onClick={() => { validAyahHandler(ayag?.numberInSurah!) }} key={`${ayag.order}_${ayag.juz}`} 
+                    className={"flex p-2 bg-emerald-100/30 justify-between px-2 hover:text-natWarmheader\
+        items-center space-x-2 hover:bg-sky-700 hover:text-2xl hover:cursor-pointer hover:scale-110 border-b-1 border-green-300/25  "}>
+                        <div className='flex justify-center items-center'>{ayag?.numberInSurah!}</div>
                         <div className=' flex text-right justify-end items-center
                              '>{ayag.text}</div>
                     </div>}else {
@@ -269,11 +274,11 @@ const [stageReady, setStageReady] = useState(false);
             
                 if (typeof hideNbContext !== 'undefined' && !hideNbContext) {
             
-                return <div onClick={() => { validAyahHandler(ayag?.numberInSurah!) }} key={`${ayag?.numberInSurah!}_${ayag.juz}`} className=" flex p-2 bg-emerald-100/30 justify-between 
-        items-center space-x-2
-        border-b-1 border-green-300/25 hover:bg-sky-700 hover:text-natWarmheader
-                hover:cursor-pointer hover:scale-110 focus:border-red-500">
-                        <div className='flex justify-center focus:border-red-500 items-center'>{ayag?.numberInSurah!}</div>
+                return <div onClick={() => { validAyahHandler(ayag?.numberInSurah!) }} key={`${ayag?.numberInSurah!}_${ayag.juz}`} className=" 
+                flex p-2 bg-emerald-100/30 justify-between 
+        items-center space-x-2 border-b-1 border-green-300/25 hover:bg-sky-700 hover:text-natWarmheader
+                hover:cursor-pointer hover:scale-110 hover:text-2xl">
+                        <div className='flex justify-center items-center'>{ayag?.numberInSurah!}</div>
                         <div className=' flex text-right justify-end items-center
                        '>{ayag.text}</div>
                     </div>} else {
