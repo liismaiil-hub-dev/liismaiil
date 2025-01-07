@@ -190,6 +190,40 @@ const [stageReady, setStageReady] = useState(false);
             toast.error(`${error}`)
         }
     }
+    async function stageQHandler() {
+        try {
+                             const {message, success} =     await   createNewStage({
+                        ayahs: JSON.stringify(shuffeledFirstAyahsContext),
+                        createdAt: new Date().toISOString(),
+                        group: gridSelected.group,
+                        grid: gridSelected.grid,
+                        createdById: "O6cKgXEsuPNAuzCMTGeblWW9sWI3",
+                        souraName: gridSelected.souraName,
+                        arabName: gridSelected.arabName,
+                        souraNb: gridSelected.souraNb,
+                        stageId,
+                        startOn: new Date().toISOString(),
+                        tokenId: guestPrisma.tokenId ? guestPrisma.tokenId : 2,
+                    })
+                    console.log({message, success});
+                    
+                    if(success) {
+                        if(typeof gridsStaged !== 'undefined' && gridsStaged && 
+                            gridsStaged.length === 1 && gridsStaged[0] === ''){
+                    console.log({message, success, gridsStaged});
+                        dispatch(setGridsStaged({stageIds:[stageId ]}))
+    
+                        }else if(typeof gridsStaged !== 'undefined' && 
+                             gridsStaged && gridsStaged[0] !== ''){
+                        dispatch(setGridsStaged({stageIds:[...gridsStaged,stageId ]}))
+                    }
+                }else {
+                toast.error(`${message}`)
+                } 
+                            } catch (error) {
+                toast.error(`${error}`)
+            }
+        }
     useEffect(() => {
      console.log({stageReady, stagedContext});
      
@@ -247,6 +281,8 @@ const [stageReady, setStageReady] = useState(false);
             <SpaceButton disabled={false} handlePress={shuffleHandler} title='Shuffel Grid' />
             <SpaceButton disabled={false} handlePress={prevGridHandler} title='Prev Grid' />
             <SpaceButton disabled={false} handlePress={nextGridHandler} title='Next Grid' />
+            <SpaceButton disabled={pending} handlePress={stageQHandler} title='Stage Q' />
+            
             { (stageReady || stagedContext) && <div className={'shadow-lg shadow-emerald-300 CENTER'}>
                     <SpaceButton disabled={pending} handlePress={stageHandler} title='Stage Grid' />
             </div>

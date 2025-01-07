@@ -32,7 +32,6 @@ const randomAyahsHidden = (nb: number) =>{
 }
 const SprintOpenBoard = ({stage}: {stage: StagePrismaType} ) => {
   const dispatch = useDispatch()
-
   
   const { stageEvalContext, validContext, stageReorderedAyahsContext,  stageEvalIndexContext, stageHideNbContext, errorNbContext,
     stageShuffeledFirstAyahsContext, stageValidContext,  stageShuffeledAyahsContext, sprintRandomHidden  } = useSelector((state: RootStateType) => state.stage)
@@ -41,11 +40,9 @@ const SprintOpenBoard = ({stage}: {stage: StagePrismaType} ) => {
   const { setValidContext, setSprintRandomHiddenContext, setStageOrderedAyahsContext, setStageShuffeledFirstAyahsContext, setStageHideNbContext, setStageGridsContext,  setStageShuffeledAyahsContext, setStageGridSelected ,
      setStageValidContext, setStepIndexContext, setFirstStateContext,setStageReorderedAyahsContext, setErrorNbContext } = stageActions
      
-     useEffect(() => {
-       dispatch(setStageReorderedAyahsContext({reorderedAyahsContext:[-1]}))
-console.log({stage});
-
-   const _shuffeleledFirst = JSON.parse(stage.ayahs).map((ordG: Ayah, index: number) => ({ ...ordG, index }));
+  useEffect(() => {
+  dispatch(setStageReorderedAyahsContext({reorderedAyahsContext:[-1]}))
+   const _shuffeleledFirst = JSON.parse(stage?.ayahs).map((ordG: Ayah, index: number) => ({ ...ordG, index }));
    console.log({ _shuffeleledFirst });
 
    const _orderedAy = [..._.sortBy(_shuffeleledFirst, ['order'])].map((ordG: Ayah, index) => ({ ...ordG, index }))
@@ -53,10 +50,8 @@ console.log({stage});
    setGridIndex(stage.stageId.split('-')[stage.stageId.split('-').length - 1 ])
    dispatch(setStageOrderedAyahsContext({ ayahs: _orderedAy }))
    dispatch(setStageShuffeledAyahsContext({ ayahs: _shuffeleledFirst }))
- 
-
-      } , []);
-      const [gridIndex, setGridIndex] = useState('0');
+  } , []);
+  const [gridIndex, setGridIndex] = useState('0');
       
   function shuffleHandler() {
       dispatch(setFirstStateContext({first: false}))
@@ -149,14 +144,14 @@ console.log({stage});
   return (
     <div className=" flex-col justify-start space-y-2 h-full py-2 items-center w-full  ">
       <div className="flex-col   justify-start  items-stretch  gap-3 flex-wrap  ">
-      <div className='justify-center items-center text-center inline-flex '>StageId &nbsp; : {stage.stageId}</div>
+      <div className='justify-center items-center text-center inline-flex '>StageId &nbsp; : {stage?.stageId}</div>
       
       <div className="flex justify-center items-center mt-2 p-3  ">
-                <p className='text-center inline-flex '>Soura &nbsp;: [&nbsp;{stage.arabName ? stage.arabName : stage.souraName}&nbsp;]&nbsp;</p>
-                <p className='text-center inline-flex '>&nbsp; Nb : [&nbsp;{stage.souraNb}&nbsp;] </p>
-                <p className='text-center inline-flex'>&nbsp; Grid :[&nbsp;{stage.grid}&nbsp;]</p>
-                <p className='text-center inline-flex' > &nbsp; Nb of Grids:  [&nbsp;{stage.group ?
-                 stage.group : stage?.stageId.split('-')[2]}] </p>
+                <p className='text-center inline-flex '>Soura &nbsp;: [&nbsp;{stage?.arabName ? stage?.arabName : stage?.souraName}&nbsp;]&nbsp;</p>
+                <p className='text-center inline-flex '>&nbsp; Nb : [&nbsp;{stage?.souraNb}&nbsp;] </p>
+                <p className='text-center inline-flex'>&nbsp; Grid :[&nbsp;{stage?.grid}&nbsp;]</p>
+                <p className='text-center inline-flex' > &nbsp; Nb of Grids:  [&nbsp;{stage?.group ?
+                 stage?.group : stage?.stageId.split('-')[2]}] </p>
             </div>
         <div className="flex-col  justify-start items-center  gap-3 text-center font-sans  " >
         <div className="flex justify-evenly items-center gap-1 ">

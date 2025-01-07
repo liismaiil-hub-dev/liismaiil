@@ -104,7 +104,7 @@ function Navigation() {
                         </div>
                     </Link>
                 </div>
-                <div className={cn(isRoute('sprints') && 'selected-navig-mobile', 'navig-mobile')}  >
+                {/* <div className={cn(isRoute('sprints') && 'selected-navig-mobile', 'navig-mobile')}  >
                     <Link prefetch={true} key={`sprints`} href='/sprints'>
                         <div className={'navig-mobile-svg'}  >
                             <SiCrunchyroll />
@@ -112,6 +112,16 @@ function Navigation() {
                         </div>
                         <div className={'nanvig-mobile-txt'}  >
                             Sprints
+                        </div>
+                    </Link>
+                </div> */}
+                <div className={cn(isRoute('hosts') && 'selected-navig-mobile', 'navig-mobile')}  >
+                    <Link prefetch={true} key={`hosts`} href='/hosts'>
+                        <div className={'navig-mobile-svg'}  >
+                            < SiMastercomfig />
+                        </div>
+                        <div className={'nanvig-mobile-txt'}  >
+                            Hosts
                         </div>
                     </Link>
                 </div>
@@ -126,16 +136,7 @@ function Navigation() {
                         </div>
                     </Link>
                 </div>
-                <div className={cn(isRoute('hosts') && 'selected-navig-mobile', 'navig-mobile')}  >
-                    <Link prefetch={true} key={`hosts`} href='/hosts'>
-                        <div className={'navig-mobile-svg'}  >
-                            < SiMastercomfig />
-                        </div>
-                        <div className={'nanvig-mobile-txt'}  >
-                            Hosts
-                        </div>
-                    </Link>
-                </div>
+                
                 <div className={cn(isRoute('signIn') && 'selected-navig-mobile', 'navig-mobile')}  >
                     {(typeof guestPrisma !== 'undefined' && guestPrisma !== null && guestPrisma?.tokenId !== 0) ?
                         <div className={cn(isRoute('signOut') ? 'borde-3 border-yellow-200 shadow-lg' : 'text-center font-tight')}  >
@@ -177,19 +178,13 @@ function Navigation() {
 
                     <Link prefetch={true} key={`stages`} href='/stages'> Stages </Link>
                 </div>
-                <div className={cn(isRoute('sprints') && ' nav-selected', 'CENTER nav-element')}  >
-
-                    <Link prefetch={true} key={`sprints`} href='/sprints'> Sprints </Link>
-                </div>
-                <div className={cn(isRoute('guests') && ' nav-selected', 'CENTER nav-element')}  >
-
-                    <Link prefetch={true} key={`guests`} href='/guests'>Guests </Link>
-                </div>
                 <div className={cn(isRoute('hosts') && ' nav-selected', 'CENTER nav-element')}  >
-
                     <Link prefetch={true} key={`hosts`} href='/hosts'>Hosts </Link>
                 </div>
-
+                <div className={cn(isRoute('guests') && ' nav-selected', 'CENTER nav-element')}  >
+                    <Link prefetch={true} key={`guests`} href='/guests'>Guests </Link>
+                </div>
+       
                 {(typeof guestPrisma !== 'undefined' && guestPrisma !== null && guestPrisma?.tokenId !== 0) ?
                     <div className={cn((guestPrisma?.tokenId !== 0) && 'nav-selected', 'outline-none text-green-400 CENTER nav-element')}  >
 

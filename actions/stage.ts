@@ -3,7 +3,7 @@ import prisma from '@/api/lib/prisma-db';
 import { memoize } from "nextjs-better-unstable-cache";
 
 import { revalidateTag } from 'next/cache';
-import { GridTypeData } from '@/app/api/graphql/tablet/tablet.types';
+import { SpaceMenuType } from '@/app/api/graphql/stage/stage.types';
 import { GridMenu } from '@/app/api/graphql/stage/stage.types';
 import { dbFirestore } from '@/app/api/graphql/fb-utils-admin';
 import _ from 'lodash';
@@ -239,40 +239,30 @@ export const addGuestToStage = async ({
 export const getSpaceGrids = memoize(async () => {
 
   try {
-    const grids: GridTypeData[] = [];
+    const grids:SpaceMenuType[] = [];
     const querySnapshot = await dbFirestore.collection('grids').orderBy('souraNb').get();
     querySnapshot.forEach((doc: any) => {
+      
       const {
         title,
         souraNb,
-        author,
-        arabName,
         souraName,
-        description,
-        grid,
-        group,
-        ayahs, } = doc.data()
+        arabName
+       } = doc.data()
         grids.push({
         title,
-        souraNb,
-        author,
         arabName,
+        souraNb:parseInt(souraNb.toString()),
         souraName,
-        description,
-        grid,
-        group,
-        ayahs,
       });
     });
 
     if (typeof grids !== 'undefined' && grids.length > 0) {
-      const souraName = grids.map((gr: GridTypeData) => {
-        return { souraName: gr.arabName, souraNb: parseInt(gr.souraNb.toString()) };
-      })
-      const uniqGrids = _.uniqBy(souraName, 'souraNb')
+      const uniqGrids = _.uniqBy(grids, 'souraNb')
       const sortedGrids = _.sortBy(uniqGrids, ['souraNb'])
+      console.log({sortedGrids});
       
-      return sortedGrids as GridMenu[]
+      return sortedGrids as SpaceMenuType[]
     } else {
       return
     }

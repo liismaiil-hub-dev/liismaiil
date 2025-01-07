@@ -12,13 +12,6 @@ function EvalSprintOrdered({guest}: {guest: boolean}) {
     const dispatch = useDispatch()
     const { sprintRandomHidden, stageReorderedAyahsContext, stageValidContext,  stageOrderedAyahsContext, stageShuffeledAyahsContext} = useSelector((state: RootStateType) => state.stage)
     
-    useEffect(() => {
-        console.log({stageReorderedAyahsContext, stageShuffeledAyahsContext });
-        console.log({guest});
-      
-    }, [stageReorderedAyahsContext,guest,  stageOrderedAyahsContext]);
-    
-    
     return <div className={cn((typeof stageValidContext !== 'undefined' && stageValidContext === true) && 'border-orange-400', `flex  border-2 border-blue-400 rounded-md 
         flex-col w-full justify-start p-2  space-y-2 items-stretch `)} >
                 <div className="flex-col  justify-start items-end py-x space-y-1">

@@ -35,21 +35,7 @@ export type TabletTypeData = {
   createdAt?: string;
   updatedAt?: string;
 };
-export type GridTypeData = {
-  id?: string;
-  author: string;
-  grid: number;
-  group: [number];
-  title: string;
-  description: string;
-  souraNb: number;
-  arabName: string;
-  souraName: string;
-  tabletWords?: [WordsCommentType];
-  ayahs: [AyahTabletType][];
-  createdAt?: string;
-  updatedAt?: string;
-};
+
 export type GuestTabletInput = {
   title: string;
   souraNb: number;

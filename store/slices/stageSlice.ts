@@ -1,6 +1,6 @@
 
 // third-party
-import { Ayah, EVAL_STATE, GiftType, GridJsoned, GridMenu, PRODUCT_STATUS_ENUM, SprintPrismaType, StagePrismaType, StageStateProps } from '@/api/graphql/stage/stage.types';
+import { Ayah, EVAL_STATE, GiftType, GridJsoned, GridMenu, GridTypeData, PRODUCT_STATUS_ENUM, SprintPrismaType, StagePrismaType, StageStateProps } from '@/api/graphql/stage/stage.types';
 import { createSlice, current, PayloadAction } from '@reduxjs/toolkit';
 import { GRIDS_NAME, GRIDS_TLD } from '../constants/constants';
 const initialState: StageStateProps = {
@@ -434,7 +434,7 @@ const stageSlice = createSlice({
       action: PayloadAction<{ nb: number }>) {
       state.correctsNbContext = action.payload.nb
     },
-    setSpaceGrids(state: StageStateProps, action: PayloadAction<{ grids: GridJsoned[] }>) {
+    setSpaceGrids(state: StageStateProps, action: PayloadAction<{ grids: GridTypeData[] }>) {
       console.log({ spaceGrids: action.payload.grids });
       state.spaceGridsSelected = action.payload.grids
     },

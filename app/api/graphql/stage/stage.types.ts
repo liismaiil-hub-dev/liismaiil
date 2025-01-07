@@ -1,5 +1,6 @@
 import { GRIDS_NAME } from '@/store/constants/constants';
 import { LIISMAIIL_STATUS_ENUM } from './../profile/profile.types';
+import { GridTypeData } from '../tablet/tablet.types';
 export type ImageType = {
   public_id: string;
   url: string;
@@ -21,7 +22,18 @@ export enum PRODUCT_STATUS_NAME_ENUM {
   VRAC = 'Vrac',
   DISC = 'Discount'
 }
-
+export type GridTypeData = {
+  id?: string;
+  author: string;
+  description: string;
+  grid: number;
+  group: number;
+  title: string;
+  souraNb: number;
+  arabName: string;
+  souraName: string;
+  ayahs: [string];
+ };
 export type GiftType = {
     title: string;
     titleSlug: string;
@@ -36,8 +48,8 @@ export type GiftType = {
     quantity?: number;
   } 
 export type StageStateProps = {
-  spaceGridsSelected: GridJsoned[],
-  gridSelected: GridJsoned,
+  spaceGridsSelected: GridTypeData[],
+  gridSelected: GridTypeData,
   stageSelected: StagePrismaType,
   isDraggedContext: boolean,
   isDroppedContext: boolean,
@@ -158,16 +170,6 @@ export type GridBrut = {
   grid: number;
   group: [number];
 };
-export type GridJsoned = {
-  id: number;
-  arabName: string;
-  title: string;
-  souraNb: number;
-  souraName: string;
-  ayahs: [string];
-  grid: number;
-  group: number;
-};
 
 export type GridAyahsJson = {
   id: number;
@@ -270,6 +272,7 @@ export type AyahTabletType = {
 };
 export type Ayah = {
   numberInSurah: number;
+  number?: number;
   id?: number;
   juz: number;
   order: number;

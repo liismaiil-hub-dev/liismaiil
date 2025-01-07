@@ -39,11 +39,9 @@ const OpenBoard = ( ) => {
   useEffect(() => {
     if (typeof stageGridSelected !== 'undefined' && stageGridSelected.ayahs != '' && typeof stageGridSelected.ayahs !== 'undefined') {
       console.log({ stageGridSelected });
-
       const _shuffeleledFirst = JSON.parse(stageGridSelected.ayahs).map((ordG: Ayah, index: number) => ({ ...ordG, index }));
       console.log({ _shuffeleledFirst });
-
-      const _orderedAy = [..._.sortBy(_shuffeleledFirst, ['order'])].map((ordG: Ayah, index) => ({ ...ordG, index }))
+    const _orderedAy = [..._.sortBy(_shuffeleledFirst, ['order'])].map((ordG: Ayah, index) => ({ ...ordG, index }))
       console.log({ _orderedAy });
       setGridIndex(stageGridSelected.stageId.split('-')[stageGridSelected.stageId.split('-').length - 1 ])
       dispatch(setStageOrderedAyahsContext({ ayahs: _orderedAy }))
@@ -59,6 +57,7 @@ const OpenBoard = ( ) => {
 
       dispatch(setStageShuffeledAyahsContext({ ayahs: shuffeledAy }))
   }
+  /*  
   function firstHandler() {
       dispatch(setFirstStateContext({first: true}))
       dispatch(setErrorNbContext({errorNb:0}))
@@ -67,7 +66,6 @@ const OpenBoard = ( ) => {
       dispatch(setStageShuffeledFirstAyahsContext({ ayahs: stageShuffeledFirstAyahsContext }))
 
   }
- 
   useEffect(() => {
       console.log({ stageReorderedAyahsContext });
 
@@ -77,13 +75,12 @@ const OpenBoard = ( ) => {
       console.log(stageShuffeledAyahsContext);
 
   }, [stageShuffeledAyahsContext]);
-
+ */
  
   function getMax() {
       if (stageGridSelected && JSON.parse(stageGridSelected.ayahs).length > 0 && JSON.parse(stageGridSelected.ayahs)[0].numberInSurah !== -1 ) {
           const _numbers =  JSON.parse(stageGridSelected.ayahs).map((e: Ayah)=> e.numberInSurah)
         return  _.max(_numbers) as string
-      
         }
   }
   function getMin() {
@@ -91,9 +88,22 @@ const OpenBoard = ( ) => {
   if (stageGridSelected && JSON.parse(stageGridSelected.ayahs).length > 0 && JSON.parse(stageGridSelected.ayahs)[0].numberInSurah !== -1 ) {
     const _numbers =  JSON.parse(stageGridSelected.ayahs).map((e: Ayah)=> e.numberInSurah)
   return  _.min(_numbers) as string
+    }
+  }
 
+function getMaxNb() {
+    if (stageGridSelected && JSON.parse(stageGridSelected.ayahs).length > 0 && JSON.parse(stageGridSelected.ayahs)[0].number !== -1 ) {
+        const _numbers =  JSON.parse(stageGridSelected.ayahs).map((e: Ayah)=> e.number)
+      return  _.max(_numbers) as string
+      }
+}
+function getMinNb() {
+//    console.log({ stageOrderedAyahsContext, stepIndexContext });
+if (stageGridSelected && JSON.parse(stageGridSelected.ayahs).length > 0 && JSON.parse(stageGridSelected.ayahs)[0].number !== -1 ) {
+  const _numbers =  JSON.parse(stageGridSelected.ayahs).map((e: Ayah)=> e.number)
+return  _.min(_numbers) as string
   }
-  }
+}
 
 
   const sprintSessionHandler = async () =>{
@@ -177,7 +187,9 @@ setSprintAble(true)
   return (
     <div className=" flex-col justify-start space-y-2 h-full py-2 items-center w-full ">
       <div className="flex-col   justify-start  items-stretch  gap-3 flex-wrap  ">
-      <div className='justify-center items-center text-center inline-flex '>StageId &nbsp; : {stageGridSelected.stageId}</div>
+      <div className='justify-center items-center text-center inline-flex '>StageId &nbsp; : {stageGridSelected.stageId} :From &nbsp; : {getMinNb()}To {getMaxNb()}
+        {`Sprint Gift for  ${getMaxNb()}-${getMinNb()} =  `}
+      </div>
       
       <div className="flex justify-center items-center mt-2 p-3  ">
                 <p className='text-center inline-flex '>Soura &nbsp;: [&nbsp;{stageGridSelected.arabName ? stageGridSelected.arabName : stageGridSelected.souraName}&nbsp;]&nbsp;</p>

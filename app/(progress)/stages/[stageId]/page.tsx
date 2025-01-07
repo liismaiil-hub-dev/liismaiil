@@ -1,4 +1,3 @@
-
 import { redirect } from "next/navigation";
 import StateOpenBoard from "@/components/stage/StateOpenBoard";
 import SprintOpenBoard from "@/components/stage/SprintOpenBoard";
@@ -36,7 +35,7 @@ export default async function GuestStagePage({params}: {
     */
    const _stage = await getStageForSprint(stageId)
    console.log({_stage});
-   
+   if(_stage && _stage.sucess){
     return (<div className="grid grid-cols-4">
       <div className="flex-col justify-center items-center col-span-1 h-full overflow-x-scroll">
       <EvalSprintOrderedFace  guest={false} />
@@ -48,7 +47,10 @@ export default async function GuestStagePage({params}: {
       <EvalSprintOrdered guest={true} />
       </div>
        </div>
-        )
+        )}else {
+    redirect('/stages')
+
+        }
     
 } catch (error) {
   redirect('/stages')

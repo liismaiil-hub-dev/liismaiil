@@ -18,14 +18,14 @@ function EvalOrdered() {
      const  stageId = `${gridSelected.souraNb}-${gridSelected.grid}-${gridsContext.length}-${gridIndexContext}`;
     const _localStageIds = localStages.map((stage : StagePrismaType)  => stage.stageId)
     return (<div className={cn((typeof blurContext !== 'undefined' && blurContext === true) && 'blur-lg', `flex  border-1 border-blue-400/20 rounded-md flex-col w-full justify-start p-2  space-y-2 items-stretch `)} >
-        <div className="flex-col justify-start items-center mb-2  ">
+        <div className="flex-col justify-start items-stretch  mb-2  h-36 overflow-x-scroll ">
         {_localStageIds.includes(stageId) ? <div className="flex justify-center items-center   ">
         Stage persisted : &nbsp;[ {stageId} ]&nbsp;
         </div>:<div className="flex justify-center items-center   ">
         First time   : &nbsp;[ {stageId} ]&nbsp; will be persisted
         </div>
         }
-        <div className="flex justify-start items-center  min-h-36 flex-wrap overflow-hidden  overflow-x-scroll">
+        <div className="flex justify-start items-center  flex-wrap ">
           { gridsStaged && gridsStaged.length > 0 && gridsStaged[0]!= '' && gridsStaged.map((stage)  => <div key={stage} className="flex justify-center items-center  ">
           &nbsp;{`[ ${stage}]`}&nbsp;
             </div>)}
