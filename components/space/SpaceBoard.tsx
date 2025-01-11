@@ -1,5 +1,5 @@
 'use client'
-import { Ayah, GuestPrismaType } from '@/app/api/graphql/stage/stage.types';
+import { Ayah, GridTypeData, GuestPrismaType } from '@/app/api/graphql/stage/stage.types';
 import EvalOrderedComp from "@/components/space/EvalOrdered";
 import EvalSuits from "@/components/space/EvalSuits";
 import { stageActions } from "@/store/slices/stageSlice";
@@ -11,47 +11,50 @@ import EvalClickBoardComp from "./EvalClickBoard";
 import EvalDragOrderBoardComp from "./EvalDragOrderBoard";
 import RadioButtonEvalState from "./RadioButtonEvalState";
 import SpaceButton from './SpaceButton';
+import { getGridsByNb } from '@/actions/space';
+import { toast } from 'react-toastify';
 
-
-// REPERE
-//EVAL
-
-/**
- * Board PRINCIPAL Component
- */
 export enum EVAL_STATE {
   EVAL = 'EVAL',
   ORDER = 'ORDER',
   CLICK = 'CLICK',
 }
+/**
+ * Space board PRINCIPAL Component
+ */
+
 const SpaceBoard = () => {
   const dispatch = useDispatch()
 
-  const { gridsContext, gridSelected, evalIndex, evalContext, hideNbContext,blurContext, 
+  const { gridsContext, gridSelected, evalIndex, evalContext, hideNbContext,blurContext, spaceGridsSelected,spaceStageSelected,
     stagedContext, validContext, gridIndexContext, firstGridContext} = useSelector((state: RootStateType) => state.stage)
   const { guestPrisma } = useSelector((state: RootStateType) => state.guestPrisma)
 
-  const { setShuffeledFirstAyahsContext, setOrderedAyahsContext, setErrorNbContext, 
-   setBlurContext, setStagedContext, setGridsContext, setHideNbContext, setGridIndexContext, setFirstGridContext, setGridsStaged } = stageActions
+  const { setShuffeledFirstAyahsContext, setOrderedAyahsContext, setErrorNbContext, setSpaceStageAyahsContext ,
+   setBlurContext, setStagedContext, setGridsContext, setHideNbContext, setGridIndexContext, setFirstGridContext, setGridsStaged } 
+   = stageActions
 
 
   useEffect(() => {
-    if (typeof gridSelected !== 'undefined' && typeof gridSelected.ayahs !== 'undefined' && gridSelected.ayahs && gridSelected?.ayahs[0] != '' && gridSelected?.ayahs.length > 0) {
-      console.log({ grdSelected: gridSelected?.ayahs[0] });
+    if (typeof spaceStageSelected !== 'undefined' && typeof spaceStageSelected.ayahs !== 'undefined' && 
+      spaceStageSelected.ayahs  != '' ) {
+      console.log({ grdSelected: spaceStageSelected.stageId });
 
 //      const _grids: [[Ayah]] = gridSelected?.ayahs?.map((ay: string) => JSON.parse(ay) as [Ayah])
       // dispatch(setGridsContext({ grids: _grids }))
-      dispatch(setGridIndexContext({ index: 0 })) 
+      dispatch(setGridIndexContext({ index: spaceStageSelected.stageId?.split('-')[3] as unknown as number })) 
       dispatch(setErrorNbContext({errorNb:0  }))
 
-      dispatch(setFirstGridContext({first:true}))
+     // dispatch(setFirstGridContext({first:true}))
       dispatch(setGridsStaged({stageIds:['']}))
      // console.log({ currentGuest, guestPrisma });
     }
   }, []);
-
+/* 
   useEffect(() => {
     if (typeof gridSelected !== 'undefined' && gridSelected.ayahs[0] != '' && typeof gridSelected.ayahs !== 'undefined') {
+      console.log({ grdSelected: gridSelected?.ayahs[0] });
+     
       const _grids:Ayah[][]|[[Ayah]] = gridSelected.ayahs?.map((ay: string) => JSON.parse(ay) as Ayah[])
       dispatch(setGridsContext({ grids: _grids }))
       dispatch(setGridIndexContext({ index: 0 }))
@@ -63,9 +66,9 @@ const SpaceBoard = () => {
     
     if (typeof gridSelected !== 'undefined' && typeof gridSelected.ayahs !== 'undefined' && gridSelected.ayahs[0] != '' && 
       gridsContext.length > gridIndexContext) {
-      const shuffeleledFirst = gridsContext[gridIndexContext].map((ordG: Ayah, index: number) => ({ ...ordG, index: gridIndexContext ? ordG.order + gridIndexContext : ordG.order }));
+      const shuffeleledFirst = gridsContext[gridIndexContext].map((ordG: Ayah, index: number) => ({ ...ordG, index: gridIndexContext ? ordG.number! + gridIndexContext : ordG.number! }));
 
-      const orderedAy = [..._.sortBy(gridsContext[gridIndexContext], ['numberInSurah'])].map((ordG: Ayah, index) => ({ ...ordG, index: gridIndexContext ? ordG.order + gridIndexContext : ordG.order }))
+      const orderedAy = [..._.sortBy(gridsContext[gridIndexContext], ['numberInSurah'])].map((ordG: Ayah, index) => ({ ...ordG, index: gridIndexContext ? ordG.number! + gridIndexContext : ordG.number! }))
       dispatch(setShuffeledFirstAyahsContext({ ayahs: shuffeleledFirst }))
 
       dispatch(setOrderedAyahsContext({ ayahs: orderedAy }))
@@ -73,9 +76,9 @@ const SpaceBoard = () => {
       dispatch(setFirstGridContext({first:true}))
 
     } else {
-      const shuffeleledFirst = gridsContext[0].map((ordG: Ayah, index: number) => ({ ...ordG, index: gridIndexContext ? ordG.order + gridIndexContext : ordG.order }));
+      const shuffeleledFirst = gridsContext[0].map((ordG: Ayah) => ({ ...ordG, index: gridIndexContext ? ordG.number! + gridIndexContext : ordG.number }));
 
-      const orderedAy = [..._.sortBy(gridsContext[gridIndexContext ?? 0], ['numberInSurah'])].map((ordG: Ayah, index) => ({ ...ordG, index: gridIndexContext ? ordG.order + gridIndexContext : ordG.order }))
+      const orderedAy = [..._.sortBy(gridsContext[gridIndexContext ?? 0], ['numberInSurah'])].map((ordG: Ayah) => ({ ...ordG, index: gridIndexContext ? ordG.number! + gridIndexContext : ordG.number}))
       dispatch(setGridIndexContext({ index: 0 }))
 
       dispatch(setShuffeledFirstAyahsContext({ ayahs: shuffeleledFirst }))
@@ -90,43 +93,65 @@ const SpaceBoard = () => {
     if (typeof gridSelected !== 'undefined' && gridSelected?.ayahs[0] != '' && typeof gridSelected.ayahs !== 'undefined') {
       const _grids = gridSelected.ayahs?.map((ay: string) => JSON.parse(ay))
 
-      const shuffeleledFirst = gridsContext[gridIndexContext ?? 0]?.map((ordG: Ayah, index: number) => ({ ...ordG, index: gridIndexContext ? ordG.order + gridIndexContext : ordG.order }));
+      const shuffeleledFirst = gridsContext[gridIndexContext ?? 0]?.map((ordG: Ayah) => ({ ...ordG, index: gridIndexContext ? ordG.number! + gridIndexContext : ordG.number }));
 
-      const orderedAy = [..._.sortBy(gridsContext[gridIndexContext ?? 0], ['numberInSurah'])].map((ordG: Ayah, index) => ({ ...ordG, index: gridIndexContext ? ordG.order + gridIndexContext : ordG.order }))
+      const orderedAy = [..._.sortBy(gridsContext[gridIndexContext ?? 0], ['numberInSurah'])].map((ordG: Ayah) => ({ ...ordG, index: gridIndexContext ? ordG.number! + gridIndexContext : ordG.number   }))
 
       dispatch(setShuffeledFirstAyahsContext({ ayahs: shuffeleledFirst }))
 
       dispatch(setOrderedAyahsContext({ ayahs: orderedAy }))
       dispatch(setFirstGridContext({first:true}))
     }
-  }, [gridsContext]);
-/* 
-  useEffect(() => {
-    //    console.log({ gridIndexContext, gridsContext });
-    if (typeof gridSelected !== 'undefined' && gridIndexContext >= 0 && (gridsContext[gridIndexContext]?.length <= gridSelected.grid * gridSelected.grid)) {
-      const firstAy = [...gridsContext[gridIndexContext].map((ay: Ayah, index: number) => ({ ...ay, index: gridIndexContext != 0 ? ay.order + index : gridIndexContext * ay.order + index }))]
-      const orderedAy = [..._.sortBy(gridsContext[gridIndexContext], ['numberInSurah'])].map((ordG: Ayah, index) => ({ ...ordG, index: index + gridIndexContext }))
-      console.log({ orderedAy });
-      dispatch(setOrderedAyahsContext({ ayahs: orderedAy }))
-      dispatch(setShuffeledAyahsContext({ ayahs: firstAy }))
+  }, [gridsContext]); */
+/* const selectGridHandler = async (arg: number) => {
+    try {
+      const gridsByNb = await getGridsByNb(arg)
+     
+      if(typeof gridsByNb !== 'undefined' &&  gridsByNb.success){
+      console.log({ grids: gridsByNb.grids });
+       dispatch(setSpaceGrids({ grids: gridsByNb.grids }))
+      }else {
+      toast.warning('can not reach the grid server, please check your internet connexion')
     }
-    dispatch(setFirstGridContext({first:false}))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gridIndexContext]);
- */
+    } catch (error) {
+      toast.error(`${error}`)
+    }
+} */
+  async function nextSouraHandler() {
+    if(gridSelected.souraNb !== -1 &&  gridSelected.souraNb < 114 ){
+      console.log({souraNb:gridSelected.souraNb});
 
-  function nextSouraHandler() {
-    //  console.log({ gridIndexContext });
-    // console.log({ ayahs: gridsContext[gridIndexContext] });
-    if (typeof evalIndex === 'undefined') {
-      dispatch(setGridIndexContext({ index: 0 }))
-    } else if (gridIndexContext < gridsContext.length - 1) {
-      dispatch(setGridIndexContext({ index: gridIndexContext + 1 }))
+      await selectGridHandler(gridSelected.souraNb + 1)
+   } else if(typeof spaceGridsSelected !== 'undefined' && spaceGridsSelected && spaceGridsSelected[0].souraNb !== -1 
+     &&  spaceGridsSelected[0].souraNb   < 114 ){
+      console.log({ fromSpaceGrid: spaceGridsSelected[0].souraNb});
+       await selectGridHandler(spaceGridsSelected[0].souraNb  + 1)
+      }  else {
+      await selectGridHandler(1)
+      } 
+   // await selectGridHandler(gridSelected.souraNb + 1)
+    
+  }
+  async function prevSouraHandler() {
+    console.log({souraNb:gridSelected.souraNb, fromSpaceGrid: spaceGridsSelected[0].souraNb});
+   if(gridSelected.souraNb !== -1 &&  gridSelected.souraNb >0 ){
+    console.log({souraNb:gridSelected.souraNb});
+     await selectGridHandler(gridSelected.souraNb - 1)
+  } else if(typeof spaceGridsSelected !== 'undefined' && spaceGridsSelected && spaceGridsSelected[0].souraNb !== -1 
+    &&  spaceGridsSelected[0].souraNb >0 ){
+      console.log({ fromSpaceGrid: spaceGridsSelected[0].souraNb});
+      await selectGridHandler(spaceGridsSelected[0].souraNb - 1)
+      } else {
+          await selectGridHandler(1)
     }
   }
-  function prevSouraHandler() {
-    dispatch(setGridIndexContext({ index: gridIndexContext > 1 ? gridIndexContext - 1 : 0 }))
-  }
+  useEffect(() => {
+    if(typeof spaceStageSelected != 'undefined' ){
+   console.log({spaceStageSelected});
+   
+      dispatch(setSpaceStageAyahsContext({ayahs: JSON.parse(spaceStageSelected?.ayahs)}))
+ } }, [spaceStageSelected]);
+  
 
   function hideNbHandler() {
     dispatch(setHideNbContext({ hide: !hideNbContext }))
@@ -193,3 +218,7 @@ const SpaceBoard = () => {
 }
 
 export default SpaceBoard
+
+function setSpaceGrids(arg0: { grids: GridTypeData[]; }): any {
+  throw new Error('Function not implemented.');
+}

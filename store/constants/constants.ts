@@ -61,8 +61,17 @@ export const PRODUCT_STATUS = {
   LIIS: 'LIIS',
   VRAC: 'VRAC',
 }
+
 export const SECTIONS_SOURAS = {
-  mofasal: [
+  "MOFASAL": [
+     {
+      souraName: "Al-Hujuraat",
+      souraNb: 49
+    },
+    {
+      souraName: "Qaaf",
+      souraNb: 50
+    },
     {
       souraName: "Adh-Dhaariyat",
       souraNb: 51
@@ -320,7 +329,7 @@ export const SECTIONS_SOURAS = {
       souraNb: 114
     }
   ],
-  mathani: [
+  "MATHANI": [
     {
       souraName: "Maryam",
       souraNb: 19
@@ -440,17 +449,9 @@ export const SECTIONS_SOURAS = {
     {
       souraName: "Al-Fath",
       souraNb: 48
-    },
-    {
-      souraName: "Al-Hujuraat",
-      souraNb: 49
-    },
-    {
-      souraName: "Qaaf",
-      souraNb: 50
     }
   ],
-  miin: [
+  "MIIN": [
     {
       souraName: "Al-Anfaal",
       souraNb: 8
@@ -496,7 +497,7 @@ export const SECTIONS_SOURAS = {
       souraNb: 18
     }
   ],
-  tiwal: [
+  TIWAL: [
     {
       souraName: "Al-Faatiha",
       souraNb: 1

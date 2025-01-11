@@ -139,6 +139,31 @@ const initialState: StageStateProps = {
     ayahs: '',
     guests: []
   }],
+  spaceStages: [{
+    id: -1,
+    stageId: '',
+    createdAt: '',
+    souraName: '',
+    souraNb: -1,
+    grid: -1,
+    startOn: '',
+    createdById: '',
+    ayahs: '',
+    guests: []
+  }],
+  spaceStageSelected: {
+    id: -1,
+    stageId: '',
+    createdAt: '',
+    souraName: '',
+    souraNb: -1,
+    grid: -1,
+    startOn: '',
+    createdById: '',
+    ayahs: '',
+    guests: []
+  },
+  //spa
   //space drag & drop
   draggedIndex: 0,
   errorNbContext: 0,
@@ -174,6 +199,15 @@ const initialState: StageStateProps = {
   validContext: false,
   stageValidContext: false,
   menuSouraNb: [{ souraName: '', souraNb: -1 }],
+  spaceStageAyahsContext:[
+    {
+      id: -1,
+      juz: 0,
+      order: 0,
+      text: '',
+      numberInSurah: 0
+    }
+  ],
   gridsContext: [[
     {
       id: -1,
@@ -258,8 +292,15 @@ const stageSlice = createSlice({
     },
     setGridSelected(state: StageStateProps,
       action: PayloadAction<{ grid: GridJsoned }>) {
-      //      console.log({ gridSelected: action.payload.grid });
+          console.log({ gridSelected: action.payload.grid });
       state.gridSelected = action.payload.grid;
+      state.reorderedAyahsContext = [-1];
+      state.firstGridContext = true;
+    },
+    setSpaceStageSelected(state: StageStateProps,
+      action: PayloadAction<{ grid: StagePrismaType }>) {
+          console.log({ gridSelected: action.payload.grid });
+      state.spaceStageSelected = action.payload.grid;
       state.reorderedAyahsContext = [-1];
       state.firstGridContext = true;
     },
@@ -407,6 +448,11 @@ const stageSlice = createSlice({
       console.log({ gridsContext: action.payload.grids })
       state.gridsContext = action.payload.grids
     },
+    setSpaceStageAyahsContext(state: StageStateProps,
+      action: PayloadAction<{ ayahs: [Ayah] }>) {
+      //console.log({ gridsContext: action.payload.grids })
+      state.spaceStageAyahsContext = action.payload.ayahs
+    },
 
     setHideNbContext(state: StageStateProps,
       action: PayloadAction<{ hide: boolean }>) {
@@ -437,6 +483,10 @@ const stageSlice = createSlice({
     setSpaceGrids(state: StageStateProps, action: PayloadAction<{ grids: GridTypeData[] }>) {
       console.log({ spaceGrids: action.payload.grids });
       state.spaceGridsSelected = action.payload.grids
+    },
+    setSpaceSrages(state: StageStateProps, action: PayloadAction<{ grids: StagePrismaType[] }>) {
+      console.log({ spaceGrids: action.payload.grids });
+      state.spaceStages = action.payload.grids
     },
     setSpaceSprint(state: StageStateProps, action: PayloadAction<{ sprint: SprintPrismaType }>) {
       state.spaceSprint = action.payload.sprint

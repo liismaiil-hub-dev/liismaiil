@@ -4,7 +4,7 @@ import { GridTypeData } from '@/app/api/graphql/stage/stage.types';
 import _ from 'lodash';
 import { memoize } from "nextjs-better-unstable-cache";
 
-export const getGridsByNb =  memoize(async (souraNb: number) => {
+export const getGridsByNb = async (souraNb: number) => {
       const grids: GridTypeData[] = [];
       console.log({ souraNb });
         try {
@@ -32,11 +32,13 @@ export const getGridsByNb =  memoize(async (souraNb: number) => {
                 ayahs,
               });
             })
+            console.log({success : grids.length});
+            
             return { success: true, grids: grids as Array<GridTypeData> }
           } catch (error: unknown) {
             throw error;
           }
-        }, {
+        }/* , {
           duration:60,
           persist: true,
           additionalCacheKey: ['spaceGrids'],
@@ -45,5 +47,5 @@ export const getGridsByNb =  memoize(async (souraNb: number) => {
           log: ['datacache', 'verbose', 'dedupe'],
           logid: 'spaceGrids'
         })
-      
+       */
   

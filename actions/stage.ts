@@ -3,7 +3,7 @@ import prisma from '@/api/lib/prisma-db';
 import { memoize } from "nextjs-better-unstable-cache";
 
 import { revalidateTag } from 'next/cache';
-import { SpaceMenuType } from '@/app/api/graphql/stage/stage.types';
+import { SpaceMenuType, StagePrismaType } from '@/app/api/graphql/stage/stage.types';
 import { GridMenu } from '@/app/api/graphql/stage/stage.types';
 import { dbFirestore } from '@/app/api/graphql/fb-utils-admin';
 import _ from 'lodash';
@@ -277,3 +277,16 @@ export const getSpaceGrids = memoize(async () => {
   logid: 'spaceMenu'
 }
 )
+export const getLocalStagesByNb = async (souraNb: number) => {
+
+  try {
+    
+  const stages = await prisma.stage.findMany({
+    where: {souraNb: souraNb}})
+ console.log({souraNb, stages });
+  return {success: true,stages:  JSON.stringify(stages) };
+  } catch (err) {
+    console.log({ err });
+    return
+  }
+}

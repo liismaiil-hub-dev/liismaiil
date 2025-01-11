@@ -295,7 +295,7 @@ const [stageReady, setStageReady] = useState(false);
                     console.log({ayagFirst: ayag});
                     
                 if (typeof hideNbContext !== 'undefined' && !hideNbContext) {
-                    return <div onClick={() => { validAyahHandler(ayag?.numberInSurah!) }} key={`${ayag.order}_${ayag.juz}`} 
+                    return <div onClick={() => { validAyahHandler(ayag?.numberInSurah!) }} key={`${ayag.numberInSurah}_${ayag.juz}`} 
                     className={"flex p-2 bg-emerald-100/30 justify-between px-2 hover:text-natWarmheader\
         items-center space-x-2 hover:bg-sky-700 hover:text-2xl hover:cursor-pointer hover:scale-110 border-b-1 border-green-300/25  "}>
                         <div className='flex justify-center items-center'>{ayag?.numberInSurah!}</div>

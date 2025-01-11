@@ -12,7 +12,7 @@ export const metadata = {
 function Spacelayout({ children, souras, stage, grid }: {
     children: ReactNode, 
     souras: ReactNode,
-    stage: ReactNode, board: ReactNode, grid: ReactNode
+    stage: ReactNode,  grid: ReactNode
 }) {
 
     return (

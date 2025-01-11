@@ -1,7 +1,6 @@
 
-import { PROFILE_STATUS_ENUM } from "@/app/api/graphql/profile/profile.types";
 import SpaceBoardComponent from "@/components/space/SpaceBoard";
-import { getGuestFromCookies } from "@/actions/guest";
+
 export default async function SpacePage() {
   //let currentGuest = await getGuestFromCookies();
   //console.log({ currentGuest });

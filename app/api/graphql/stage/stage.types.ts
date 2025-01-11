@@ -1,6 +1,6 @@
 import { GRIDS_NAME } from '@/store/constants/constants';
 import { LIISMAIIL_STATUS_ENUM } from './../profile/profile.types';
-import { GridTypeData } from '../tablet/tablet.types';
+
 export type ImageType = {
   public_id: string;
   url: string;
@@ -34,6 +34,12 @@ export type GridTypeData = {
   souraName: string;
   ayahs: [string];
  };
+ export type SpaceMenuType = {
+  title: string;
+  souraNb: number;
+  arabName: string;
+  souraName: string;
+  };
 export type GiftType = {
     title: string;
     titleSlug: string;
@@ -49,7 +55,9 @@ export type GiftType = {
   } 
 export type StageStateProps = {
   spaceGridsSelected: GridTypeData[],
+  spaceStages: StagePrismaType[],
   gridSelected: GridTypeData,
+  spaceStageSelected: StagePrismaType,
   stageSelected: StagePrismaType,
   isDraggedContext: boolean,
   isDroppedContext: boolean,
@@ -96,6 +104,7 @@ export type StageStateProps = {
   validContext: boolean,
   menuSouraNb: GridMenu[],
   gridsContext: [[Ayah]],
+  spaceStageAyahsContext:[Ayah]
   // drag & drop
   draggedIndex: number,
   errorNbContext: number,
@@ -255,6 +264,7 @@ export type GuestPrismaType = {
   status: LIISMAIIL_STATUS_ENUM | string;
   country?: string;
   onLine?: boolean;
+  addedAt?: string;
   startDate?: string;
   endDate?: string;
   stages?: StagePrismaType[] | [string];

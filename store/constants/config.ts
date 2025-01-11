@@ -17,7 +17,7 @@ const config = {
     LIISMAIIL_ORG: process.env.LIISMAIIL_ORG,
     LIISMAIIL_GUEST: process.env.LIISMAIIL_GUEST,
     // local web box
-    APP_ENV: APP_ENV,
+    APP_ENV: process.env.APP_ENV,
 
     TELEGRAM_TOKEN: process.env.TELEGRAM_TOKEN,
     DB_USER: process.env.DB_USER,

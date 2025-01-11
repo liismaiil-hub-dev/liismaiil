@@ -1,15 +1,15 @@
 'use client'
 
 import { getGridsByNb } from "@/actions/space";
-import { STAGE_CATEGORY_ENUM } from "@/app/api/graphql/stage/stage.types";
-import { GET_GRIDS_BY_NB } from "@/graphql/stage/queries";
-import { GRIDS_TLD } from "@/store/constants/constants";
+import { STAGE_CATEGORY_ENUM, StagePrismaType } from "@/app/api/graphql/stage/stage.types";
 import { stageActions } from "@/store/slices/stageSlice";
 import { useLazyQuery } from "@apollo/client";
 import { Button, ScrollShadow } from "@nextui-org/react";
 import { Fragment, useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
+import { SECTIONS_SOURAS, GRIDS_TLD} from "@/store/constants/constants";
+import { getLocalStagesByNb } from "@/actions/stage";
 
 type GridMenu = {
   souraName: string;
@@ -17,26 +17,18 @@ type GridMenu = {
 }
 //             _____COMPONENT_____________
 
-const SpaceMenu = ({ grids }: { grids: GridMenu[] }) => {
+const SpaceMenu = () => {
   const dispatch = useDispatch()
   //const [GetGridsByNb, { data: dataGetGridsByNb, loading: loadingGetGridsByNb, error: errorGetGridsByNb }] = useLazyQuery(GET_GRIDS_BY_NB)
 ;
   const [selectedGrid, setSelectedGrid] = useState(0);
-console.log({grids});
+console.log({SECTIONS_SOURAS});
 
   const { setSpaceGrids } = stageActions
-  const newTiwal = useMemo(() => grids?.filter((gr: GridMenu) => {
-    return gr.souraNb <= 7
-  }), [grids]);
-  const newMiin = useMemo(() => grids?.filter((gr: GridMenu) => {
-    return gr.souraNb > 7 && gr.souraNb <= 18;
-  }), [grids])
-  const newMathani = useMemo(() => grids?.filter((gr: GridMenu) => {
-    return gr.souraNb > 18 && gr.souraNb <= 48;
-  }), [grids])
-  const newMofasal = useMemo(() => grids.filter((gr: GridMenu) => {
-    return gr.souraNb > 48;
-  }), [grids])
+  const newTiwal =  SECTIONS_SOURAS[GRIDS_TLD.TIWAL]
+    const newMiin = SECTIONS_SOURAS[GRIDS_TLD.MIIN]
+  const newMathani = SECTIONS_SOURAS[GRIDS_TLD.MATHANI]
+  const newMofasal = SECTIONS_SOURAS[GRIDS_TLD.MOFASAL]
   /* id: number;
   arabName: string;
   title: string;
@@ -59,32 +51,23 @@ console.log({grids});
   }, [dataGetGridsByNb, loadingGetGridsByNb, errorGetGridsByNb]);
    */
   const selectGridHandler = async (arg: number) => {
-    // console.log({ arg });
+    console.log({ arg });
     setSelectedGrid(arg)
     try {
-      const gridsByNb = await getGridsByNb(arg)
+      const gridsByNb = await getLocalStagesByNb(arg)
+      console.log({gridsByNb});
+      
       if(typeof gridsByNb !== 'undefined' &&  gridsByNb.success){
-      console.log({ grids: gridsByNb.grids });
-       dispatch(setSpaceGrids({ grids: gridsByNb.grids }))
+      console.log({ grids: gridsByNb.stages });
+       dispatch(setSpaceStages({ grids: JSON.parse(gridsByNb.stages) }))
       }else {
       toast.warning('can not reach the grid server, please check your internet connexion')
 
       }
     } catch (error) {
-      toast.error(`${error}`)
-      
+      //toast.warning(`${error}`)
     }
-
-    /*  GetGridsByNb({
-      variables: {
-        souraNb: arg,
-      }
-    }) */
-
-  }
-  const selectedKeyHandler = (arg: number) => {
-    setSelectedGrid(arg)
-  }
+}
   return (
     <section className="flex flex-col text-blue-800 justify-start space-y-1 gap-1 items-stretch w-full h-full">
 
@@ -170,3 +153,7 @@ console.log({grids});
 }
 
 export default SpaceMenu
+
+function setSpaceStages(arg0: { grids: StagePrismaType[]; }): any {
+  throw new Error("Function not implemented.");
+}
