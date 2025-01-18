@@ -83,6 +83,17 @@ function Navigation() {
                         </div>
                     </Link>
                 </div>
+                <div className={cn(isRoute('insight') && 'selected-navig-mobile', 'navig-mobile')}  >
+                    <Link prefetch={true} key={`insight`} href='/insight'>
+                        <div className={'navig-mobile-svg'}  >
+                            <SiCrunchyroll />
+
+                        </div>
+                        <div className={'nanvig-mobile-txt'}  >
+                                    Insight
+                        </div>
+              </Link>
+                              </div>
                 <div className={cn(isRoute('space') && 'selected-navig-mobile', 'navig-mobile')}  >
                     <Link prefetch={true} key={`space`} href='/space'>
                         <div className={'navig-mobile-svg'}  >
@@ -93,8 +104,8 @@ function Navigation() {
                         </div>
                     </Link>
                 </div>
-                <div className={cn(isRoute('stage') && 'selected-navig-mobile', 'navig-mobile')}  >
-                    <Link prefetch={true} key={`stage`} href='/stage'>
+                <div className={cn(isRoute('stages') && 'selected-navig-mobile', 'navig-mobile')}  >
+                    <Link prefetch={true} key={`stages`} href='/stage'>
                         <div className={'navig-mobile-svg'}  >
                             <SiProgress />
 
@@ -104,18 +115,7 @@ function Navigation() {
                         </div>
                     </Link>
                 </div>
-                {/* <div className={cn(isRoute('sprints') && 'selected-navig-mobile', 'navig-mobile')}  >
-                    <Link prefetch={true} key={`sprints`} href='/sprints'>
-                        <div className={'navig-mobile-svg'}  >
-                            <SiCrunchyroll />
-
-                        </div>
-                        <div className={'nanvig-mobile-txt'}  >
-                            Sprints
-                        </div>
-                    </Link>
-                </div> */}
-                <div className={cn(isRoute('hosts') && 'selected-navig-mobile', 'navig-mobile')}  >
+                 <div className={cn(isRoute('hosts') && 'selected-navig-mobile', 'navig-mobile')}  >
                     <Link prefetch={true} key={`hosts`} href='/hosts'>
                         <div className={'navig-mobile-svg'}  >
                             < SiMastercomfig />
@@ -171,6 +171,10 @@ function Navigation() {
                         Home
                     </Link>
                 </div>
+                <div className={cn(isRoute('insight') && ' nav-selected', 'CENTER nav-element')}  >
+
+                    <Link prefetch={true} key={`Insight`} href='/insight'> Insight </Link>
+                </div>
                 <div className={cn(isRoute('space') && ' nav-selected', 'CENTER nav-element')}  >
                     <Link prefetch={true} key={`space`} href='/space'> Space </Link>
                 </div>
@@ -178,6 +182,7 @@ function Navigation() {
 
                     <Link prefetch={true} key={`stages`} href='/stages'> Stages </Link>
                 </div>
+                
                 <div className={cn(isRoute('hosts') && ' nav-selected', 'CENTER nav-element')}  >
                     <Link prefetch={true} key={`hosts`} href='/hosts'>Hosts </Link>
                 </div>

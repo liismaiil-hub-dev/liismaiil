@@ -243,7 +243,7 @@ export const getGuestFromCookies = memoize(async (): Promise<GuestType | undefin
 
       console.log({message: e.message});
       console.log({cause: e});
-      redirect(`/signin`)
+      //redirect(`/signin`)
     } else  {
       redirect(`/space`)
 
@@ -253,39 +253,31 @@ export const getGuestFromCookies = memoize(async (): Promise<GuestType | undefin
   }
 }, {
   persist: true,
-  revalidateTags: () => ['stages', 'sprints'],
+  revalidateTags: () => ['stages', 'hosts'],
   log: ['datacache', 'verbose', 'dedupe'],
   logid: 'getGuestFromCookies'
 })
 
 
-export const getGuestFromTokenPrisma = async (token: number) => {
+export const getPrismaGuests = async (min=0, max=100) => {
   try {
-    console.log({ tokenGetGuestFromToken: token });
-    const _guest = await prisma.guest.findFirst({ where: { tokenId: token } })
-    try {
-      if (_guest) {
+    //console.log({ tokenGetGuestFromToken: token });
+    const _guests = await prisma.guest.findMany({
+      skip: min,
+      take:max
+       })
+    
+      if (_guests) {
         // const randomFlag = _.random(FLAG_FILES.length)
 
-        const { tokenId, collaboratorId, host, flag } = _guest
-        if (typeof tokenId === 'undefined' || tokenId === 0) {
-          return null
-        } else {
-          return ({ collaboratorId, flag, host, tokenId, status: LIISMAIIL_STATUS_ENUM.GUEST });
+          return ({success: true, guests:JSON.stringify(_guests) });
+        }else {
+          return {success: false, guests:JSON.stringify([''])}
         }
-      } else {
-        return null
+    } catch (error) {
+      return {success: false, guests:JSON.stringify(error)}
       }
 
-    } catch (error) {
-      console.log({ error });
-      return null
-    }
-
-  } catch (error) {
-    console.log({ error });
-    return null
-  }
 }
 
 export const logoutGuest = async (tokenId: number) => {

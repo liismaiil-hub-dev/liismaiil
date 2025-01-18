@@ -1,92 +1,56 @@
 
 'use client'
 
-import { StagePrismaType } from "@/app/api/graphql/stage/stage.types";
 import { GRIDS_NAME, GRIDS_TLD } from "@/store/constants/constants";
 import { stageActions } from "@/store/slices/stageSlice";
 import { RootStateType } from "@/store/store";
 import {  AccordionItem, Button, cn } from "@nextui-org/react";
-import { useEffect, useMemo, useState } from 'react';
+import { useTransform } from "framer-motion";
+import { startTransition, useEffect, useMemo, useState, useTransition } from 'react';
 import { useDispatch, useSelector } from "react-redux";
+import {StagesSprintType} from "@/api/graphql/stage/stage.types";
 
 
-
-const StageStepsIn = ({ stageCat ,grids, handleSelectedStage }: {
-  grids: StagePrismaType[],stageCat: string,
-  handleSelectedStage: (arg: StagePrismaType) => void
-}) => {
-  console.log({ gridsTiWal: grids });
-  return (
-    <section id={`${stageCat}`} className="flex p-3 justify-start items-start gap-2 overflow-scroll flex-wrap ">
-      {grids?.map((grd, index) => {
-
-        return <Button 
-        className="flex  justify-center   items-center p-2" onClick={() => { 
-          console.log({grd});
-           handleSelectedStage(grd) }}
-         key={`${grd.stageId}-${index}`} aria-label={`${grd.souraName}`} title={`${grd.souraName}`}>
-          <div className="flex justify-center w-full  text-center">
-            {`  ${grd.souraName} : {${grd.stageId}}  [${grd.group}]`}
-
-          </div>
-        </Button>
-      }
-      )}
-    </section>
-
-  )
-}
 //             _____COMPONENT_____________
-type StagesStagePrismaType = {
-  stage: StagePrismaType
-}
-const StageSteps = ({stages}:{stages: StagePrismaType[]}) => {
+
+const StageSteps = ({stages}:{stages: StagesSprintType[]}) => {
 
   const dispatch = useDispatch()
  //console.log({stages});
   
-
-  const { setStageGridSelected, setStageGridsContext, setCatStages, setCategoryContext } = stageActions
-  const { stageGridsContext, catStages, categoryContext, showStepsContext} = useSelector((state: RootStateType) => state.stage)
+const [isPending, startTransition] = useTransition()
+  const { setStagesSprintsContext, setStageGridSelected, setCatStages, setCategoryContext } = stageActions
+  const { stagesSprintsContext, catStages, categoryContext, showStepsContext} = useSelector((state: RootStateType) => state.stage)
 
   // creating chunks 
-  const newTiwal: StagePrismaType[] = useMemo(() => stageGridsContext?.filter((gr: StagePrismaType) => {
+  const newTiwal: StagesSprintType[] = useMemo(() => stagesSprintsContext?.filter((gr: StagesSprintType) => {
     return gr.souraNb <= 7
-  }), [stageGridsContext])
-  const newMiin = useMemo(() => stageGridsContext?.filter((gr: StagePrismaType) => {
+  }), [stagesSprintsContext])
+  const newMiin = useMemo(() => stagesSprintsContext?.filter((gr: StagesSprintType) => {
     return gr.souraNb! > 7 && gr.souraNb <= 18;
-  }), [stageGridsContext])
+  }), [stagesSprintsContext])
 
 
-  const newMathani = useMemo(() => stageGridsContext?.filter((gr: StagePrismaType) => {
+  const newMathani = useMemo(() => stagesSprintsContext?.filter((gr: StagesSprintType) => {
     return gr.souraNb > 18 && gr.souraNb <= 48;
-  }), [stageGridsContext])
+  }), [stagesSprintsContext])
 
-  const newMofasal = useMemo(() => stageGridsContext?.filter((gr: StagePrismaType) => {
+  const newMofasal = useMemo(() => stagesSprintsContext?.filter((gr: StagesSprintType) => {
     return gr.souraNb > 48;
-  }), [stageGridsContext])
+  }), [stagesSprintsContext])
 
 
-  const selectStageHandler = (st: StagePrismaType) => {
-    console.log({ st });
 
-    try {
-      dispatch(setStageGridSelected({ stage: st }))
-    } catch (error) {
-      console.log(error);
-    }
-  }
   useEffect(() => {
-    dispatch(setStageGridsContext({stages:stages}))
+    startTransition(()  =>{
+
+      dispatch(setStagesSprintsContext({stages:stages}))
+    }
+    )
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stages]);
   
-  useEffect(() => {
-    console.log({ stageGridsContext });
 
-  }, [stageGridsContext]);
- 
-  
 const categoryHandler = (cat:GRIDS_NAME ) => {
  console.log({cat});
    dispatch(setCategoryContext({cat:cat}))

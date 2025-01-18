@@ -45,14 +45,31 @@ export default function EvalDragOrderBoard() {
 
     const dispatch = useDispatch()
 
-    const { firstStateContext,errorNbContext,isDraggedContext, isDroppedContext, gridSelected, orderedAyahsContext, shuffeledAyahsContext, gridsContext, validContext, hideNbContext, shuffeledFirstAyahsContext, gridIndexContext, evalIndex } = useSelector((state: RootStateType) => state.stage)
+    const { spaceStageSelected, firstStateContext,errorNbContext,isDraggedContext, isDroppedContext, gridSelected, orderedAyahsContext, shuffeledAyahsContext, gridsContext, validContext, hideNbContext, shuffeledFirstAyahsContext, gridIndexContext, evalIndex } = useSelector((state: RootStateType) => state.stage)
     const { guestPrisma } = useSelector((state: RootStateType) => state.guestPrisma)
     const { setDraggedIndex, setOrderedAyahsContext, setErrorNbContext, 
         setShuffeledAyahsContext, setEvalIndex, setValidContext,  setShuffeledFirstAyahsContext, setFirstStateContext, setGridIndexContext, setHideNbContext } = stageActions
 
     const [firstState, setFirstState] = useState(() => true);
     const [reorderedAyahs, setReorderedAyahs] = useState([-1]);
- 
+    useEffect(() => {
+        if(typeof spaceStageSelected != 'undefined' ){
+       console.log({spaceStageSelected, ayahs:JSON.parse(spaceStageSelected.ayahs)});
+       JSON.parse(spaceStageSelected.ayahs).forEach((ay: Ayah) => {
+        console.log({ay});
+        
+       });
+          dispatch(setShuffeledAyahsContext({ayahs: spaceStageSelected?.ayahs}))
+     
+             const orderedAy = _.sortBy(JSON.parse(spaceStageSelected?.ayahs), ['numberInSurah']) 
+             console.log({orderedAy, });
+             console.log({ orderedAyahsContext, shuffeledAyahsContext});
+             
+         dispatch(setOrderedAyahsContext({ ayahs: orderedAy }))
+             
+        } }, [spaceStageSelected]);
+      
+    
     function shuffelHandler() {
         dispatch(setShuffeledAyahsContext({ ayahs: [..._.shuffle(orderedAyahsContext)] }))
     }
@@ -205,12 +222,9 @@ useEffect(() => {
             <div className="flex flex-row justify-between items-stretch gap-3  w-full  border-blue-600 border-3 
                  h-full " >
                 <div className="flex   flex-col w-full items-center justify-start  gap-2">
-                    {(firstStateContext && shuffeledFirstAyahsContext) ?  shuffeledFirstAyahsContext.map((ayd: Ayah, index: number) => {
-//                        console.log({ayId:ayd.order, nbSurah: ayd.numberInSurah, index});
-                        
-                        return (<Draggable  key={`${ayd.order}-${index}`} id={ayd?.numberInSurah!} gridAyah={ayd} hideNb={hideNbContext} />)
-                    }): shuffeledAyahsContext && shuffeledAyahsContext.map((ayd: Ayah, index: number) => {
-//                        console.log({ayId:ayd.order, nbSurah: ayd.numberInSurah, index});
+                    { typeof shuffeledAyahsContext !== 'undefined' && 
+                    shuffeledAyahsContext.length > 0 && shuffeledAyahsContext.map && shuffeledAyahsContext?.map((ayd: Ayah, index: number) => {
+                      console.log({ayId:ayd, nbSurah: ayd.numberInSurah, index});
                         
                         return (<Draggable  key={`${ayd.order}-${index}`} id={ayd?.numberInSurah!} gridAyah={ayd} hideNb={hideNbContext} />)
                     })}

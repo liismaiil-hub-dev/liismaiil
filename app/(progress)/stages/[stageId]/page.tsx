@@ -1,8 +1,9 @@
 import { redirect } from "next/navigation";
 import StateOpenBoard from "@/components/stage/StateOpenBoard";
 import SprintOpenBoard from "@/components/stage/SprintOpenBoard";
-import { StagePrismaType } from "@/app/api/graphql/stage/stage.types";
 import { getAllStageIdsForSprints, getStageForSprint } from "@/actions/stage";
+import {getSprintGuests} from "@/actions/sprint";
+
 import EvalSprintOrdered from "@/components/stage/EvalSprintOrdered";
 import EvalSprintOrderedFace from "@/components/stage/EvalSprintOrderedFace";
 /* 
@@ -41,7 +42,7 @@ export default async function GuestStagePage({params}: {
       <EvalSprintOrderedFace  guest={false} />
       </div>
       <div className="flex justify-center items-center col-span-2 px-3 h-full  overflow-x-scroll"> 
-      <SprintOpenBoard stage={_stage.stage} />
+      <SprintOpenBoard stage={_stage.stage} guests={_sprintGuests ?? []} />
        </div>
        <div className="flex-col justify-center items-center col-span-1 h-full overflow-x-scroll">
       <EvalSprintOrdered guest={true} />

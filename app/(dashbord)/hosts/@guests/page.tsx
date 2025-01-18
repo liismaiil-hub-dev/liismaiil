@@ -1,6 +1,6 @@
 
 import { SprintPrismaType } from "@/app/api/graphql/stage/stage.types";
-import SprintComponent from "@/components/space/Staged";
+import SprintComponent from "@/components/space/Sprints";
 import { getOwnSprints, } from "@/app/api/lib/sprint";
 import { getOwnStages } from "@/actions/host";
 import { Button } from '@nextui-org/react';

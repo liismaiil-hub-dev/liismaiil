@@ -12,6 +12,7 @@ function GridCard() {
 
     const { setGridSelected, setSpaceStageSelected  } = stageActions
     
+    
     useEffect(() => {
         console.log({spaceStages});
         console.log({spaceStages, spaceGridsSelected, gridSelected });
@@ -25,15 +26,16 @@ function GridCard() {
         dispatch(setSpaceStageSelected({ grid: grid }))
     }
 
-    return <div className="flex justify-evenly gap-1 py-2 items-center"> {spaceStages && spaceStages.map((stage: StagePrismaType) => {
+    return <div className="grid grid-cols-5 gap-1 p-2 items-center h-full flex-wrap w-full overflow-y-scroll"> 
+    {spaceStages && spaceStages.map((stage: StagePrismaType, index) => {
         return (
-            <Card className="mx-1 border-2 border-blue-600/50 rounded-md px-3" key={stage.stageId} shadow="sm" >
-                <CardBody className="flex justify-start items-center  overflow-visible p-0 h-[140px]">
+            <Card className=" col-span-1 border-2 border-blue-600/50 rounded-md h-24 p-1" key={stage.stageId} shadow="sm" >
+                <CardBody className="flex-col justify-start items-stretch  p-1 ">
                     <p>stageId : {stage.stageId}. </p>
                    
                     <Button onPress={() => handleSetGridSelected(stage)} color="primary" 
                     variant="bordered" className={`border-2 border-blue-600 rounded-md  
-                    ${stage.stageId === spaceStageSelected.stageId ? 'bg-orange-200' : 'bg-slate-400'} `}>
+                    ${stage.stageId === spaceStageSelected?.stageId ? 'bg-orange-200' : 'bg-slate-400'} `}>
                         On board
                     </Button>
                    

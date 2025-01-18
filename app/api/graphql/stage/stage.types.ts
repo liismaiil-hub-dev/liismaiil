@@ -69,10 +69,15 @@ export type StageStateProps = {
   stageShuffeledAyahsContext: Ayah[],
   stageShuffeledFirstAyahsContext: Ayah[],
   stageGridSelected: StagePrismaType,
-  catStages: StagePrismaType[],
+  stageSprintSelected: StagesSprintType,
+  stageSprintAy: StageSprintAyType,
+  catStages: StagesSprintType[],
   localStages: StagePrismaType[],
   gridsStaged: string[],
+  sprintsReady: string[],
+  sprintGuests: SprintGuest[],
   stageGridsContext: StagePrismaType[],
+  stagesSprintsContext: StagesSprintType[],
   stageHideNbContext: boolean,
   stageEvalContext: EVAL_STATE,
   sprintRandomHidden: number[],
@@ -80,11 +85,20 @@ export type StageStateProps = {
   showStepsContext: boolean,
   stepIndexContext: number,
   stageEvalIndexContext: number,
+  //insight
+
+  insightTemplate: TemplateTypeData,
+  gridTemplateSelected: Ayah[],
+  insightTemplateAyahsSelected: Ayah[],
+  statsTemplateContext: StatsTemplateType[],
+  
+  
   //host
   selectedGifts:GiftType[], 
   
   // sprint
   sprintsContext: SprintPrismaType[],
+  ownSprints: SprintPrismaType[],
   sprintSelected: SprintPrismaType,
   // space
   reorderedAyahsContext:number[],
@@ -110,6 +124,32 @@ export type StageStateProps = {
   errorNbContext: number,
   firstStateContext: boolean,
 }
+export type StagesSprintType = {
+  arabName:string,
+  stageId:string,
+  souraName:string,
+  souraNb:number,
+  grid:number ,
+  group:number,
+  ayahs:string
+}
+export type StatsTemplateType = {
+  id : number,
+  souraNb    :number,        
+  min   :number,
+  max :number,    
+  ayMin :string,
+  ayMax :string,
+  }
+export type StageSprintAyType = {
+  arabName:string,
+  stageId:string,
+  souraName:string,
+  souraNb:number,
+  grid:number ,
+  group:number,
+  ayahs:string
+}
 export type GridMenu = {
   souraName: string;
   souraNb: number;
@@ -131,6 +171,15 @@ export type SprintPrismaType = {
   stageId: string,
 
 }
+export type SprintGuest = {
+  tokenId: number,
+      sprintId: string,
+      rate?: number,
+      review?: number,
+      addedAt: string,
+      guest: GuestPrismaType[]
+}
+ 
 
 export type SprintPrismaSessionInputType = {
   sprintId: string,
@@ -215,7 +264,12 @@ export type PromoteStageInput = {
   stage: number,
   category: STAGE_CATEGORY_ENUM
 };
-
+export type TemplateTypeData = {
+  souraNb: number;
+  souraName: string;
+  arabName: string;
+  ayahs: [string];
+};
 
 
 export type StagePrismaType = {

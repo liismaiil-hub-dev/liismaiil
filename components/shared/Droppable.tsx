@@ -7,30 +7,24 @@ import { useDroppable } from '@dnd-kit/core';
 import { cn } from '@nextui-org/react';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
+
 export function Droppable({ ayd, id }: { ayd: Ayah, id: number }) {
     const { draggedIndex , blurContext} = useSelector((state: RootStateType) => state.stage)
-    const { setBlurContext } = stageActions
-
 
     const { isOver, setNodeRef ,active} = useDroppable({ id, data: {numberInSurah : ayd.numberInSurah } });
     const style = {
         color: isOver ? 'back-ground: blue' : undefined,
     };
     useEffect(() => {
-        
-        
      if(active && typeof draggedIndex !== 'undefined' &&    ( active?.id === draggedIndex)&& active?.data?.current?.numberInSurah === draggedIndex){
         console.log({active,draggedIndex});
         }
-     
-    }, [active, draggedIndex]);
+     }, [active, draggedIndex]);
     
 
-    return (<div ref={setNodeRef} style={style} role='button' className={cn( (typeof draggedIndex !== 'undefined' && active?.id === draggedIndex && 
-     active?.data?.current?.numberInSurah === draggedIndex ) && `${!blurContext ? "p-2 flex  border border-blue-500 flex-row justify-end items-stretch  w-full  h-full":
-      "p-2 flex  border border-blue-500 flex-row justify-end items-stretch  w-full  h-full"}  `,
-      `${!blurContext ? "p-2 flex  border border-blue-500 flex-row justify-end items-stretch  w-full  h-full blur-none":
-      "p-2 flex  border border-blue-500 flex-row justify-end items-stretch  w-full  h-full blur-sm"}  `, )} >
+    return (<div ref={setNodeRef} style={style} role='button' className={ "p-2 flex  justify-between items-center\
+       w-full  h-full"} >
+        <div className=' text-left  '>{` ${ayd.numberInSurah} `}</div>
         <div className=' text-right select-all '>{` ${ayd.text} `}</div>
     </div>
 

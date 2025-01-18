@@ -15,6 +15,7 @@ import { toast } from 'react-toastify';
 import { cn } from '@nextui-org/react';
 import { createNewSprint, setSprintSession } from '@/actions/sprint';
 import { useRouter } from 'next/navigation';
+import { getStageForSprint } from '@/actions/stage';
 
 export enum EVAL_STATE {
   EVAL = 'EVAL',
@@ -24,7 +25,7 @@ export enum EVAL_STATE {
 const OpenBoard = ( ) => {
   const dispatch = useDispatch()
   const router = useRouter()
-  const { stageGridSelected, stageEvalContext, stageReorderedAyahsContext, firstStateContext, stageEvalIndexContext, stageHideNbContext, errorNbContext,
+  const {stageSprintSelected, stageGridSelected, stageEvalContext, stageReorderedAyahsContext, firstStateContext, stageEvalIndexContext, stageHideNbContext, errorNbContext,
     stageShuffeledFirstAyahsContext, stageValidContext, stepIndexContext,   stageOrderedAyahsContext, stageShuffeledAyahsContext, stageGridsContext, } = useSelector((state: RootStateType) => state.stage)
   const { guestPrisma } = useSelector((state: RootStateType) => state.guestPrisma)
 
@@ -36,18 +37,25 @@ const OpenBoard = ( ) => {
       } , []);
       const [gridIndex, setGridIndex] = useState('0');
       
-  useEffect(() => {
-    if (typeof stageGridSelected !== 'undefined' && stageGridSelected.ayahs != '' && typeof stageGridSelected.ayahs !== 'undefined') {
-      console.log({ stageGridSelected });
-      const _shuffeleledFirst = JSON.parse(stageGridSelected.ayahs).map((ordG: Ayah, index: number) => ({ ...ordG, index }));
-      console.log({ _shuffeleledFirst });
-    const _orderedAy = [..._.sortBy(_shuffeleledFirst, ['order'])].map((ordG: Ayah, index) => ({ ...ordG, index }))
-      console.log({ _orderedAy });
-      setGridIndex(stageGridSelected.stageId.split('-')[stageGridSelected.stageId.split('-').length - 1 ])
-      dispatch(setStageOrderedAyahsContext({ ayahs: _orderedAy }))
-      dispatch(setStageShuffeledAyahsContext({ ayahs: _shuffeleledFirst }))
-    }
-  }, [stageGridSelected]);
+  
+useEffect(() => {
+  
+  if (typeof stageSprintSelected !== 'undefined' && stageSprintSelected?.souraName != '' ){
+const _actualSprint = async () =>{ 
+  const _sprint =  await getStageForSprint(stageSprintSelected.stageId)
+if ( _sprint.success && typeof _sprint.stage !== 'undefined' ) {
+  const _shuffeleledFirst = (JSON.parse(_sprint.stage!.ayahs)).map((ordG: Ayah, index: number) => (ordG));
+ // console.log({ _shuffeleledFirst });
+const _orderedAy = [..._.sortBy(_shuffeleledFirst, ['number'])].map((ordG: Ayah, index) => (ordG))
+  console.log({ _orderedAy });
+  setGridIndex(stageSprintSelected.stageId.split('-')[stageSprintSelected.stageId.split('-').length - 1 ])
+  dispatch(setStageOrderedAyahsContext({ ayahs: _orderedAy }))
+  dispatch(setStageShuffeledAyahsContext({ ayahs: _shuffeleledFirst }))
+}}
+_actualSprint()
+}
+
+}, [stageSprintSelected]);
 
   
   function shuffleHandler() {
@@ -57,53 +65,29 @@ const OpenBoard = ( ) => {
 
       dispatch(setStageShuffeledAyahsContext({ ayahs: shuffeledAy }))
   }
-  /*  
-  function firstHandler() {
-      dispatch(setFirstStateContext({first: true}))
-      dispatch(setErrorNbContext({errorNb:0}))
-      dispatch(setStageReorderedAyahsContext({reorderedAyahsContext:[-1]}))
-      
-      dispatch(setStageShuffeledFirstAyahsContext({ ayahs: stageShuffeledFirstAyahsContext }))
-
-  }
-  useEffect(() => {
-      console.log({ stageReorderedAyahsContext });
-
-  }, [stageReorderedAyahsContext]);
-
-  useEffect(() => {
-      console.log(stageShuffeledAyahsContext);
-
-  }, [stageShuffeledAyahsContext]);
- */
  
   function getMax() {
-      if (stageGridSelected && JSON.parse(stageGridSelected.ayahs).length > 0 && JSON.parse(stageGridSelected.ayahs)[0].numberInSurah !== -1 ) {
-          const _numbers =  JSON.parse(stageGridSelected.ayahs).map((e: Ayah)=> e.numberInSurah)
-        return  _.max(_numbers) as string
+    if (stageOrderedAyahsContext && stageOrderedAyahsContext.length > 0 && 
+      stageOrderedAyahsContext[stageOrderedAyahsContext.length -1 ].numberInSurah !== -1 ) {
+      return stageOrderedAyahsContext[stageOrderedAyahsContext.length -1 ].numberInSurah! 
+       }else return 0
         }
-  }
   function getMin() {
-  //    console.log({ stageOrderedAyahsContext, stepIndexContext });
-  if (stageGridSelected && JSON.parse(stageGridSelected.ayahs).length > 0 && JSON.parse(stageGridSelected.ayahs)[0].numberInSurah !== -1 ) {
-    const _numbers =  JSON.parse(stageGridSelected.ayahs).map((e: Ayah)=> e.numberInSurah)
-  return  _.min(_numbers) as string
-    }
-  }
+    if (stageOrderedAyahsContext && stageOrderedAyahsContext.length > 0 && stageOrderedAyahsContext[0].numberInSurah !== -1 ) {
+      return stageOrderedAyahsContext[0].numberInSurah!
+       } else return 0 }
 
-function getMaxNb() {
-    if (stageGridSelected && JSON.parse(stageGridSelected.ayahs).length > 0 && JSON.parse(stageGridSelected.ayahs)[0].number !== -1 ) {
-        const _numbers =  JSON.parse(stageGridSelected.ayahs).map((e: Ayah)=> e.number)
-      return  _.max(_numbers) as string
-      }
+function getMinNb(): number {
+    if (stageOrderedAyahsContext && stageOrderedAyahsContext.length > 0 && stageOrderedAyahsContext[0].number !== -1 ) {
+   return stageOrderedAyahsContext[0].number!
+    } else return 0
 }
-function getMinNb() {
-//    console.log({ stageOrderedAyahsContext, stepIndexContext });
-if (stageGridSelected && JSON.parse(stageGridSelected.ayahs).length > 0 && JSON.parse(stageGridSelected.ayahs)[0].number !== -1 ) {
-  const _numbers =  JSON.parse(stageGridSelected.ayahs).map((e: Ayah)=> e.number)
-return  _.min(_numbers) as string
-  }
-}
+function getMaxNb(): number {
+  if (stageOrderedAyahsContext && stageOrderedAyahsContext.length > 0 && 
+    stageOrderedAyahsContext[stageOrderedAyahsContext.length -1 ].number !== -1 ) {
+    return stageOrderedAyahsContext[stageOrderedAyahsContext.length -1 ].number! 
+     }else return 0
+ }
 
 
   const sprintSessionHandler = async () =>{
@@ -172,44 +156,52 @@ return  _.min(_numbers) as string
   }, [stageHideNbContext, stageEvalIndexContext, stageValidContext, stageEvalContext, stageGridSelected, stageReorderedAyahsContext]);
   
   const [sprintAble, setSprintAble] = useState(false);
+ const [taysir, setTaysir] = useState(0);
   
   useEffect(() => {
-    const gridNb = stageGridSelected.stageId.split('-')[1];
-
-  if(parseInt(gridNb) === 5) {
-setSprintAble(true)
+ 
+  if(typeof  stageSprintSelected !== 'undefined' &&  stageSprintSelected?.grid === 5) {
+    setSprintAble(true)
+    console.log({substr : getMaxNb() - getMinNb(), max:getMaxNb(), min: getMinNb() });
+    const min =  getMinNb()
+    const max = getMaxNb()
+    console.log({max_min: max-min});
+    
+    setTaysir(max- min)
     }else {
       setSprintAble(false)
     }
 
-  }, [stageGridSelected]);
+  }, [stageSprintSelected]);
   
   return (
     <div className=" flex-col justify-start space-y-2 h-full py-2 items-center w-full ">
-      <div className="flex-col   justify-start  items-stretch  gap-3 flex-wrap  ">
-      <div className='justify-center items-center text-center inline-flex '>StageId &nbsp; : {stageGridSelected.stageId} :From &nbsp; : {getMinNb()}To {getMaxNb()}
-        {`Sprint Gift for  ${getMaxNb()}-${getMinNb()} =  `}
-      </div>
+      <div className="flex-col   justify-start  items-center  gap-1 flex-wrap  ">
+      {sprintAble ? 
+      <div className='justify-center items-center text-center flex '>SprintId &nbsp; : {stageSprintSelected?.stageId} &nbsp;&nbsp;
+        :From ayah &nbsp; : {getMinNb()} &nbsp; To &nbsp;{getMaxNb()}&nbsp;&nbsp;
+        {`Sprint Gifts up to } = ${taysir} to use as 20% discount from hosts selections `}
+      </div>:
+      <div className='justify-center items-center text-center flex '>StageId &nbsp; : {stageSprintSelected?.stageId} 
+        :From &nbsp; : {getMinNb()}To {getMaxNb()}
+        
+      </div> 
+       }
       
       <div className="flex justify-center items-center mt-2 p-3  ">
-                <p className='text-center inline-flex '>Soura &nbsp;: [&nbsp;{stageGridSelected.arabName ? stageGridSelected.arabName : stageGridSelected.souraName}&nbsp;]&nbsp;</p>
-                <p className='text-center inline-flex '>&nbsp; Nb : [&nbsp;{stageGridSelected.souraNb}&nbsp;] </p>
-                <p className='text-center inline-flex'>&nbsp; Grid :[&nbsp;{stageGridSelected.grid}&nbsp;]</p>
-                <p className='text-center inline-flex' > &nbsp; Nb of Grids:  [&nbsp;{stageGridSelected.group ?
-                 stageGridSelected.group : stageGridSelected?.stageId.split('-')[2]}] </p>
+                <p className='text-center inline-flex '>Soura &nbsp;: [&nbsp;{stageSprintSelected?.arabName ? stageSprintSelected?.arabName : stageSprintSelected?.souraName}&nbsp;]&nbsp;</p>
+                <p className='text-center inline-flex '>&nbsp; Nb : [&nbsp;{stageSprintSelected?.souraNb}&nbsp;] </p>
+                <p className='text-center inline-flex'>&nbsp; Grid :[&nbsp;{stageSprintSelected?.grid}&nbsp;]</p>
+                <p className='text-center inline-flex' > &nbsp; Nb of Grids:  [&nbsp;{stageSprintSelected?.group ?
+                 stageSprintSelected?.group : stageSprintSelected?.stageId.split('-')[2]}] </p>
             </div>
         <div className="flex-col  justify-start items-center  gap-3 text-center font-sans  " >
         <div className="flex justify-evenly items-center gap-1 ">
             <SpaceButton handlePress={shuffleHandler} title='Shuffel Grid' />
              {sprintAble && 
             <SpaceButton handlePress={sprintItHandler} title='Sprint it ' />
-        }
-            {sprintAble && 
-            <SpaceButton handlePress={sprintHandler} title='Sprint ' />
-        }
-        {sprintAble && 
-          <SpaceButton handlePress={sprintSessionHandler} title='Sprint charge ' />
-      }
+              }
+         
         </div>
         <div className="flex justify-evenly items-center gap-1 flex-wrap ">
           

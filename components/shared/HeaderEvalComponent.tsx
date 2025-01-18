@@ -16,7 +16,7 @@ function HeaderEvalComponent() {
 
 
     const dispatch = useDispatch()
-    const { errorNbContext, gridSelected, orderedAyahsContext, gridsContext,firstStateContext, shuffeledAyahsContext,
+    const {spaceStageSelected,spaceStages, errorNbContext, gridSelected, orderedAyahsContext, gridsContext,firstStateContext, shuffeledAyahsContext,
         shuffeledFirstAyahsContext, gridIndexContext, } = useSelector((state: RootStateType) => state.stage)
     const { guestPrisma } = useSelector((state: RootStateType) => state.guestPrisma)
     const { setGridIndexContext, setShuffeledAyahsContext, setErrorNbContext, setFirstStateContext, setShuffeledFirstAyahsContext,setOrderedAyahsContext} = stageActions
@@ -25,31 +25,14 @@ function HeaderEvalComponent() {
     const [isPending, startTransition] = useTransition()
 
     function shuffleHandler() {
-        dispatch(setFirstStateContext({first:false}))
-        const shuffeledAy = _.shuffle(shuffeledFirstAyahsContext)
+          const shuffeledAy = _.shuffle(shuffeledAyahsContext)
         console.log({ shuffeledAy });
 
         dispatch(setShuffeledAyahsContext({ ayahs: shuffeledAy }))
     }
    
-    function firstHandler() {
-        dispatch(setFirstStateContext({first: true}))
-         const shuffeleledFirst = gridsContext[0].map((ordG: Ayah, index: number) => ({ ...ordG, index: gridIndexContext ? ordG.order + gridIndexContext : ordG.order }));
-
-      
-     
-     //      dispatch(setShuffeledFirstAyahsContext({ ayahs: shuffeleledFirst }))
-     const orderedAy = [..._.sortBy(gridsContext[gridIndexContext ?? 0], ['numberInSurah'])].map((ordG: Ayah, index) => ({ ...ordG, index: gridIndexContext ? ordG.order + gridIndexContext : ordG.order }))
-     dispatch(setShuffeledFirstAyahsContext({ ayahs: shuffeleledFirst }))
-
-     dispatch(setOrderedAyahsContext({ ayahs: orderedAy }))
-        dispatch(setErrorNbContext({errorNb:0}))
-        setReorderedAyahs([-1])
-        dispatch(setGridIndexContext({ index: 0 }))
-        console.log({ firstStateContext });
-    }
     function nextGridHandler() {
-        if (gridIndexContext < gridSelected.group) {
+        if (gridIndexContext < spaceStageSelected?.group!) {
             dispatch(setGridIndexContext({ index: gridIndexContext + 1 }))
             setReorderedAyahs([-1])
 
@@ -69,23 +52,22 @@ function HeaderEvalComponent() {
         }
     }
 
-    function stageHandler() {
+   async function stageHandler() {
         console.log({ reorderedAyahs, shuffeledFirstAyahsContext });
         try {
 
             if (reorderedAyahs.length === shuffeledFirstAyahsContext.length) {
-                startTransition(() => createNewStage({
+                await  createNewStage({
                     ayahs: JSON.stringify(shuffeledFirstAyahsContext),
                     createdAt: new Date().toISOString(),
-                    grid: gridSelected.grid,
+                    grid: spaceStageSelected.grid,
                     createdById: "O6cKgXEsuPNAuzCMTGeblWW9sWI3",
-                    souraName: gridSelected.souraName,
-                    souraNb: gridSelected.souraNb,
-                    stageId: `${gridSelected.souraNb}-${gridSelected.grid}-${gridsContext.length}-${gridIndexContext}`,
+                    souraName: spaceStageSelected.souraName,
+                    souraNb: spaceStageSelected.souraNb,
+                    stageId: `${spaceStageSelected.souraNb}-${spaceStageSelected.grid}-${gridsContext.length}-${gridIndexContext}`,
                     startOn: new Date().toISOString(),
                     tokenId: guestPrisma.tokenId ? guestPrisma.tokenId : 2,
-                }
-                ))
+                })
             } else {
                 toast.warning('you must at least order the grid once');
             }
@@ -95,11 +77,11 @@ function HeaderEvalComponent() {
     }
     return (<div className={`flex  border-2 border-blue-400 rounded-md flex-col justify-start p-2 space-y-2  items-stretch w-full`} >
         <div className="flex justify-center items-center  ">
-            <p className='text-center inline-flex '>{gridSelected.arabName}</p>
+            <p className='text-center inline-flex '>{spaceStageSelected.arabName}</p>
 
-            <p className='text-center inline-flex '>&nbsp; &nbsp; {gridSelected.souraNb}</p>
-            <p className='text-center inline-flex' > &nbsp; &nbsp; Nb of groups &nbsp;{gridSelected.group}</p>
-            <p className='text-center inline-flex'>&nbsp; Grid &nbsp;{gridSelected.grid}</p>
+            <p className='text-center inline-flex '>&nbsp; &nbsp; {spaceStageSelected.souraNb}</p>
+            <p className='text-center inline-flex' > &nbsp; &nbsp; Nb of groups &nbsp;{spaceStageSelected.group}</p>
+            <p className='text-center inline-flex'>&nbsp; Grid &nbsp;{spaceStageSelected.grid}</p>
         </div>
 
         <p className='text-center'>reordered suits &nbsp;{reorderedAyahs[0] != -1 && reorderedAyahs.map((e: number) => `[${e}]`).join(', ')}</p>
@@ -114,32 +96,30 @@ function HeaderEvalComponent() {
 
         <div className="flex justify-center items-center  ">
 
-            <p className=' text-center text-emerald-200'>Grid Index &nbsp;
+            <p className=' text-center text-emerald-200'>Stage id &nbsp;
             </p>
             <p className=' text-center text-blue-400'>
-                {gridIndexContext + 1}/ {gridsContext.length}
+                {spaceStageSelected.stageId}
             </p>
         </div>
         <div className="flex justify-center items-center  ">
 
             <p className=' text-center text-emerald-200'> Ayahs &nbsp;
             </p>
+            {typeof orderedAyahsContext !== 'undefined' && orderedAyahsContext && orderedAyahsContext.length > 0 &&
             <p className=' text-center text-blue-400'>
                 From {orderedAyahsContext[0]['numberInSurah'] ? orderedAyahsContext[0]['numberInSurah'] : 0} To  {orderedAyahsContext ? orderedAyahsContext[orderedAyahsContext.length - 1]['numberInSurah'] : 1}
-            </p>
+            </p>}
         </div>
 
 
 
         <div className="flex justify-evenly items-center ">
             
-            <div className={cn(firstStateContext && 'shadow-lg shadow-emerald-300', 'CENTER')}>
-                <SpaceButton handlePress={() => firstHandler()} title='First Grid' />
-            </div>
-            <SpaceButton handlePress={shuffleHandler} title='Shuffel Grid' />
-            <SpaceButton handlePress={prevGridHandler} title='Prev Grid' />
-            <SpaceButton handlePress={nextGridHandler} title='Next Grid' />
-            <SpaceButton handlePress={stageHandler} title='Stage Grid' />
+            <SpaceButton handlePress={shuffleHandler} title='Shuffel Stage' />
+            <SpaceButton handlePress={prevGridHandler} title='Prev Stage' />
+            <SpaceButton handlePress={nextGridHandler} title='Next Stage' />
+            <SpaceButton handlePress={stageHandler} title='Staged' />
         </div>
     </div >
     )

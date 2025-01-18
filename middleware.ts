@@ -19,19 +19,19 @@ export function middleware(request: NextRequest) {
         console.log({ isBot })
         return NextResponse.next()
     }
-    if (request.nextUrl.pathname.startsWith('/sprints')) {
+    if (request.nextUrl.pathname.startsWith('/hosts')) {
         console.log({ pathName: request.nextUrl.pathname });
         if (!token) {
-            return NextResponse.redirect(new URL('/signIn', request.url))
+            return NextResponse.redirect(new URL('/signin', request.url))
         }
     }
     if (request.nextUrl.pathname.startsWith('/stages')) {
         console.log({ pathName: request.nextUrl.pathname });
         if (!token) {
-            return NextResponse.redirect(new URL('/signIn', request.url))
+            return NextResponse.redirect(new URL('/signin', request.url))
         }
     }
-    if (request.nextUrl.pathname.startsWith('/signIn') || request.nextUrl.pathname.startsWith('/signUp')) {
+    if (request.nextUrl.pathname.startsWith('/signin') || request.nextUrl.pathname.startsWith('/signup')) {
         if (token) {
            
             return NextResponse.redirect(new URL(`stages`, request.url))
@@ -46,9 +46,11 @@ export const config = {
     matcher: [
         /* '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
  */
-        '/signIn',
-        '/signUP/',
-        '/sprints/:path*',
+        '/signin',
+        '/signup',
+        '/stages',
+        '/hosts',
+        
        // '/stages/:path*',
         // Skip Next.js internals and all static files,  unless found in search params
 

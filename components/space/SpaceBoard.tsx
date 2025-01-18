@@ -13,6 +13,7 @@ import RadioButtonEvalState from "./RadioButtonEvalState";
 import SpaceButton from './SpaceButton';
 import { getGridsByNb } from '@/actions/space';
 import { toast } from 'react-toastify';
+import { getLocalStagesByNb } from '@/actions/stage';
 
 export enum EVAL_STATE {
   EVAL = 'EVAL',
@@ -26,11 +27,11 @@ export enum EVAL_STATE {
 const SpaceBoard = () => {
   const dispatch = useDispatch()
 
-  const { gridsContext, gridSelected, evalIndex, evalContext, hideNbContext,blurContext, spaceGridsSelected,spaceStageSelected,
+  const { spaceStages, gridSelected, evalIndex, evalContext, hideNbContext,blurContext, spaceGridsSelected,spaceStageSelected,
     stagedContext, validContext, gridIndexContext, firstGridContext} = useSelector((state: RootStateType) => state.stage)
   const { guestPrisma } = useSelector((state: RootStateType) => state.guestPrisma)
 
-  const { setShuffeledFirstAyahsContext, setOrderedAyahsContext, setErrorNbContext, setSpaceStageAyahsContext ,
+  const { setShuffeledAyahsContext, setSpaceStages, setErrorNbContext, setSpaceStageAyahsContext ,
    setBlurContext, setStagedContext, setGridsContext, setHideNbContext, setGridIndexContext, setFirstGridContext, setGridsStaged } 
    = stageActions
 
@@ -38,12 +39,13 @@ const SpaceBoard = () => {
   useEffect(() => {
     if (typeof spaceStageSelected !== 'undefined' && typeof spaceStageSelected.ayahs !== 'undefined' && 
       spaceStageSelected.ayahs  != '' ) {
-      console.log({ grdSelected: spaceStageSelected.stageId });
-
-//      const _grids: [[Ayah]] = gridSelected?.ayahs?.map((ay: string) => JSON.parse(ay) as [Ayah])
-      // dispatch(setGridsContext({ grids: _grids }))
-      dispatch(setGridIndexContext({ index: spaceStageSelected.stageId?.split('-')[3] as unknown as number })) 
+        
+        //      const _grids: [[Ayah]] = gridSelected?.ayahs?.map((ay: string) => JSON.parse(ay) as [Ayah])
+        // dispatch(setGridsContext({ grids: _grids }))
+        dispatch(setGridIndexContext({ index: spaceStageSelected.stageId?.split('-')[3] as unknown as number })) 
+        console.log({ grdSelected: spaceStageSelected.stageId, index :spaceStageSelected.stageId?.split('-')[3] });
       dispatch(setErrorNbContext({errorNb:0  }))
+      dispatch(setShuffeledAyahsContext({ayahs: JSON.parse(spaceStageSelected?.ayahs)}))
 
      // dispatch(setFirstGridContext({first:true}))
       dispatch(setGridsStaged({stageIds:['']}))
@@ -118,38 +120,47 @@ const SpaceBoard = () => {
     }
 } */
   async function nextSouraHandler() {
-    if(gridSelected.souraNb !== -1 &&  gridSelected.souraNb < 114 ){
-      console.log({souraNb:gridSelected.souraNb});
-
-      await selectGridHandler(gridSelected.souraNb + 1)
-   } else if(typeof spaceGridsSelected !== 'undefined' && spaceGridsSelected && spaceGridsSelected[0].souraNb !== -1 
-     &&  spaceGridsSelected[0].souraNb   < 114 ){
-      console.log({ fromSpaceGrid: spaceGridsSelected[0].souraNb});
-       await selectGridHandler(spaceGridsSelected[0].souraNb  + 1)
-      }  else {
-      await selectGridHandler(1)
-      } 
-   // await selectGridHandler(gridSelected.souraNb + 1)
+    if(spaceStages && spaceStages[0].souraNb !== -1 && spaceStages[0].souraNb  < 114 ){
+         try {
+           const stagesByNb = await getLocalStagesByNb(spaceStages[0].souraNb + 1 )
+           //console.log({stagesByNb});
+           
+           if(typeof stagesByNb !== 'undefined' &&  stagesByNb.success){
+           console.log({ grids: JSON.parse(stagesByNb.stages) });
+            dispatch(setSpaceStages({ stages: JSON.parse(stagesByNb.stages) }))
+           }else {
+           toast.warning('can not reach the grid server, please check your internet connexion')
+     
+           }
+         } catch (error) {
+           //toast.warning(`${error}`)
+         }
+     }
     
   }
   async function prevSouraHandler() {
-    console.log({souraNb:gridSelected.souraNb, fromSpaceGrid: spaceGridsSelected[0].souraNb});
-   if(gridSelected.souraNb !== -1 &&  gridSelected.souraNb >0 ){
-    console.log({souraNb:gridSelected.souraNb});
-     await selectGridHandler(gridSelected.souraNb - 1)
-  } else if(typeof spaceGridsSelected !== 'undefined' && spaceGridsSelected && spaceGridsSelected[0].souraNb !== -1 
-    &&  spaceGridsSelected[0].souraNb >0 ){
-      console.log({ fromSpaceGrid: spaceGridsSelected[0].souraNb});
-      await selectGridHandler(spaceGridsSelected[0].souraNb - 1)
-      } else {
-          await selectGridHandler(1)
-    }
+    if(spaceStages && spaceStages[0].souraNb !== -1 && spaceStages[0].souraNb  !== 1 ){
+      try {
+        const stagesByNb = await getLocalStagesByNb(spaceStages[0].souraNb - 1 )
+        //console.log({stagesByNb});
+        
+        if(typeof stagesByNb !== 'undefined' &&  stagesByNb.success){
+        console.log({ grids: JSON.parse(stagesByNb.stages) });
+         dispatch(setSpaceStages({ stages: JSON.parse(stagesByNb.stages) }))
+        }else {
+        toast.warning('can not reach the grid server, please check your internet connexion')
+  
+        }
+      } catch (error) {
+        //toast.warning(`${error}`)
+      }
+  }
   }
   useEffect(() => {
     if(typeof spaceStageSelected != 'undefined' ){
    console.log({spaceStageSelected});
    
-      dispatch(setSpaceStageAyahsContext({ayahs: JSON.parse(spaceStageSelected?.ayahs)}))
+      dispatch(setShuffeledAyahsContext({ayahs: JSON.parse(spaceStageSelected?.ayahs)}))
  } }, [spaceStageSelected]);
   
 

@@ -1,17 +1,18 @@
+import { TemplateTypeData } from '@/api/graphql/stage/stage.types';
 'use server'
 import prisma from '@/api/lib/prisma-db';
 import { memoize } from "nextjs-better-unstable-cache";
 
 import { revalidateTag } from 'next/cache';
 import { SpaceMenuType, StagePrismaType } from '@/app/api/graphql/stage/stage.types';
-import { GridMenu } from '@/app/api/graphql/stage/stage.types';
 import { dbFirestore } from '@/app/api/graphql/fb-utils-admin';
 import _ from 'lodash';
+import { error } from 'console';
 
 export const getAllStagesForDashboard = memoize(async () => {
 
   const stages = await prisma.stage.findMany({
-    orderBy: {souraNb: 'asc'},include:{guests:{orderBy:{tokenId:'asc'}}}
+    orderBy: {souraNb: 'asc'}
   })
  // console.log({allStagesAction: stages });
   return stages;
@@ -23,6 +24,51 @@ export const getAllStagesForDashboard = memoize(async () => {
   suppressWarnings: true,
   log: ['datacache', 'verbose', 'dedupe'],
   logid: 'stages'
+})
+export const getAllStagesIdsNbName = memoize(async () => {
+
+  const stages = await prisma.stage.findMany({
+    orderBy: {souraNb: 'asc'}, select:{
+      arabName:true,
+      stageId:true,
+      souraName:true,
+      souraNb:true,
+      grid:true,
+      group:true,
+
+    }
+  })
+ // console.log({allStagesAction: stages });
+  return stages;
+}, {
+  duration:60,
+  persist: true,
+  additionalCacheKey: ['stagesSprints'],
+  revalidateTags: ['stagesSprints'],
+  suppressWarnings: true,
+  log: ['datacache', 'verbose', 'dedupe'],
+  logid: 'stagesSprints'
+})
+export const getSpaceSprintable = memoize(async (tokenId: number) => {
+
+  const sprints = await prisma.sprint.findMany({where:{
+    guests:{
+      some:{
+        tokenId
+      }
+    }
+  },
+    orderBy: {sprintId: 'asc'}})
+ // console.log({allStagesAction: stages });
+  return sprints;
+}, {
+  duration:60,
+  persist: true,
+  additionalCacheKey: ['sprints'],
+  revalidateTags: ['space','stages'],
+  suppressWarnings: true,
+  log: ['datacache', 'verbose', 'dedupe'],
+  logid: 'sprints'
 })
 export const getAllStageIdsForSprints = memoize(async () => {
 try {
@@ -67,20 +113,20 @@ export const getStageForSprint = memoize(async (stageId: string) => {
       }
     )
   if(_stage  && typeof _stage !== 'undefined') {
-      return {sucess: true, stage:_stage}
+      return {success: true, stage:_stage}
   }else {
-    return {sucess: false, stage:null}
+    return {success: false, stage:null}
     }} catch (error) {
-      return {sucess: false, error}
+      return {success: false, error}
     }
   }, {
     duration:60,
     persist: true,
-    additionalCacheKey: ['sprint'],
-    revalidateTags: ['stages'],
+    additionalCacheKey: ['stageForSprint'],
+    revalidateTags: ['stageForSprint'],
     suppressWarnings: true,
     log: ['datacache', 'verbose', 'dedupe'],
-    logid: 'sprint'
+    logid: 'stageForSprint'
   })
 export const getOwnStages = memoize(async ({
   tokenId,
@@ -275,6 +321,39 @@ export const getSpaceGrids = memoize(async () => {
   revalidateTags: ['space'],
   log: ['datacache', 'verbose', 'dedupe'],
   logid: 'spaceMenu'
+}
+)
+export const getInsightTemplateByNb = memoize(async (souraNb: number) => {
+
+  try {
+    const templates:TemplateTypeData[] = [];
+ 
+    const templatesRef =  dbFirestore.collection('templates')
+   const templateSnapshot = await templatesRef.where('souraNb', '==', souraNb).get();
+  if(templateSnapshot.empty){
+return {success: false, templates: 'No template'}
+ 
+  }
+  
+   await templateSnapshot.forEach((doc: any) => {
+      
+      const {ayahs,souraNb,souraName,arabName} = doc.data()
+ templates.push({ayahs,souraNb,souraName,arabName})   
+    });
+return {success: true, templates: JSON.stringify(templates)}
+      
+    
+  } catch (err) {
+
+    console.log({ err });
+    return {success: false, templates: JSON.stringify(err)}
+
+  }
+}, {
+  persist: true,
+  revalidateTags: (souraNb)  =>[`insight-${souraNb}`],
+  log: ['datacache', 'verbose', 'dedupe'],
+  logid:  `insight`
 }
 )
 export const getLocalStagesByNb = async (souraNb: number) => {

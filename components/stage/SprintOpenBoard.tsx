@@ -1,5 +1,5 @@
 'use client'
-import { Ayah, AyahPrismaType, StagePrismaType } from '@/app/api/graphql/stage/stage.types';
+import { Ayah, AyahPrismaType, GuestPrismaType, SprintGuest, StagePrismaType } from '@/app/api/graphql/stage/stage.types';
 import EvalClickBoardComp from "@/components/stage/EvalClickBoard";
 import EvalDragOrderBoardComp from "@/components/stage/EvalDragOrderBoard";
 import EvalOrderedComp from "@/components/stage/EvalOrdered";
@@ -30,14 +30,15 @@ const randomAyahsHidden = (nb: number) =>{
  
   return _hidenAys;
 }
-const SprintOpenBoard = ({stage}: {stage: StagePrismaType} ) => {
+const SprintOpenBoard = ({stage, guests}: {stage: StagePrismaType, guests:SprintGuest[]} ) => {
   const dispatch = useDispatch()
+  console.log({guests});
   
   const { stageEvalContext, validContext, stageReorderedAyahsContext,  stageEvalIndexContext, stageHideNbContext, errorNbContext,
     stageShuffeledFirstAyahsContext, stageValidContext,  stageShuffeledAyahsContext, sprintRandomHidden  } = useSelector((state: RootStateType) => state.stage)
   const { guestPrisma } = useSelector((state: RootStateType) => state.guestPrisma)
 
-  const { setValidContext, setSprintRandomHiddenContext, setStageOrderedAyahsContext, setStageShuffeledFirstAyahsContext, setStageHideNbContext, setStageGridsContext,  setStageShuffeledAyahsContext, setStageGridSelected ,
+  const { setSprintGuests, setSprintRandomHiddenContext, setStageOrderedAyahsContext, setStageShuffeledFirstAyahsContext, setStageHideNbContext, setStageGridsContext,  setStageShuffeledAyahsContext, setStageGridSelected ,
      setStageValidContext, setStepIndexContext, setFirstStateContext,setStageReorderedAyahsContext, setErrorNbContext } = stageActions
      
   useEffect(() => {

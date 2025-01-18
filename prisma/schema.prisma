@@ -73,6 +73,15 @@ model Sprint {
   @@unique([sprintId, id])
   @@map("sprints")
 }
+model StatTaysir {
+  id     Int    @id @default(autoincrement())
+  souraNb    Int        
+  min   Int
+  max     Int
+  ayMin String
+  ayMax String
+  @@unique([souraNb, id])
+}
 
 model GuestStage {
   tokenId Int      @map("tokenId")
@@ -92,10 +101,10 @@ model GuestSprint {
   sprintId String   @map("sprintId")
   rate     Int?
   review   String?
-  addedAt  DateTime @default(now()) @map("added_at")
+  addedAt  String
   guest    Guest    @relation(fields: [tokenId], references: [tokenId])
   sprint   Sprint   @relation(fields: [sprintId], references: [sprintId])
 
-  @@unique([sprintId, tokenId, addedAt])
+  @@unique([sprintId, tokenId])
   @@map("guest_sprints")
 }

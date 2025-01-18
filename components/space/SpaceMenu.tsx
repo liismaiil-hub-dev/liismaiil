@@ -6,10 +6,11 @@ import { stageActions } from "@/store/slices/stageSlice";
 import { useLazyQuery } from "@apollo/client";
 import { Button, ScrollShadow } from "@nextui-org/react";
 import { Fragment, useEffect, useMemo, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { SECTIONS_SOURAS, GRIDS_TLD} from "@/store/constants/constants";
 import { getLocalStagesByNb } from "@/actions/stage";
+import { RootStateType } from "@/store/store";
 
 type GridMenu = {
   souraName: string;
@@ -19,11 +20,11 @@ type GridMenu = {
 
 const SpaceMenu = () => {
   const dispatch = useDispatch()
-  //const [GetGridsByNb, { data: dataGetGridsByNb, loading: loadingGetGridsByNb, error: errorGetGridsByNb }] = useLazyQuery(GET_GRIDS_BY_NB)
-;
   const [selectedGrid, setSelectedGrid] = useState(0);
-console.log({SECTIONS_SOURAS});
+  const { spaceStages ,spaceStageSelected } = useSelector((state: RootStateType) => state.stage)
 
+  const { setSpaceStages, setSpaceStageSelected  } = stageActions
+ 
   const { setSpaceGrids } = stageActions
   const newTiwal =  SECTIONS_SOURAS[GRIDS_TLD.TIWAL]
     const newMiin = SECTIONS_SOURAS[GRIDS_TLD.MIIN]
@@ -55,11 +56,11 @@ console.log({SECTIONS_SOURAS});
     setSelectedGrid(arg)
     try {
       const gridsByNb = await getLocalStagesByNb(arg)
-      console.log({gridsByNb});
+      //console.log({gridsByNb});
       
       if(typeof gridsByNb !== 'undefined' &&  gridsByNb.success){
-      console.log({ grids: gridsByNb.stages });
-       dispatch(setSpaceStages({ grids: JSON.parse(gridsByNb.stages) }))
+      console.log({ grids: JSON.parse(gridsByNb.stages) });
+       dispatch(setSpaceStages({ stages: JSON.parse(gridsByNb.stages) }))
       }else {
       toast.warning('can not reach the grid server, please check your internet connexion')
 
@@ -153,7 +154,3 @@ console.log({SECTIONS_SOURAS});
 }
 
 export default SpaceMenu
-
-function setSpaceStages(arg0: { grids: StagePrismaType[]; }): any {
-  throw new Error("Function not implemented.");
-}

@@ -1,12 +1,10 @@
-import { SprintPrismaSessionInputType } from './../app/api/graphql/stage/stage.types';
+import { StatTaysir } from './../node_modules/.prisma/client/index.d';
+import { SprintPrismaSessionInputType, SprintPrismaType } from './../app/api/graphql/stage/stage.types';
 'use server'
-import { GuestType } from "@/app/api/graphql/profile/profile.types";
-import moment from "moment";
 import { revalidateTag } from "next/cache";
 import prisma from "@/api/lib/prisma-db";
 import { memoize } from "nextjs-better-unstable-cache";
-import { getGuestFromCookies} from "@/actions/guest";
-import { SprintPrismaType } from "@/app/api/graphql/stage/stage.types";
+import  * as _  from 'lodash';
 
 
 export const createNewSprint = async ({
@@ -27,54 +25,112 @@ export const createNewSprint = async ({
         stageId,
         tokenId
     });
+
     try {
-        const _sprint = await prisma.sprint.findUnique({ where: { sprintId } })
-        if (_sprint) {
-            await prisma.guestSprint.create({
-                data: {
-                    sprintId,
-                    tokenId,
-                    addedAt: new Date().toISOString(),
-                }
-            })
-            revalidateTag('sprints')
-            revalidateTag('stages')
+       // create guest Sprint Junction
+            
 
-            return { success: true, message: JSON.stringify(_sprint) }
+    const __sprint = await prisma.sprint.upsert({where:{
+        sprintId
+    },
+        create:{
+                sprintId ,
+                createdAt :new Date().toISOString(),
+                published: true,
+                stageId,
+            }, 
+            update:{
 
-        } else {
-            const _sprint = await prisma.sprint.create({
-                data: {
-                    createdAt: new Date().toISOString(),
-                    startOn: new Date().toISOString(),
-                    finishOn: moment().add(1, 'months').toISOString(),
-                    stageId,
-                    published: true,
-                    sprintId,
-                    createdById,
-                }
+            },
+            include:{
+                guests: true
+            }
             })
-            await prisma.guestSprint.create({
-                data: {
-                    sprintId,
-                    tokenId,
-                    addedAt: new Date().toISOString(),
-                }
-            })
-            revalidateTag('sprints')
-            revalidateTag('stages')
-            return { success: true, message: JSON.stringify(_sprint) }
+      const __guest_sprint = await prisma.guestSprint.create({data:{
+        sprintId,
+        tokenId,
+        addedAt:new Date().toISOString(),
+    }})
+      console.log({__sprint, __guest_sprint});
+      
+        
+         revalidateTag('space')
+         revalidateTag('stages')
+         return { success: true, message: JSON.stringify(__sprint) }
+        } catch (error) {
+            console.log({error});
+            
+        return { success: false, message: JSON.stringify(error) }
+            
         }
-
-    } catch (error) {
-
-        console.log({ ErrorCode: error.code, sprintActionError: error });
-        throw error
-    }
-    revalidateTag('sprints')
 }
+export const statTaysirPersist = async ({
+    souraNb,
+   min,
+   max,
+   ayMin,
+   ayMax,
 
+}: {souraNb:number,min:number, max: number , length: number, ayMin:string, ayMax:string}) => {
+    //const _guest = getCurrentGuest()
+    console.log({
+        souraNb,
+        min,
+        max,
+        ayMin,
+        ayMax, });
 
+    try {
+
+    const __stat = await prisma.statTaysir.create({
+        data:{
+            souraNb,
+            min,
+            max,
+            ayMin,
+            ayMax,
+        }})
+      
+        
+         revalidateTag('insight')
+
+         return { success: true, message: JSON.stringify(__stat) }
+        } catch (error) {
+            console.log({error});
+            
+        return { success: false, message: JSON.stringify(error) }
+            
+        }
+}
+   
+export const getStatTaysir = async ({
+   min=0,
+   max=100,
+   }: {min:number, max: number ,}) => {
+    //const _guest = getCurrentGuest()
+    console.log({
+        min,
+        max,
+ });
+
+    try {
+
+    const __stat = await prisma.statTaysir.findMany({
+        skip:min,   
+        take:max,})
+      revalidateTag('insight')
+       // console.log({__stat});
+        const _statString =JSON.stringify(__stat) 
+        
+         return { success: true, message: _statString}
+        } catch (error) {
+            console.log({error});
+            
+        return { success: false, message: JSON.stringify(error) }
+            
+        }
+}
+   
 
 export const sprintActivate = async (sprintId: string) => {
     console.log({ sprintId });
@@ -210,7 +266,7 @@ export const deleteSprint = memoize(async (sprintId: string, stageId: string) =>
 
 
 
-export const getAllSprintsForDashboard = memoize(async () => {
+export const getAllSprints = memoize(async () => {
 
     const sprints = await prisma.sprint.findMany({
         orderBy: {
@@ -219,13 +275,13 @@ export const getAllSprintsForDashboard = memoize(async () => {
             }
         },
     })
-    return sprints;
+    return sprints as SprintPrismaType[];
 }, {
     persist: true,
-    revalidateTags: [`dashboard:sprints`],
+    revalidateTags: [`sprints`],
     suppressWarnings: true,
     log: ['datacache', 'verbose', 'dedupe'],
-    logid: `dashboard:sprints`,
+    logid: `sprints`,
 })
 
 export const getOneSprintById = memoize(
@@ -240,5 +296,24 @@ export const getOneSprintById = memoize(
         revalidateTags: (sprintId) => ['sprint', sprintId],
         suppressWarnings: true,
         logid: 'sprint',
+    }
+)
+export const getSprintGuests = memoize(
+    async (sprintId: string) => {
+        const guests = await prisma.guestSprint.findMany({
+            where: { sprintId: { equals: sprintId } }, include:{
+                
+                guest:true,
+               }
+        })
+        console.log({guests});
+        
+        return guests;
+    },
+    {
+        persist: true,
+        revalidateTags: (sprintId) => [`guetsOf-${sprintId}`],
+        suppressWarnings: true,
+        logid: 'sprintGuests',
     }
 )

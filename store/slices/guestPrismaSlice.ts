@@ -19,28 +19,28 @@ export type GuestStateType = {
 
 export const initialGuestState: GuestStateType = {
   guestPrisma: {
-    tokenId: 0, collaboratorId: '', status: LIISMAIIL_STATUS_ENUM.GUEST,
+    tokenId: -1, collaboratorId: '', status: LIISMAIIL_STATUS_ENUM.GUEST,
     flag: '', startDate: '', endDate: '',
-    host: 0,
+    host: -1,
     password: '',
     country: ''
   },
   guestsPrisma: [{
-    tokenId: 0, collaboratorId: '', status: LIISMAIIL_STATUS_ENUM.GUEST,
+    tokenId: -1, collaboratorId: '', status: LIISMAIIL_STATUS_ENUM.GUEST,
     flag: '', startDate: '', endDate: '',
-    host: 0,
+    host: -1,
     country: ''
   }],
   guestsOnline: [{
-    tokenId: 0, collaboratorId: '', status: LIISMAIIL_STATUS_ENUM.GUEST,
+    tokenId: -1, collaboratorId: '', status: LIISMAIIL_STATUS_ENUM.GUEST,
     flag: '', startDate: '', endDate: '',
-    host: 0,
+    host: -1,
     country: ''
   }],
   hostsPrisma: [{
-    tokenId: 0, collaboratorId: '', status: LIISMAIIL_STATUS_ENUM.GUEST,
+    tokenId: -1, collaboratorId: '', status: LIISMAIIL_STATUS_ENUM.GUEST,
     flag: '', startDate: '', endDate: '',
-    host: 0,
+    host: -1,
     country: ''
   }],
 }

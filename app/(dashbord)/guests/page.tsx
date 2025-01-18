@@ -1,15 +1,18 @@
-import { getGuestFromCookies } from "@/actions/guest";
-import GuestsComponents from "@/components/front/Guests";
+import { getPrismaGuests } from "@/actions/guest";
+import GuestsComponents from "@/components/guests/Guests";
 
 export default async function Guests() {
-    const guest = await getGuestFromCookies()
-    console.log({ guestFromGuests: guest });
-
+    
     //   const {credential} = guest;
-    //const guests = await getGuestsStagesdb(credential.tokenId)
-    return (
-        <div className="flex border-2 h-full w-full p-3  border-violet-500  justify-start items-start gap-3 flex-wrap">
-            <GuestsComponents />
-        </div>
-    );
+    const _guestsResp = await getPrismaGuests()
+    console.log({_guestsResp });
+    if(_guestsResp && _guestsResp.success){
+        return (
+            <div className="flex border-2 h-full w-full p-3  border-violet-500  justify-start items-start gap-3 flex-wrap">
+                <GuestsComponents guests={JSON.parse(_guestsResp.guests)} />
+            </div>
+        );    
+    }else {
+        return null
+    }
 }
