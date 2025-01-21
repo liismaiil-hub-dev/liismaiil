@@ -10,13 +10,11 @@ export default async function Stage() {
    
       return <div className="flex-col justify-start shadow-md py-2 items-center h-52 overflow-x-scroll">
                 <div className=" bg-green-100/50   col-span-3 text-center text-blue-400 font-semibold " >
-                    Staged Grids ready for sprints 
+                    Ready Sprints 
                 </div >
-      <div className="flex flex-col  justify-start items-start w-full  overflow-x-scroll ">
-       
-            <StagedComponent   />
-          
-         </div>
+                <div className="flex flex-col  justify-start items-start w-full  overflow-x-scroll ">
+                  <StagedComponent   />
+                </div>
          </div>
     
     
@@ -26,9 +24,5 @@ export default async function Stage() {
              text-yellow-100  text-center text-md p-1 
               rounded-md'>
       No stage projected
-    </Button>)
-}
-
-
-
+    </Button>)}
 }

@@ -1,18 +1,18 @@
 'use client'
-import { addGuestToStage, createNewStage, getInsightTemplateByNb } from '@/actions/stage';
 import { Ayah, StatsTemplateType } from '@/app/api/graphql/stage/stage.types';
 import { stageActions } from "@/store/slices/stageSlice";
 import { RootStateType } from '@/store/store';
 import { cn } from '@nextui-org/react';
 import _ from 'lodash';
-import { memo, use, useEffect, useState, useTransition } from "react";
+import { memo, use, useEffect, useRef, useState, useTransition } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import SpaceButton from './SpaceButton';
 import { useFormState, useFormStatus } from 'react-dom';
-import {scaleLinear, max, ScaleBand, min, scaleBand} from "d3";
+import {scaleLinear, axisBottom, axisRight, extent, scaleOrdinal, select,schemeRdYlGn, schemeRdYlBu, schemeCategory10, axisLeft} from "d3";
 import { SECTIONS_SOURAS } from '@/store/constants/constants';
 import { getStatTaysir } from '@/actions/sprint';
+
 const dimentions = {
     width:600,
     height:350,
@@ -20,47 +20,57 @@ const dimentions = {
         top:20,
         right:20,
         bottom:20,
-        left:20,}}
+        left:60,}}
 
-function TempalteStat() {
+const {height, margin, width } = dimentions
+const boundedWidth = width - margin.right
+const boundedHeight = height - margin.bottom
+
+
+const drawChart = ({
+    SVG,chartData, data, souraNbArr,height, width 
+}) => {
+
+const xScale = scaleLinear(extent(data, (data)  => data.max),[margin.left,boundedWidth])
+const yScale = scaleLinear(extent(data, (data)  => data.max),[boundedHeight, margin.top])
+const colorScale = scaleOrdinal(souraNbArr,schemeCategory10).unknown(null)  
+console.log({xSc:xScale(13),ySc: yScale(14), souraNbArr,scc:colorScale(4)});
+SVG.selectAll('rect')
+    .data(data)
+    .transition()
+    .duration(500)
+    .attr('x', (d:StatsTemplateType)  => xScale(d.max ))
+    .attr('y', (d:StatsTemplateType)  => yScale(d.souraNb ))
+    .style('fill',(d:StatsTemplateType)  => colorScale(d.souraNb) )
+// axis 
+SVG.append('g')
+    .call(axisLeft(yScale).ticks(1))
+    .attr('transform', `translate(${margin.left},0)`)
+    .call((g)=> g.select('.domain').remove())    
+SVG.append('g')
+    .call(axisBottom(xScale).ticks(20))
+    .attr('transform', `translate(0,${boundedHeight})`)
+    .call((g)=> g.select('.domain').remove())    
+
+}
+
+
+function TempalteDistribution() {
     const dispatch = useDispatch()
   //  const [isPending, startTransition] = useTransition()
    const {pending} =   useFormStatus()
     const { insightTemplate, statsTemplateContext,insightTemplateAyahsSelected} = useSelector((state: RootStateType) => state.stage)
     const { guestPrisma } = useSelector((state: RootStateType) => state.guestPrisma)
     const {  setGridsStaged, setStatsTemplateContext } = stageActions
-     const [errorNb, setErrorNb] = useState(0);
+ 
 const [statZoom, setStatZoom] = useState([0, 100]);
 
+const svgRef = useRef();
 function nextGridHandler() {
         setStatZoom((prev) =>  ([prev[0]+100,prev[1]+100]))
     }
 
-const {height, margin, width } = dimentions
-const boundedWidth = width - margin.left - margin.right
-const boundedHeight = height -margin.top - margin.bottom
-
-const [data, setData] = useState([{
-    x:-1,
-    y:-1,
-    height: -1,
-    fill:''
-}]);
-
-const xAccessorMax = (d:StatsTemplateType) => d.max 
-const xAccessorMin = (d:StatsTemplateType) => d.min 
-const yAccessor = (d:StatsTemplateType) => d.souraNb 
-const [xscaleState, setXscaleState] = useState();
-const [yscaleState, setYscaleState] = useState();
-const xScale = scaleLinear([0,max(data, (d )=> d.max!)],[0,boundedWidth])
-const yScale = scaleBand([0, yAccessor],[0,boundedHeight])
-
-const xDataMax = statsTemplateContext?.map((d:StatsTemplateType) =>{
-    //console.log({souraNb : d.souraNb,max : d.max})
-    return ({souraNb : d.souraNb,max : d.max})
-}
-).sort((a,b)=> a.max - b.max )
-const minAyahLabels = statsTemplateContext?.map((d:StatsTemplateType) =>{
+/* const minAyahLabels = statsTemplateContext?.map((d:StatsTemplateType) =>{
     //console.log({souraNb : d.souraNb,max : d.max})
     return (
         <text fill='#fff' key={d.min} x={xScale(d.min)} textAnchor='end'  y={yScale(d.souraNb)}>
@@ -78,16 +88,23 @@ const gridLines = statsTemplateContext?.map((d:StatsTemplateType) =>{
         {d.ayMin}</line>
         )
 }
-)
-
-const souarStatsRect = xDataMax?.map((souraStats, index )=>   <rect key={`${souraStats.souraNb}-${souraStats.max}`} 
-     x={dimentions.margin}  
-     y={yScale(souraStats.souraNb)}    
-    transform={`translate(0,${xScale(souraStats.max)})`}
-        fill='darkorange!' stroke='#fff' 
-        width={xScale(souraStats.max)} 
-        height={yScale.bandwidth()}/>
-  )    
+) */
+useEffect(() => {
+    const xDataMax = statsTemplateContext?.map((d:StatsTemplateType) =>{
+        //console.log({souraNb : d.souraNb,max : d.max})
+        return ({souraNb : d.souraNb,max : d.max})
+    }
+    ).sort((a,b)=> a.max - b.max )
+    const _souraNb = statsTemplateContext?.map((d:StatsTemplateType) => d.souraNb)
+    const chartData = statsTemplateContext?.map((d:StatsTemplateType) => d.ayMax)
+    const souraNbArr = [...new Set(_souraNb)];
+    console.log({xDataMax});
+    if(typeof xDataMax !== 'undefined' && xDataMax.length > 0){
+    console.log({xDataMax});
+    
+        drawChart({SVG:select(svgRef.current), data:xDataMax, souraNbArr, height, width,chartData })
+    }
+}, [statsTemplateContext]);
 
   function prevGridHandler() {
     if(statZoom[0] !== 0){
@@ -138,6 +155,7 @@ const souarStatsRect = xDataMax?.map((souraStats, index )=>   <rect key={`${sour
             })
             setData(__val)
             console.log({__val,});
+            xmlns='http://www.w3.org/2000/svg' width={width} height={height} 
           */   
     
     return <div className={`flex  border-2 border-blue-400 rounded-md flex-col justify-start p-2  space-y-2 items-stretch w-full`} >
@@ -150,25 +168,18 @@ const souarStatsRect = xDataMax?.map((souraStats, index )=>   <rect key={`${sour
             
         </div>
         <div className="flex flex-col justify-start items-stretch  space-y-2">
-        <svg xmlns='http://www.w3.org/2000/svg' width={width} height={height} >
+        <svg ref={svgRef!} viewBox={`0 0 ${width} ${height}`}  >
         <rect fill='gray' width={'100%'} height={'100%'}/>
         <g transform={`traslate(${margin.left},${margin.top})`}> 
+      {statsTemplateContext && statsTemplateContext.map((sts, index)  => <rect key={sts.max} fill='#fff'
+       width={'100%'} height={'15px'}/>) 
+        }
 
-      {statsTemplateContext && typeof xscaleState !== 'undefined'&& 
-            souarStatsRect
-        }
-        {
-            minAyahLabels 
-        }
-        {gridLines}
-          </g> 
-        <g transform={`translate(0,${boundedHeight})`}> 
-        <rect fill='lime' width={'100%'} height={'5px'}/>
-        
-        </g> 
+
+    </g> 
         </svg>
 
             </div>
     </div>}
 
-export default memo(TempalteStat);
+export default memo(TempalteDistribution);

@@ -29,14 +29,13 @@ function GridCard() {
     return <div className="grid grid-cols-5 gap-1 p-2 items-center h-full flex-wrap w-full overflow-y-scroll"> 
     {spaceStages && spaceStages.map((stage: StagePrismaType, index) => {
         return (
-            <Card className=" col-span-1 border-2 border-blue-600/50 rounded-md h-24 p-1" key={stage.stageId} shadow="sm" >
+            <Card className=" col-span-1 border-2 border-blue-600/50 rounded-md h-16 p-1" key={stage.stageId} shadow="sm" >
                 <CardBody className="flex-col justify-start items-stretch  p-1 ">
-                    <p>stageId : {stage.stageId}. </p>
                    
                     <Button onPress={() => handleSetGridSelected(stage)} color="primary" 
-                    variant="bordered" className={`border-2 border-blue-600 rounded-md  
-                    ${stage.stageId === spaceStageSelected?.stageId ? 'bg-orange-200' : 'bg-slate-400'} `}>
-                        On board
+                    variant="bordered" className={`border-2 border-blue-600 rounded-md font-semibold 
+                    ${stage.stageId === spaceStageSelected?.stageId ? 'bg-orange-200' : 'bg-slate-300'} `}>
+                        {`With :  ${stage.stageId}`} 
                     </Button>
                    
                 </CardBody>

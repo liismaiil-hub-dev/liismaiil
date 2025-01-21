@@ -5,7 +5,7 @@ import EvalSuits from "@/components/space/EvalSuits";
 import { stageActions } from "@/store/slices/stageSlice";
 import { RootStateType } from '@/store/store';
 import _ from 'lodash';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import EvalClickBoardComp from "./EvalClickBoard";
 import EvalDragOrderBoardComp from "./EvalDragOrderBoard";
@@ -13,7 +13,7 @@ import RadioButtonEvalState from "./RadioButtonEvalState";
 import SpaceButton from './SpaceButton';
 import { getGridsByNb } from '@/actions/space';
 import { toast } from 'react-toastify';
-import { getLocalStagesByNb } from '@/actions/stage';
+import { getLocalStagesByNb, getStageById } from '@/actions/stage';
 
 export enum EVAL_STATE {
   EVAL = 'EVAL',
@@ -23,15 +23,15 @@ export enum EVAL_STATE {
 /**
  * Space board PRINCIPAL Component
  */
-
+ 
 const SpaceBoard = () => {
   const dispatch = useDispatch()
 
-  const { spaceStages, gridSelected, evalIndex, evalContext, hideNbContext,blurContext, spaceGridsSelected,spaceStageSelected,
+  const { spaceStages, gridSelected, shuffeledAyahsContext,evalIndex, hideOddNbContext, evalContext, hideNbContext,blurContext, spaceGridsSelected,spaceStageSelected,
     stagedContext, validContext, gridIndexContext, firstGridContext} = useSelector((state: RootStateType) => state.stage)
   const { guestPrisma } = useSelector((state: RootStateType) => state.guestPrisma)
 
-  const { setShuffeledAyahsContext, setSpaceStages, setErrorNbContext, setSpaceStageAyahsContext ,
+  const { setShuffeledAyahsContext, setSpaceStages, setErrorNbContext, setSpaceStageAyahsContext , setHideOddNbContext,
    setBlurContext, setStagedContext, setGridsContext, setHideNbContext, setGridIndexContext, setFirstGridContext, setGridsStaged } 
    = stageActions
 
@@ -42,10 +42,10 @@ const SpaceBoard = () => {
         
         //      const _grids: [[Ayah]] = gridSelected?.ayahs?.map((ay: string) => JSON.parse(ay) as [Ayah])
         // dispatch(setGridsContext({ grids: _grids }))
-        dispatch(setGridIndexContext({ index: spaceStageSelected.stageId?.split('-')[3] as unknown as number })) 
-        console.log({ grdSelected: spaceStageSelected.stageId, index :spaceStageSelected.stageId?.split('-')[3] });
+//        dispatch(setGridIndexContext({ index: spaceStageSelected.stageId?.split('-')[3] as unknown as number })) 
+  //      console.log({ grdSelected: spaceStageSelected.stageId, index :spaceStageSelected.stageId?.split('-')[3] });
       dispatch(setErrorNbContext({errorNb:0  }))
-      dispatch(setShuffeledAyahsContext({ayahs: JSON.parse(spaceStageSelected?.ayahs)}))
+     // dispatch(setShuffeledAyahsContext({ayahs: JSON.parse(spaceStageSelected?.ayahs)}))
 
      // dispatch(setFirstGridContext({first:true}))
       dispatch(setGridsStaged({stageIds:['']}))
@@ -123,15 +123,13 @@ const SpaceBoard = () => {
     if(spaceStages && spaceStages[0].souraNb !== -1 && spaceStages[0].souraNb  < 114 ){
          try {
            const stagesByNb = await getLocalStagesByNb(spaceStages[0].souraNb + 1 )
-           //console.log({stagesByNb});
            
            if(typeof stagesByNb !== 'undefined' &&  stagesByNb.success){
            console.log({ grids: JSON.parse(stagesByNb.stages) });
             dispatch(setSpaceStages({ stages: JSON.parse(stagesByNb.stages) }))
            }else {
            toast.warning('can not reach the grid server, please check your internet connexion')
-     
-           }
+          }
          } catch (error) {
            //toast.warning(`${error}`)
          }
@@ -141,7 +139,7 @@ const SpaceBoard = () => {
   async function prevSouraHandler() {
     if(spaceStages && spaceStages[0].souraNb !== -1 && spaceStages[0].souraNb  !== 1 ){
       try {
-        const stagesByNb = await getLocalStagesByNb(spaceStages[0].souraNb - 1 )
+        const stagesByNb = await getLocalStagesByNb(spaceStages[0].souraNb! - 1 )
         //console.log({stagesByNb});
         
         if(typeof stagesByNb !== 'undefined' &&  stagesByNb.success){
@@ -156,16 +154,34 @@ const SpaceBoard = () => {
       }
   }
   }
-  useEffect(() => {
-    if(typeof spaceStageSelected != 'undefined' ){
-   console.log({spaceStageSelected});
-   
-      dispatch(setShuffeledAyahsContext({ayahs: JSON.parse(spaceStageSelected?.ayahs)}))
- } }, [spaceStageSelected]);
+const getAyahsStageId = useCallback(async() => {
+  if(spaceStageSelected) {
+    const _getStageAyahs = await getStageById(spaceStageSelected.stageId)
+
+
+    if(_getStageAyahs && _getStageAyahs.success && _getStageAyahs.stage){
+  const stageAyahs = JSON.parse(_getStageAyahs.stage)
+  
+  console.log({stageAyahs});
+  
+  dispatch(setShuffeledAyahsContext({ayahs:stageAyahs}))
+  }else {
+    toast.warning(_getStageAyahs.stage)
+  }
+  }
+  }, [spaceStageSelected]);
+
+
+useEffect(() => {
+getAyahsStageId()
+}, [spaceStageSelected]);
   
 
   function hideNbHandler() {
     dispatch(setHideNbContext({ hide: !hideNbContext }))
+  }
+  function hideOddNbHandler() {
+    dispatch(setHideOddNbContext({ hide: !hideOddNbContext }))
   }
 
   function blurHandler() {
@@ -190,7 +206,13 @@ const SpaceBoard = () => {
           <input className="flex  justify-center items-center  border border-blue-800 text-green-300"
             type="checkbox"
             id='HIDE_NB' name='HIDE_NB' value='HIDE_NB' checked={validContext || hideNbContext} onChange={() => hideNbHandler()} />
-          <label htmlFor='HIDE_NB' className='text-sm' >Hide nb</label>
+          <label htmlFor='HIDE_NB' className='text-sm' >Hide even</label>
+        </div>
+        <div className="flex  justify-between items-center  border border-green-400 text-center font-sans " >
+          <input className="flex  justify-center items-center  border border-blue-800 text-green-300"
+            type="checkbox"
+            id='HIDE_ODD_NB' name='HIDE_ODD_NB' value='HIDE_ODD_NB' checked={validContext || hideOddNbContext} onChange={() => hideOddNbHandler()} />
+          <label htmlFor='HIDE_ODD_NB' className='text-sm' >Hide Odd</label>
         </div>
         
           <div className="flex  justify-between items-center  border border-green-400 text-center font-sans " >
@@ -220,10 +242,12 @@ const SpaceBoard = () => {
             <EvalSuits  />
           </div> 
           </div> :
-        evalContext === EVAL_STATE.ORDER ?
+        evalContext === EVAL_STATE.ORDER &&
           <EvalDragOrderBoardComp />
-          : evalContext === EVAL_STATE.CLICK && <EvalClickBoardComp
-          />}
+          /* : evalContext === EVAL_STATE.CLICK && <EvalClickBoardComp 
+          />
+          */
+          }
     </div>
   )
 }

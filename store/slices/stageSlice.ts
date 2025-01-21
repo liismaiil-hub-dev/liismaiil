@@ -530,6 +530,10 @@ const stageSlice = createSlice({
       action: PayloadAction<{ hide: boolean }>) {
       state.hideNbContext = action.payload.hide
     },
+    setHideOddNbContext(state: StageStateProps,
+      action: PayloadAction<{ hide: boolean }>) {
+      state.hideOddNbContext = action.payload.hide
+    },
     setBlurContext(state: StageStateProps,
       action: PayloadAction<{ blur: boolean }>) {
       state.blurContext = action.payload.blur

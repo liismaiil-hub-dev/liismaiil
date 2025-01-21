@@ -39,13 +39,14 @@ const OpenBoard = ( ) => {
       
   
 useEffect(() => {
+  console.log({stageSprintSelected});
   
   if (typeof stageSprintSelected !== 'undefined' && stageSprintSelected?.souraName != '' ){
 const _actualSprint = async () =>{ 
   const _sprint =  await getStageForSprint(stageSprintSelected.stageId)
 if ( _sprint.success && typeof _sprint.stage !== 'undefined' ) {
   const _shuffeleledFirst = (JSON.parse(_sprint.stage!.ayahs)).map((ordG: Ayah, index: number) => (ordG));
- // console.log({ _shuffeleledFirst });
+ console.log({ _shuffeleledFirst });
 const _orderedAy = [..._.sortBy(_shuffeleledFirst, ['number'])].map((ordG: Ayah, index) => (ordG))
   console.log({ _orderedAy });
   setGridIndex(stageSprintSelected.stageId.split('-')[stageSprintSelected.stageId.split('-').length - 1 ])

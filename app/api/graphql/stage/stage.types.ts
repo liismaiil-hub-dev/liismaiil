@@ -108,6 +108,7 @@ export type StageStateProps = {
   shuffeledFirstAyahsContext: Ayah[],
   gridIndexContext: number,
   hideNbContext: boolean,
+  hideOddNbContext: boolean,
   blurContext: boolean,
   faultsNbContext: number,
   correctsNbContext: number,
@@ -168,7 +169,7 @@ export type SprintPrismaType = {
   createdById?: string,
   published?: boolean,
   guests?: GuestSprintType[],
-  stageId: string,
+  stageId?: string,
 
 }
 export type SprintGuest = {
@@ -275,16 +276,16 @@ export type TemplateTypeData = {
 export type StagePrismaType = {
   id: number;
   stageId: string;
-  createdAt: string;
+  createdAt?: string;
   souraName: string;
   arabName?: string;
-  souraNb: number;
+  souraNb?: number;
   grid: number;
   group?: number;
   startOn?: string
   createdById?: string;
   guests?: GuestPrismaType[];
-  ayahs: string;
+  ayahs?: string;
   sprints?: SprintPrismaType[]
 }
 export type AyahPrismaType = {

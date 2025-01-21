@@ -45,14 +45,14 @@ export default function EvalDragOrderBoard() {
 
     const dispatch = useDispatch()
 
-    const { spaceStageSelected, firstStateContext,errorNbContext,isDraggedContext, isDroppedContext, gridSelected, orderedAyahsContext, shuffeledAyahsContext, gridsContext, validContext, hideNbContext, shuffeledFirstAyahsContext, gridIndexContext, evalIndex } = useSelector((state: RootStateType) => state.stage)
+    const { spaceStageSelected, firstStateContext,errorNbContext, reorderedAyahsContext,isDraggedContext, isDroppedContext, gridSelected, orderedAyahsContext, shuffeledAyahsContext, gridsContext, validContext, hideNbContext, shuffeledFirstAyahsContext, gridIndexContext, evalIndex } = useSelector((state: RootStateType) => state.stage)
     const { guestPrisma } = useSelector((state: RootStateType) => state.guestPrisma)
-    const { setDraggedIndex, setOrderedAyahsContext, setErrorNbContext, 
+    const { setDraggedIndex, setOrderedAyahsContext, setErrorNbContext, setReorderedAyahsContext,
         setShuffeledAyahsContext, setEvalIndex, setValidContext,  setShuffeledFirstAyahsContext, setFirstStateContext, setGridIndexContext, setHideNbContext } = stageActions
 
     const [firstState, setFirstState] = useState(() => true);
     const [reorderedAyahs, setReorderedAyahs] = useState([-1]);
-    useEffect(() => {
+/*     useEffect(() => {
         if(typeof spaceStageSelected != 'undefined' ){
        console.log({spaceStageSelected, ayahs:JSON.parse(spaceStageSelected.ayahs)});
        JSON.parse(spaceStageSelected.ayahs).forEach((ay: Ayah) => {
@@ -69,7 +69,7 @@ export default function EvalDragOrderBoard() {
              
         } }, [spaceStageSelected]);
       
-    
+     */
     function shuffelHandler() {
         dispatch(setShuffeledAyahsContext({ ayahs: [..._.shuffle(orderedAyahsContext)] }))
     }
@@ -86,8 +86,19 @@ export default function EvalDragOrderBoard() {
              dispatch(setDraggedIndex({index:event.active.id}))
         }
     }
+    useEffect(() => {
+        console.log({shuffeledAyahsContext});
+          const orderedAy = _.sortBy(shuffeledAyahsContext, ['numberInSurah']) 
+          console.log({orderedAy, orderedAyahsContext, shuffeledAyahsContext});
+          
+          dispatch(setOrderedAyahsContext({ ayahs: orderedAy }))
+           
+       // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shuffeledAyahsContext]);
 
-    function handleDragEnd(event: { active: any; over: any; }) {
+  const [errorNb, setErrorNb] = useState(0);
+  
+  function handleDragEnd(event: { active: any; over: any; }) {
         const { active, over } = event;
         console.log({ active, over })
         if (active?.id === over?.id && !firstStateContext) {
@@ -103,22 +114,42 @@ export default function EvalDragOrderBoard() {
                     return sh.numberInSurah !== active.id
                 })]
             })) 
-        }else if (active?.id === over?.id && firstStateContext ) {
-            console.log({active, over});
-        
-             dispatch(setShuffeledFirstAyahsContext({
-                ayahs: [..._.filter(shuffeledFirstAyahsContext, function (sh: Ayah) {
-                    return sh.numberInSurah !== active.id
-                })]
-            })) 
-          dispatch(setOrderedAyahsContext({
-                ayahs: [..._.filter(orderedAyahsContext, function (sh: Ayah) {
-                    return sh.numberInSurah !== active.id
-                })]
-            })) 
-        }/* else{
-            dispatch(setErrorNbContext({errorNb: errorNbContext + 1}))
-        } */
+            if (reorderedAyahsContext[0] == -1 && active.data.current.numberInSurah !== orderedAyahsContext[0].numberInSurah) {
+                toast.error(`You made a mistake on the first ayah its ${orderedAyahsContext[0].text} `)
+            }
+            else if (reorderedAyahsContext[0] == -1) {
+                
+                dispatch(setReorderedAyahsContext({reorderedAyahsContext:[active.data.current.numberInSurah!]}))
+            }else if (active.data.current.numberInSurah === reorderedAyahsContext[reorderedAyahsContext.length - 1] + 1) {
+                console.log({orderedAyahsContext,reorderedAyahsContext, });
+    
+                dispatch(setReorderedAyahsContext({reorderedAyahsContext:[...reorderedAyahsContext, active.data.current.numberInSurah]}))
+               
+            } else {
+                console.log({orderedAyahsContext,reorderedAyahsContext});
+                
+                toast.warning(`your next ayah ${active.data.current.numberInSurah + 1}  
+                     ${orderedAyahsContext[reorderedAyahsContext.length].text} 
+                     is next ayah `, {
+                    closeOnClick: true,
+                    autoClose: false
+                })
+                setErrorNb((prev) => prev + 1)
+            }
+            if (errorNb < 4) {
+                console.log({ reorderedAyahsContext, shuffeledAyahsContext });
+                if ( reorderedAyahsContext.length === shuffeledAyahsContext.length && reorderedAyahsContext[0] !== -1){
+                    toast.success('it was the last ayas for that grid you can stage it')
+                }
+            } else {
+                toast.warning(`you must rehearsal  !!! `)
+                dispatch(setValidContext({ validCtxt: false }))
+                dispatch(setHideNbContext({ hide: false }))
+                setErrorNb(0)
+                
+            }
+
+        }
     }
 useEffect(() => {
   if(errorNbContext < 4 && errorNbContext !==0) {
@@ -134,18 +165,7 @@ useEffect(() => {
         dispatch(setShuffeledAyahsContext({ ayahs: [..._.shuffle(orderedAyahsContext)] }))
     }
 
-    function shuffleHandler() {
-        setFirstState(false)
-        const shuffeledAy = _.shuffle(shuffeledFirstAyahsContext)
-        console.log({ shuffeledAy });
-
-        dispatch(setShuffeledAyahsContext({ ayahs: shuffeledAy }))
-    }
-
-    /**
-     * 
-     * @param reord  index
-     */
+  
     function ayahInReordered(ord: number) {
         console.log({ reorderedAyahs, ord, some: reorderedAyahs.some((el) => el === ord) });
 
@@ -213,23 +233,23 @@ useEffect(() => {
 
     const randomColor = Math.floor(Math.random() * 16777215).toString(16);
 
-    return (<div className="flex flex-col justify-items-start items-stretch  mt-3 w-full   h-full " >
+    return (<div className="flex-col justify-start items-stretch mt-3 w-full gap-2   h-full " >
         <HeaderEvalComponent />
         <DndContext sensors={sensors}
             collisionDetection={closestCenter}
             autoScroll={true} onDragOver={handleDragOver}
              onDragEnd={handleDragEnd}>
-            <div className="flex flex-row justify-between items-stretch gap-3  w-full  border-blue-600 border-3 
+            <div className="flex justify-between items-stretch gap-3 mt-2 w-full  border-blue-400 border-1 rounded-md  
                  h-full " >
-                <div className="flex   flex-col w-full items-center justify-start  gap-2">
+                <div className="flex   flex-col w-full items-stretch justify-start p-2 gap-2">
                     { typeof shuffeledAyahsContext !== 'undefined' && 
                     shuffeledAyahsContext.length > 0 && shuffeledAyahsContext.map && shuffeledAyahsContext?.map((ayd: Ayah, index: number) => {
-                      console.log({ayId:ayd, nbSurah: ayd.numberInSurah, index});
+                     // console.log({ayId:ayd, nbSurah: ayd.numberInSurah, index});
                         
-                        return (<Draggable  key={`${ayd.order}-${index}`} id={ayd?.numberInSurah!} gridAyah={ayd} hideNb={hideNbContext} />)
+                        return (<Draggable  key={`${ayd.order}-${index}`} id={ayd?.numberInSurah!} gridAyah={ayd}  />)
                     })}
                 </div>
-                <div className="flex flex-col items-center justify-start   h-full  w-full  gap-2  border-emerald-500  " >
+                <div className="flex flex-col items-center justify-start   h-full  w-full  gap-2 p-2 border-emerald-500  " >
                     {orderedAyahsContext && orderedAyahsContext?.length > 0 &&
                         orderedAyahsContext.map((ayd: Ayah, index: number) => {
                           //  console.log({ayd, nbA: ayd.numberInSurah});

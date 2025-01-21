@@ -14,6 +14,7 @@ import SpaceButton from './SpaceButton';
 import { getGridsByNb } from '@/actions/space';
 import { toast } from 'react-toastify';
 import {SECTIONS_SOURAS} from "@/store/constants/constants";
+import TemplateDistribution from './TemplateDistribution';
 
 export enum EVAL_STATE {
   EVAL = 'EVAL',
@@ -127,8 +128,9 @@ const TemplateBoard = () => {
           <div className=" md:order-first  flex justify-stretch w-full flex-1 items-start m-1 ">
             <TemplateOrdered />
           </div>
-          <div className=" order-first flex justify-stretch w-full flex-1 items-start m-1">
+          <div className=" order-first flex-col justify-start items-stretch w-full flex-1  m-1 p-1">
             <TemplateStat  />
+            <TemplateDistribution  />
           </div> 
           </div> }
     </div>

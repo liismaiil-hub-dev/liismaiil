@@ -12,7 +12,7 @@ export default  function GridNav() {
   const gridFive = spaceStages.filter(st=> st.grid === 5)
     return (<div className="flex-col justify-start  py-2 items-center overflow-x-scroll">
                 <div className=" bg-green-100/50   text-center text-blue-400 font-semibold " >
-                    {`Select Grid From soura ${spaceStages[0].souraName}  Nb {${spaceStages[0].souraNb}} : ${spaceStages.length} grids     `} 
+                    {`Select Stage From [${spaceStages[0].arabName} | ${spaceStages[0].souraName}]  Nb {${spaceStages[0].souraNb}} : ${spaceStages.length} grids     `} 
                     {`    {${gridThree.length} == 9   //  ${gridFour.length} == 16   //  ${gridFive.length} == 25   }`} 
                 </div >
                 <div className=" bg-green-100/75    text-blue-400 " >

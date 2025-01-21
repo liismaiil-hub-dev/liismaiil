@@ -14,13 +14,12 @@ import _ from "lodash";
 // COPMPONENT
 function HeaderEvalComponent() {
 
-
     const dispatch = useDispatch()
-    const {spaceStageSelected,spaceStages, errorNbContext, gridSelected, orderedAyahsContext, gridsContext,firstStateContext, shuffeledAyahsContext,
+    const {spaceStageSelected,reorderedAyahsContext,spaceStages, errorNbContext, gridSelected, orderedAyahsContext, gridsContext,firstStateContext, shuffeledAyahsContext,
         shuffeledFirstAyahsContext, gridIndexContext, } = useSelector((state: RootStateType) => state.stage)
     const { guestPrisma } = useSelector((state: RootStateType) => state.guestPrisma)
-    const { setGridIndexContext, setShuffeledAyahsContext, setErrorNbContext, setFirstStateContext, setShuffeledFirstAyahsContext,setOrderedAyahsContext} = stageActions
-    const [reorderedAyahs, setReorderedAyahs] = useState([-1]);
+    const {setReorderedAyahsContext, setGridIndexContext, setShuffeledAyahsContext, setErrorNbContext, setFirstStateContext, setShuffeledFirstAyahsContext,setOrderedAyahsContext} = stageActions
+ 
 
     const [isPending, startTransition] = useTransition()
 
@@ -34,29 +33,29 @@ function HeaderEvalComponent() {
     function nextGridHandler() {
         if (gridIndexContext < spaceStageSelected?.group!) {
             dispatch(setGridIndexContext({ index: gridIndexContext + 1 }))
-            setReorderedAyahs([-1])
+            dispatch(setReorderedAyahsContext({reorderedAyahsContext:[-1]}))
 
         } else {
             dispatch(setGridIndexContext({ index: 0 }))
-            setReorderedAyahs([-1])
+            dispatch(setReorderedAyahsContext({reorderedAyahsContext:[-1]}))
 
         }
     }
     function prevGridHandler() {
         if (gridIndexContext >= 1) {
             dispatch(setGridIndexContext({ index: gridIndexContext - 1 }))
-            setReorderedAyahs([-1])
+            dispatch(setReorderedAyahsContext({reorderedAyahsContext:[-1]}))
         } else {
             dispatch(setGridIndexContext({ index: 0 }))
-            setReorderedAyahs([-1])
+            dispatch(setReorderedAyahsContext({reorderedAyahsContext:[-1]}))
         }
     }
 
    async function stageHandler() {
-        console.log({ reorderedAyahs, shuffeledFirstAyahsContext });
+        console.log({ reorderedAyahsContext, shuffeledFirstAyahsContext });
         try {
 
-            if (reorderedAyahs.length === shuffeledFirstAyahsContext.length) {
+            if (reorderedAyahsContext.length === shuffeledFirstAyahsContext.length) {
                 await  createNewStage({
                     ayahs: JSON.stringify(shuffeledFirstAyahsContext),
                     createdAt: new Date().toISOString(),
@@ -75,7 +74,7 @@ function HeaderEvalComponent() {
             toast.error(`${error}`)
         }
     }
-    return (<div className={`flex  border-2 border-blue-400 rounded-md flex-col justify-start p-2 space-y-2  items-stretch w-full`} >
+    return (<div className={`flex  border-1 border-blue-400 rounded-md flex-col justify-start p-2 space-y-2  items-stretch w-full`} >
         <div className="flex justify-center items-center  ">
             <p className='text-center inline-flex '>{spaceStageSelected.arabName}</p>
 
@@ -84,7 +83,7 @@ function HeaderEvalComponent() {
             <p className='text-center inline-flex'>&nbsp; Grid &nbsp;{spaceStageSelected.grid}</p>
         </div>
 
-        <p className='text-center'>reordered suits &nbsp;{reorderedAyahs[0] != -1 && reorderedAyahs.map((e: number) => `[${e}]`).join(', ')}</p>
+        <p className='text-center'>Reordered Suits &nbsp;{reorderedAyahsContext[0] != -1 && reorderedAyahsContext.map((e: number) => `[${e}]`).join(', ')}</p>
         <div className="flex justify-center items-center  ">
 
             <p className={cn(errorNbContext < 1 ? 'text-green-200 !important' : errorNbContext > 2 ? 'text-red-400 !important' : 'text-red-500 !important')}>errors &nbsp;

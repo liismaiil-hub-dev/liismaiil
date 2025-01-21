@@ -17,10 +17,10 @@ function EvalSuits() {
     const dispatch = useDispatch()
   //  const [isPending, startTransition] = useTransition()
    const {pending} =   useFormStatus()
-    const { localStages,gridSelected,spaceStageSelected, spaceStageAyahsContext, spaceStages,sprintsReady ,orderedAyahsContext, shuffeledAyahsContext, gridsContext, reorderedAyahsContext, hideNbContext, 
+    const { localStages,gridSelected,spaceStageSelected, spaceStageAyahsContext, spaceStages,sprintsReady, hideOddNbContext ,orderedAyahsContext, shuffeledAyahsContext, gridsContext, reorderedAyahsContext, hideNbContext, 
  gridIndexContext, gridsStaged, stagedContext } = useSelector((state: RootStateType) => state.stage)
     const { guestPrisma } = useSelector((state: RootStateType) => state.guestPrisma)
-    const { setShuffeledAyahsContext, setReorderedAyahsContext, setSpaceStageSelected,
+    const { setShuffeledAyahsContext, setReorderedAyahsContext, setSpaceStageSelected, setHideOddNbContext,
          setValidContext, setGridIndexContext, setHideNbContext, setGridsStaged, setSprintsReady, setFirstGridContext} = stageActions
      const [errorNb, setErrorNb] = useState(0);
 
@@ -156,13 +156,18 @@ useEffect(() => {
     try {
         
 /*              if (reorderedAyahsContext.length === shuffeledAyahsContext.length ) {
- */   
+ */   console.log({
+            sprintId:spaceStageSelected.stageId,
+            createdById: "O6cKgXEsuPNAuzCMTGeblWW9sWI3",
+            stageId: spaceStageSelected.stageId,
+            tokenId: guestPrisma.tokenId
+ });
+ 
                 const {message, success} =     await createNewSprint({
                     sprintId:spaceStageSelected.stageId,
-                    
                     createdById: "O6cKgXEsuPNAuzCMTGeblWW9sWI3",
                     stageId: spaceStageSelected.stageId,    
-                     tokenId: guestPrisma.tokenId ? guestPrisma.tokenId : 2,
+                    tokenId: guestPrisma.tokenId ? guestPrisma.tokenId : 2,
                 })
                 console.log({message, success});
                 
@@ -171,7 +176,7 @@ useEffect(() => {
                         gridsStaged.length === 1 && gridsStaged[0] === ''){
                     console.log({message, success, gridsStaged});
                     dispatch(setSprintsReady({sprintIds:[spaceStageSelected.stageId ]}))
-
+                            toast.success(`Stage ${spaceStageSelected.stageId} is sprinted`)
                     }else if(typeof gridsStaged !== 'undefined' && 
                          gridsStaged && gridsStaged[0] !== ''){
                     dispatch(setSprintsReady({sprintIds:[...sprintsReady,spaceStageSelected.stageId ]}))
@@ -222,9 +227,8 @@ useEffect(() => {
     useEffect(() => {
      console.log({sprintReady, stagedContext});
      
-    }, [sprintReady, stagedContext]);
+    }, [ sprintReady, stagedContext]);
     
-
     return <div className={`flex  border-2 border-blue-400 rounded-md flex-col justify-start p-2  space-y-2 items-stretch w-full`} >
         <div className="flex-col justify-center items-center  ">
             <div className='flex justify-center items-center text-center  '>StageId &nbsp; : {spaceStageSelected?.stageId}&nbsp; from soura :  {spaceStages[0].souraName}</div>
@@ -269,37 +273,49 @@ useEffect(() => {
 
         </div>
         <div className="flex justify-evenly items-center ">
-            
             <SpaceButton disabled={false} handlePress={shuffleHandler} title='Shuffel Grid' />
             <SpaceButton disabled={false} handlePress={prevGridHandler} title='Prev Grid' />
             <SpaceButton disabled={false} handlePress={nextGridHandler} title='Next Grid' />
-            <SpaceButton disabled={pending} handlePress={stageQHandler} title='Stage Q' />
+            <SpaceButton disabled={pending} handlePress={stageQHandler} title='Stage ' />
             
-            { (sprintReady || stagedContext) && <div className={'shadow-lg shadow-emerald-300 CENTER'}>
-                    <SpaceButton disabled={pending} handlePress={sprintHandler} title='Sprint ready' />
+            { (sprintReady || stagedContext) && spaceStageSelected.grid === 5 && <div className={'shadow-lg shadow-emerald-300 CENTER'}>
+                    <SpaceButton disabled={pending} handlePress={sprintHandler} title='Sprint read' />
             </div>
             }
         </div>
         <div className="flex flex-col justify-start items-stretch  space-y-2">
-            { (typeof reorderedAyahsContext !='undefined' ) && shuffeledAyahsContext?.map((ayag: Ayah) => {
-                if( !reorderedAyahsContext.includes(ayag?.numberInSurah!))
-            
-                if (typeof hideNbContext !== 'undefined' && !hideNbContext) {
-            
-                return <div onClick={() => { validAyahHandler(ayag?.numberInSurah!) }} key={`${ayag?.numberInSurah!}_${ayag.juz}`} className=" 
-                flex p-2 bg-emerald-100/30 justify-between 
-        items-center space-x-2 border-b-1 border-green-300/25 hover:bg-sky-700 hover:text-natWarmheader
-                hover:cursor-pointer hover:scale-110 hover:text-2xl">
-                        <div className='flex justify-center items-center'>{ayag?.numberInSurah!}</div>
-                        <div className=' flex text-right justify-end items-center
-                       '>{ayag.text}</div>
-                    </div>} else {
-                        console.log({ayag});
+            { (typeof reorderedAyahsContext !='undefined'  && typeof shuffeledAyahsContext != 'undefined' && shuffeledAyahsContext && shuffeledAyahsContext.length >0) && shuffeledAyahsContext?.map((ayag: Ayah) => {
+                if( !reorderedAyahsContext.includes(ayag?.numberInSurah!)){
+                    if (typeof hideNbContext !== 'undefined' && hideNbContext && !hideOddNbContext) {
                         
-                    return (
-                        <div onClick={() => { validAyahHandler(ayag?.numberInSurah!) }} key={`${ayag?.numberInSurah!}_${ayag.juz}`} className='   p-2 flex justify-end  w-full   bg-emerald-100/30  text-right space-x-2 border-1 border-green-300/25 hover:cursor-pointer items-center   focus:border-red-500'>{ayag.text}</div>
-                    )}}
-            )}</div>
+                        return <div onClick={() => { validAyahHandler(ayag?.numberInSurah!) }} key={`${ayag?.numberInSurah!}_${ayag.juz}`} className=" 
+                        flex p-2 bg-emerald-100/30 justify-between 
+                        items-center space-x-2 border-b-1 border-green-300/25 hover:bg-sky-700 hover:text-natWarmheader
+                        hover:cursor-pointer hover:scale-110 hover:text-2xl">
+                        <div className='flex justify-center items-center'>{ayag?.numberInSurah % 2 === 0 ? null: ayag?.numberInSurah!}</div>
+                        <div className=' flex text-right justify-end items-center '>{ayag.text}</div>
+                        </div>
+                            } else if(typeof hideOddNbContext !== 'undefined' && hideOddNbContext && !hideNbContext) {
+                               
+                        return <div onClick={() => { validAyahHandler(ayag?.numberInSurah!) }} key={`${ayag?.numberInSurah!}_${ayag.juz}`} className=" 
+                        flex p-2 bg-emerald-100/30 justify-between 
+                        items-center space-x-2 border-b-1 border-green-300/25 hover:bg-sky-700 hover:text-natWarmheader
+                        hover:cursor-pointer hover:scale-110 hover:text-2xl">
+                        <div className='flex justify-center items-center'>{ayag?.numberInSurah % 2 === 0 ?  ayag?.numberInSurah!: null}</div>
+                        <div className=' flex text-right justify-end items-center '>{ayag.text}</div>
+                        </div>
+                        }else{
+                            return <div onClick={() => { validAyahHandler(ayag?.numberInSurah!) }} key={`${ayag?.numberInSurah!}_${ayag.juz}`} className=" 
+                            flex p-2 bg-emerald-100/30 justify-between 
+                            items-center space-x-2 border-b-1 border-green-300/25 hover:bg-sky-700 hover:text-natWarmheader
+                            hover:cursor-pointer hover:scale-110 hover:text-2xl">
+                            <div className='flex justify-center items-center'>{ayag?.numberInSurah}</div>
+                            <div className=' flex text-right justify-end items-center '>{ayag.text}</div>
+                            </div>
+                            }
+                        }}
+                    )}
+                    </div>
     </div>}
 
 export default memo(EvalSuits);

@@ -1,3 +1,4 @@
+import { select } from 'd3';
 import { StatTaysir } from './../node_modules/.prisma/client/index.d';
 import { SprintPrismaSessionInputType, SprintPrismaType } from './../app/api/graphql/stage/stage.types';
 'use server'
@@ -272,7 +273,12 @@ export const getAllSprints = memoize(async () => {
         orderBy: {
             stage: {
                 souraNb: 'asc'
-            }
+            },
+            
+        },
+        select:{
+            sprintId: true,
+            guests:true,
         },
     })
     return sprints as SprintPrismaType[];
