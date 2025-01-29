@@ -5,7 +5,7 @@ import Logo from '@/components/front/Logo';
 import { COOKIE_NAME } from '@/store/constants/constants';
 import { guestPrismaActions } from "@/store/slices/guestPrismaSlice";
 import { RootStateType } from '@/store/store';
-import { cn } from '@nextui-org/react';
+import { cn } from '@/lib/cn-utility'
 import Cookies from "js-cookie";
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';

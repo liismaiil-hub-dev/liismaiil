@@ -3,7 +3,7 @@
 import { Ayah } from '@/app/api/graphql/stage/stage.types';
 import { stageActions } from "@/store/slices/stageSlice";
 import { RootStateType } from '@/store/store';
-import { cn } from '@nextui-org/react';
+import { cn } from '@/lib/cn-utility'
 import { memo, useEffect, useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import SpaceButton from './SpaceButton';

@@ -4,7 +4,7 @@ import { Ayah } from '@/app/api/graphql/stage/stage.types';
 import { stageActions } from '@/store/slices/stageSlice';
 import { RootStateType } from '@/store/store';
 import { useDroppable } from '@dnd-kit/core';
-import { cn } from '@nextui-org/react';
+import { cn } from '@/lib/cn-utility'
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 

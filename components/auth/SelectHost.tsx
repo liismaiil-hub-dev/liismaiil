@@ -4,7 +4,7 @@ import { CoordsType, COUNTRY_ENUM } from '@/api/graphql/viewer/viewer.types';
 import { ProfileTypeData } from '@/app/api/graphql/profile/profile.types';
 import { profileActions } from '@/store/slices/profileSlice';
 import { RootStateType } from '@/store/store';
-import { cn } from '@nextui-org/react';
+import { cn } from '@/lib/cn-utility'
 import _ from 'lodash';
 import Link from "next/link";
 import { useRouter } from 'next/navigation';

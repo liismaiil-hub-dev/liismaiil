@@ -3,7 +3,7 @@ import { addGuestToStage, createNewStage } from '@/actions/stage';
 import { Ayah } from '@/app/api/graphql/stage/stage.types';
 import { stageActions } from "@/store/slices/stageSlice";
 import { RootStateType } from '@/store/store';
-import { cn } from '@nextui-org/react';
+import { cn } from '@/lib/cn-utility'
 import _ from 'lodash';
 import { memo, useEffect, useState, useTransition } from "react";
 import { useDispatch, useSelector } from 'react-redux';

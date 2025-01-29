@@ -327,6 +327,7 @@ export const getInsightTemplateByNb = memoize(async (souraNb: number) => {
 
   try {
     const templates:TemplateTypeData[] = [];
+ console.log({souraNb});
  
     const templatesRef =  dbFirestore.collection('templates')
    const templateSnapshot = await templatesRef.where('souraNb', '==', souraNb).get();
@@ -334,6 +335,7 @@ export const getInsightTemplateByNb = memoize(async (souraNb: number) => {
 return {success: false, templates: 'No template'}
  
   }
+  //console.log({templateSnapshot});
   
    await templateSnapshot.forEach((doc: any) => {
       

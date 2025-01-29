@@ -3,7 +3,7 @@
 import { CoordsType, COUNTRY_ENUM } from '@/api/graphql/profile/profile.types';
 import { CollaboratorProfileType } from '@/store/slices/profileSlice';
 import { RootStateType } from '@/store/store';
-import { cn } from '@nextui-org/react';
+import { cn } from '@/lib/cn-utility'
 import _ from 'lodash';
 import Link from "next/link";
 import { useRouter } from 'next/navigation';

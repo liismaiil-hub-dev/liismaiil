@@ -7,7 +7,7 @@ import _ from 'lodash';
 import { ElementRef, ElementType, memo, ReactNode, use, useEffect, useRef, useState, useTransition } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import SpaceButton from './SpaceButton';
+import SpaceButton from '@/components/shared/SpaceButton';
 import { useFormState, useFormStatus } from 'react-dom';
 import {selectAll,scaleLinear, axisBottom, axisRight, extent, min, max, scaleOrdinal, 
     select,schemeRdYlGn, schemeRdYlBu, schemeCategory10,schemeYlOrBr, axisLeft, BaseType,
@@ -17,7 +17,7 @@ import { getStatTaysir } from '@/actions/sprint';
 
 const dimentions = {
     width:600,
-    height:550,
+    height:350,
     margin :{
         top:20,
         right:20,
@@ -54,22 +54,20 @@ SVG?.selectAll('rect')
      //select(this).attr('width', d => d.max)
     return this
 })
-.attr('x', (d:StatsTemplateType)  => xScale(d.min ))
-.attr('width', (d:StatsTemplateType)  => d.max )
-.attr('y', (d:StatsTemplateType)  => yScale(d.souraNb ))    
-.style('fill',(d:StatsTemplateType)  => colorScale(d.souraNb) )
 .transition()
 .duration(500)
-    
+    .attr('x', (d:StatsTemplateType)  => xScale(d.min ))
+    .attr('y', (d:StatsTemplateType)  => yScale(d.souraNb ))    
+    .style('fill',(d:StatsTemplateType)  => colorScale(d.souraNb) )
 
     console.log({SVG});
     // axis 
 SVG?.append('g')
-    .call(axisLeft(yScale).ticks(114))
+    .call(axisLeft(yScale).ticks(1))
     .attr('transform', `translate(${margin.left},0)`)
     .call((g)=> g.select('.domain').remove())    
     SVG?.append('g')
-    .call(axisBottom(xScale).ticks(10))
+    .call(axisBottom(xScale).ticks(20))
     .attr('transform', `translate(0,${boundedHeight})`)
     .call((g)=> g.select('.domain').remove())    
     
@@ -81,7 +79,7 @@ SVG?.append('g')
 
 
  
-function TempalteDistribution() {
+function GuestStats() {
     const dispatch = useDispatch()
   //  const [isPending, startTransition] = useTransition()
    const {pending} =   useFormStatus()
@@ -187,7 +185,9 @@ useEffect(() => {
             <SpaceButton disabled={false} handlePress={prevGridHandler} title='Prev 100 templates' />
             <SpaceButton disabled={false} handlePress={nextGridHandler} title='Next 100 Template' />
             <SpaceButton disabled={pending} handlePress={getStat} title='Get Stats' />
+            
         </div>
+
         <h1 className="text-green-300"> Bismai ALLAH
         </h1>
 
@@ -206,4 +206,4 @@ useEffect(() => {
             </div>
     </div>}
 
-export default memo(TempalteDistribution);
+export default memo(GuestStats);

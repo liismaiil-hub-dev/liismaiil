@@ -2,7 +2,7 @@
 import Logo from '@/components/front/Logo';
 import { guestPrismaActions } from "@/store/slices/guestPrismaSlice";
 import { RootStateType } from '@/store/store';
-import { cn } from '@nextui-org/react';
+import { cn } from '@/lib/cn-utility'
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useEffect, useState } from 'react';

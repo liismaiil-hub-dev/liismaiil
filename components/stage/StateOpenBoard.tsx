@@ -12,7 +12,7 @@ import _ from 'lodash';
 import { startTransition, useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { cn } from '@nextui-org/react';
+import { cn } from '@/lib/cn-utility'
 import * as d3 from "d3";
 import StagesSprintableComponent from './StagesSprintable';
 import StagesRehearsalComponent from './StagesRehearsal';

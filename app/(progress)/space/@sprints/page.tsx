@@ -1,7 +1,7 @@
 
 import {getSpaceSprintable } from "@/actions/stage";
 import StagedComponent from "@/components/space/Sprints";
-import { Button } from '@nextui-org/react';
+import { Button } from "@heroui/button";
 
 
 export default async function Stage() {

@@ -1,6 +1,6 @@
 
 import { CoordsType, LIISMAIIL_STATUS_ENUM } from '@/api/graphql/profile/profile.types';
-import { GuestPrismaType } from '@/app/api/graphql/stage/stage.types';
+import { GuestPrismaType, GuestStatsType } from '@/app/api/graphql/stage/stage.types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 
@@ -12,6 +12,7 @@ export type OrgCoordType = {
 export type GuestStateType = {
   guestPrisma: GuestPrismaType,
   guestsPrisma: GuestPrismaType[],
+  guestStats: GuestStatsType,
   hostsPrisma: GuestPrismaType[],
   guestsOnline: GuestPrismaType[],
 
@@ -37,6 +38,14 @@ export const initialGuestState: GuestStateType = {
     host: -1,
     country: ''
   }],
+  guestStats: {
+    tokenId: -1,  status: LIISMAIIL_STATUS_ENUM.GUEST,
+    flag: '', startDate: '', endDate: '',
+    host: -1,
+    country: '',
+    sprints:[''],
+    stages:['']
+  },
   hostsPrisma: [{
     tokenId: -1, collaboratorId: '', status: LIISMAIIL_STATUS_ENUM.GUEST,
     flag: '', startDate: '', endDate: '',
@@ -57,6 +66,9 @@ const guestPrismaSlice = createSlice({
     },
     setGuestsOnLine(state, action: PayloadAction<{ guestsPrisma: GuestPrismaType[] }>) {
       state.guestsOnline = action.payload.guestsPrisma
+    },
+    setGuestStats(state, action: PayloadAction<{ stats: GuestStatsType }>) {
+      state.guestStats = action.payload.stats
     },
 
     setHostsPrisma(state, action: PayloadAction<{ hostsPrismas: GuestPrismaType[] }>) {

@@ -325,6 +325,20 @@ export type GuestPrismaType = {
   stages?: StagePrismaType[] | [string];
   sprints?: SprintPrismaType[] | [string];
 };
+
+export type GuestStatsType = {
+  
+  tokenId: number;
+  host: number;
+  flag: string;
+  status: LIISMAIIL_STATUS_ENUM | string;
+  country?: string;
+  onLine?: boolean;
+  startDate?: string;
+  endDate?: string;
+  stages?: [string];
+  sprints?: [string];
+};
 export type RegisterPrismaGridsMenuInput = {
   souraName: string;
   souraNb: number;

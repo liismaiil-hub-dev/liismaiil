@@ -1,5 +1,5 @@
 'use client'
-import { Button } from "@nextui-org/react";
+import { Button } from "@heroui/button";
 import { ReactNode } from "react";
 
 function AyahButton({ children, handlePress, id}: { children: ReactNode, handlePress: (arg:number) => void, id: number}) {

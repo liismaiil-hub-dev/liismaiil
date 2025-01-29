@@ -11,10 +11,11 @@ import EvalClickBoardComp from "./EvalClickBoard";
 import EvalDragOrderBoardComp from "./EvalDragOrderBoard";
 import RadioButtonEvalState from "./RadioButtonEvalState";
 import SpaceButton from './SpaceButton';
-import { getGridsByNb } from '@/actions/space';
-import { toast } from 'react-toastify';
-import {SECTIONS_SOURAS} from "@/store/constants/constants";
 import TemplateDistribution from './TemplateDistribution';
+import StatsDialog from '../shared/StatsDialog';
+import {useDisclosure} from "@heroui/modal";
+import PlanetDistribution from './PlanetDistribution';
+
 
 export enum EVAL_STATE {
   EVAL = 'EVAL',
@@ -27,7 +28,7 @@ export enum EVAL_STATE {
 
 const TemplateBoard = () => {
   const dispatch = useDispatch()
-
+  const {isOpen, onOpen, onClose} = useDisclosure();
   const { insightTemplate,insightTemplateAyahsSelected, } = useSelector((state: RootStateType) => state.stage)
   const { guestPrisma } = useSelector((state: RootStateType) => state.guestPrisma)
 
@@ -51,6 +52,7 @@ const TemplateBoard = () => {
      // console.log({ currentGuest, guestPrisma });
     }
   }, []);
+  
   async function nextSouraHandler() {
  /*    if(gridSelected.souraNb !== -1 &&  gridSelected.souraNb < 114 ){
       console.log({souraNb:gridSelected.souraNb});
@@ -79,12 +81,17 @@ const TemplateBoard = () => {
           await selectGridHandler(1)
     } */
   }
+  async function modalInsightHandler() {
+    onOpen()   
+  }
   useEffect(() => {
+console.log({isOpen});
+
     if(typeof insightTemplateAyahsSelected != 'undefined' ){
    console.log({tempalteAyahs : insightTemplateAyahsSelected});
    
     //  dispatch(setInsightTemplateAyahsContext({ayahs: JSON.parse(insightTemplateAyahsSelected?.ayahs)}))
- } }, [insightTemplateAyahsSelected]);
+ } }, [insightTemplateAyahsSelected,isOpen]);
   
   
   
@@ -97,27 +104,8 @@ const TemplateBoard = () => {
       <div className="flex  justify-around  items-center  py-2 ">
         <SpaceButton disabled={false} handlePress={prevSouraHandler} title='Prev Soura' />
         <SpaceButton disabled={false} handlePress={nextSouraHandler} title='Next Soura' />
+        <SpaceButton disabled={false} handlePress={modalInsightHandler} title='Modal Full' />
 
-       {/*  <div className="flex  justify-between items-center  border border-green-400 text-center font-sans " >
-          <input className="flex  justify-center items-center  border border-blue-800 text-green-300"
-            type="checkbox"
-            id='HIDE_NB' name='HIDE_NB' value='HIDE_NB' checked={validContext || hideNbContext} onChange={() => hideNbHandler()} />
-          <label htmlFor='HIDE_NB' className='text-sm' >Hide nb</label>
-        </div>
-        
-          <div className="flex  justify-between items-center  border border-green-400 text-center font-sans " >
-          <input className="flex  justify-center items-center  border border-blue-800 text-green-300"
-            type="checkbox"
-            id='VALID_CTXT' name='VALID_CTXT' value='HIDE_NB' checked={blurContext} onChange={() => blurHandler()} />
-          <label htmlFor='HIDE_NB' className='text-sm' >Blur</label>
-        </div>
-        
-        <div className="flex  justify-between items-center  border border-green-400 text-center font-sans " >
-          <input className="flex  justify-center items-center  border border-blue-800 text-green-300"
-            type="checkbox"
-            id='STAGED_CTXT' name='STAGED_CTXT' value='STAGED_CTXT' checked={stagedContext} onChange={() => stageContextHandler()} />
-          <label htmlFor='STAGED_CTXT' className='text-sm' >Stageable</label>
-        </div> */} 
         <RadioButtonEvalState
           evalState={EVAL_STATE.EVAL} title='Eval board' />
         <RadioButtonEvalState
@@ -129,9 +117,12 @@ const TemplateBoard = () => {
             <TemplateOrdered />
           </div>
           <div className=" order-first flex-col justify-start items-stretch w-full flex-1  m-1 p-1">
-            <TemplateStat  />
+          <PlanetDistribution  />
+            
+            {/* <TemplateStat  /> */}
             <TemplateDistribution  />
           </div> 
+          {isOpen &&   <StatsDialog isOpen={isOpen}  onOpen={onOpen} onClose={onClose}/>}
           </div> }
     </div>
   )

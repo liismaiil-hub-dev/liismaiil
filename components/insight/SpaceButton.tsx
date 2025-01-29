@@ -1,5 +1,5 @@
 'use client'
-import { Button } from "@nextui-org/react";
+import { Button } from "@heroui/button";
 
 function SpaceButton({ disabled=false, title, handlePress,  }: {disabled:boolean, title: string, handlePress: () => void,}) {
 

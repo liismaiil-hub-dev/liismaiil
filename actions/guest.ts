@@ -279,6 +279,46 @@ export const getPrismaGuests = async (min=0, max=100) => {
       }
 
 }
+export const getGuestStats = async (tokenId: number) => {
+  try {
+    console.log({ tokenGetGustStats: tokenId });
+    const _guest = await prisma.guest.findFirst({
+      where : {
+        tokenId        
+      },
+      select:{
+onLine: true,startDate: true,
+flag: true,country: true,
+sprints: {
+  select:{ sprintId:true,addedAt:true, guest:{
+    select:{
+      tokenId: true,
+      onLine:true
+    }
+  },},
+},
+stages: {
+  select:{ stageId:true,addedAt: true,guest: {
+    select:{
+      tokenId: true,
+      onLine:true
+    }
+  }},}
+      },
+       })
+    
+      if (_guest) {
+        // const randomFlag = _.random(FLAG_FILES.length)
+
+          return ({success: true, guest:JSON.stringify(_guest) });
+        }else {
+          return {success: false, guest: ''}
+        }
+    } catch (error) {
+      return {success: false, guest:JSON.stringify(error)}
+      }
+
+}
 
 export const logoutGuest = async (tokenId: number) => {
   try {

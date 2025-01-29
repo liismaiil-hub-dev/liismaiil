@@ -7,25 +7,32 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-const Stage = ({ sprints }: { sprints: SprintPrismaType[] }) => {
+const Sprints = ({ sprints }: { sprints: SprintPrismaType[] }) => {
   const dispatch =  useDispatch()
+  const { sprintsContext} = useSelector((state: RootStateType) => state.stage)
+  
+  const { setOwnSprints, setSprintsContext } = stageActions
+
   const { guestPrisma } = useSelector((state: RootStateType) => state.guestPrisma)
   
-    const { setLocalStages } = stageActions
-useEffect(() => {
+  useEffect(() => {
  console.log({sprints});
+ if(typeof sprintsContext == 'undefined'&& !sprintsContext){
+
+   dispatch(setSprintsContext({sprints:sprints}))
+ }
  
 }, [sprints]);
 
   return (
     <div className="flex w-full flex-wrap  gap-2">
-     Empty
-     {/*    {stages && stages.map((stage:StagePrismaType) => <Link  key={stage.stageId} href={`/sprints/${stage.stageId}`} target="_blank">&nbsp;[ {stage?.stageId}]&nbsp;
+         {sprints && sprints.map((sprint:SprintPrismaType) => <Link  key={sprint.sprintId} href={`/stages/${sprint.sprintId}`} 
+         target="_blank">&nbsp;[ {sprint?.sprintId}]&nbsp;
     </Link>
         )
-    } */}
+    } 
     </div>
   )
 
 }
-export default Stage
+export default Sprints

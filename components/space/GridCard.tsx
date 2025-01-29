@@ -1,11 +1,11 @@
 'use client'
+import { useEffect } from "react";
 import { GridTypeData, StagePrismaType } from "@/api/graphql/stage/stage.types";
 import { stageActions } from '@/store/slices/stageSlice';
 import { RootStateType } from '@/store/store';
-import { Button, Card, CardBody } from "@nextui-org/react";
-import { useEffect } from "react";
 import { useDispatch, useSelector } from 'react-redux';
-
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                import { Button } from "@heroui/button";
+import {Card, CardBody } from "@heroui/card";
 function GridCard() {
     const dispatch = useDispatch()
     const { gridSelected,spaceStages, spaceGridsSelected, spaceStageSelected } = useSelector((state: RootStateType) => state.stage)
