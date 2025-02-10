@@ -3,13 +3,10 @@
 import {  StagePrismaType, StagesSprintType } from "@/app/api/graphql/stage/stage.types";
 import { stageActions } from "@/store/slices/stageSlice";
 import { RootStateType } from "@/store/store";
-import { Button, ScrollShadow } from "@nextui-org/react";
+import { Button, } from "@heroui/button";
+import {ScrollShadow } from "@heroui/scroll-shadow";
 import { useEffect, useState, useTransition } from "react";
-
-import {deleteSprint, setSprintSession} from "@/actions/sprint";
-
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import _ from "lodash";
 //             _____COMPONENT_____________
@@ -37,8 +34,6 @@ useEffect(() => {
     console.log(error);
   }
  }
-
-
   return (
       <ScrollShadow >
         {typeof catSprints !== 'undefined' && catSprints && catSprints.length > 0 &&

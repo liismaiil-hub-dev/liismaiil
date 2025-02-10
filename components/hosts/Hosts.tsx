@@ -1,6 +1,8 @@
 'use client'
 import { GuestType } from "@/app/api/graphql/profile/profile.types";
-import { cn, Pagination } from "@nextui-org/react";
+import {  Pagination } from "@heroui/pagination";
+import {cn} from "@/lib/cn-utility";
+
 import Image from "next/image";
 import Link from 'next/link';
 import {COUNTRY_CODES} from "@/store/constants/flagArray";

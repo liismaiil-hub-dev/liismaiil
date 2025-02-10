@@ -4,9 +4,10 @@ import { sprintActivate } from "@/actions/sprint";
 import { SprintPrismaType, StagePrismaType } from "@/app/api/graphql/stage/stage.types";
 import { stageActions } from "@/store/slices/stageSlice";
 import { RootStateType } from "@/store/store";
-import { Button, ScrollShadow } from "@nextui-org/react";
+
+import {ScrollShadow } from "@heroui/scroll-shadow";
 import Link from "next/link";
-import { useEffect, useMemo, useState, useTransition } from 'react';
+import {  useState, useTransition } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 
 import { useSelectedLayoutSegment } from 'next/navigation'

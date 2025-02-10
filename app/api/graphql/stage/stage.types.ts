@@ -53,7 +53,32 @@ export type GiftType = {
     rate: number;
     quantity?: number;
   } 
+ 
+export enum AY_VISUALISATION {
+  MIN = 'MIN',
+  MAX = 'MAX',
+  MINMAX = 'MINMAX',
+  AWAL ='AWAL',
+  AWSAT ='AWSAT',
+  AKHIR ='AKHIR',
+}
+export enum WINDOW_VISUALISATION {
+  ODD = 'ODD',
+  EVEN = 'EVEN',
+  ALL = 'ALL',
+  AWAL ='AWAL',
+  AWSAT ='AWSAT',
+  AKHIR ='AKHIR',
+}
+export enum INSIGHT_STATE {
+  CAT = 'CAT',
+  SOURA = 'SOURA',
+  PANORAMIC = 'PANORAMIC',
+} 
 export type StageStateProps = {
+  windowContext: number;
+  insightContext:INSIGHT_STATE;
+  insightWindow: number;
   spaceGridsSelected: GridTypeData[],
   spaceStages: StagePrismaType[],
   gridSelected: GridTypeData,

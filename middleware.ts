@@ -25,12 +25,12 @@ export function middleware(request: NextRequest) {
             return NextResponse.redirect(new URL('/signin', request.url))
         }
     }
-    if (request.nextUrl.pathname.startsWith('/stages')) {
+   /*  if (request.nextUrl.pathname.startsWith('/stages')) {
         console.log({ pathName: request.nextUrl.pathname });
         if (!token) {
             return NextResponse.redirect(new URL('/signin', request.url))
         }
-    }
+    } */
     if (request.nextUrl.pathname.startsWith('/signin') || request.nextUrl.pathname.startsWith('/signup')) {
         if (token) {
            
@@ -48,7 +48,7 @@ export const config = {
  */
         '/signin',
         '/signup',
-        '/stages',
+       // '/stages/:path*',
         '/hosts',
         
        // '/stages/:path*',

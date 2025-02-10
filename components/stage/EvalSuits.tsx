@@ -99,7 +99,7 @@ setGridAyahs(JSON.parse(stageGridSelected.ayahs))
                     return <button onClick={() => { validAyahHandler(ayag.numberInSurah!) }}
                      key={`${ayag.numberInSurah}_${ayag.juz}`} className=" flex p-2 bg-emerald-100/30 justify-between px-2
                     items-center space-x-2 border-b-1 border-green-300/25 ">
-                                    <div className='flex justify-center focus:border-red-500 items-center'>{ayag.number! }</div>
+                                    <div className='flex justify-center focus:border-red-500 items-center'>{` [ ${ ayag.numberInSurah}- ${ ayag.number}] `}</div>
                                     <div className=' flex text-right justify-end items-center
                        hover:bg-emerald-800 hover:text-yellow-200 hover:scale-125 hover:-translate-x-3 hover:-translate-y-1 ease-in 
                        hover:cursor-pointer  active:border-red-500'>{ayag.text}</div>
@@ -110,8 +110,7 @@ setGridAyahs(JSON.parse(stageGridSelected.ayahs))
                                     <button onClick={() => { validAyahHandler(ayag.number!) }} 
                                     key={`${ayag.number!}_${ayag.juz}`} 
                                     className=' flex text-right justify-end items-center
-                                     p-2 bg-emerald-100/30  px-2
-                     space-x-2 border-b-1 border-green-300/25 
+                                     p-2 bg-emerald-100/30  px-2 space-x-2 border-b-1 border-green-300/25 
                                     hover:bg-emerald-800 hover:text-yellow-200 hover:scale-110
                                     hover:-translate-x-5 hover:-translate-y-1 ease-in 
                                     hover:cursor-pointer '>{ayag.text}</button>)

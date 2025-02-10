@@ -21,7 +21,7 @@ type GridMenu = {
 
 const InsightMenu = () => {
   const dispatch = useDispatch()
-  const [selectedGrid, setSelectedGrid] = useState(0);
+ // const [selectedGrid, setSelectedGrid] = useState(0);
 console.log({SECTIONS_SOURAS});
 
 const { gridsContext, gridSelected, evalIndex, evalContext, hideNbContext,blurContext, spaceGridsSelected,spaceStageSelected,
@@ -39,7 +39,7 @@ const { setInsightTemplate }  = stageActions
 
   const selectGridHandler = async (arg: number) => {
     console.log({ arg });
-    setSelectedGrid(arg)
+    //setSelectedGrid(arg)
     try {
       const templateByNb = await getInsightTemplateByNb(arg)
       console.log({templateByNb});
@@ -47,6 +47,7 @@ const { setInsightTemplate }  = stageActions
       if(typeof templateByNb !== 'undefined' &&  templateByNb.success){
       console.log({ grids: templateByNb.templates });
        dispatch(setInsightTemplate({ template: JSON.parse(templateByNb.templates)[0] }))
+      
       }else if(!templateByNb.success){
       toast.warning(`${templateByNb.templates}`)
 
@@ -65,9 +66,9 @@ const { setInsightTemplate }  = stageActions
             {STAGE_CATEGORY_ENUM.TIWAL} &nbsp; [ 2 - 7 ]&nbsp; </div>
             {newTiwal?.map((grid: GridMenu) => {
 //console.log({ grid });
-              return <Button className="text-center bg-emerald-300/80 mx-1 rounded-md text-pretty  w-3/4" onPress={() => { selectGridHandler(grid.souraNb) }} key={`${grid.souraName}-${grid.souraNb}`} aria-label={`${grid.souraName}`} title={`${grid.souraName}`}>
-                <div className="flex justify-center  text-center">
-                  {`  ${grid.souraName}   :  ${grid.souraNb}`}
+              return <Button className="text-start bg-emerald-300/80 mx-1 rounded-md text-pretty  w-3/4" onPress={() => { selectGridHandler(grid.souraNb) }} key={`${grid.souraName}-${grid.souraNb}`} aria-label={`${grid.souraName}`} title={`${grid.souraName}`}>
+                <div className="flex justify-start  items-center text-start">
+                {`  ${grid.souraName.length<10 ? `${grid.souraName.substring(0,10)}`:`${grid.souraName.substring(0,10)}.`}:  ${grid.souraNb}`}
                 </div>
               </Button>
             })}
@@ -78,10 +79,10 @@ const { setInsightTemplate }  = stageActions
             <div className="flex justify-center items-center bg-orange-200/70 rounded-md w-full "> 
             {STAGE_CATEGORY_ENUM.MIIN} &nbsp; [ 8 - 18 ]&nbsp; </div>
             {newMiin?.map((grid) => {
-              return <Button className="text-center text-pretty mx-1 rounded-md bg-emerald-300/60  w-3/4" onPress={() => 
+              return <Button className="text-start text-pretty mx-1 rounded-md bg-emerald-300/60  w-3/4" onPress={() => 
               { selectGridHandler(grid.souraNb) }} key={`${grid.souraName}-${grid.souraNb}`} aria-label={`${grid.souraName}`} title={`${grid.souraName}`}>
-                <div className="flex justify-center items-center text-center mx-1 ">
-                  {`[ ${grid.souraNb} ]   ${grid.souraName}  `}
+                <div className="flex justify-start items-center text-center mx-1 ">
+                {`  ${grid.souraName.length<10 ? `${grid.souraName.substring(0,10)}`:`${grid.souraName.substring(0,10)}.`}:  ${grid.souraNb}`}
                 </div>
               </Button>
             }
@@ -94,9 +95,9 @@ const { setInsightTemplate }  = stageActions
             {STAGE_CATEGORY_ENUM.MATHANI} &nbsp; [ 19 - 48 ]&nbsp;</div>
 
             {newMathani?.map((grid) => {
-              return <Button className="text-center text-pretty mx-1 rounded-md bg-emerald-300/40 w-3/4" onPress={() => { selectGridHandler(grid.souraNb) }} key={`${grid.souraName}-${grid.souraNb}`} aria-label={`${grid.souraName}`} title={`${grid.souraName}`}>
-                <div className="flex justify-center mx-1 text-center">
-                  {`  ${grid.souraName}   :  ${grid.souraNb}`}
+              return <Button className="text-start text-pretty mx-1 rounded-md bg-emerald-300/40 w-3/4" onPress={() => { selectGridHandler(grid.souraNb) }} key={`${grid.souraName}-${grid.souraNb}`} aria-label={`${grid.souraName}`} title={`${grid.souraName}`}>
+                <div className="flex justify-start mx-1 text-center">
+                {`  ${grid.souraName.length<10 ? `${grid.souraName.substring(0,10)}`:`${grid.souraName.substring(0,10)}.`}:  ${grid.souraNb}`}
                 </div>
               </Button>
             }
@@ -105,30 +106,30 @@ const { setInsightTemplate }  = stageActions
         }
         {newMofasal && newMofasal.length > 0 &&
           <section className="flex flex-col gap-1 space-y-1  justify-start items-start ">
-            <div className="flex justify-center items-center mx-1 mt-1 bg-orange-500/50 rounded-md w-full "> 
-            {STAGE_CATEGORY_ENUM.MOFASAL} &nbsp; [ 49 - 114 ] &nbsp; </div>
+            <div className="flex justify-start items-center mx-1 mt-1 bg-orange-500/50 rounded-md w-full "> 
+            {STAGE_CATEGORY_ENUM.MOFASAL} &nbsp; [49-114] &nbsp; </div>
 
             {newMofasal?.map((grid) => {
            if(grid.souraNb < 80) {
             
-         return(   <Button key={`${grid.souraName}-${grid.souraNb}`} className="text-center mx-1 rounded-md text-pretty  w-3/4 bg-green-500/50" 
+         return(   <Button key={`${grid.souraName}-${grid.souraNb}`} className="text-start mx-1 rounded-md text-pretty  w-3/4 bg-green-500/50" 
           onPress={() => { selectGridHandler(grid.souraNb) }}  aria-label={`${grid.souraName}`} title={`${grid.souraName}`}>
-               <div className="flex justify-center  mx-1 text-center">
-                 {`  ${grid.souraName}   :  ${grid.souraNb}`}
+               <div className="flex justify-start  mx-1 text-start">
+               {`  ${grid.souraName.length<10 ? `${grid.souraName.substring(0,10)}`:`${grid.souraName.substring(0,10)}.`}:  ${grid.souraNb}`}
                </div>
              </Button>) 
              }else if  (grid.souraNb < 93) { 
-              return (<Button  key={`${grid.souraName}-${grid.souraNb}`} className="text-center text-pretty rounded-md mx-1 ml-4 w-3/4  bg-green-400/50" 
+              return (<Button  key={`${grid.souraName}-${grid.souraNb}`} className="text-start text-pretty rounded-md mx-1 ml-4 w-3/4  bg-green-400/50" 
            onPress={() => { selectGridHandler(grid.souraNb) }}  aria-label={`${grid.souraName}`} title={`${grid.souraName}`}>
-                <div className="flex justify-center text-center">
-                  {`  ${grid.souraName}   :  ${grid.souraNb}`}
+                <div className="flex justify-start mx-1 text-start">
+     {`  ${grid.souraName.length<10 ? `${grid.souraName.substring(0,10)}`:`${grid.souraName.substring(0,10)}.`}:  ${grid.souraNb}`}
                 </div>
               </Button>)
               }else {
-                 return (<Button  key={`${grid.souraName}-${grid.souraNb}`} className="text-center text-pretty mx-1 rounded-md w-3/4 ml-8 bg-green-300/50" 
+                 return (<Button  key={`${grid.souraName}-${grid.souraNb}`} className="text-start text-pretty mx-1 rounded-md w-3/4 ml-8 bg-green-300/50" 
                   onPress={() => { selectGridHandler(grid.souraNb) }}  aria-label={`${grid.souraName}`} title={`${grid.souraName}`}>
-                       <div className="flex justify-center  text-center">
-                         {`  ${grid.souraName}   :  ${grid.souraNb}`}
+                       <div className="flex justify-start  mx-1 text-start">
+          {`  ${grid.souraName.length<10 ? `${grid.souraName.substring(0,10)}`:`${grid.souraName.substring(0,10)}.`}:  ${grid.souraNb}`}
                        </div>
                      </Button>)
               }

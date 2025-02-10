@@ -27,22 +27,19 @@ function TemplateCard() {
         
         dispatch(setInsightTemplateAyahsSelected({ ayahs: grid }))
     }
-    const getStatAndPersist = async( {min, max , length, ayMin, ayMax}:{min:number, max: number , length: number, ayMin:string, ayMax:string}) => {
+  /*   const getStatAndPersist = async( {min, max , length, ayMin, ayMax}:{min:number, max: number , length: number, ayMin:string, ayMax:string}) => {
         const souraNb = insightTemplate.souraNb;
         console.log({ ayMin,ayMax});
         try {
-            
             const resp = await statTaysirPersist({min, max, length,souraNb, ayMin,ayMax})
-if(resp && resp.success) {
-    toast.success(`stat for ${insightTemplate.souraNb}successfully persisted` )
-        }
+    if(resp && resp.success) {
+        toast.success(`stat for ${insightTemplate.souraNb}successfully persisted` )
+      }
         } catch (error) {
-    toast.warning(`error occured when trying to persist ${insightTemplate.souraNb} stat` )
-            
+        toast.warning(`error occured when trying to persist ${insightTemplate.souraNb} stat` )
         }
-
     }
-
+ */
     return <div className="flex justify-start gap-1 p-2 items-center overflow-hidden overflow-y-scroll flex-wrap h-40"> {
         insightTemplate && insightTemplate.ayahs.map((ayStri: string, index: number) => {
             const ayaParsed = JSON.parse(ayStri)
@@ -54,12 +51,13 @@ if(resp && resp.success) {
                    
                     <Button onPress={() => {
                         handleSetGridSelected(ayaParsed)
-                        getStatAndPersist({min:ayaParsed[0].number,
+                       /*  getStatAndPersist({min:ayaParsed[0].number,
                             max:ayaParsed[ayaParsed.length -1].number,
                             length: ayaParsed.length,
                         ayMin: ayaParsed[0].text,
                     ayMax: ayaParsed[ayaParsed.length -1].text} )
-                        setTemplateSelected(index)
+                        */ 
+                       setTemplateSelected(index)
                     }} color="primary" 
                     variant="bordered" className={`border-2 border-blue-600 rounded-md  
                     ${templateSelected === index ? 'bg-orange-200' : 'bg-slate-400'} `}>

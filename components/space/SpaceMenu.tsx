@@ -4,7 +4,9 @@ import { getGridsByNb } from "@/actions/space";
 import { STAGE_CATEGORY_ENUM, StagePrismaType } from "@/app/api/graphql/stage/stage.types";
 import { stageActions } from "@/store/slices/stageSlice";
 import { useLazyQuery } from "@apollo/client";
-import { Button, ScrollShadow } from "@nextui-org/react";
+import { Button, } from "@heroui/button";
+import { ScrollShadow} from "@heroui/scroll-shadow";
+
 import { Fragment, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";

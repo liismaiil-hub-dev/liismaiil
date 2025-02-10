@@ -2,9 +2,40 @@
 import _ from 'lodash';
 
 import { FLAG_FILES } from '@/store/constants/flagArray';
-import fs from 'node:fs';
 
 
+const arabic = /[\u0600-\u06FF]/;
+
+export  function ayahWithoutPunct(ayah : string) {
+  console.log({ayah});
+  
+  const _words = _.words(ayah);
+  const __words = _words.map((w) => {
+    // length: 1, code: 175
+    //[1769, 1750, 1751, 1752, 1753, 1754, 1755, 1756, 1757, 1758]0 ode: 1751
+    const arrayAnot = [1769, 1750, 1751, 1752, 1753, 1754, 1755, 1756, 1757, 1758, 65533,1758, 65279,1758, 1750 ,1754];
+    console.log({word:w, code:w.charCodeAt(0)});
+    
+    let newWord: string = ''
+    if (arabic.test(w) && w.length > 0) {
+
+      for (let i = 0; i < w.length; i++) {
+        if (arrayAnot.includes(w.charCodeAt(i))) {
+          continue
+        }
+
+        newWord += w[i]
+        //          console.log(newWord, w);
+      }
+
+      return newWord;
+    }
+  });
+  console.log({__words});
+  return __words
+  
+  
+}
 
 export async function genRandomToken() {
   const chars = '0123456789abcdefghijklmnopqrstuvwxyz!@#*ABCDEFGHIJKLMNOPQRSTUVWXYZ';

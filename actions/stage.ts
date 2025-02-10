@@ -107,12 +107,15 @@ console.log({sprintIds});
 })
 export const getStageForSprint = memoize(async (stageId: string) => {
   try {
+    console.log({stageId});
     
     const _stage = await prisma.stage.findFirstOrThrow({
       where:{stageId},
       }
     )
   if(_stage  && typeof _stage !== 'undefined') {
+    console.log(_stage);
+    
       return {success: true, stage:_stage}
   }else {
     return {success: false, stage:null}

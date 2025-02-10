@@ -4,7 +4,9 @@
 import { GRIDS_NAME, GRIDS_TLD } from "@/store/constants/constants";
 import { stageActions } from "@/store/slices/stageSlice";
 import { RootStateType } from "@/store/store";
-import {  AccordionItem, Button, cn } from "@nextui-org/react";
+import {  Button,  } from "@heroui/button";
+import {cn} from "@/lib/cn-utility";
+
 import { useTransform } from "framer-motion";
 import { startTransition, useEffect, useMemo, useState, useTransition } from 'react';
 import { useDispatch, useSelector } from "react-redux";
@@ -30,7 +32,6 @@ const [isPending, startTransition] = useTransition()
     return gr.souraNb! > 7 && gr.souraNb <= 18;
   }), [stagesSprintsContext])
 
-
   const newMathani = useMemo(() => stagesSprintsContext?.filter((gr: StagesSprintType) => {
     return gr.souraNb > 18 && gr.souraNb <= 48;
   }), [stagesSprintsContext])
@@ -38,8 +39,6 @@ const [isPending, startTransition] = useTransition()
   const newMofasal = useMemo(() => stagesSprintsContext?.filter((gr: StagesSprintType) => {
     return gr.souraNb > 48;
   }), [stagesSprintsContext])
-
-
 
   useEffect(() => {
     startTransition(()  =>{
@@ -50,7 +49,6 @@ const [isPending, startTransition] = useTransition()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stages]);
   
-
 const categoryHandler = (cat:GRIDS_NAME ) => {
  console.log({cat});
    dispatch(setCategoryContext({cat:cat}))
@@ -67,7 +65,6 @@ const categoryHandler = (cat:GRIDS_NAME ) => {
       break;
     }
     case ( GRIDS_NAME[GRIDS_TLD.MATHANI]):{
-
       dispatch(setCatStages({
        stages:newMathani 
       })) 
@@ -76,16 +73,12 @@ const categoryHandler = (cat:GRIDS_NAME ) => {
    dispatch(setCatStages({
        stages:newMofasal 
       })) 
-      
       break;
     }
-   
-  };
-}
+  };}
 
   return (
     <div className="flex-col items-stretch justify-center gap-3">
-
     <section  className="container  overflow-scroll w-svw gap-3  grid grid-cols-4 items-center p-1 
     border-3 border-gray-500 rounded-md space-x-3">
               <div className={"flex justify-center py-3 w-full col-span-1 items-center text-center  "} >
@@ -96,7 +89,6 @@ const categoryHandler = (cat:GRIDS_NAME ) => {
              aria-label=  {`${GRIDS_NAME[GRIDS_TLD.TIWAL]}`} 
              title=  {`${GRIDS_NAME[GRIDS_TLD.TIWAL]}   `}>
           {`${GRIDS_NAME[GRIDS_TLD.TIWAL]} [ 2 - 7 ]`}
-
         </Button>
         </div>
         <div className="flex justify-center w-full col-span-1 items-center text-center  ">
@@ -105,7 +97,6 @@ const categoryHandler = (cat:GRIDS_NAME ) => {
                text-green-700 ")} onClick={() => { categoryHandler(GRIDS_NAME[GRIDS_TLD.MIIN]) }} 
             aria-label=  {`${GRIDS_NAME[GRIDS_TLD.MIIN]}`} title=  {`${GRIDS_NAME[GRIDS_TLD.MIIN]} `}>
          {`${GRIDS_NAME[GRIDS_TLD.MIIN]} [ 8 - 18 ]`}
-
        </Button>
        </div>
        <div className="flex justify-center w-full col-span-1 items-center text-center  ">
@@ -115,7 +106,6 @@ const categoryHandler = (cat:GRIDS_NAME ) => {
                text-green-700 ")} onClick={() => { categoryHandler(GRIDS_NAME[GRIDS_TLD.MATHANI]) }} 
          aria-label=  {`${GRIDS_NAME[GRIDS_TLD.MATHANI]}`} title=  {`${GRIDS_NAME[GRIDS_TLD.MATHANI]} `}>
       {`${GRIDS_NAME[GRIDS_TLD.MATHANI]} [ 19 - 48 ]`}
-
     </Button>
     </div>
     <div className="flex justify-center w-full col-span-1 items-center text-center  ">

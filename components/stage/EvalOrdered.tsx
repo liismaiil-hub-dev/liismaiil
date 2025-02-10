@@ -28,7 +28,7 @@ function EvalOrdered() {
                     return <div key={`${ayag.order}_${ayag.juz}`} className=" flex  p-2 bg-emerald-100/30 justify-start 
         items-center cursor-not-allowed
         border-b-1 border-green-300/25 ">
-                        <div className='flex  focus:border-red-500 items-center'>{` [ ${ ayag.numberInSurah} ] `}</div>
+                        <div className='flex  focus:border-red-500 items-center'>{` [ ${ ayag.numberInSurah}- ${ ayag.number}] `}</div>
                         <div className={'flex flex-1 text-right justify-end  items-center '}>{ayag.text}</div>
                     </div>
 }

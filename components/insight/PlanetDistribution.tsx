@@ -145,43 +145,40 @@ const drawDensity = ({
 const _mapPlanets = planetData.map(p  => p)
 console.log({_mapPlanets});
 try {
-    let cxValue = 0
-const _svg = SVG?.selectAll('circle')
+  const _svgRect = SVG?.selectAll('rect')
 .data(_mapPlanets, async function(d){
-/**
- * .order((a,b) => {
-    if(order === OrderEnum.ASC){
-        console.log({order});
-        
-        return Number(a.diameter) - Number(b.diameter)
-    }else {
-        return Number(b.diameter) - Number(a.diameter)
-
-    }
+    return d?.name
+}) .order((a,b) => {return order == OrderEnum.ASC ? Number(a?.density) - Number(b.density): Number(b.density) - Number(a.density)})
+    .join('rect')
+    .attr('width', d => Number(d.density / 10))
+    .attr('height', '30')
+    .attr('y', (d, i) => {
+        return i*40
     })
- */
-
-    return this
-}).join('circle').attr('r', d => Number(d.diameter / 1000)).attr('cy', 150).attr('cx', (d, i, n) => {
-    if(i === 0) {
-        cxValue= Number(d.diameter / 1000)
-    }else {
-       const prevRadius = Number(select(n[i -1]).attr('r'))
-    cxValue = cxValue + prevRadius + d.diameter / 1000
-    }
-    return ( 75 * (i + 1) + cxValue )
-}).style('fill', d  => d.color)
-console.log({_svg});
+    .attr('x', '10')
+    .style('fill', d  => d.color)
+console.log({_svgRect});
 
 const _textName =   SVG?.selectAll('text')
 .data(_mapPlanets, async function(d){
+    console.log({inText:d});
+    
     return d?.name
-}).join('text').attr('x', (d, i, n) => _svg['_groups'][0][i].getAttribute('cx')).attr('y', (d, i,) => {
-    console.log({dText:d});
-    return i%2==0? '330' : '15' }).text((d) => `${d.name}-${d.diameter}`).style('text-anchor', 'middle')
-    .style('fill', 'rgb(100,63,63)')
-    .style('font-size','15px')
+}).join('text')
+.attr('x', (d, i) => d.density / 10 + 20)
+.attr('y', (d, i,) => {
+    return (i*40) +20 
+})
+.text((d) => {
+        console.log({dText:`${d.name}-${d.density}`});
+
+        return `${d.name}-${d.density}`})
+    .style('text-anchor', 'start')
+    .style('fill', 'rgb(63,63,63)')
+    .style('font-size','20px')
     .style('font-weight','bold')
+    console.log(_textName);
+    
 } catch (error) {
     console.log({error});
 }
@@ -232,19 +229,26 @@ async function getPlanets() {
         <h1 className="text-green-700 text-center"> Solar System Planets
         </h1>
 
-        <div className="flex flex-col justify-start overflow-scroll items-stretch  space-y-2">
+        <div className=" flex-col justify-between overflow-scroll items-stretch  space-y-2">
+
+        <div className=" flex-col justify-start overflow-scroll items-stretch  space-y-2">
         <svg ref={svgRef!} viewBox={`0 0 ${width} ${height}`}  >
         
         <circle />
         <text />
          
         </svg>
+        </div>
+
+        <div className=" flex-col justify-start overflow-scroll items-stretch  space-y-2 border-1 border-blue-400   ">
+        
         <svg ref={densityRef!} viewBox={`0 700 ${width} ${height}`}  >
         
         <rect />
         <text />
          
         </svg>
+        </div>
 
             </div>
     </div>}

@@ -1,8 +1,10 @@
+import { INSIGHT_STATE } from '@/api/graphql/stage/stage.types';
 
 // third-party
-import { Ayah, EVAL_STATE, GiftType, GridJsoned, GridMenu, GridTypeData, GuestPrismaType, PRODUCT_STATUS_ENUM, SprintGuest, SprintPrismaType, StagePrismaType, StagesSprintType, StageStateProps, StatsTemplateType, statsTemplateType, TemplateTypeData } from '@/api/graphql/stage/stage.types';
+import { Ayah, EVAL_STATE, GiftType, GridMenu, GridTypeData, GuestPrismaType, PRODUCT_STATUS_ENUM, SprintGuest, SprintPrismaType, StagePrismaType, StagesSprintType, StageStateProps, StatsTemplateType, statsTemplateType, TemplateTypeData } from '@/api/graphql/stage/stage.types';
 import { createSlice, current, PayloadAction } from '@reduxjs/toolkit';
 import { GRIDS_NAME, GRIDS_TLD } from '../constants/constants';
+
 const initialState: StageStateProps = {
   
   categoryContext:GRIDS_NAME[GRIDS_TLD.TIWAL],
@@ -195,10 +197,12 @@ const initialState: StageStateProps = {
   faultsNbContext: 0,
   correctsNbContext: 0,
   evalContext: EVAL_STATE.ORDER,
+  insightContext: INSIGHT_STATE.SOURA,
   stageEvalContext: EVAL_STATE.ORDER,
   validContext: false,
   stageValidContext: false,
   menuSouraNb: [{ souraName: '', souraNb: -1 }],
+  windowContext: -1,
   spaceStageAyahsContext:[
     {
       id: -1,
@@ -347,6 +351,12 @@ const stageSlice = createSlice({
       action: PayloadAction<{ template: TemplateTypeData }>) {
       console.log({insightTemplate : action.payload.template })
       state.insightTemplate = action.payload.template
+      state.insightWindow = 0
+    },
+    setInsightWindow(state: StageStateProps,
+      action: PayloadAction<{ window: number }>) {
+
+      state.insightWindow = action.payload.window
     },
     setGridTemplateSelected(state: StageStateProps,
       action: PayloadAction<{ grid:Ayah[]  }>) {
@@ -363,6 +373,17 @@ const stageSlice = createSlice({
 //          console.log({ gridSelected: action.payload.ayahs });
       state.statsTemplateContext = action.payload.stats;
      },
+     setWindowDialogContext(state: StageStateProps,
+      action: PayloadAction<{ wind:number  }>) {
+//          console.log({ gridSelected: action.payload.ayahs });
+      state.windowContext = action.payload.wind;
+     },
+     setInsightContext(state: StageStateProps,
+      action: PayloadAction<{ insight: INSIGHT_STATE }>) {
+      state.insightContext = action.payload.insight
+      state.windowContext = -1
+    },
+
     //@begin stage 
     setStageGridsContext(state: StageStateProps,
       action: PayloadAction<{ stages: StagePrismaType[] }>) {
@@ -430,6 +451,14 @@ const stageSlice = createSlice({
         console.log({currentGridsStaged : current(state).gridsStaged, stageIds:action.payload.stageIds});
          
       state.gridsStaged = action.payload.stageIds;
+    },
+    initInsight(state: StageStateProps,
+      action: PayloadAction<{ insightContext: INSIGHT_STATE }>) {
+
+        
+        state.errorNbContext = 0  
+        state.gridsStaged = [''];
+      state.insightContext = INSIGHT_STATE.SOURA;
     },
     setSprintsReady(state: StageStateProps,
       action: PayloadAction<{ sprintIds: string[] }>) {

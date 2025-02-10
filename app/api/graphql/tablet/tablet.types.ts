@@ -138,13 +138,6 @@ export type TabletInput = {
   ayahs: [AyahTabletType];
 };
 
-export type StatsTypeData = {
-  guests: number;
-  time: number;
-  suggestions: [string];
-  coll: [string];
-  soura: string;
-};
 
 export type TabletComment = {
   id: string;

@@ -8,81 +8,196 @@ import { ElementRef, ElementType, memo, ReactNode, use, useEffect, useRef, useSt
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import SpaceButton from './SpaceButton';
-import { useFormState, useFormStatus } from 'react-dom';
 import {  Modal,  ModalContent,  ModalHeader,  ModalBody,  ModalFooter,  useDisclosure} from "@heroui/modal";
 import {Button} from "@heroui/button";
+import {Radio, RadioGroup} from "@heroui/radio";
 
-import {selectAll,scaleLinear, axisBottom, axisRight, extent, min, max, scaleOrdinal, 
-    select,schemeRdYlGn, schemeRdYlBu, schemeCategory10,schemeYlOrBr, axisLeft, BaseType,
-    schemeGreens} from "d3";
-import { SECTIONS_SOURAS } from '@/store/constants/constants';
+import {  useFormStatus } from 'react-dom';
+import {scaleLinear,BaseType,select, 
+     scaleSequential, 
+    interpolateRainbow,
+    axisLeft,
+     axisTop,
+     format,
+     min,
+     max,
+     axisBottom} from "d3";
+
 import { getStatTaysir } from '@/actions/sprint';
+import { getInsightTemplateByNb } from '@/actions/stage';
 
 const dimentions = {
-    width:600,
+    width:1000,
     height:500,
     margin :{
-        top:20,
-        right:20,
-        bottom:20,
-        left:60,}}
+        top:25,
+        right:45,
+        bottom:25,
+        left:25,}}
 
-const {height, margin, width } = dimentions
-const boundedWidth = width - margin.right
-const boundedHeight = height - margin.bottom
-
-
-const drawChart = ({
-    SVG,chartData, data, souraNbArr,height, width 
-}:{
-    SVG:Selection<BaseType, unknown, HTMLElement, any> | ElementType,
-    chartData: [],
-    data: [], 
-    souraNbArr:[number],
-    height: number,
-    width: number 
-}) => {
-    console.log({souraNbArr});
-
-const xScale = scaleLinear([min(data, (d)  => d?.min!), max(data, (d)  => d?.max!)],[margin.left,boundedWidth])
-const yScale = scaleLinear([0,max(data, (d)  => d?.souraNb!)],[boundedHeight, margin.top])
-const colorScale = scaleOrdinal(souraNbArr, schemeCategory10).unknown(null)  
-const scdRec = select('rect:nth-of-type(3)')
-console.log({scdRec});
-scdRec.style('background-color', 'brown')
-
-SVG?.selectAll('rect')
-.data(data).select(function(d, i, n){
-    console.log({d, i, n});
-     //select(this).attr('width', d => d.max)
-    return this
-})
-.attr('x', (d:StatsTemplateType)  => xScale(d.min ))
-.attr('width', (d:StatsTemplateType)  => d.max )
-.attr('y', (d:StatsTemplateType)  => yScale(d.souraNb ))    
-.style('fill',(d:StatsTemplateType)  => colorScale(d.souraNb) )
-.transition()
-.duration(500)
-    
-
-    console.log({SVG});
-    // axis 
-SVG?.append('g')
-    .call(axisLeft(yScale).ticks(1))
-    .attr('transform', `translate(${margin.left},0)`)
-    .call((g)=> g.select('.domain').remove())    
-    SVG?.append('g')
-    .call(axisBottom(xScale).ticks(20))
-    .attr('transform', `translate(0,${boundedHeight})`)
-    .call((g)=> g.select('.domain').remove())    
-    
-    scdRec.select(function(d, i, n){
-    console.log({d, i, n});
-    
-    })
+enum OrderEnum { 
+    ASC ='ASC',
+    DESC =  'DESC'
 }
 
+const {height, margin, width } = dimentions
+const boundedWidth = width  - margin.right - margin.left -25
+const boundedHeight = height  - margin.top   
+const drawSoura = ({
+    SVG,
+    minAySelected,
+    maxAySelected, 
+    data
+}:{
+    SVG:Selection<BaseType, unknown, HTMLElement, any> | ElementType,
+    minAySelected: boolean,
+    maxAySelected: boolean, 
+    data:StatsTemplateType[]
+}) => {
+    console.log({data});
+    const colorScale =scaleSequential([0,data.length ], ['blue', "green"]).interpolator(interpolateRainbow)
+    try {
+        const WIND_max = data.map((wind)=> wind.max )
+        const WIND_min = data.map((wind)=> wind.min )
 
+     const WINDOW_AY_MAX = Math.max(...WIND_max)
+     const WINDOW_AY_MIN = Math.min(...WIND_min)
+console.log(
+    {WINDOW_AY_MIN,WINDOW_AY_MAX, diff:WINDOW_AY_MAX -WINDOW_AY_MIN }
+);
+    const _xScale = scaleLinear()
+                    .domain([WINDOW_AY_MIN,WINDOW_AY_MAX ])
+                    .rangeRound([margin.left , boundedWidth]).clamp(true)
+  
+                    
+const _yScale = scaleLinear()
+                .domain([ 0,data.length +1 ])
+                .rangeRound([   margin.bottom, boundedHeight])
+                .clamp(true)
+const yScaleAxis = scaleLinear()
+                .domain([1,data.length ])
+                .rangeRound([  boundedHeight, margin.top])
+                .clamp(true)
+const xScaleAxis = scaleLinear()
+                .domain([WINDOW_AY_MIN,WINDOW_AY_MAX ])
+                .rangeRound([0, boundedWidth]).clamp(true)
+
+               const _xticks =   xScaleAxis.ticks(WINDOW_AY_MAX - WINDOW_AY_MIN) 
+                const _yticks =   yScaleAxis.ticks(data.length) 
+  //.interpolate(interpolateHclLong)
+    SVG.attr('viewBox', `0 0 ${width} ${height}`).style('background-color', 'rgb(240,240,240)')
+   /*   const _svgWindow = SVG?.selectAll('rect')
+                .data(data, async function(d, i ,n){
+                    return d})
+                .join('rect')
+                .attr('width',function(d, i ){
+                  console.log({min:d.max-d.min, xscMin:_xScale(d.min),xscMax:_xScale(d.max) });
+                    
+                  return (50 )
+                   })
+                .attr('height', function(d){
+                    return 8
+                })
+                .attr('x', function(d, i){
+                  //  console.log({ min:d.min});
+                    return _xScale(d.min)  
+                }).attr('transform','translate(-27,-15)')
+                .attr('y', function(d, i){
+                    return _yScale(i)+ (i + 11)* 2 
+                })
+                    .attr('fill', (d,i ) => colorScale(i))
+                    .attr('rx', '2')
+                    .attr('ry', '2')
+    */               
+  // g1
+  const _svgWindow = SVG?.select('g:nth-of-type(1)').selectAll('line')
+        .data(data, async function(d, i ,n){
+            return d})
+        .join('line')
+        .attr('height', function(d){
+            return 8
+        })
+        .attr('x1', function(d, i){
+            console.log({ min:d.min});
+            return _xScale(d.min)  
+        }).attr('x2', function(d, i){
+          //  console.log({ min:d.min});
+            return _xScale(d.max)  
+        }).attr('y1', function(d, i){
+            console.log({ yscal:d.i});
+          return boundedHeight- _yScale(i  )//+ ((i + 1) * 6)  
+        }).attr('y2', function(d, i){
+          //  console.log({ min:d.min});
+          return boundedHeight-  _yScale(i )//+ ((i + 1) * 6)
+        })
+        .style('stroke', (d,i ) => colorScale(i))
+        .style('hight', (d,i ) => d.max-d.min)
+           // .attr('fill', (d,i ) => colorScale(i))
+            .attr('rx', '2')
+            .attr('ry', '2')
+            .attr('transform',`translate(${margin.left+10},0)`)    
+
+const formatFn = format('_>4') 
+
+ const _ayMinWind =   SVG?.select('g:nth-of-type(2)').selectAll('text')
+.data(data)
+.join('text')
+.text(function(d, i){
+  console.log({d, min:d.min, pos: _xScale(d.min) });
+        return  minAySelected ?`${d.ayMin}:${d.min}`: ''
+     })
+.attr('x', (d, i ) => {
+      console.log({d, min:d.min, pos: _xScale(d.min) });
+      return _xScale(d.min)
+    }    )
+.attr('y', function(d, i){
+      return boundedHeight - _yScale(i) -margin.bottom
+   })
+.style('fill',(d,i ) => colorScale(i)) 
+    .style('font-size','17px')
+    .style('font-weight','light')
+    .attr('transform',`translate(${margin.left+10},0)`)    
+
+  
+  const _ayMaxWind =   SVG?.select('g:nth-of-type(3)').selectAll('text')
+ .data(data)
+ .join('text')
+ .text(function(d,i){
+  return   maxAySelected ?`${d.ayMax}:${d.max}`: ''
+  // return  `${formatFn(d.max)}`
+  //     return `${d.max}-${d.ayMax}`
+    })
+    .attr('x', (d, i ) => {
+    return _xScale(d.max)
+    })
+    .attr('y', function(d, i){
+      return boundedHeight - _yScale(i)-margin.bottom - margin.top 
+   })
+    .style('fill',(d,i ) => colorScale(i)) 
+        .style('font-size','17px')
+        .style('font-weight','light') 
+        .attr('transform',(d)  =>`translate(${ - margin.right - (5*d.ayMax.length) },0)`)    
+
+        //   .attr('transform','rotate(45)')
+//  console.log({_svgWindow, _ayMinWind, scalPo: scalePow().exponent()});
+ 
+const _yAxisLeft = axisLeft(yScaleAxis)
+const _displayYAxisG = SVG.select('g:nth-of-type(4)')
+                .attr('id','yAxisLeftG')
+               .attr('transform',`translate(${margin.left +20},0)`)    
+             //   .attr('margin', '10')
+               _yAxisLeft(_displayYAxisG)
+
+const _xAxisTop = axisBottom(xScaleAxis)
+const _displayXAxisT = SVG.select('g:nth-of-type(5)')
+                .attr('id','xAxisTop')
+               .attr('transform',`translate(${margin.left +20},${boundedHeight})`)    
+             //   .attr('margin', '10')
+               _xAxisTop(_displayXAxisT)
+}catch(error) {
+console.log({error});
+
+}}
 export default function StatsDialog({isOpen,  onOpen, onClose}:{isOpen:boolean,  onOpen:()=> void,  onClose:()=> void}) {
     const dispatch = useDispatch()
   //  const [isPending, startTransition] = useTransition()
@@ -90,76 +205,179 @@ export default function StatsDialog({isOpen,  onOpen, onClose}:{isOpen:boolean, 
    const {pending} =   useFormStatus()
     const { insightTemplate, statsTemplateContext,insightTemplateAyahsSelected} = useSelector((state: RootStateType) => state.stage)
     const { guestPrisma } = useSelector((state: RootStateType) => state.guestPrisma)
-    const {  setGridsStaged, setStatsTemplateContext } = stageActions
- 
-    const [statZoom, setStatZoom] = useState([0, 100]);
-
-    const svgRef = useRef();
-    function nextGridHandler() {
-        setStatZoom((prev) =>  ([prev[0]+100,prev[1]+100]))
-    }
-
-    useEffect(() => {
-        const xDataMax = statsTemplateContext?.map((stTem:StatsTemplateType)=> stTem ).sort((a,b)=> a.max - b.max )
-        const _souraNb = statsTemplateContext?.map((d:StatsTemplateType) => d.souraNb).sort((a,b) => a-b )
-        const chartData = statsTemplateContext?.map((d:StatsTemplateType) => d.ayMax)
-        const souraNbArr = [...new Set(_souraNb)];
-        console.log({souraNbArr,xDataMax});
-        if(typeof xDataMax !== 'undefined' && xDataMax.length > 0){
-        console.log({xDataMax});
-        
-            drawChart({SVG:select(svgRef.current), data:xDataMax, souraNbArr, height, width,chartData })
-        }
-    }, [statsTemplateContext]);
-
-      function prevGridHandler() {
-        if(statZoom[0] !== 0){
-        setStatZoom((prev) =>  ([prev[0]-100,prev[1]-100]))
-        }
-       }
-     async function getStat() {
-        try {
-          //  console.log({statZoom});
-
-            const _statResp = await getStatTaysir({min:statZoom[0], max:statZoom[1]}) 
-            if(_statResp && _statResp.success) {
-               const _stats= JSON.parse(_statResp.message)
-                console.log({_stats});
+    const {  setGridsStaged, setStatsTemplateContext, setInsightTemplate } = stageActions
+  const svgRef = useRef();
+        const svgSoura = useRef();
+     
+        async function nextSouraHandler() {
+     if(typeof insightTemplate !== 'undefined'&& insightTemplate && insightTemplate.souraNb>0 && insightTemplate.souraNb <115){
+      try {
+           const templateByNb = await getInsightTemplateByNb(insightTemplate.souraNb +1 )
+           console.log({templateByNb});
+           if(typeof templateByNb !== 'undefined' &&  templateByNb.success){
+           console.log({ grids: templateByNb.templates });
+            dispatch(setInsightTemplate({ template: JSON.parse(templateByNb.templates)[0] }))
+           }else if(!templateByNb.success){
+           toast.warning(`${templateByNb.templates}`)
+           }
+         } catch (error) {
+           toast.warning(`${error}`)
+         } 
+        }else {
+          try {
+            const templateByNb = await getInsightTemplateByNb(1)
+            console.log({templateByNb});
             
-                dispatch(setStatsTemplateContext({stats:_stats}))
+            if(typeof templateByNb !== 'undefined' &&  templateByNb.success){
+            console.log({ grids: templateByNb.templates });
+             dispatch(setInsightTemplate({ template: JSON.parse(templateByNb.templates)[0] }))
+            }else if(!templateByNb.success){
+            toast.warning(`${templateByNb.templates}`)
+      
+            }
+          } catch (error) {
+            toast.warning(`${error}`)
+          }
+        }
+      }
+      async function prevSouraHandler() {
+        if(typeof insightTemplate !== 'undefined'&& insightTemplate && insightTemplate.souraNb>0 && insightTemplate.souraNb <115){
+          try {
+               const templateByNb = await getInsightTemplateByNb(insightTemplate.souraNb -1 )
+               console.log({templateByNb});
+               if(typeof templateByNb !== 'undefined' &&  templateByNb.success){
+               console.log({ grids: templateByNb.templates });
+                dispatch(setInsightTemplate({ template: JSON.parse(templateByNb.templates)[0] }))
+               }else if(!templateByNb.success){
+               toast.warning(`${templateByNb.templates}`)
+              }
+             } catch (error) {
+               toast.warning(`${error}`)
+             } 
             }else {
-                toast.warning('something went wrong')
+              try {
+                const templateByNb = await getInsightTemplateByNb(1)
+                console.log({templateByNb});
+                if(typeof templateByNb !== 'undefined' &&  templateByNb.success){
+                console.log({ grids: templateByNb.templates });
+                 dispatch(setInsightTemplate({ template: JSON.parse(templateByNb.templates)[0] }))
+                }else if(!templateByNb.success){
+                toast.warning(`${templateByNb.templates}`)
+              }
+              } catch (error) {
+                toast.warning(`${error}`)
+              }
             }
-        } catch (error) {
-            toast.error(`${error} occured`)
-            }
-     }  
-
-      return       <Modal isOpen={isOpen} size={'full'} onClose={onClose}>
+      }
+      async function getStat() {
+         try {
+             const _statResp = await getStatTaysir({min:0, max:350}) 
+             if(_statResp && _statResp.success) {
+                const _stats= await JSON.parse(_statResp.message)
+                 console.log({_stats});
+                 dispatch(setStatsTemplateContext({stats:_stats}))
+             } else if(!_statResp.success) {
+             toast.warning(`something went wrong ${error}`)
+     
+             }  
+         }catch(error) {
+           toast.warning(`something went wrong ${error}`)
+          }
+        } 
+        const [statsSoura, setStatsSoura] = useState([{}]);
+        const [minBehavior, setMinBehavior] = useState("min");
+        
+        const [sprintUnder, setSprintUnder] = useState(-1);
+     useEffect(() => {
+         if(typeof statsTemplateContext !== 'undefined' && statsTemplateContext){
+         const _svgSoura =  select(svgSoura.current!)
+         
+         console.log({
+             width: document?.querySelector('svg')?.clientWidth,
+             hight: document?.querySelector('svg')?.clientHeight,
+         });
+         console.log({statsTemplateContext, insightTemplate});
+         
+         const  _dataSoura = statsTemplateContext.filter((wiAy)=> wiAy.souraNb == insightTemplate.souraNb)
+         console.log({_dataSoura});
+         const _diFFLastSprint = _dataSoura[_dataSoura.length -1].max -  _dataSoura[_dataSoura.length -1].min
+         
+         if(_diFFLastSprint   <25) {
+          setSprintUnder(_diFFLastSprint +1)
+        } 
+        console.log({dMax:_dataSoura[_dataSoura.length -1].max, dMin:_dataSoura[_dataSoura.length -1].min, diFF:_dataSoura[_dataSoura.length -1].max - _dataSoura[_dataSoura.length -1].min })
+        
+            setStatsSoura(_dataSoura)
+            drawSoura({SVG:_svgSoura, minAySelected:minBehavior==='min' , maxAySelected:minBehavior!=='min', data:_dataSoura  })
+         
+         }
+     
+         }, [statsTemplateContext, insightTemplate]);
+    useEffect(() => {
+  if(typeof statsTemplateContext !== 'undefined' && statsTemplateContext){
+    const _svgSoura =  select(svgSoura.current!)
+    
+    console.log({
+        width: document?.querySelector('svg')?.clientWidth,
+        hight: document?.querySelector('svg')?.clientHeight,
+    });
+    console.log({statsTemplateContext, insightTemplate});
+    
+    const  _dataSoura = statsTemplateContext.filter((wiAy)=> wiAy.souraNb == insightTemplate.souraNb)
+    console.log({_dataSoura});
+    
+       setStatsSoura(_dataSoura)
+    drawSoura({SVG:_svgSoura, minAySelected:minBehavior==='min' , maxAySelected:minBehavior==='min', data:_dataSoura  })
+  }
+ }, [minBehavior]);
+ 
+ console.log({sprintUnder});
+ 
+   
+    return       <Modal backdrop={'blur'} isOpen={isOpen} size={'full'} onClose={onClose}>
       <ModalContent>
         {(onClose) => (
           <>
-            <ModalHeader className="flex flex-col gap-1">Modal Title</ModalHeader>
+            <ModalHeader className="flex flex-col gap-1 text-center text-blue-700">{`
+            ${insightTemplate.souraNb} - ${insightTemplate.arabName}-${insightTemplate.souraName}-
+            ${statsSoura[statsSoura.length - 1]?.max! - statsSoura[0].min! } Ayahs
+            From Ayah ${statsSoura[0]?.min} To Ayah ${statsSoura[statsSoura.length-1]?.max}
+            {  ${sprintUnder !== -1 ? statsSoura.length -1  : statsSoura.length  } sprint of 25 Ayahs 
+            ${sprintUnder !== -1 ? `and ${sprintUnder -1} ayahs`:'!' }  }
+            `}</ModalHeader>
             <ModalBody>
-                    <svg ref={svgRef!} viewBox={`0 0 ${width} ${height}`}  >
-                      <circle cx={boundedWidth - boundedWidth/2} cy={boundedHeight - boundedHeight/2} r={15} fill='green' />
-                      <g transform={`traslate(${margin.left},${margin.top})`}> 
-                    {statsTemplateContext && statsTemplateContext.map((sts, index)  => <rect className='bars' key={sts.max} fill='#fff'
-                     width={'100%'} height={'15px'}/>) 
-                      }
-              
-              
-                  </g> 
-                      </svg>
+            <div className={`flex h-full border-2 border-blue-400 rounded-md flex-col justify-start p-2  space-y-2 items-stretch w-full`} >
+               <div className="flex justify-evenly items-center ">
+                <SpaceButton  handlePress={prevSouraHandler} title='Prev ' />
+                <SpaceButton  handlePress={nextSouraHandler} title='Next' />
+                <SpaceButton  handlePress={getStat} title='Get Stats' />
+            
+        </div>
+        <div className="h-full p-2  flex-col justify-start items-stretch border-2 border-violet-500  space-y-2">
+        <svg ref={svgSoura!}   >
+        <g /> 
+        <g /> 
+        <g /> 
+        <g /> 
+        <g /> 
+        </svg>
+        </div>
+    </div>
             </ModalBody>
             <ModalFooter>
-              <Button color="danger" variant="light" onPress={onClose}>
-                Close
-              </Button>
-              <Button color="primary" onPress={onClose}>
-                Action
-              </Button>
-            </ModalFooter>
+            <RadioGroup
+                    orientation="horizontal"
+                    value={minBehavior}
+                    onValueChange={setMinBehavior}
+                >
+        <div className="flex  p-2  rounded-md justify-center items-center border-2 border-violet-500  space-y-2">
+                  <Radio value="min">Min Ay</Radio>
+                  <Radio value="max">Max Ay</Radio>
+        </div>
+              
+              </RadioGroup>            
+              </ModalFooter>
+          
           </>
         )}
       </ModalContent>

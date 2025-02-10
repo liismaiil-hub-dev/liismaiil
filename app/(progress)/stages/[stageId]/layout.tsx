@@ -12,7 +12,7 @@ function Stageslayout({ children, guests, sprints }: {
 }) {
     return (
         <main className=' flex-col container    p-2 h-full w-full justify-start items-stretch '>
-       <div className="grid grid-cols-2 h-44 ">
+   {/*     <div className="grid grid-cols-2 h-44 ">
              <div className="flex-col justify-start items-stretch col-span-1 overflow-x-scroll">
              {guests}
              </div>
@@ -21,7 +21,7 @@ function Stageslayout({ children, guests, sprints }: {
              </div>
              </div>
 
-             <div className="flex-col justify-start items-stretch h-full overflow-x-scroll">
+    */}          <div className="flex-col justify-start items-stretch h-full overflow-x-scroll">
              
                           {children}
                           </div>

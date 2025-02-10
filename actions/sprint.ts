@@ -117,8 +117,8 @@ export const getStatTaysir = async ({
     try {
 
     const __stat = await prisma.statTaysir.findMany({
-        skip:min,   
-        take:max,})
+        /* skip:min,   
+        take:max, */})
       revalidateTag('insight')
        // console.log({__stat});
         const _statString =JSON.stringify(__stat) 

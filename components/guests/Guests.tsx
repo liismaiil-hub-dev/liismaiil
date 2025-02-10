@@ -1,7 +1,7 @@
 'use client'
 import { memo, useState } from "react";
 import { RootStateType } from '@/store/store';
-import { cn } from "@nextui-org/react";
+import { cn } from "@/lib/cn-utility";
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';

@@ -2,7 +2,7 @@
 import { GuestPrismaType } from '@/api/graphql/stage/stage.types';
 import { guestPrismaActions } from '@/store/slices/guestPrismaSlice';
 import { RootStateType } from '@/store/store';
-import { cn } from "@nextui-org/react";
+import { cn } from "@/lib/cn-utility";
 import _ from 'lodash';
 import Image from "next/image";
 import Link from 'next/link';

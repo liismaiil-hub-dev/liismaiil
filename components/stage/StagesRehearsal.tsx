@@ -3,7 +3,9 @@
 import {  StagePrismaType, StagesSprintType } from "@/app/api/graphql/stage/stage.types";
 import { stageActions } from "@/store/slices/stageSlice";
 import { RootStateType } from "@/store/store";
-import { Button, ScrollShadow } from "@nextui-org/react";
+import { Button, } from "@heroui/button";
+import {ScrollShadow } from "@heroui/scroll-shadow";
+
 import { useEffect, useState, useTransition } from "react";
 
 import {deleteSprint, setSprintSession} from "@/actions/sprint";

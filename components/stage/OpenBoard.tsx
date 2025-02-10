@@ -15,7 +15,7 @@ import { toast } from 'react-toastify';
 import { cn } from '@/lib/cn-utility'
 import { createNewSprint, setSprintSession } from '@/actions/sprint';
 import { useRouter } from 'next/navigation';
-import { getStageForSprint } from '@/actions/stage';
+import { addGuestToStage, getStageForSprint } from '@/actions/stage';
 
 export enum EVAL_STATE {
   EVAL = 'EVAL',
@@ -27,7 +27,7 @@ const OpenBoard = ( ) => {
   const router = useRouter()
   const {stageSprintSelected, stageGridSelected, stageEvalContext, stageReorderedAyahsContext, firstStateContext, stageEvalIndexContext, stageHideNbContext, errorNbContext,
     stageShuffeledFirstAyahsContext, stageValidContext, stepIndexContext,   stageOrderedAyahsContext, stageShuffeledAyahsContext, stageGridsContext, } = useSelector((state: RootStateType) => state.stage)
-  const { guestPrisma } = useSelector((state: RootStateType) => state.guestPrisma)
+  const { guestPrisma:{tokenId} } = useSelector((state: RootStateType) => state.guestPrisma)
 
   const { setStageOrderedAyahsContext, setStageShuffeledFirstAyahsContext, setStageHideNbContext, setStageGridsContext,  setStageShuffeledAyahsContext, setStageGridSelected ,
      setStageValidContext, setStepIndexContext, setFirstStateContext,setStageReorderedAyahsContext, setErrorNbContext } = stageActions
@@ -61,7 +61,7 @@ _actualSprint()
   
   function shuffleHandler() {
       dispatch(setFirstStateContext({first: false}))
-      const shuffeledAy = _.shuffle(stageShuffeledFirstAyahsContext)
+      const shuffeledAy = _.shuffle(stageShuffeledAyahsContext)
       console.log({ shuffeledAy });
 
       dispatch(setStageShuffeledAyahsContext({ ayahs: shuffeledAy }))
@@ -96,7 +96,7 @@ function getMaxNb(): number {
       const {stageId,createdAt, }= stageGridSelected
         const _sprint = {
         
-          stageId, guests:[guestPrisma.tokenId,-1], sprintId:stageId
+          stageId, guests:[tokenId,-1], sprintId:stageId
         }
        const res =  await setSprintSession(_sprint) 
       if(typeof res !=='undefined' && res.success) {
@@ -119,10 +119,10 @@ function getMaxNb(): number {
 
           if (stageReorderedAyahsContext.length === stageShuffeledFirstAyahsContext.length) {
              const {message, success} = await createNewSprint({
-                  sprintId: `${stageGridSelected.stageId}_${guestPrisma.tokenId}`,
+                  sprintId: `${stageGridSelected.stageId}_${tokenId}`,
                   createdById: "O6cKgXEsuPNAuzCMTGeblWW9sWI3",
                   stageId: stageGridSelected.stageId,
-                  tokenId:guestPrisma.tokenId,
+                  tokenId:tokenId,
               })
               if(success) {
                 toast.success(`sprint ${stageGridSelected.stageId} was successfully persisted`)
@@ -136,8 +136,14 @@ function getMaxNb(): number {
   }
 
   async  function sprintItHandler() {
-   router.push(`/stages/${stageGridSelected.stageId}`)
+   router.push(`/stages/${stageSprintSelected?.stageId}`)
   }
+  async  function stageItHandler() {
+    const resp = await addGuestToStage({
+      stageId:stageSprintSelected?.stageId,
+      tokenId
+    })
+   }
   function stageHideNbHandler() {
     dispatch(setStageHideNbContext({ hide: !stageHideNbContext }))
   }
@@ -168,7 +174,7 @@ function getMaxNb(): number {
     const max = getMaxNb()
     console.log({max_min: max-min});
     
-    setTaysir(max- min)
+    setTaysir((max- min) )
     }else {
       setSprintAble(false)
     }
@@ -179,9 +185,10 @@ function getMaxNb(): number {
     <div className=" flex-col justify-start space-y-2 h-full py-2 items-center w-full ">
       <div className="flex-col   justify-start  items-center  gap-1 flex-wrap  ">
       {sprintAble ? 
-      <div className='justify-center items-center text-center flex '>SprintId &nbsp; : {stageSprintSelected?.stageId} &nbsp;&nbsp;
+      <div className='justify-center items-center text-center flex '>{sprintAble ? `SprintId &nbsp; : ${stageSprintSelected?.stageId}`
+          :`StageId &nbsp; : ${stageSprintSelected?.stageId}` } &nbsp;&nbsp;
         :From ayah &nbsp; : {getMinNb()} &nbsp; To &nbsp;{getMaxNb()}&nbsp;&nbsp;
-        {`Sprint Gifts up to } = ${taysir} to use as 20% discount from hosts selections `}
+        {sprintAble ? `Sprint Gifts up to <${taysir}> to use as 20% discount from hosts selections `: null}
       </div>:
       <div className='justify-center items-center text-center flex '>StageId &nbsp; : {stageSprintSelected?.stageId} 
         :From &nbsp; : {getMinNb()}To {getMaxNb()}
@@ -192,19 +199,18 @@ function getMaxNb(): number {
       <div className="flex justify-center items-center mt-2 p-3  ">
                 <p className='text-center inline-flex '>Soura &nbsp;: [&nbsp;{stageSprintSelected?.arabName ? stageSprintSelected?.arabName : stageSprintSelected?.souraName}&nbsp;]&nbsp;</p>
                 <p className='text-center inline-flex '>&nbsp; Nb : [&nbsp;{stageSprintSelected?.souraNb}&nbsp;] </p>
-                <p className='text-center inline-flex'>&nbsp; Grid :[&nbsp;{stageSprintSelected?.grid}&nbsp;]</p>
+                <p className='text-center inline-flex'>&nbsp; Grid :[&nbsp;{stageSprintSelected?.grid*stageSprintSelected?.grid}&nbsp;]</p>
                 <p className='text-center inline-flex' > &nbsp; Nb of Grids:  [&nbsp;{stageSprintSelected?.group ?
                  stageSprintSelected?.group : stageSprintSelected?.stageId.split('-')[2]}] </p>
             </div>
         <div className="flex-col  justify-start items-center  gap-3 text-center font-sans  " >
-        <div className="flex justify-evenly items-center gap-1 ">
-            <SpaceButton handlePress={shuffleHandler} title='Shuffel Grid' />
-             {sprintAble && 
-            <SpaceButton handlePress={sprintItHandler} title='Sprint it ' />
-              }
-         
-        </div>
         <div className="flex justify-evenly items-center gap-1 flex-wrap ">
+            <SpaceButton handlePress={shuffleHandler} title='Shuffel Grid' />
+             {sprintAble ?
+            <SpaceButton handlePress={sprintItHandler} title='Sprint it ' />:
+            <SpaceButton handlePress={stageItHandler} title='Stage it ' />
+              }
+        
           
           <div className="flex  justify-between items-center p-2  border border-green-300 rounded-md text-center font-sans " >
             <input className="flex border-blue-800 text-green-300 justify-center items-center  border "
@@ -233,12 +239,10 @@ function getMaxNb(): number {
           </div>
           </div>
           
-            <div className="flex justify-start items-center mt-1 p-3  ">
+            <div className="flex justify-between items-center mt-1 p-3  ">
            
             <p className='text-center'>reordered suits &nbsp;{typeof stageReorderedAyahsContext != 'undefined'&& stageReorderedAyahsContext[0] != -1 && stageReorderedAyahsContext.map((e: number) => `[${e}]`).join(', ')}</p>
-            </div>
             
-            <div className="flex justify-between items-center mt-1 p-3  ">
             
             <div className="flex justify-center items-center  ">
               <p className={cn(errorNbContext < 1 ? 'text-green-500 !important' : errorNbContext > 2 ? 'text-red-400 !important' : 'text-red-500 !important')}>errors &nbsp;

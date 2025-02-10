@@ -6,6 +6,10 @@ import {getSprintGuests} from "@/actions/sprint";
 
 import EvalSprintOrdered from "@/components/stage/EvalSprintOrdered";
 import EvalSprintOrderedFace from "@/components/stage/EvalSprintOrderedFace";
+import { toast } from "react-toastify";
+import SpaceButton from "@/components/insight/SpaceButton";
+import { Radio, RadioGroup } from "@heroui/radio";
+import OpenBoardSprint from "@/components/stage/OpenBoardSprint";
 /* 
 export async function generateStaticParams() {
   try {
@@ -34,27 +38,18 @@ export default async function GuestStagePage({params}: {
   try {
     /* let currentGuest = await getGuestFromCookies();
     */
-   const _stage = await getStageForSprint(stageId)
-   console.log({_stage});
-   if(_stage && _stage.sucess){
-    return (<div className="grid grid-cols-4">
-      <div className="flex-col justify-center items-center col-span-1 h-full overflow-x-scroll">
-      <EvalSprintOrderedFace  guest={false} />
-      </div>
-      <div className="flex justify-center items-center col-span-2 px-3 h-full  overflow-x-scroll"> 
-      <SprintOpenBoard stage={_stage.stage} guests={_sprintGuests ?? []} />
-       </div>
-       <div className="flex-col justify-center items-center col-span-1 h-full overflow-x-scroll">
-      <EvalSprintOrdered guest={true} />
-      </div>
-       </div>
-        )}else {
-    redirect('/stages')
-
-        }
-    
+   const resp = await getStageForSprint(stageId)
+   console.log({resp});
+   if(resp && resp.success){
+      return (<div className={`flex h-full border-2 border-blue-400 rounded-md flex-col justify-start p-2  space-y-2 items-stretch w-full`} >
+     <OpenBoardSprint  />
+      
+</div>)}   
 } catch (error) {
-  redirect('/stages')
+ // toast.error(`the error ${error} occured` )
+console.log({_err : JSON.stringify(error)});
+
+//  redirect('/stages')
 }
   
 }

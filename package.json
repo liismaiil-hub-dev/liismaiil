@@ -22,6 +22,8 @@
     "@heroui/button": "^2.2.10",
     "@heroui/card": "^2.2.10",
     "@heroui/modal": "^2.2.8",
+    "@heroui/pagination": "^2.2.9",
+    "@heroui/radio": "^2.3.9",
     "@heroui/scroll-shadow": "^2.3.6",
     "@heroui/spinner": "^2.2.7",
     "@heroui/system": "^2.4.7",

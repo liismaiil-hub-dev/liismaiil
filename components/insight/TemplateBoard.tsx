@@ -1,26 +1,30 @@
 'use client'
-import { Ayah, GridTypeData, GuestPrismaType } from '@/app/api/graphql/stage/stage.types';
+
 import TemplateOrdered from "@/components/insight/TemplateOrdered";
-import TemplateStat from "@/components/insight/TemplateStat";
+
 import { stageActions } from "@/store/slices/stageSlice";
 import { RootStateType } from '@/store/store';
 import _ from 'lodash';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import EvalClickBoardComp from "./EvalClickBoard";
-import EvalDragOrderBoardComp from "./EvalDragOrderBoard";
-import RadioButtonEvalState from "./RadioButtonEvalState";
+import RadioButtonEvalState from "./RadioButtonInsight";
 import SpaceButton from './SpaceButton';
 import TemplateDistribution from './TemplateDistribution';
-import StatsDialog from '../shared/StatsDialog';
+import StatSouraDialog from './StatSouraDialog';
 import {useDisclosure} from "@heroui/modal";
-import PlanetDistribution from './PlanetDistribution';
+import { getInsightTemplateByNb } from '@/actions/stage';
+import { toast } from 'react-toastify';
+import TemplateSouraStats from './TemplateSouraStats';
+import TemplateSouarPanoramic from './TemplateSouarPanoramic';
+import CatDialog from './CatDialog';
+import TemplateCat from "@/components/insight/TemplateCat";
 
 
-export enum EVAL_STATE {
-  EVAL = 'EVAL',
-  ORDER = 'ORDER',
-  CLICK = 'CLICK',
+
+export enum INSIGHT_STATE {
+  CAT = 'CAT',
+  SOURA = 'SOURA',
+  PANORAMIC = 'PANORAMIC',
 }
 /**
  * Space board PRINCIPAL Component
@@ -29,101 +33,156 @@ export enum EVAL_STATE {
 const TemplateBoard = () => {
   const dispatch = useDispatch()
   const {isOpen, onOpen, onClose} = useDisclosure();
-  const { insightTemplate,insightTemplateAyahsSelected, } = useSelector((state: RootStateType) => state.stage)
-  const { guestPrisma } = useSelector((state: RootStateType) => state.guestPrisma)
-
-  const {  setErrorNbContext, setSpaceStageAyahsContext ,
-   setBlurContext, setStagedContext, setGridsContext, setHideNbContext, setGridIndexContext, setFirstGridContext, setGridsStaged } 
-   = stageActions
-
+  const { insightTemplate,insightTemplateAyahsSelected, insightContext, insightWindow , windowContext} = useSelector((state: RootStateType) => state.stage)
+  
+  const {  setInsightWindow, setInsightTemplate, setInsightTemplateAyahsSelected, setInsightContext } = stageActions
 
   useEffect(() => {
     if (typeof insightTemplate !== 'undefined' && typeof insightTemplateAyahsSelected !== 'undefined' && 
       insightTemplateAyahsSelected.length > 0  ) {
-      console.log({ insightTemplateAyahsSelected, insightTemplate });
-
-//      const _grids: [[Ayah]] = gridSelected?.ayahs?.map((ay: string) => JSON.parse(ay) as [Ayah])
-      // dispatch(setGridsContext({ grids: _grids }))
-     // dispatch(setGridIndexContext({ index: spaceStageSelected.stageId?.split('-')[3] as unknown as number })) 
-      dispatch(setErrorNbContext({errorNb:0  }))
-
-     // dispatch(setFirstGridContext({first:true}))
-      dispatch(setGridsStaged({stageIds:['']}))
-     // console.log({ currentGuest, guestPrisma });
-    }
-  }, []);
-  
-  async function nextSouraHandler() {
- /*    if(gridSelected.souraNb !== -1 &&  gridSelected.souraNb < 114 ){
-      console.log({souraNb:gridSelected.souraNb});
-
-      await selectGridHandler(gridSelected.souraNb + 1)
-   } else if(typeof spaceGridsSelected !== 'undefined' && spaceGridsSelected && spaceGridsSelected[0].souraNb !== -1 
-     &&  spaceGridsSelected[0].souraNb   < 114 ){
-      console.log({ fromSpaceGrid: spaceGridsSelected[0].souraNb});
-       await selectGridHandler(spaceGridsSelected[0].souraNb  + 1)
-      }  else {
-      await selectGridHandler(1)
-      } 
-  */  // await selectGridHandler(gridSelected.souraNb + 1)
+        dispatch(setInsightContext({insight:INSIGHT_STATE.SOURA}))
+        
+      }
+    }, []);
     
+    async function nextSouraHandler() {
+      if(typeof insightTemplate !== 'undefined'&& insightTemplate && insightTemplate.souraNb>0 && insightTemplate.souraNb <115){
+        try {
+          const templateByNb = await getInsightTemplateByNb(insightTemplate.souraNb +1 )
+          console.log({templateByNb});
+          
+          if(typeof templateByNb !== 'undefined' &&  templateByNb.success){
+            console.log({ grids: templateByNb.templates });
+            dispatch(setInsightTemplate({ template: JSON.parse(templateByNb.templates)[0] }))
+          }else if(!templateByNb.success){
+            toast.warning(`${templateByNb.templates}`)
+            
+          }
+        } catch (error) {
+          toast.warning(`${error}`)
+        } 
+      }else {
+        try {
+          const templateByNb = await getInsightTemplateByNb(1)
+          console.log({templateByNb});
+          
+          if(typeof templateByNb !== 'undefined' &&  templateByNb.success){
+            console.log({ grids: templateByNb.templates });
+            dispatch(setInsightTemplate({ template: JSON.parse(templateByNb.templates)[0] }))
+        }else if(!templateByNb.success){
+        toast.warning(`${templateByNb.templates}`)
+  
+        }
+      } catch (error) {
+        toast.warning(`${error}`)
+      }
+    }
   }
+  async function nextGridHandler() {
+    if(typeof insightTemplate !== 'undefined'&& insightTemplate && insightTemplate.souraNb>0 && insightTemplate.souraNb <115 && insightWindow<insightTemplate.ayahs.length ){
+    dispatch(setInsightWindow({window:insightWindow + 1})) 
+       }else {
+        dispatch(setInsightWindow({window:0}))
+        
+      }
+    }
+    useEffect(() => {
+
+      if(typeof insightTemplate !== 'undefined'&& insightTemplate && insightTemplate.souraNb>0 && insightTemplate.souraNb <115 
+        && insightWindow<insightTemplate.ayahs.length ){
+
+      console.log({insightWindow ,insightTemplateAyahsSelected, insightTemplate, ayahs: JSON.parse(insightTemplate.ayahs[insightWindow]) });
+      dispatch(setInsightTemplateAyahsSelected({ayahs: JSON.parse(insightTemplate.ayahs[insightWindow])})) 
+      }      
+    }, [insightWindow, windowContext]);
+    
+     
   async function prevSouraHandler() {
- /*    console.log({souraNb:gridSelected.souraNb, fromSpaceGrid: spaceGridsSelected[0].souraNb});
-   if(gridSelected.souraNb !== -1 &&  gridSelected.souraNb >0 ){
-    console.log({souraNb:gridSelected.souraNb});
-     await selectGridHandler(gridSelected.souraNb - 1)
-  } else if(typeof spaceGridsSelected !== 'undefined' && spaceGridsSelected && spaceGridsSelected[0].souraNb !== -1 
-    &&  spaceGridsSelected[0].souraNb >0 ){
-      console.log({ fromSpaceGrid: spaceGridsSelected[0].souraNb});
-      await selectGridHandler(spaceGridsSelected[0].souraNb - 1)
-      } else {
-          await selectGridHandler(1)
-    } */
+    if(typeof insightTemplate !== 'undefined'&& insightTemplate && insightTemplate.souraNb>0 && insightTemplate.souraNb <115){
+      try {
+           const templateByNb = await getInsightTemplateByNb(insightTemplate.souraNb -1 )
+           console.log({templateByNb});
+           if(typeof templateByNb !== 'undefined' &&  templateByNb.success){
+           console.log({ grids: templateByNb.templates });
+            dispatch(setInsightTemplate({ template: JSON.parse(templateByNb.templates)[0] }))
+           }else if(!templateByNb.success){
+           toast.warning(`${templateByNb.templates}`)
+          }
+         } catch (error) {
+           toast.warning(`${error}`)
+         } 
+        }else {
+          try {
+            const templateByNb = await getInsightTemplateByNb(1)
+            console.log({templateByNb});
+            if(typeof templateByNb !== 'undefined' &&  templateByNb.success){
+            console.log({ grids: templateByNb.templates });
+             dispatch(setInsightTemplate({ template: JSON.parse(templateByNb.templates)[0] }))
+            }else if(!templateByNb.success){
+            toast.warning(`${templateByNb.templates}`)
+          }
+          } catch (error) {
+            toast.warning(`${error}`)
+          }
+        }
   }
   async function modalInsightHandler() {
+    console.log({isOpen});
+    
     onOpen()   
   }
-  useEffect(() => {
-console.log({isOpen});
 
-    if(typeof insightTemplateAyahsSelected != 'undefined' ){
-   console.log({tempalteAyahs : insightTemplateAyahsSelected});
+  
+  useEffect(() => {
+      console.log({isOpen});
+
+      if(typeof insightTemplateAyahsSelected != 'undefined' ){
+       console.log({tempalteAyahs : insightTemplateAyahsSelected});
    
     //  dispatch(setInsightTemplateAyahsContext({ayahs: JSON.parse(insightTemplateAyahsSelected?.ayahs)}))
  } }, [insightTemplateAyahsSelected,isOpen]);
   
-  
-  
-  /* useEffect(() => {
-//    console.log({ hideNbContext, evalContext, gridIndexContext, evalIndex, gridSelected, first });
-  }, [hideNbContext, evalIndex, gridIndexContext, evalContext, gridSelected]);
- */
   return (
     <div className=" flex-col justify-start space-y-2 h-full items-center w-full ">
       <div className="flex  justify-around  items-center  py-2 ">
         <SpaceButton disabled={false} handlePress={prevSouraHandler} title='Prev Soura' />
         <SpaceButton disabled={false} handlePress={nextSouraHandler} title='Next Soura' />
-        <SpaceButton disabled={false} handlePress={modalInsightHandler} title='Modal Full' />
+        <SpaceButton disabled={false} handlePress={nextGridHandler} title='Next Window' />
+        <SpaceButton disabled={false} handlePress={modalInsightHandler} title='Modal Screen' />
 
         <RadioButtonEvalState
-          evalState={EVAL_STATE.EVAL} title='Eval board' />
+          insightState={INSIGHT_STATE.CAT} title='Categories' />
         <RadioButtonEvalState
-          evalState={EVAL_STATE.ORDER} title='Order Grid' />
+          insightState={INSIGHT_STATE.SOURA} title='Soura' />
+          <RadioButtonEvalState
+          insightState={INSIGHT_STATE.PANORAMIC} title='Panoramic' />
+       
         </div>
-      {  typeof insightTemplateAyahsSelected  !== 'undefined' && insightTemplateAyahsSelected.length> 1 && 
-        <div className="grid  grid-cols-1 md:grid-cols-2 w-full ">
+      { typeof insightTemplateAyahsSelected  !== 'undefined' && insightTemplateAyahsSelected.length> 1  &&  isOpen && 
+      insightContext === INSIGHT_STATE.SOURA  ?  
+        <div className=" flex justify-center w-screen h-screen items-center p-2 overflow-scroll ">
+           <StatSouraDialog isOpen={isOpen}  onOpen={onOpen} onClose={onClose}/>
+         </div>: insightContext === INSIGHT_STATE.SOURA? 
+         <div className="grid  grid-cols-1 md:grid-cols-2 w-full ">
           <div className=" md:order-first  flex justify-stretch w-full flex-1 items-start m-1 ">
             <TemplateOrdered />
           </div>
-          <div className=" order-first flex-col justify-start items-stretch w-full flex-1  m-1 p-1">
-          <PlanetDistribution  />
-            
-            {/* <TemplateStat  /> */}
-            <TemplateDistribution  />
-          </div> 
-          {isOpen &&   <StatsDialog isOpen={isOpen}  onOpen={onOpen} onClose={onClose}/>}
-          </div> }
+          <div className=" md:order-first  flex justify-stretch w-full flex-1 items-start m-1 ">
+            <TemplateSouraStats />
+          </div>
+          </div> : isOpen && insightContext === INSIGHT_STATE.CAT ?  
+          <div className=" flex justify-center w-full h-full items-center p-2 overflow-scroll ">
+               <CatDialog isOpen={isOpen}  onOpen={onOpen} onClose={onClose}/>
+          </div>
+          :insightContext === INSIGHT_STATE.CAT ?
+          
+          <div className=" flex-col overflow-scroll row-span-1  justify-start items-stretch w-full flex-1 border-3 border-pink-500 
+          shadow-md  m-1 p-1">
+               <TemplateCat  /> 
+          </div>: insightContext === INSIGHT_STATE.PANORAMIC? 
+      <div className=" flex-col overflow-scroll row-span-1 justify-start items-stretch w-full border border-orange-200 shadow-md  flex-1  m-1 p-1">
+            <TemplateSouarPanoramic  /> 
+      </div>: null}   
     </div>
   )
 }

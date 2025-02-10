@@ -1,6 +1,6 @@
 'use client'
 import { GuestType } from "@/app/api/graphql/profile/profile.types";
-import { cn, Pagination } from "@nextui-org/react";
+import {  Pagination } from "@heroui/pagination";
 import Image from "next/image";
 import Link from 'next/link';
 import {COUNTRY_CODES} from "@/store/constants/flagArray";
@@ -45,8 +45,7 @@ return <div key={gift.titleSlug} className='flex-col items-center justify-betwee
 </div>
 
 <div className="flex  h-14 w-full p-3   justify-center items-center gap-3 ">
-
-<Pagination boundaries={3} color="secondary" total={gifts.length} />
+<Pagination initialPage={1} boundaries={3} color="secondary" total={gifts.length} />
 </div>
 </div>
 
