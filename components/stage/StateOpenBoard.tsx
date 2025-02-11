@@ -29,14 +29,13 @@ const StateOpenBoard = ( ) => {
   const stageId = searchParams.get('stageId');
   console.log({stageId});
   
-  return ( <div className=" flex-col justify-start space-y-2 h-full p-2 items-stretchw-full ">
-      <div className="flex-col overflow-y-scroll p-2 justify-start h-1/2 items-stretch  gap-2  text-center font-sans">
+  return ( <div className=" flex-col justify-start space-y-2 h-full  items-stretch w-full ">
+      <div className="flex-col overflow-y-scroll  justify-start h-1/2 items-stretch  gap-1  text-center  text-sm font-sans">
 
     <StagesSprintableComponent />
       
     </div>
-    <div className="flex-col p-2 justify-start overflow-y-scroll  h-1/2 items-stretch  gap-2  text-center 
-    font-sans">
+    <div className="flex-col justify-start overflow-y-scroll  h-1/2 items-stretch  gap-1  text-center text-sm  font-sans">
       <StagesRehearsalComponent />
       </div>
 

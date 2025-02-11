@@ -4,7 +4,7 @@ import { createNewSprint } from "@/actions/sprint";
 import { Ayah } from '@/app/api/graphql/stage/stage.types';
 import { stageActions } from "@/store/slices/stageSlice";
 import { RootStateType } from '@/store/store';
-import { cn } from "@nextui-org/react";
+
 import _ from 'lodash';
 import { memo,  useEffect, useState,  } from "react";
 import { useDispatch, useSelector } from 'react-redux';
@@ -77,8 +77,9 @@ dispatch(setStageReorderedAyahsContext({reorderedAyahsContext:[-1]}))
   
     useEffect(() => {
         console.log({  });
-setGridAyahs(JSON.parse(stageGridSelected.ayahs))
+setGridAyahs(JSON.parse(stageGridSelected.ayahs!))
     }, [stageReorderedAyahsContext, stageGridSelected]);
+    
     useEffect(() => {
         console.log({ stepIndexContext });
         if (stepIndexContext < stageGridsContext.length) {
@@ -88,21 +89,44 @@ setGridAyahs(JSON.parse(stageGridSelected.ayahs))
         }
     }, [stepIndexContext]);
   //  console.log({ stageReorderedAyahsContext, stageHideNbContext });
+  function getMin() {
+    if (stageOrderedAyahsContext && 
+        stageOrderedAyahsContext.length > 0 && stageOrderedAyahsContext[0].numberInSurah 
+        !== -1 ) {
+        console.log({Num:stageOrderedAyahsContext[0].numberInSurah, 
+            });
+      return stageOrderedAyahsContext[0].numberInSurah!
+        } else return 
+       0 
+    }
 
     return <div className={`flex  border-2 border-blue-400 rounded-md flex-col justify-start p-2  space-y-2 items-stretch w-full`} >
         <div className="flex flex-col justify-start items-stretch  space-y-2">
-            { stageShuffeledAyahsContext && typeof stageReorderedAyahsContext !== 'undefined' && stageShuffeledAyahsContext?.map((ayag: Ayah) => {
+            { stageShuffeledAyahsContext && typeof stageReorderedAyahsContext !== 'undefined' && 
+            stageShuffeledAyahsContext?.map((ayag: Ayah) => {
                 //console.log({ stageReorderedAyahsContext, ayag });
                 if(!stageReorderedAyahsContext.includes(ayag.numberInSurah!)){
 
                 if (typeof stageHideNbContext !== 'undefined' && !stageHideNbContext) {
                     return <button onClick={() => { validAyahHandler(ayag.numberInSurah!) }}
-                     key={`${ayag.numberInSurah}_${ayag.juz}`} className=" flex p-2 bg-emerald-100/30 justify-between px-2
+                     key={`${ayag.numberInSurah}_${ayag.juz}`} 
+                     className=" flex p-2 bg-emerald-100/30 justify-between px-2
                     items-center space-x-2 border-b-1 border-green-300/25 ">
-                                    <div className='flex justify-center focus:border-red-500 items-center'>{` [ ${ ayag.numberInSurah}- ${ ayag.number}] `}</div>
+                                    { getMin() ==  ayag.numberInSurah ?
+                                  <>  <div className='flex justify-center border-2 border-red-500 items-center'>{` [ ${ ayag.numberInSurah}- ${ ayag.number}] `}
+                                    </div>
                                     <div className=' flex text-right justify-end items-center
-                       hover:bg-emerald-800 hover:text-yellow-200 hover:scale-125 hover:-translate-x-3 hover:-translate-y-1 ease-in 
-                       hover:cursor-pointer  active:border-red-500'>{ayag.text}</div>
+                                    hover:bg-emerald-800 hover:text-yellow-200 hover:scale-125 hover:-translate-x-3 hover:-translate-y-1 ease-in 
+                                    hover:cursor-pointer  bg-red-500/15'>{ayag.text}</div>
+                                    </> 
+                                    :<>
+                                   <div className='flex justify-center  items-center'>{` [ ${ ayag.numberInSurah}- ${ ayag.number}] `}
+                                    <div className=' flex text-right justify-end items-center
+                                     hover:bg-emerald-800 hover:text-yellow-200 hover:scale-125 hover:-translate-x-3 hover:-translate-y-1 ease-in 
+                                     hover:cursor-pointer  active:border-red-500'>{ayag.text}</div>
+                                    </div>
+                                    </> 
+                                    }
                                 </button>
                             }
                             else {

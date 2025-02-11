@@ -241,7 +241,7 @@ console.log(
 SVG.attr('viewBox', `0 0 ${width} ${height}`)
     .style('background-color', 'rgb(240,240,240)')
     .style('position', 'relative')
-const _svgWindow = SVG?.select('g:nth-of-type(1)').selectAll('line')
+/* const _svgWindow = SVG?.select('g:nth-of-type(1)').selectAll('line')
       .data(data, async function(d, i ,n){
           return d})
       .join('line')
@@ -277,7 +277,7 @@ const _svgWindow = SVG?.select('g:nth-of-type(1)').selectAll('line')
       .style('stroke', (d,i ) => _colors(i))
       .style('stroke-width', (d,i ) => d.max - d.min < 20 ? (d.max-d.min )/ 2: d.max - d.min < 40 ? (d.max-d.min )/ 3:(d.max-d.min )/ 4)
          // .attr('fill', (d,i ) => _colors(i))
-          .attr('transform',`translate(${margin.left+10},0)`)    
+          .attr('transform',`translate(${margin.left+10},0)`)  */   
 
 const _ayMinWind =   SVG?.select('g:nth-of-type(2)')
       .style('position', 'relative')
@@ -296,17 +296,17 @@ const _ayMinWind =   SVG?.select('g:nth-of-type(2)')
    })
 .attr('x', (d, i ) => {
       console.log({dMin:d.min,xsc:_xScale(d.min) , ayLength:d.ayMin.length});
-          return   _xScale(d.min ) -((i+2)*50) 
+          return   _xScale(WINDOW_AY_MAX ) + margin.left +margin.right
         }    )
 .attr('y', function(d, i){
       console.log({dMin:d.min,ysc:_yScale(i), i });
 
-    return  _yScale(i) + 25   
+    return  _yScale(i)    
  })
 .style('fill',(d,i ) => _colors(i)) 
   .style('font-size',`${ayVisualisation===AY_VISUALISATION.MINMAX ||ayVisualisation===AY_VISUALISATION.MIN ||ayVisualisation===AY_VISUALISATION.AWAL 
     ||ayVisualisation===AY_VISUALISATION.AWSAT||ayVisualisation===AY_VISUALISATION.AKHIR
-    ? '15px': '9px'}` )
+    ? '9px': '7px'}` )
   .style('font-weight','light')
   //.style('opacity','0.3')
   /* .each(function(d,i){
@@ -341,15 +341,17 @@ const _ayMaxWind =   SVG?.select('g:nth-of-type(3)').selectAll('text')
 })
   .attr('x', (d, i ) => {
       console.log({dMAx:d.max,xsc:_xScale(d.max) - d.ayMax.length, ayLength:d.ayMax.length});
-      return   _xScale(d.max )
+      return   _xScale(WINDOW_AY_MAX ) + margin.left +margin.right
+  //    return   _xScale(d.max )
     })
   .attr('y', function(d, i){
       console.log({yMax:d.max,ysc:_yScale(i),i});
 
-    return  _yScale(i) +( 45/data.length)  
+return  _yScale(i) +(i+1)*3   
  })
   .style('fill',(d,i ) => _colors(i)) 
-  .style('font-size',`${ayVisualisation===AY_VISUALISATION.MAX ||ayVisualisation===AY_VISUALISATION.MINMAX ? '15px': '9px'}` )
+  .style('font-size',`${ayVisualisation===AY_VISUALISATION.MAX ||ayVisualisation===AY_VISUALISATION.MINMAX ? 
+    '9px': '7px'}` )
       .style('font-weight','light')
       
       //.attr('transform',(d)  =>`translate(${  margin.right + (d.ayMax.length) },${margin.top})`)    
@@ -464,14 +466,21 @@ function TemplateSouraStats() {
      }
     }, [ayVisualisation]);
 function selectWindowHandler(wind:number) {
-
-    dispatch(setWindowDialogContext({wind:wind}))
-onOpen()
+        dispatch(setWindowDialogContext({wind:wind}))
+        onOpen()
   }
     console.log({statsSoura});
+    useEffect(() => {
+      if(windowContext !== -1 && windowContext < statsSoura.length) {
+        onOpen()
+      }
+    }, [windowContext]);
+    
     
     return (<div className={`flex h-full border-2 border-blue-400 rounded-md flex-col justify-start p-2  space-y-2 items-stretch w-full`} >
-               <div className="flex justify-between">
+               <div className="flex justify-start items-center p-2  gap-2 ">
+              
+               <div className="flex justify-start items-center ">
                 {`[ ${insightTemplate.souraNb} -  ${insightTemplate.arabName} - ${insightTemplate.souraName} ]`}
             {`[ ${statsSoura[statsSoura.length - 1]?.max! - statsSoura[0].min! +1 } Ayahs  ]`}
             {`[ From Ayah ${statsSoura[0]?.min!} To Ayah ${statsSoura[statsSoura.length-1]?.max}  ]`}
@@ -481,20 +490,21 @@ onOpen()
             ` [ ${statsSoura[statsSoura.length-1].max!- statsSoura[statsSoura.length-1].min} ayahs ] `:''}` }  
             {`[ So you can have up to ${ statsSoura.length} Sprints ]` }  
             </div>
-               <div className="flex justify-evenly items-center ">
+               <div className="flex justify-end items-center  rounded-md ">
 {/*                 <SpaceButton disabled={false} handlePress={descHandler} title='Desc' />
                 <SpaceButton disabled={false} handlePress={ascHandler} title='Asc ' />
- */}                <SpaceButton disabled={pending} handlePress={getStat} title='Get Stats' />
+ */}                <SpaceButton disabled={pending} handlePress={getStat} title='Get Stats'  />
             
         </div>
-        <div className="h-full p-2  flex-col justify-start items-stretch border-2 border-violet-500  space-y-2">
+        </div>
+        <div className="h-full p-2  flex-col justify-start items-stretch border-2 border-violet-500 rounded-md space-y-2">
         {typeof statsSoura !=='undefined' && statsSoura[0].min!== -1 && 
-              <div className="flex-col justify-start items-stetch border-green-500 ">
+              <div className="flex-col justify-start items-stetch gap-2 border-green-500 ">
                 { statsSoura.map((sts, index)=> {
              console.log({sts});
              
-             return  <div  key={`${index}-${sts.min}`} className="flex justify-evenly items-center">
-                  <div  key={`${index}-${sts.min}`} className="flex justify-end text-right">
+             return  <div  key={`${index}-${sts.min}`} className="flex gap-2 p-1 justify-between items-center">
+                  <div  key={`${index}-${sts.min}`} className="text-left">
               
               {`    
            
@@ -513,7 +523,7 @@ onOpen()
                
               </div>
                   <div  key={`${index}-${sts.min}`} className="flex justify-start items-center text-right">
-                    <Button  className='bg-green-600 text-blue-200 ' onPress={ ()=> selectWindowHandler(index) }>
+                    <Button  className='bg-green-600 text-blue-200 rounded-md ' onPress={ ()=> selectWindowHandler(index) }>
                         Window
                     </Button>
               </div>
@@ -549,7 +559,7 @@ onOpen()
               
               </RadioGroup>  
               </div>
-              
+       {/*        
         <div className="w-full   justify-center items-center border-2   space-y-2">
     <div className="w-full   flex justify-center items-center border-2 border-red-500  space-y-2">
 
@@ -576,7 +586,7 @@ onOpen()
         </div>
               
               </RadioGroup>  
-              </div>
+              </div> */}
               </div>{isOpen && windowContext !== -1 &&
         <div className=" flex justify-center w-screen h-screen items-center p-2 overflow-scroll ">
            <WindowDialog isOpen={isOpen}  onOpen={onOpen} onClose={onClose}/>

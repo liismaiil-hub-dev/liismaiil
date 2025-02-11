@@ -44,27 +44,23 @@ useEffect(() => {
             {catSprints?.map((grid: StagesSprintType, index: number) => {
 //console.log({ grid });
               return( <div key={`${grid.stageId}_${index}`} className="flex items-center justify-center rounded-md col-span-1 ">
-              <Button className=" text-center bg-emerald-300/80 text-pretty w-full" onClick={() => { selectGridHandler(grid); } } key={`${grid.souraName}-${grid.souraNb}`} aria-label={`${grid.souraName}`} title={`${grid.souraName}`}>
+              <Button className=" text-center bg-emerald-300/80 text-pretty text-sm rounded-md w-full" 
+              onPress={() => { selectGridHandler(grid); } 
+              } 
+              key={`${grid.souraName}-${grid.souraNb}`} aria-label={`${grid.souraName}`} title={`${grid.souraName}`}>
+                <div className="flex-col justify-start  text-center">
                 <div className="flex justify-center  text-center">
-                  {`  ${grid.souraName}   :  ${grid.stageId}`}
+      
+                  {` ${grid.souraName}`}
                 </div>
+                <div className="flex justify-center  text-center">
+            {` ${grid.stageId}`}
+          </div>
+            </div>
               </Button>
               </div>)})}
                   </div>
 
-                {/* 
-              <Button className="text-center bg-emerald-300/80 text-pretty w-full" onClick={() => { sprintHandler(grid); } } key={`${grid.souraName}-${grid.souraNb}`} aria-label={`${grid.souraName}`} title={`${grid.souraName}`}>
-                  <div className="flex justify-center  text-center">
-                  Ready {`${guestPrisma.tokenId}`}
-                  </div>
-                </Button>                 
-                <div   className="flex items-center justify-center col-span-1 rounded-md w-full  ">
-              <Button className="text-center bg-emerald-300/80 text-pretty w-full" onClick={() => { deleteGridHandler(grid); } } key={`${grid.souraName}-${grid.souraNb}`} aria-label={`${grid.souraName}`} title={`${grid.souraName}`}>
-                  <div className="flex justify-center  text-center">
-                  Delete {`${guestPrisma.tokenId}`}
-                  </div>
-                </Button>                 
-                </div> */}
                 
           </section>}
        </ScrollShadow>

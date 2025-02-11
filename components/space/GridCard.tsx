@@ -35,7 +35,7 @@ function GridCard() {
                     <Button onPress={() => handleSetGridSelected(stage)} color="primary" 
                     variant="bordered" className={`border-2 border-blue-600 rounded-md font-semibold 
                     ${stage.stageId === spaceStageSelected?.stageId ? 'bg-orange-200' : 'bg-slate-300'} `}>
-                        {`With :  ${stage.stageId}`} 
+                        {`${stage.stageId}`} 
                     </Button>
                    
                 </CardBody>

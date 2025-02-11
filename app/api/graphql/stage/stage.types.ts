@@ -107,6 +107,7 @@ export type StageStateProps = {
   stageEvalContext: EVAL_STATE,
   sprintRandomHidden: number[],
   stageValidContext: boolean,
+  evalValidContext: boolean,
   showStepsContext: boolean,
   stepIndexContext: number,
   stageEvalIndexContext: number,

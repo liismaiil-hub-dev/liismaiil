@@ -201,6 +201,7 @@ const initialState: StageStateProps = {
   stageEvalContext: EVAL_STATE.ORDER,
   validContext: false,
   stageValidContext: false,
+  evalValidContext: false,
   menuSouraNb: [{ souraName: '', souraNb: -1 }],
   windowContext: -1,
   spaceStageAyahsContext:[
@@ -510,6 +511,10 @@ const stageSlice = createSlice({
     setStageValidContext(state: StageStateProps,
       action: PayloadAction<{ validCtxt: boolean }>) {
       state.stageValidContext = action.payload.validCtxt
+    },
+    setEvalValidContext(state: StageStateProps,
+      action: PayloadAction<{ evalCtxt: boolean }>) {
+      state.evalValidContext = action.payload.evalCtxt
     },
     setStageEvalContext(state: StageStateProps,
       action: PayloadAction<{ eval: EVAL_STATE }>) {

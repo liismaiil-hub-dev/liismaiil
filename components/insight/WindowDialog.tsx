@@ -21,7 +21,9 @@ import {scaleLinear,BaseType,select,
      format,
      min,
      max,
-     axisBottom} from "d3";
+     axisBottom,
+     scaleOrdinal,
+     schemeDark2} from "d3";
 
 import { getStatTaysir } from '@/actions/sprint';
 import { getInsightTemplateByNb } from '@/actions/stage';
@@ -60,7 +62,8 @@ const drawWindow = ({
   data:Ayah[]
 }) => {
   console.log({data});
-  const colorScale =scaleSequential([0,data.length ], ['blue', "green"]).interpolator(interpolateRainbow)
+  //const colorScale =scaleSequential([0,data.length ], ['blue', "green"]).interpolator(interpolateRainbow)
+  const colorScale = scaleOrdinal(schemeDark2)
   try {
       const WIND_numberInSurah = data.map((wind)=> wind.numberInSurah )
       
@@ -127,16 +130,25 @@ const _ayMinWind =   SVG?.select('g:nth-of-type(2)').selectAll('text')
 .join('text')
 .text(function(d, i){
 console.log({d, min:d.min, pos: _xScale(d.min) });
+console.log({
+  aw:ayahWithoutPunct(d.text)[(Math.floor(ayahWithoutPunct(d.text).length/2))],text:d.text
+});
+
       return  windowVisualisation===WINDOW_VISUALISATION.ALL || (windowVisualisation===WINDOW_VISUALISATION.ODD && i%2 !== 0) 
       ||(windowVisualisation===WINDOW_VISUALISATION.EVEN && i%2 === 0) ?
       `${d.text}:${d.numberInSurah}`:(
       windowVisualisation===WINDOW_VISUALISATION.AWAL || (windowVisualisation===WINDOW_VISUALISATION.ODD && i%2 !== 0) 
       ||(windowVisualisation===WINDOW_VISUALISATION.EVEN && i%2 === 0 )) ?
-      `${ typeof ayahWithoutPunct(d.text)[0] !='undefined' ? ayahWithoutPunct(d.text)[0] : d.text}:${d.numberInSurah}`:
+      `${ typeof ayahWithoutPunct(d.text)[0] !='undefined' && ayahWithoutPunct(d.text)[0] !=="" ?
+       ayahWithoutPunct(d.text)[0] :
+      ayahWithoutPunct(d.text)[0] !==""  ? ayahWithoutPunct(d.text)[1] :d.text}:${d.numberInSurah}`:
       windowVisualisation===WINDOW_VISUALISATION.AWSAT || (windowVisualisation===WINDOW_VISUALISATION.ODD && i%2 !== 0) 
       ||(windowVisualisation===WINDOW_VISUALISATION.EVEN && i%2 === 0) 
-      ?`${typeof ayahWithoutPunct(d.text)[(Math.floor(ayahWithoutPunct(d.text).length)/2)] !== 'undefined'?
-      ayahWithoutPunct(d.text)[(Math.floor(ayahWithoutPunct(d.text).length)/2)] : d.text }:${d.numberInSurah}`:
+      ?`${ayahWithoutPunct(d.text)[(Math.floor(ayahWithoutPunct(d.text).length/2))] !== 'undefined' && 
+      ayahWithoutPunct(d.text)[(Math.floor(ayahWithoutPunct(d.text).length/2))] !== ""?
+      ayahWithoutPunct(d.text)[(Math.floor(ayahWithoutPunct(d.text).length/2))]  :
+      ayahWithoutPunct(d.text)[(Math.floor(ayahWithoutPunct(d.text).length/2))] === "" ?
+      ayahWithoutPunct(d.text)[(Math.floor(ayahWithoutPunct(d.text).length/2))-1] :d.text }:${d.numberInSurah}`:
       windowVisualisation===WINDOW_VISUALISATION.AKHIR || (windowVisualisation===WINDOW_VISUALISATION.ODD && i%2 !== 0) 
       ||(windowVisualisation===WINDOW_VISUALISATION.EVEN && i%2 === 0) ?
       `${ typeof ayahWithoutPunct(d.text)[Math.floor(ayahWithoutPunct(d.text).length - 1)] !== 'undefined' 
@@ -144,11 +156,18 @@ console.log({d, min:d.min, pos: _xScale(d.min) });
       :''})
 .attr('x', (d, i ) => {
   //  console.log({d, min:d.min,ayLength: d.ayMax.split(' ').length });
-  //  console.log({d, min:d.min, pos: boundedWidth/ d.ayMax.split(' ').length});
-    return   _xScale(d.numberInSurah ) //- ((i + 1 ) * data.length) 
+  if(windowVisualisation===WINDOW_VISUALISATION.AWSAT ||windowVisualisation===WINDOW_VISUALISATION.AWAL||
+    windowVisualisation===WINDOW_VISUALISATION.AKHIR) {
+      
+      console.log({xAW : _xScale(WINDOW_AY_MAX )+ boundedHeight/2});
+  return   _xScale(WINDOW_AY_MAX )+ boundedWidth/2 
+
+  }  
+  return   _xScale(WINDOW_AY_MAX )+margin.left + margin.right+20
+      //d.numberInSurah ) + (Math.pow((i - 5 ) ,2) ) - margin.left
   }    )
 .attr('y', function(d, i){
-    return  _yScale(i + 1) 
+    return  _yScale(i ) 
  })
 .style('fill',(d,i ) => colorScale(i)) 
   .style('font-size',`${windowVisualisation===WINDOW_VISUALISATION.MINMAX ||windowVisualisation===WINDOW_VISUALISATION.MIN ? '15px': '9px'}` )
@@ -362,7 +381,6 @@ export default function WindowDialog({isOpen,  onOpen, onClose}:{isOpen:boolean,
                 <SpaceButton  handlePress={nextWindowHandler} title='Next Window' disabled={false} />
         </div>
              
-               <div className="w-full   justify-center items-center border-2   space-y-2">
            <div className="w-full   flex justify-center items-center border-2 border-red-500  space-y-2">
        
                <svg ref={svgWindow!}   >
@@ -377,14 +395,14 @@ export default function WindowDialog({isOpen,  onOpen, onClose}:{isOpen:boolean,
                </svg>
                </div>
                     </div>
-    </div>
             </ModalBody>
             <ModalFooter>
+              <div className=" flex w-full   justify-center items-center border-2   space-y-2">
             <RadioGroup
                            orientation="horizontal"
                            value={windowVisualisation}
                            onValueChange={setWindowStatus}
-                    >
+                           >
                <div className="flex  p-2  rounded-md justify-center items-center border-2 border-violet-500  space-y-2">
                          <Radio value={WINDOW_VISUALISATION.AWAL }>Awal</Radio>
                          <Radio value={WINDOW_VISUALISATION.AWSAT }>Awsat</Radio>
@@ -395,6 +413,7 @@ export default function WindowDialog({isOpen,  onOpen, onClose}:{isOpen:boolean,
                </div>
                      
                      </RadioGroup>  
+                      </div>
                             
               </ModalFooter>
           

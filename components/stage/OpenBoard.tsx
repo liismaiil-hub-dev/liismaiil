@@ -16,6 +16,8 @@ import { cn } from '@/lib/cn-utility'
 import { createNewSprint, setSprintSession } from '@/actions/sprint';
 import { useRouter } from 'next/navigation';
 import { addGuestToStage, getStageForSprint } from '@/actions/stage';
+import { useDisclosure } from '@heroui/modal';
+import WindowSprintDialog from './WindowSprintDialog';
 
 export enum EVAL_STATE {
   EVAL = 'EVAL',
@@ -25,17 +27,21 @@ export enum EVAL_STATE {
 const OpenBoard = ( ) => {
   const dispatch = useDispatch()
   const router = useRouter()
-  const {stageSprintSelected, stageGridSelected, stageEvalContext, stageReorderedAyahsContext, firstStateContext, stageEvalIndexContext, stageHideNbContext, errorNbContext,
+  const {stageSprintSelected, stageGridSelected, stageEvalContext, stageReorderedAyahsContext, evalValidContext, stageEvalIndexContext, stageHideNbContext, errorNbContext,
     stageShuffeledFirstAyahsContext, stageValidContext, stepIndexContext,   stageOrderedAyahsContext, stageShuffeledAyahsContext, stageGridsContext, } = useSelector((state: RootStateType) => state.stage)
   const { guestPrisma:{tokenId} } = useSelector((state: RootStateType) => state.guestPrisma)
 
   const { setStageOrderedAyahsContext, setStageShuffeledFirstAyahsContext, setStageHideNbContext, setStageGridsContext,  setStageShuffeledAyahsContext, setStageGridSelected ,
-     setStageValidContext, setStepIndexContext, setFirstStateContext,setStageReorderedAyahsContext, setErrorNbContext } = stageActions
-     
+     setStageValidContext, setStepIndexContext, setFirstStateContext,setStageReorderedAyahsContext, setEvalValidContext } = stageActions
+  
+     const {isOpen, onOpen, onClose} = useDisclosure();
+           
+      
+
      useEffect(() => {
        dispatch(setStageReorderedAyahsContext({reorderedAyahsContext:[-1]}))
       } , []);
-      const [gridIndex, setGridIndex] = useState('0');
+     // const [gridIndex, setGridIndex] = useState('0');
       
   
 useEffect(() => {
@@ -49,7 +55,7 @@ if ( _sprint.success && typeof _sprint.stage !== 'undefined' ) {
  console.log({ _shuffeleledFirst });
 const _orderedAy = [..._.sortBy(_shuffeleledFirst, ['number'])].map((ordG: Ayah, index) => (ordG))
   console.log({ _orderedAy });
-  setGridIndex(stageSprintSelected.stageId.split('-')[stageSprintSelected.stageId.split('-').length - 1 ])
+  //setGridIndex(stageSprintSelected.stageId.split('-')[stageSprintSelected.stageId.split('-').length - 1 ])
   dispatch(setStageOrderedAyahsContext({ ayahs: _orderedAy }))
   dispatch(setStageShuffeledAyahsContext({ ayahs: _shuffeleledFirst }))
 }}
@@ -89,6 +95,7 @@ function getMaxNb(): number {
     return stageOrderedAyahsContext[stageOrderedAyahsContext.length -1 ].number! 
      }else return 0
  }
+console.log({min:getMin(), max:getMax() ,minNb:getMinNb(),maxNb:getMaxNb()});
 
 
   const sprintSessionHandler = async () =>{
@@ -136,7 +143,7 @@ function getMaxNb(): number {
   }
 
   async  function sprintItHandler() {
-   router.push(`/stages/${stageSprintSelected?.stageId}`)
+
   }
   async  function stageItHandler() {
     const resp = await addGuestToStage({
@@ -154,6 +161,14 @@ function getMaxNb(): number {
   }
   function stageValidHandler() {
     dispatch(setStageValidContext({ validCtxt: !stageValidContext }))
+    console.log({isOpen});
+    
+    onOpen()
+    // setEvalIndex((prev) => prev + 1)
+  }
+  function evalValidHandler() {
+    dispatch(setEvalValidContext({ evalCtxt: !evalValidContext }))
+   onClose()
     // setEvalIndex((prev) => prev + 1)
   }
   
@@ -180,30 +195,39 @@ function getMaxNb(): number {
     }
 
   }, [stageSprintSelected]);
+  useEffect(() => {
+ console.log({isOpen});
+ 
+  }, [isOpen]);
+  
+  useEffect(() => {
+    console.log({stageValidContext, isOpen});
+    
+  }, [stageValidContext, isOpen]);
   
   return (
-    <div className=" flex-col justify-start space-y-2 h-full py-2 items-center w-full ">
-      <div className="flex-col   justify-start  items-center  gap-1 flex-wrap  ">
+    <div className=" flex-col justify-start  h-full p-1 items-center w-full ">
+      <div className="flex-col   justify-start  items-center   flex-wrap  ">
       {sprintAble ? 
-      <div className='justify-center items-center text-center flex '>{sprintAble ? `SprintId &nbsp; : ${stageSprintSelected?.stageId}`
-          :`StageId &nbsp; : ${stageSprintSelected?.stageId}` } &nbsp;&nbsp;
+      <div className='justify-center items-center text-center flex '>{
+        sprintAble ? `SprintId : ${stageSprintSelected?.stageId}`
+          :`StageId : ${stageSprintSelected?.stageId}` } &nbsp;&nbsp;
         :From ayah &nbsp; : {getMinNb()} &nbsp; To &nbsp;{getMaxNb()}&nbsp;&nbsp;
-        {sprintAble ? `Sprint Gifts up to <${taysir}> to use as 20% discount from hosts selections `: null}
-      </div>:
+           </div>:
       <div className='justify-center items-center text-center flex '>StageId &nbsp; : {stageSprintSelected?.stageId} 
         :From &nbsp; : {getMinNb()}To {getMaxNb()}
         
       </div> 
        }
       
-      <div className="flex justify-center items-center mt-2 p-3  ">
+      <div className="flex justify-center items-center  p-1  ">
                 <p className='text-center inline-flex '>Soura &nbsp;: [&nbsp;{stageSprintSelected?.arabName ? stageSprintSelected?.arabName : stageSprintSelected?.souraName}&nbsp;]&nbsp;</p>
                 <p className='text-center inline-flex '>&nbsp; Nb : [&nbsp;{stageSprintSelected?.souraNb}&nbsp;] </p>
                 <p className='text-center inline-flex'>&nbsp; Grid :[&nbsp;{stageSprintSelected?.grid*stageSprintSelected?.grid}&nbsp;]</p>
                 <p className='text-center inline-flex' > &nbsp; Nb of Grids:  [&nbsp;{stageSprintSelected?.group ?
                  stageSprintSelected?.group : stageSprintSelected?.stageId.split('-')[2]}] </p>
             </div>
-        <div className="flex-col  justify-start items-center  gap-3 text-center font-sans  " >
+        <div className="flex-col  justify-start items-center   text-center font-sans  " >
         <div className="flex justify-evenly items-center gap-1 flex-wrap ">
             <SpaceButton handlePress={shuffleHandler} title='Shuffel Grid' />
              {sprintAble ?
@@ -212,36 +236,35 @@ function getMaxNb(): number {
               }
         
           
-          <div className="flex  justify-between items-center p-2  border border-green-300 rounded-md text-center font-sans " >
+          <div className="flex  justify-between items-center border border-green-300 rounded-md text-center font-sans " >
             <input className="flex border-blue-800 text-green-300 justify-center items-center  border "
               type="checkbox"
               id='HIDE_NB' name='HIDE_NB' value='HIDE_NB' checked={stageHideNbContext} onChange={() => stageHideNbHandler()} />
-            <label className='px-2' htmlFor='HIDE_NB'  >Hide nb</label>
+            <label className='px-1' htmlFor='HIDE_NB'  >Hide nb</label>
           </div>
-          <div className="flex  justify-center items-center p-2 border border-green-300 rounded-md text-center font-sans " >
+          <div className="flex  justify-center items-center border border-green-300 rounded-md text-center font-sans " >
             <input className="flex  justify-center items-center  border border-blue-800 text-green-300"
               type="checkbox"
-              id='VALID_CTXT' name='VALID_CTXT' value='HIDE_NB' checked={stageValidContext} onChange={() => stageValidHandler()} />
-            <label className='px-2' htmlFor='VALID_CTXT' >valid sprint</label>
+              id='VALID_CTXT' name='VALID_CTXT' value='HIDE_NB' 
+              checked={stageValidContext && isOpen} 
+              onChange={() => stageValidHandler()} />
+            <label className='px-2' htmlFor='VALID_CTXT' >Validate </label>
           </div>
-            <div className="CENTER border border-green-300 rounded-md  p-2 text-center font-sans " >
-               <RadioButtonEvalState
-                evalState={EVAL_STATE.EVAL} title='Eval board' />
-            </div>
-            <div className="CENTER  border border-blue-300 rounded-md p-2 text-center font-sans " >
-              <RadioButtonEvalState
-                evalState={EVAL_STATE.ORDER} title='Order Grid' />
-            </div>
-            <div className="CENTER  border border-violet-300 rounded-md p-2 text-center font-sans " >
-              <RadioButtonEvalState
-                evalState={EVAL_STATE.CLICK} title='Click Grid' />
-            </div>
+          <div className="flex  justify-center items-center border border-green-300 rounded-md text-center font-sans " >
+            <input className="flex  justify-center items-center  border border-blue-800 text-green-300"
+              type="checkbox"
+              id='EVAL_CTXT' name='EVAL_CTXT' value='EVAL_CTXT' 
+              checked={evalValidContext} 
+              onChange={() => evalValidHandler()} />
+            <label className='px-2' htmlFor='EVAL_CTXT' >Eval </label>
+          </div>
+            
           </div>
           </div>
           
-            <div className="flex justify-between items-center mt-1 p-3  ">
+            <div className="flex justify-between items-center p-1  ">
            
-            <p className='text-center'>reordered suits &nbsp;{typeof stageReorderedAyahsContext != 'undefined'&& stageReorderedAyahsContext[0] != -1 && stageReorderedAyahsContext.map((e: number) => `[${e}]`).join(', ')}</p>
+            <p className='text-center'>Suits &nbsp;{typeof stageReorderedAyahsContext != 'undefined'&& stageReorderedAyahsContext[0] != -1 && stageReorderedAyahsContext.map((e: number) => `[${e}]`).join(', ')}</p>
             
             
             <div className="flex justify-center items-center  ">
@@ -252,13 +275,13 @@ function getMaxNb(): number {
                 </p>
               </div>
 
-            <div className="flex justify-center items-center  ">
+           {/*  <div className="flex justify-center items-center  ">
                 <p className=' text-center text-emerald-500'>Grid Index &nbsp;
                 </p>
                 <p className=' text-center text-blue-400'>
                     {gridIndex}
                 </p>
-            </div>
+            </div> */}
             <div className="flex justify-center items-center  ">
 
                 <p className=' text-center text-emerald-500'> Ayahs &nbsp;
@@ -270,18 +293,19 @@ function getMaxNb(): number {
           </div>
       </div>
 
-      {stageGridSelected && stageEvalContext === EVAL_STATE.EVAL ?
+      {stageGridSelected && !isOpen?
         <div className="flex flex-col justify-start  items-stretch w-full   ">
           <div className=" -order-last md:order-first flex justify-stretch w-full flex-1 items-start m-1 ">
             <EvalOrderedComp />
           </div>
           <div className=" flex justify-stretch w-full flex-1 items-start m-1">
             <EvalSuits  />
-          </div> </div> :
-        stageEvalContext === EVAL_STATE.ORDER ?
-          <EvalDragOrderBoardComp />
-          : stageEvalContext === EVAL_STATE.CLICK && <EvalClickBoardComp
-          />}
+          </div> 
+          </div> :   stageValidContext && isOpen  ?
+                <div className=" flex justify-center w-screen h-screen items-center p-2 overflow-scroll ">
+                   <WindowSprintDialog isOpen={isOpen}  onOpen={onOpen} onClose={onClose}/>
+                 </div>
+                 : null} 
     </div>
   )
 }
