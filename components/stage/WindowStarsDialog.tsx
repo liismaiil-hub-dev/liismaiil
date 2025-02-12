@@ -11,13 +11,13 @@ import SpaceButton from './SpaceButton';
 import {  Modal,  ModalContent,  ModalHeader,  ModalBody,  ModalFooter} from "@heroui/modal";
 
 import {Radio, RadioGroup} from "@heroui/radio";
-import {scaleLinear,BaseType,select,axisLeft,axisBottom,scaleOrdinal,schemeDark2} from "d3";
+import { scaleLinear,BaseType,select,axisLeft,axisBottom,scaleOrdinal,schemeDark2, pointers, } from "d3";
 
 import { getStageForSprint } from '@/actions/stage';
 import { ayahWithoutPunct } from '@/lib/tools';
 
         const dimentions = {
-          width:700,
+          width:900,
           height:300,
           margin :{
               top:25,
@@ -29,7 +29,7 @@ import { ayahWithoutPunct } from '@/lib/tools';
 const {height, margin, width } = dimentions
 const boundedWidth = width  - margin.right - margin.left 
 const boundedHeight = height  - margin.top   
-
+  
 const drawWindow = ({
   SVG,
   windowVisualisation,
@@ -39,19 +39,33 @@ const drawWindow = ({
   windowVisualisation: WINDOW_VISUALISATION|string,
   data:Ayah[]
 }) => {
-  console.log({data});
-  //const colorScale =scaleSequential([0,data.length ], ['blue', "green"]).interpolator(interpolateRainbow)
+
+  const _suits: number[] = []
+  function validAyahHandler(reord: number) {
+    console.log({reord});
+  
+    _suits.push(reord) 
+  
+  }
+  const ayPosition: { x: number; y: number; }[] = []
+  for(let i=0;i< data.length; i++) {
+    
+    ayPosition.push({
+      x: Math.random()* boundedWidth,
+      y: Math.random()* boundedHeight
+    })
+  }
+  console.log({_suits, ayPosition});
+    //const colorScale =scaleSequential([0,data.length ], ['blue', "green"]).interpolator(interpolateRainbow)
   const colorScale = scaleOrdinal(schemeDark2)
   try {
       const WIND_numberInSurah = data.map((wind)=> wind.numberInSurah )
-      
-
-   const WINDOW_AY_MAX = Math.max(...WIND_numberInSurah)
-   const WINDOW_AY_MIN = Math.min(...WIND_numberInSurah)
+      const WINDOW_AY_MAX = Math.max(...WIND_numberInSurah)
+      const WINDOW_AY_MIN = Math.min(...WIND_numberInSurah)
 console.log(
   {WINDOW_AY_MIN,WINDOW_AY_MAX, diff:WINDOW_AY_MAX -WINDOW_AY_MIN }
 );
-  const _xScale = scaleLinear()
+const _xScale = scaleLinear()
                   .domain([WINDOW_AY_MAX,WINDOW_AY_MIN ])
                   .rangeRound([ 0, boundedWidth]).clamp(true)
 
@@ -60,10 +74,12 @@ const _yScale = scaleLinear()
               .domain([ 0,data.length  ])
               .rangeRound([   margin.top, boundedHeight])
               .clamp(true)
+
 const yScaleAxis = scaleLinear()
               .domain([0,data.length ])
               .rangeRound([ margin.top, boundedHeight ])
               .clamp(true)
+
 const xScaleAxis = scaleLinear()
               .domain([WINDOW_AY_MAX+1,WINDOW_AY_MIN -1 ])
               .rangeRound([0, boundedWidth])
@@ -71,9 +87,9 @@ const xScaleAxis = scaleLinear()
 
              const _xticks =   xScaleAxis.ticks(WINDOW_AY_MAX - WINDOW_AY_MIN) 
               const _yticks =   yScaleAxis.ticks(data.length) 
-//.interpolate(interpolateHclLong)
   SVG.attr('viewBox', `0 0 ${width} ${height}`).style('background-color', 'rgb(240,240,240)')
-const _ayMinWind =   SVG?.select('g:nth-of-type(2)').selectAll('text')
+
+const _ayWind =   SVG?.select('g:nth-of-type(2)').selectAll('text')
 .data(data)
 .join('text')
 .text(function(d, i){
@@ -81,8 +97,7 @@ console.log({d,  });
 console.log({
   aw:ayahWithoutPunct(d.text)[(Math.floor(ayahWithoutPunct(d.text).length/2))],text:d.text
 });
-
-      return  windowVisualisation===WINDOW_VISUALISATION.ALL || (windowVisualisation===WINDOW_VISUALISATION.ODD && i%2 !== 0) 
+    return  windowVisualisation===WINDOW_VISUALISATION.ALL || (windowVisualisation===WINDOW_VISUALISATION.ODD && i%2 !== 0) 
       ||(windowVisualisation===WINDOW_VISUALISATION.EVEN && i%2 === 0) ?
       `${d.text}:${d.numberInSurah}`:(
       windowVisualisation===WINDOW_VISUALISATION.AWAL || (windowVisualisation===WINDOW_VISUALISATION.ODD && i%2 !== 0) 
@@ -101,15 +116,15 @@ console.log({
       ||(windowVisualisation===WINDOW_VISUALISATION.EVEN && i%2 === 0) ?
       `${ typeof ayahWithoutPunct(d.text)[Math.floor(ayahWithoutPunct(d.text).length - 1)] !== 'undefined' 
       ? ayahWithoutPunct(d.text)[Math.floor(ayahWithoutPunct(d.text).length - 1)]: d.text}:${d.numberInSurah}`
-      :''})
+      :windowVisualisation===WINDOW_VISUALISATION.HIDE_NB ||windowVisualisation===WINDOW_VISUALISATION.VALID ?  
+      ayahWithoutPunct(d.text): 
+      '' })
 .attr('x', (d, i ) => {
   //  console.log({d, min:d.min,ayLength: d.ayMax.split(' ').length });
   if(windowVisualisation===WINDOW_VISUALISATION.AWSAT ||windowVisualisation===WINDOW_VISUALISATION.AWAL||
     windowVisualisation===WINDOW_VISUALISATION.AKHIR) {
-      
       console.log({xAW : _xScale(WINDOW_AY_MAX )+ boundedHeight/2});
-  return   _xScale(WINDOW_AY_MAX )+ boundedWidth/2 
-
+      return   ayPosition[i] //_xScale(WINDOW_AY_MAX )+ boundedWidth/2 
   }  
   return   _xScale(WINDOW_AY_MAX )+margin.left + margin.right+20
       //d.numberInSurah ) + (Math.pow((i - 5 ) ,2) ) - margin.left
@@ -117,11 +132,44 @@ console.log({
 .attr('y', function(d, i){
     return  _yScale(i ) 
  })
-.style('fill',(d,i ) => colorScale(i)) 
-  .style('font-size',`${windowVisualisation===WINDOW_VISUALISATION.MINMAX ||windowVisualisation===WINDOW_VISUALISATION.MIN ? '15px': '9px'}` )
+ .on('click',function(ev, d, i ) {
+   //const point =pointers(ev)
+   console.log({ev, d, })
+   select(d).remove() 
+   validAyahHandler(d.numberInSurah)
+
+   select(this).attr('class','window-ay-click')  
+ })
+ .on('mouseout',function(ev, d, i ) {
+  // const point =pointers(ev)
+    select(d).remove() 
+    validAyahHandler(d.numberInSurah)
+  
+
+ })
+ .on('mouseover',function(ev, d, i ) {
+ // const point =pointers(ev)
+  if(windowVisualisation===WINDOW_VISUALISATION.READ ) {
+    select(this).attr('class','ay-hover') 
+}
+}).on('mouseup',function(ev, d, i ) {
+  // const point =pointers(ev)
+   if(windowVisualisation===WINDOW_VISUALISATION.VALID || windowVisualisation===WINDOW_VISUALISATION.DUO ) {
+     select(this).remove() 
+      validAyahHandler(d.numberInSurah)
+    } })
+ .style('fill',(d,i ) => colorScale(i)) 
+  .style('font-size',`${windowVisualisation===WINDOW_VISUALISATION.ALL || windowVisualisation===WINDOW_VISUALISATION.VALID||
+    windowVisualisation===WINDOW_VISUALISATION.HIDE_NB ? '9px': '15px'}` )
   .style('font-weight','light')
   .attr('transform', (d, i ) => `translate(${-ayahWithoutPunct(d.text).length },0)`)    
-
+  .attr('transform',function( d, i ) {
+    if(d.numberInSurah === WINDOW_AY_MIN) {
+      select(this).attr('class','first-ay') 
+    } 
+    return
+   })   
+  
 const _yAxisLeft = axisLeft(yScaleAxis)
 const _displayYAxisG = SVG.select('g:nth-of-type(4)')
               .attr('id','yAxisLeftG')
@@ -147,7 +195,9 @@ export default function WindowSprintDialog({isOpen,  onOpen, onClose}:{isOpen:bo
      catStages, stepIndexContext, stageGridSelected } = useSelector((state: RootStateType) => state.stage)
  const { setStageOrderedAyahsContext,setStageReorderedAyahsContext,setFirstStateContext, setStageSprintSelected,setStageValidContext, 
   setStageShuffeledAyahsContext,setErrorNbContext,setStageHideNbContext } = stageActions
- 
+  const svgWindow = useRef();
+        const [windowVisualisation, setWindowVisualisation] = useState(WINDOW_VISUALISATION.ALL);
+       
  function ayahInReordered(ord: number) {
     if(typeof stageReorderedAyahsContext!= 'undefined' ) {
      console.log({ stageReorderedAyahsContext, ord, some: stageReorderedAyahsContext.some((el) => el === ord) });
@@ -155,8 +205,9 @@ export default function WindowSprintDialog({isOpen,  onOpen, onClose}:{isOpen:bo
 }    }
 
 useEffect(() => {
+  console.log({windowVisualisation});
   
-}, []);
+}, [ windowVisualisation]);
 
 useEffect(() => {
       dispatch(setStageReorderedAyahsContext({reorderedAyahsContext:[-1]})) 
@@ -225,7 +276,7 @@ _actualSprint()
          dispatch(setErrorNbContext({errorNb:0}))
          dispatch(setFirstStateContext({first:false}))
 }}
-const [gridAyahs, setGridAyahs] = useState(() => JSON.parse(stageGridSelected.ayahs!) );
+//const [gridAyahs, setGridAyahs] = useState(() => JSON.parse(stageGridSelected.ayahs!) );
 
  useEffect(() => {
      console.log({ stageOrderedAyahsContext,stageShuffeledAyahsContext });
@@ -242,10 +293,7 @@ function getMin() {
    return stageOrderedAyahsContext[0].numberInSurah!
      } else return 
     0 
- }      const svgWindow = useRef();
-        const [windowVisualisation, setWindowStatus] = useState(WINDOW_VISUALISATION.ALL);
-        const [window, setWindow] = useState([{ }]);
- // const [stageSprintSelected, setStageSelectedState] = useState<StagesSprintType>(stageSprintSelected);
+ }     
      
 async function nextSouraHandler() {
   try {
@@ -261,9 +309,7 @@ async function nextSouraHandler() {
            }}))
   }catch (error) {
         toast.warning(`${error}`)
-      }  
-        
-      }
+  }}
 async function prevSouraHandler() {
   try {
     const _sprints = _.filter(catStages , (spr:StagesSprintType)  => spr.souraNb ===stageSprintSelected.souraNb -1)
@@ -274,12 +320,57 @@ async function prevSouraHandler() {
             grid:_sprints[0].grid,
             group:_sprints[0].group,
           stageId:_sprints[0].stageId,
-            
-           }}))
+   }}))
   }catch (error) {
         toast.warning(`${error}`)
-      } 
+      }}
+async function validateHandler() {
+    try {
+      const _svgWindow =  select(svgWindow.current!)
+
+    //console.log({windowVisualisation});
+    setWindowVisualisation(WINDOW_VISUALISATION.HIDE_NB)
+     // drawWindow({SVG:_svgWindow, windowVisualisation:WINDOW_VISUALISATION.HIDE_NB , data:stageShuffeledAyahsContext  })
+   
+     } catch (error) {
+         toast.warning(`${error}`)
+       }
+  
 }
+async function sprintHandler() {
+  try {
+    const _sprints = _.filter(catStages , (spr:StagesSprintType)  => spr.souraNb ===stageSprintSelected.souraNb +1)
+        /* dispatch(setStageSprintSelected({stage:{
+            arabName:_sprints[0].arabName,
+            souraName:_sprints[0].souraName,
+            souraNb:_sprints[0].souraNb,
+            grid:_sprints[0].grid,
+            group:_sprints[0].group,
+          stageId:_sprints[0].stageId,
+            
+           }})) */
+  }catch (error) {
+        toast.warning(`${error}`)
+      }  
+        
+      }
+      async function duoHandler() {
+        try {
+          const _sprints = _.filter(catStages , (spr:StagesSprintType)  => spr.souraNb ===stageSprintSelected.souraNb +1)
+              dispatch(setStageSprintSelected({stage:{
+                  arabName:_sprints[0].arabName,
+                  souraName:_sprints[0].souraName,
+                  souraNb:_sprints[0].souraNb,
+                  grid:_sprints[0].grid,
+                  group:_sprints[0].group,
+                stageId:_sprints[0].stageId,
+                  
+                 }}))
+        }catch (error) {
+              toast.warning(`${error}`)
+            }  
+              
+            }
   function prevSprintHandler() {
          try {
           const _sprints = _.filter(catStages , (spr:StagesSprintType)  => spr.souraNb ===stageSprintSelected.souraNb && spr.grid ===stageSprintSelected.grid )
@@ -296,22 +387,8 @@ async function prevSouraHandler() {
             grid:stageSprintSelected.grid,
             group:stageSprintSelected.group,
           stageId:_sprints[_actualSprintIndex -1].stageId,
-            
-           }
-          }
-        )
-        ) 
-         // dispatch(setStageOrderedAyahsContext({ ayahs: _orderedAy }))
-          //  dispatch(setStageShuffeledAyahsContext({ ayahs: _shuffeleledFirst }))
-        
+            }})) 
           }else {
-       // const  _sprint =  await getStageForSprint(_sprints[0].stageId)
-      //  if ( _sprint.success && typeof _sprint.stage !== 'undefined' ) {
-        //  const _shuffeleledFirst = (JSON.parse(_sprint.stage!.ayahs)).map((ordG: Ayah, index: number) => (ordG));
-        // console.log({ _shuffeleledFirst });
-        //const _orderedAy = [..._.sortBy(_shuffeleledFirst, ['number'])].map((ordG: Ayah, index) => (ordG))
-         // console.log({ _orderedAy });
-        //  setGridIndex(stageSprintSelected.stageId.split('-')[stageSprintSelected.stageId.split('-').length - 1 ])
         dispatch(setStageSprintSelected({stage:{
 
           arabName:stageSprintSelected.arabName,
@@ -325,10 +402,6 @@ async function prevSouraHandler() {
         }
       ))}}
       _actualSprint()
-    
-      //  dispatch(setStageOrderedAyahsContext({ ayahs: _orderedAy }))
-        //  dispatch(setStageShuffeledAyahsContext({ ayahs: _shuffeleledFirst }))
-      //   }
        } catch (error) {
               toast.warning(`${error}`)
             } 
@@ -349,14 +422,6 @@ async function prevSouraHandler() {
             
             const _actualSprint = async () =>{ 
              if(_actualSprintIndex < _sprints.length){
-/* 
-            const    _sprint =  await getStageForSprint(_sprints[_actualSprintIndex ].stageId)
-            if ( _sprint.success && typeof _sprint.stage !== 'undefined' ) {
-              const _shuffeleledFirst = (JSON.parse(_sprint.stage!.ayahs)).map((ordG: Ayah, index: number) => (ordG));
-             console.log({ _shuffeleledFirst });
-            const _orderedAy = [..._.sortBy(_shuffeleledFirst, ['number'])].map((ordG: Ayah, index) => (ordG))
-              console.log({ _orderedAy });
-             *///  setGridIndex(stageSprintSelected.stageId.split('-')[stageSprintSelected.stageId.split('-').length - 1 ])
             dispatch(setStageSprintSelected({ stage: {  arabName:stageSprintSelected.arabName,
               souraName:stageSprintSelected.souraName,
               souraNb:stageSprintSelected.souraNb,
@@ -367,22 +432,8 @@ async function prevSouraHandler() {
             stageSprintSelected.stageId, 
             //ayahs:_sprint.stage!.ayahs
             }}))
-  
-          //  dispatch(setStageOrderedAyahsContext({ ayahs: _orderedAy }))
-            //  dispatch(setStageShuffeledAyahsContext({ ayahs: _shuffeleledFirst }))
-              
-            //  dispatch(setStageGridSelected({stage:}))
-            
+      
             }else {
-          /* const  _sprint =  await getStageForSprint(_sprints[0].stageId)
-          if ( _sprint.success && typeof _sprint.stage !== 'undefined' ) {
-            const _shuffeleledFirst = (JSON.parse(_sprint.stage!.ayahs)).map((ordG: Ayah, index: number) => (ordG));
-           console.log({ _shuffeleledFirst });
-          const _orderedAy = [..._.sortBy(_shuffeleledFirst, ['number'])].map((ordG: Ayah, index) => (ordG))
-            console.log({ _orderedAy });
-            dispatch(setStageOrderedAyahsContext({ ayahs: _orderedAy }))
-            dispatch(setStageShuffeledAyahsContext({ ayahs: _shuffeleledFirst }))
-           */ 
             dispatch(setStageSprintSelected({ stage: {  arabName:stageSprintSelected.arabName,
               souraName:stageSprintSelected.souraName,
               souraNb:stageSprintSelected.souraNb,
@@ -400,7 +451,17 @@ async function prevSouraHandler() {
                 toast.warning(`${error}`)
               }}
            
-  
+function readHandler() {
+                try {
+                  const _svgWindow =  select(svgWindow.current!)
+   
+                  drawWindow({SVG:_svgWindow, windowVisualisation:WINDOW_VISUALISATION.READ , data:stageOrderedAyahsContext  })
+               
+                  //ayahs:_sprint.stage!.ayahs
+                 } catch (error) {
+                     toast.warning(`${error}`)
+                   }}
+                
     function shuffleHandler() {
       //dispatch(setFirstStateContext({first: false}))
         const shuffeledAy = _.shuffle(stageShuffeledAyahsContext)
@@ -447,8 +508,9 @@ async function prevSouraHandler() {
                 <SpaceButton  handlePress={prevSouraHandler} title='Prev Soura '  />
                 <SpaceButton  handlePress={nextSouraHandler} title='Next Soura'  />
                  <SpaceButton  handlePress={shuffleHandler} title='Shuffle' /> 
-                <SpaceButton  handlePress={prevSprintHandler} title='Prev Window '  />
-                <SpaceButton  handlePress={nextSprintHandler} title='Next Window'  />
+                <SpaceButton  handlePress={prevSprintHandler} title='Prev Wind '  />
+                <SpaceButton  handlePress={nextSprintHandler} title='Next Wind'  />
+                <SpaceButton  handlePress={readHandler} title='Read'  />
         </div>
              
            <div className="w-full   flex justify-center items-center border-2 border-red-500  space-y-2">
@@ -467,22 +529,31 @@ async function prevSouraHandler() {
                     </div>
             </ModalBody>
             <ModalFooter>
-              <div className=" flex w-full   justify-center items-center border-2   space-y-2">
+              <div className=" flex w-full   justify-evenly items-center border-2   p-2">
             <RadioGroup
                            orientation="horizontal"
                            value={windowVisualisation}
-                           onValueChange={setWindowStatus}
+                           onValueChange={setWindowVisualisation}
                            >
-               <div className="flex  p-2  rounded-md justify-center items-center border-2 border-violet-500  space-y-2">
+               <div className="flex  p-2  rounded-md justify-center items-center border-2 border-violet-500  space-x-2">
                          <Radio value={WINDOW_VISUALISATION.AWAL }>Awal</Radio>
                          <Radio value={WINDOW_VISUALISATION.AWSAT }>Awsat</Radio>
                          <Radio value={WINDOW_VISUALISATION.AKHIR }>Akhir</Radio>
                          <Radio value={WINDOW_VISUALISATION.ODD }>Odd</Radio>
                          <Radio value={WINDOW_VISUALISATION.EVEN }>Even</Radio>
                          <Radio value={WINDOW_VISUALISATION.ALL }>All</Radio>
+                         <Radio value={WINDOW_VISUALISATION.HIDE_NB }>Hide Nb</Radio>
+                         <Radio value={WINDOW_VISUALISATION.VALID }>Valid Mode</Radio>
                </div>
                      
                      </RadioGroup>  
+                     <div className="flex justify-between p-2  rounded-md gap-1 items-center border-2 border-violet-500">
+                        <SpaceButton  handlePress={validateHandler} title='Validate '  />
+                        <SpaceButton  handlePress={sprintHandler} title='Sprint '  />
+                         <SpaceButton  handlePress={duoHandler} title='Duo ' /> 
+                        {/* <SpaceButton  handlePress={prevSprintHandler} title='Prev Window '  />
+                        <SpaceButton  handlePress={nextSprintHandler} title='Next Window'  /> */}
+        </div>
                       </div>
                             
               </ModalFooter>

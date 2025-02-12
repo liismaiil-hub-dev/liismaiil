@@ -170,6 +170,7 @@ const initialState: StageStateProps = {
   draggedIndex: 0,
   errorNbContext: 0,
   firstStateContext: false,
+  exerciseContext: false,
   showStepsContext: false,
   gridsStaged:[''],
   selectedGifts:[{
@@ -507,6 +508,10 @@ const stageSlice = createSlice({
     setStageHideNbContext(state: StageStateProps,
       action: PayloadAction<{ hide: boolean }>) {
       state.stageHideNbContext = action.payload.hide
+    },
+    setExerciseContext(state: StageStateProps,
+      action: PayloadAction<{ exercise: boolean }>) {
+      state.exerciseContext = action.payload.exercise
     },
     setStageValidContext(state: StageStateProps,
       action: PayloadAction<{ validCtxt: boolean }>) {

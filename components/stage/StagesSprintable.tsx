@@ -15,16 +15,33 @@ const StagesSprintable = ( ) => {
   const dispatch = useDispatch()
   const route =  useRouter()
   const [isPending, startTransition] = useTransition();
-  const {categoryContext, catStages, } = useSelector((state: RootStateType) => state.stage)
+  const {categoryContext, stagesSprintsContext, catStages, } = useSelector((state: RootStateType) => state.stage)
   const { guestPrisma } = useSelector((state: RootStateType) => state.guestPrisma)
 
-  const { setStageSprintSelected  } = stageActions
+  const { setStageSprintSelected, setCatStages,   } = stageActions
   const [catSprints, setCatSprints] = useState(() => _.filter(catStages , (spr:StagesSprintType)  => spr.grid === 5));
   
 useEffect(() => {
   const _sprints = _.filter(catStages , (spr:StagesSprintType)  => spr.grid === 5)
   setCatSprints(_sprints)
 }, [catStages]);
+
+useEffect(() => {
+ console.log({stagesSprintsContext});
+  
+ const newMofasal = stagesSprintsContext?.filter((gr: StagesSprintType) => {
+    return gr.souraNb > 48;
+   } )
+    const _sprints = _.filter(newMofasal , (spr:StagesSprintType)  => spr.grid === 5)
+  
+    dispatch(setCatStages({
+  stages:newMofasal 
+ }
+))
+setCatSprints(_sprints)
+ // const _sprints = _.filter(catStages , (spr:StagesSprintType)  => spr.grid === 5)
+//  setCatSprints(_sprints)
+}, []);
 
 
  const selectGridHandler =(grid:StagesSprintType ) =>{

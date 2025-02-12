@@ -73,12 +73,15 @@ dispatch(setStageReorderedAyahsContext({reorderedAyahsContext:[-1]}))
             dispatch(setErrorNbContext({errorNb:0}))
             dispatch(setFirstStateContext({first:false}))
   }}
-  const [gridAyahs, setGridAyahs] = useState(() => JSON.parse(stageGridSelected.ayahs!) );
+  const [gridAyahs, setGridAyahs] = useState(() => {
+    if(typeof stageGridSelected.ayahs !== 'undefined'){
+         return JSON?.parse(stageGridSelected.ayahs!)} }
+        );
   
     useEffect(() => {
-        console.log({  });
+if(typeof stageGridSelected !== 'undefined' && stageGridSelected && typeof stageGridSelected.ayahs !== 'undefined'){        
 setGridAyahs(JSON.parse(stageGridSelected.ayahs!))
-    }, [stageReorderedAyahsContext, stageGridSelected]);
+}    }, [stageReorderedAyahsContext, stageGridSelected]);
     
     useEffect(() => {
         console.log({ stepIndexContext });
@@ -100,8 +103,7 @@ setGridAyahs(JSON.parse(stageGridSelected.ayahs!))
        0 
     }
 
-    return <div className={`flex  border-2 border-blue-400 rounded-md flex-col justify-start p-2  space-y-2 items-stretch w-full`} >
-        <div className="flex flex-col justify-start items-stretch  space-y-2">
+    return <div className="flex flex-col justify-start items-stretch  space-y-2">
             { stageShuffeledAyahsContext && typeof stageReorderedAyahsContext !== 'undefined' && 
             stageShuffeledAyahsContext?.map((ayag: Ayah) => {
                 //console.log({ stageReorderedAyahsContext, ayag });
@@ -110,37 +112,38 @@ setGridAyahs(JSON.parse(stageGridSelected.ayahs!))
                 if (typeof stageHideNbContext !== 'undefined' && !stageHideNbContext) {
                     return <button onClick={() => { validAyahHandler(ayag.numberInSurah!) }}
                      key={`${ayag.numberInSurah}_${ayag.juz}`} 
-                     className=" flex p-2 bg-emerald-100/30 justify-between px-2
-                    items-center space-x-2 border-b-1 border-green-300/25 ">
+                     className=" flex p-1 bg-emerald-100/30 items-center gap-1 border-1 border-green-300/25 ">
                                     { getMin() ==  ayag.numberInSurah ?
-                                  <>  <div className='flex justify-center border-2 border-red-500 items-center'>{` [ ${ ayag.numberInSurah}- ${ ayag.number}] `}
+                                  <div className=" flex p-1 bg-emerald-100/30 justify-between  items-center gap-1 border-b-1 border-green-300/25">  
+                                  <div className='flex-none w-13 justify-start border-2  border-red-500 '>{` [ ${ ayag.numberInSurah}- ${ ayag.number}] `}
                                     </div>
-                                    <div className=' flex text-right justify-end items-center
+                                    <div className=' flex-initial   text-right justify-end
                                     hover:bg-emerald-800 hover:text-yellow-200 hover:scale-125 hover:-translate-x-3 hover:-translate-y-1 ease-in 
-                                    hover:cursor-pointer  bg-red-500/15'>{ayag.text}</div>
-                                    </> 
-                                    :<>
-                                   <div className='flex justify-center  items-center'>{` [ ${ ayag.numberInSurah}- ${ ayag.number}] `}
+                                    hover:cursor-pointer  bg-red-500/15'>{ayag.text}
+                                    </div>
+                                    </div> 
+                                    :
+                                    <div className=" flex p-1 bg-emerald-100/30 justify-stretch 
+                                                 items-center gap-1 border-b-1 border-green-300/25">  
+                                  <div className='flex justify-start border-2  items-center'>{` [ ${ ayag.numberInSurah}- ${ ayag.number}] `}
+                                    </div>
                                     <div className=' flex text-right justify-end items-center
                                      hover:bg-emerald-800 hover:text-yellow-200 hover:scale-125 hover:-translate-x-3 hover:-translate-y-1 ease-in 
-                                     hover:cursor-pointer  active:border-red-500'>{ayag.text}</div>
-                                    </div>
-                                    </> 
-                                    }
+                                     hover:cursor-pointer  active:border-red-500'>{ayag.text}
+                                     </div></div>}
                                 </button>
                             }
                             else {
                                 return (
                                     <button onClick={() => { validAyahHandler(ayag.number!) }} 
                                     key={`${ayag.number!}_${ayag.juz}`} 
-                                    className=' flex text-right justify-end items-center
-                                     p-2 bg-emerald-100/30  px-2 space-x-2 border-b-1 border-green-300/25 
-                                    hover:bg-emerald-800 hover:text-yellow-200 hover:scale-110
-                                    hover:-translate-x-5 hover:-translate-y-1 ease-in 
-                                    hover:cursor-pointer '>{ayag.text}</button>)
+                                    className=' flex text-right justify-end items-center p-2 bg-emerald-100/30  px-1 gap-1 border-b-1 border-green-300/25 
+                                            hover:bg-emerald-800 hover:text-yellow-200 hover:scale-110
+                                      hover:-translate-x-5 hover:-translate-y-1 ease-in hover:cursor-pointer '>
+                                        {ayag.text}</button>)
                             }}})}
         </div>
-    </div>
+  
 
 }
 

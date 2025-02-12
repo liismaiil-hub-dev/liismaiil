@@ -23,7 +23,7 @@ function EvalOrdered() {
         
         <div className="flex-col  justify-start items-end py-x space-y-1">
             {stageOrderedAyahsContext && stageOrderedAyahsContext?.map((ayag: Ayah) => {
-                if(stageReorderedAyahsContext.includes(ayag.numberInSurah!)){
+                if(stageReorderedAyahsContext?.includes(ayag?.numberInSurah!)){
         console.log({stageReorderedAyahsContext,nbInS: ayag.numberInSurah, includ:stageReorderedAyahsContext.includes(ayag.numberInSurah!) });
                     return <div key={`${ayag.order}_${ayag.juz}`} className=" flex  p-1 bg-emerald-100/30 justify-start 
         items-center cursor-not-allowed

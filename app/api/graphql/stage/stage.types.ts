@@ -69,6 +69,10 @@ export enum WINDOW_VISUALISATION {
   AWAL ='AWAL',
   AWSAT ='AWSAT',
   AKHIR ='AKHIR',
+  HIDE_NB ='HIDE_NB',
+  VALID ='VALID',
+  DUO ='DUO',
+  READ ='READ',
 }
 export enum INSIGHT_STATE {
   CAT = 'CAT',
@@ -104,6 +108,7 @@ export type StageStateProps = {
   stageGridsContext: StagePrismaType[],
   stagesSprintsContext: StagesSprintType[],
   stageHideNbContext: boolean,
+  exerciseContext: boolean,
   stageEvalContext: EVAL_STATE,
   sprintRandomHidden: number[],
   stageValidContext: boolean,

@@ -13,7 +13,22 @@
 }
 
 @layer components {
-
+  .ay-display  {
+    @apply  text-medium cursor-pointer;
+  }
+  .ay-hover {
+    @apply  hover:-translate-y-1 hover:-translate-x-1 border-2 border-green-400   duration-200 rounded-sm 
+     shadow-sm hover:text-2xl cursor-pointer;
+  }
+  .window-ay-click  {
+    @apply  duration-200 rounded-sm  shadow-sm font-semibold  ;
+  }
+  .first-ay {
+    @apply    duration-200 rounded-sm shadow-sm text-3xl;
+  }
+  .ay-border {
+    @apply    border-2 border-green-400 rounded-sm shadow-sm text-3xl;
+  }
   .grid-ayah {
     @apply  hover:-translate-y-1 duration-200 rounded-sm  shadow-sm;
   }

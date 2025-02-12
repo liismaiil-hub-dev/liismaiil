@@ -11,6 +11,7 @@ export default async function StepsNav() {
      //  console.log({stagesSteps: stages });
       if (typeof stages !== 'undefined' && stages ) {
        //h-[calc(100vh-7rem)]
+       
 
         return (
           <div className="flex flex-col justify-start items-center     w-full h-full  " >

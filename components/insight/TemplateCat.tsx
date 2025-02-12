@@ -19,7 +19,8 @@ import {scaleLinear,BaseType, pointer, pointers, select, min, max,scalePow,
     scaleBand,
     scalePoint,
     axisLeft,
-    schemePastel1} from "d3";
+    schemePastel1,
+    axisBottom} from "d3";
 import { SECTIONS_SOURAS } from '@/store/constants/constants';
 import { getStatTaysir } from '@/actions/sprint';
 import { Radio, RadioGroup } from '@heroui/radio';
@@ -388,12 +389,12 @@ const _displayYAxisG = SVG.select('g:nth-of-type(3)')
              //   .attr('margin', '10')
                _yAxisLeft(_displayYAxisG)
 
-const _xAxisTop = axisBottom(xScaleAxis)
+const _xAxisBottom = axisBottom(xScaleAxis)
 const _displayXAxisT = SVG.select('g:nth-of-type(4)')
                 .attr('id','xAxisTop')
                .attr('transform',`translate(0,${boundedHeight})`)    
              //   .attr('margin', '10')
-               _xAxisTop(_displayXAxisT)
+               _xAxisBottom(_displayXAxisT)
 }catch(error) {
 console.log({error});
 
@@ -403,7 +404,8 @@ console.log({error});
 function TemplateCat() {
     const dispatch = useDispatch()
    const {pending} =   useFormStatus()
-    const { insightTemplate, statsTemplateContext,insightTemplateAyahsSelected} = useSelector((state: RootStateType) => state.stage)
+    const { insightTemplate, statsTemplateContext,
+      insightTemplateAyahsSelected} = useSelector((state: RootStateType) => state.stage)
     const {  setGridsStaged, setStatsTemplateContext } = stageActions
    const svgTiwal = useRef();
    const svgMiin = useRef();

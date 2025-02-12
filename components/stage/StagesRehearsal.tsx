@@ -41,8 +41,6 @@ const StagesRehearsal = ( ) => {
    setRehearsalStages(_rehearsal)
  }, [catStages]);
  
- 
- 
   return (
       <ScrollShadow >
         {typeof catStages !== 'undefined' && catStages && catStages.length > 0 &&

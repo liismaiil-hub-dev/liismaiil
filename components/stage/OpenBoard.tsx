@@ -17,7 +17,9 @@ import { createNewSprint, setSprintSession } from '@/actions/sprint';
 import { useRouter } from 'next/navigation';
 import { addGuestToStage, getStageForSprint } from '@/actions/stage';
 import { useDisclosure } from '@heroui/modal';
-import WindowSprintDialog from './WindowSprintDialog';
+import WindowSprintDialog from './StageExerciseDialog';
+import StageExerciseDialog from "@/components/stage/StageExerciseDialog";
+
 
 export enum EVAL_STATE {
   EVAL = 'EVAL',
@@ -28,11 +30,11 @@ const OpenBoard = ( ) => {
   const dispatch = useDispatch()
   const router = useRouter()
   const {stageSprintSelected, stageGridSelected, stageEvalContext, stageReorderedAyahsContext, evalValidContext, stageEvalIndexContext, stageHideNbContext, errorNbContext,
-    stageShuffeledFirstAyahsContext, stageValidContext, stepIndexContext,   stageOrderedAyahsContext, stageShuffeledAyahsContext, stageGridsContext, } = useSelector((state: RootStateType) => state.stage)
+    stageShuffeledFirstAyahsContext, stageValidContext, exerciseContext,   stageOrderedAyahsContext, stageShuffeledAyahsContext, stageGridsContext, } = useSelector((state: RootStateType) => state.stage)
   const { guestPrisma:{tokenId} } = useSelector((state: RootStateType) => state.guestPrisma)
 
   const { setStageOrderedAyahsContext, setStageShuffeledFirstAyahsContext, setStageHideNbContext, setStageGridsContext,  setStageShuffeledAyahsContext, setStageGridSelected ,
-     setStageValidContext, setStepIndexContext, setFirstStateContext,setStageReorderedAyahsContext, setEvalValidContext } = stageActions
+     setStageValidContext, setExerciseContext, setFirstStateContext,setStageReorderedAyahsContext, setEvalValidContext } = stageActions
   
      const {isOpen, onOpen, onClose} = useDisclosure();
            
@@ -154,6 +156,10 @@ console.log({min:getMin(), max:getMax() ,minNb:getMinNb(),maxNb:getMaxNb()});
   function stageHideNbHandler() {
     dispatch(setStageHideNbContext({ hide: !stageHideNbContext }))
   }
+  function exerciseHandler() {
+    dispatch(setExerciseContext({ exercise: !exerciseContext }))
+    onOpen()
+  }
   function shuffelHandler() {
     console.log({ stageShuffeledFirstAyahsContext });
 
@@ -207,7 +213,7 @@ console.log({min:getMin(), max:getMax() ,minNb:getMinNb(),maxNb:getMaxNb()});
   
   return (
     <div className=" flex-col justify-start  h-full p-1 items-center w-full ">
-      <div className="flex-col   justify-start  items-center   flex-wrap  ">
+    <div className="flex-col   justify-start  items-center   flex-wrap  ">
       {sprintAble ? 
       <div className='justify-center items-center text-center flex '>{
         sprintAble ? `SprintId : ${stageSprintSelected?.stageId}`
@@ -236,21 +242,27 @@ console.log({min:getMin(), max:getMax() ,minNb:getMinNb(),maxNb:getMaxNb()});
               }
         
           
-          <div className="flex  justify-between items-center border border-green-300 rounded-md text-center font-sans " >
+          <div className="flex  justify-between items-center  p-1 border border-green-300 rounded-md text-center font-sans " >
             <input className="flex border-blue-800 text-green-300 justify-center items-center  border "
               type="checkbox"
               id='HIDE_NB' name='HIDE_NB' value='HIDE_NB' checked={stageHideNbContext} onChange={() => stageHideNbHandler()} />
-            <label className='px-1' htmlFor='HIDE_NB'  >Hide nb</label>
+            <label className='px-1' htmlFor='HIDE_NB'  >Hide Nb</label>
           </div>
-          <div className="flex  justify-center items-center border border-green-300 rounded-md text-center font-sans " >
-            <input className="flex  justify-center items-center  border border-blue-800 text-green-300"
+          <div className="flex  justify-between items-center  p-1 border border-green-300 rounded-md text-center font-sans " >
+            <input className="flex border-blue-800 text-green-300 justify-center items-center  border "
+              type="checkbox"
+              id='EXERCISE_CTXT' name='EXERCISE_CTXT' value='EXERCISE_CTXT' checked={exerciseContext} onChange={() => exerciseHandler()} />
+            <label className='px-1' htmlFor='EXERCISE_CTXT'  >Exercise</label>
+          </div>
+          <div className="flex  justify-center items-center border p-1  border-green-300 rounded-md text-center font-sans " >
+            <input className="flex  p-2 justify-center items-center  border border-blue-800 text-green-300"
               type="checkbox"
               id='VALID_CTXT' name='VALID_CTXT' value='HIDE_NB' 
               checked={stageValidContext && isOpen} 
               onChange={() => stageValidHandler()} />
             <label className='px-2' htmlFor='VALID_CTXT' >Validate </label>
           </div>
-          <div className="flex  justify-center items-center border border-green-300 rounded-md text-center font-sans " >
+          <div className="flex  justify-center items-center border p-1  border-green-300 rounded-md text-center font-sans " >
             <input className="flex  justify-center items-center  border border-blue-800 text-green-300"
               type="checkbox"
               id='EVAL_CTXT' name='EVAL_CTXT' value='EVAL_CTXT' 
@@ -275,13 +287,6 @@ console.log({min:getMin(), max:getMax() ,minNb:getMinNb(),maxNb:getMaxNb()});
                 </p>
               </div>
 
-           {/*  <div className="flex justify-center items-center  ">
-                <p className=' text-center text-emerald-500'>Grid Index &nbsp;
-                </p>
-                <p className=' text-center text-blue-400'>
-                    {gridIndex}
-                </p>
-            </div> */}
             <div className="flex justify-center items-center  ">
 
                 <p className=' text-center text-emerald-500'> Ayahs &nbsp;
@@ -302,10 +307,17 @@ console.log({min:getMin(), max:getMax() ,minNb:getMinNb(),maxNb:getMaxNb()});
             <EvalSuits  />
           </div> 
           </div> :   stageValidContext && isOpen  ?
-                <div className=" flex justify-center w-screen h-screen items-center p-2 overflow-scroll ">
+               //d3 version drag an drop Modal
+               <div className=" flex justify-center w-screen h-screen items-center p-2 overflow-scroll ">
                    <WindowSprintDialog isOpen={isOpen}  onOpen={onOpen} onClose={onClose}/>
                  </div>
-                 : null} 
+                 : 
+                 exerciseContext && isOpen  ?
+                 //React modal Component
+                 <div className=" flex justify-center w-screen h-screen items-center p-2 overflow-scroll ">
+                 <StageExerciseDialog isOpen={isOpen}  onOpen={onOpen} onClose={onClose}/>
+               </div>: null
+                } 
     </div>
   )
 }
