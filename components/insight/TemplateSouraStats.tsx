@@ -531,62 +531,7 @@ function selectWindowHandler(wind:number) {
            } )}
             
             </div>}
-        <div className="w-full   flex justify-center items-center border-2 border-red-500  space-y-2">
-        <svg ref={svgSouraDesign!}   >
-        <g /> 
-        <g /> 
-        <g /> 
-        <g /> 
-        <g /> 
-        </svg>
-        </div>
-        
-        <div className="w-full   flexjustify-center items-center border-2 border-red-500  space-y-2">
-
-        <RadioGroup
-                    orientation="horizontal"
-                    value={ayVisualisation}
-                    onValueChange={setMinBehavior}
-                >
-        <div className="flex  p-2  rounded-md justify-center items-center border-2 border-violet-500  space-y-2">
-                  <Radio value={AY_VISUALISATION.AWAL }>Awal</Radio>
-                  <Radio value={AY_VISUALISATION.AWSAT }>Awsat</Radio>
-                  <Radio value={AY_VISUALISATION.AKHIR }>Akhir</Radio>
-                  <Radio value={AY_VISUALISATION.MIN }>Min Ay</Radio>
-                  <Radio value={AY_VISUALISATION.MAX }>Max Ay</Radio>
-                  <Radio value={AY_VISUALISATION.MINMAX }>MinMax</Radio>
-        </div>
-              
-              </RadioGroup>  
-              </div>
-       {/*        
-        <div className="w-full   justify-center items-center border-2   space-y-2">
-    <div className="w-full   flex justify-center items-center border-2 border-red-500  space-y-2">
-
-        <svg ref={svgSoura!}   >
-        <g /> 
-        <g /> 
-        <g /> 
-        <g /> 
-        <g /> 
-        </svg>
-        </div>
-        <RadioGroup
-                    orientation="horizontal"
-                    value={ayVisualisation}
-                    onValueChange={setMinBehavior}
-                >
-        <div className="flex  p-2  rounded-md justify-center items-center border-2 border-violet-500  space-y-2">
-                  <Radio value={AY_VISUALISATION.AWAL }>Awal</Radio>
-                  <Radio value={AY_VISUALISATION.AWSAT }>Awsat</Radio>
-                  <Radio value={AY_VISUALISATION.AKHIR }>Akhir</Radio>
-                  <Radio value={AY_VISUALISATION.MIN }>Min Ay</Radio>
-                  <Radio value={AY_VISUALISATION.MAX }>Max Ay</Radio>
-                  <Radio value={AY_VISUALISATION.MINMAX }>MinMax</Radio>
-        </div>
-              
-              </RadioGroup>  
-              </div> */}
+       
               </div>{isOpen && windowContext !== -1 &&
         <div className=" flex justify-center w-screen h-screen items-center p-2 overflow-scroll ">
            <WindowDialog isOpen={isOpen}  onOpen={onOpen} onClose={onClose}/>

@@ -23,6 +23,9 @@
   .window-ay-click  {
     @apply  duration-200 rounded-sm  shadow-sm font-semibold  ;
   }
+  .stage-hover {
+    @apply hover:bg-emerald-600 hover:text-yellow-200 hover:text-2xl hover:-translate-x-5 hover:-translate-y-1 ease-in;
+  }
   .first-ay {
     @apply    duration-200 rounded-sm shadow-sm text-3xl;
   }

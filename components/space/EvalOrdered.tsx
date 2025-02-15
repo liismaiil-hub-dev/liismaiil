@@ -29,11 +29,11 @@ const dispatch = useDispatch()
      async function EmptyStageHandler() {
        dispatch(emptyGridsStaged())
           } 
+    useEffect(() => {
+     console.log({orderedAyahsContext});
+    }, [orderedAyahsContext]);
       
-    //console.log({orderedAyahsContext});
     
-     
-   //  const  stageId = `${gridSelected.souraNb}-${gridSelected.grid}-${gridsContext.length}-${gridIndexContext}`;
     const _localStageIds = localStages?.map((stage : StagePrismaType)  => stage.stageId)
     return (<div className={cn((typeof blurContext !== 'undefined' && blurContext === true) && 'blur-lg', `flex  border-1 border-blue-400/20 rounded-md flex-col w-full justify-start p-2  space-y-2 items-stretch `)} >
         <div className="flex-col justify-start items-stretch    h-48 overflow-x-scroll ">
@@ -66,13 +66,12 @@ const dispatch = useDispatch()
             }
             </div>: <div className="flex flex-col justify-start w-full items-stretch py-1 space-y-2">
             {orderedAyahsContext && orderedAyahsContext?.map((ayag: Ayah) => {
-        if(reorderedAyahsContext.includes(ayag?.numberInSurah!)){
-                        return <div key={`${ayag?.number}_${ayag?.juz}`} className=" flex p-2  justify-between  hover:cursor-not-allowed  
+                               return <div key={`${ayag?.number}_${ayag?.juz}`} className=" flex p-2  justify-between  hover:cursor-not-allowed  
         items-center space-x-2 hover:text-2xl hover:bg-sky-700 hover:text-natWarmheader
         border-b-1 border-green-300/25 ">
                          <div className='flex justify-center  items-center'> {ayag?.numberInSurah} </div> 
                         <div className=' flex text-right justify-end items-center  hover:cursor-not-allowed'> {ayag?.text} </div>
-                    </div>}})
+                    </div>})
                  }</div>
 }
 </div>)

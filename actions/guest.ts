@@ -74,13 +74,13 @@ export const signinGuestLocal = async (formState:FormStateSigninType,formData: F
  }else {
     return({success:false, message: 'An error occured', errors:{}})
 }}
-redirect(`/stages/${data?.tokenId}`) 
-revalidatePath('/')
+//redirect(`/stages/${data?.tokenId}`) 
+//revalidatePath('/')
 }else{
   return{success:false,message:'',errors:error.flatten().fieldErrors}
    }
-redirect(`/stages/${data?.tokenId}`) 
-revalidatePath('/')
+//redirect(`/stages/${data?.tokenId}`) 
+//revalidatePath('/')
 }
 
 export const registerGuestLocal = async (formState:FormStateSigninType, formData: FormData) => {
@@ -88,28 +88,25 @@ export const registerGuestLocal = async (formState:FormStateSigninType, formData
     tokenId: parseInt(formData.get('tokenId') as unknown as string),
     password: formData.get('password'),
     host: parseInt(formData.get('host') as unknown as string),
-    country: parseInt(formData.get('country') as unknown as string),
+    country: formData.get('country') as unknown as string,
   })
+  console.log({tokenId:formData.get('tokenId') ,
+    password: formData.get('password'),
+    host:parseInt(formData.get('host') as unknown as string),
+    country:formData.get('country')
+  }
+  );
+  
   if(success)
 {  try {
-    if(data.tokenId > 1000  && data.host != 0){
+    if(data.tokenId > 1000 && data.tokenId < 100000 && data.host != 0){
     const docRef = dbFirestore.collection('guests').doc(`${data.tokenId}`);
     const snapshot = await docRef.get();
     if (snapshot.exists) {
-      const guestPassword = await hashPassword("8hana1") as unknown as string
+      const guestPassword = await hashPassword(data.password) as unknown as string
 
       const { tokenId, host,country  } = snapshot.data()as GuestType; 
-     console.log({ host: data.host , 
-         tokenId: data.tokenId,
-         password: data.password,
-          guestPassword,
-         startDate:new Date().toISOString(),
-          collaboratorId:'O6cKgXEsuPNAuzCMTGeblWW9sWI3',
-           country: data.country,
-           status: LIISMAIIL_STATUS_ENUM.GUEST , 
-           flag:`${(data.country).toLowerCase()}.png`,
-           endDate:  new Date(moment().add(3, 'months').toISOString()).toISOString() 
-     });
+     
       const _newGuest=  await prisma.guest.create({
              data:{ host: data.host , 
               tokenId: data.tokenId,
@@ -127,39 +124,18 @@ export const registerGuestLocal = async (formState:FormStateSigninType, formData
       return{success:false, message:'this tokenId is not provided'}
       }
   }else {
-    if(data.host === 0  && data.tokenId  < 1000  ){
-      const profilesRef = dbFirestore.collection('profiles');
-      const snapshot = await  profilesRef.where('tokenId', '==', data.tokenId).orderBy('tokenId').limit(1).get();
-      if (snapshot.empty) {
-      return{success:false, message:'this tokenId is not provided', errors:{}}
-      }
-      snapshot.forEach(async (doc) => {
-            const {updatedAt }  = doc.data() as ProfileTypeData; 
-            //const hashedPass = await hashPassword(data.password) as string;
-            console.log({ docId: doc.id, data:doc.data(),  updatedAt}) ;
+    if(data.host === 3  && data.tokenId >  100000  ){
             const _flag = data.country.toLowerCase()
           try {
-            console.log({ host: data.host , 
-              tokenId: data.tokenId,
-              password: data.password,
-              startDate:updatedAt ? new Date(updatedAt).toISOString(): new Date().toISOString(),
-               collaboratorId:doc.id,
-               country: data.country,
-               status: LIISMAIIL_STATUS_ENUM.HOST , 
-               flag:`${_flag}.png`,
-               endDate:  new Date(moment().add(3, 'months').toISOString()).toISOString() 
-             });
-            const guestPassword = await hashPassword("8hanya") as unknown as string
-
-            const _newGuest=  await prisma.guest.create({
+            const guestPassword = await hashPassword(data.password) as unknown as string
+        const _newGuest=  await prisma.guest.create({
                     data:{ host: data.host , 
                      tokenId: data.tokenId,
-                     password: data.password,
-                     guestPassword: guestPassword,
-                     startDate:updatedAt ? new Date(updatedAt).toISOString(): new Date().toISOString(),
-                      collaboratorId:doc.id,
+                     password: guestPassword,
+                     startDate:new Date().toISOString(),
+                      collaboratorId:'O6cKgXEsuPNAuzCMTGeblWW9sWI3',
                       country: data.country,
-                      status: LIISMAIIL_STATUS_ENUM.HOST , 
+                      status: LIISMAIIL_STATUS_ENUM.GUEST , 
                       flag:`${_flag}.png`,
                       endDate:  new Date(moment().add(3, 'months').toISOString()).toISOString() },
                     })
@@ -167,25 +143,19 @@ export const registerGuestLocal = async (formState:FormStateSigninType, formData
               return {success: true, message:JSON.stringify(_newGuest), errors:{} } 
             } catch (error) {
             console.log({error});
-            
               return {success:false,message:`You can not register to rooming db ${error}`, errors:{}}
-            }
-      
-    })
-  }else {
-    return ({success: false, message: 'you can not register with that tokenId' , errors:{}})
-    }
+  }}
   } 
 }catch (e: unknown) {
   if(e instanceof Error){
     return ({success: false, message: ` ${e.message}` , errors:{}})
   }else  {
     return ({success: false, message: `you cant register with that tokenId due to ${e}` , errors:{}})}
-  }
-}else {
+  }}else {
   return{success:false,message:'',errors:error.flatten().fieldErrors} 
-}
-}
+}}
+
+
 export const signinGuestPrisma = async (formData: FormData) => {
   console.log({ formData });
 
@@ -216,6 +186,36 @@ export const signinGuestPrisma = async (formData: FormData) => {
   } finally {
     redirect(direction)
   }
+}
+export const getCountGuestsPrisma = async () => {
+  try {
+    const _nextGuest = await prisma.guest.count({where: {
+          tokenId: {
+          
+             gt: 1000 
+            },
+          },
+        })
+        console.log(_nextGuest);
+        return _nextGuest
+  } catch (error) {
+    console.log({error});
+    }
+}
+export const getFreeGuestsPrisma = async () => {
+  try {
+    const _nextGuest = await prisma.guest.findMany({where: {
+          tokenId: {
+          
+             gt: 10000 
+            },
+          },
+        })
+        console.log(_nextGuest);
+        return _nextGuest
+  } catch (error) {
+    console.log({error});
+    }
 }
 
 

@@ -13,25 +13,28 @@ import {  Modal,  ModalContent,  ModalHeader,  ModalBody,  ModalFooter} from "@h
 import {cn} from "@/lib/cn-utility";
 
 import {Radio, RadioGroup} from "@heroui/radio";
-import { addGuestToStage, getStageForSprint } from '@/actions/stage';
+import { addGuestToStage,  getStageForSprint } from '@/actions/stage';
 
 export default function StageExerciseDialog({isOpen,  onOpen, onClose}:{isOpen:boolean,  onOpen:()=> void,  onClose:()=> void}) {
     const dispatch = useDispatch()
     const {windowContext} = useSelector((state: RootStateType) => state.stage)
-    const {firstStateContext,stageSprintSelected , stageReorderedAyahsContext,evalValidContext,stageOrderedAyahsContext,
-      errorNbContext,stageShuffeledAyahsContext, stageGridsContext,   stageShuffeledFirstAyahsContext, stageValidContext,
-     catStages, stepIndexContext, stageGridSelected, stageHideNbContext } = useSelector((state: RootStateType) => state.stage)
- const { setStageOrderedAyahsContext,setStageReorderedAyahsContext,setFirstStateContext, setStageSprintSelected,setStageValidContext, 
-  setStageShuffeledAyahsContext,setErrorNbContext,setStageHideNbContext, setEvalValidContext } = stageActions
-  
+    const {firstStateContext,stageSprintSelected , stageReorderedAyahsContext,evalValidContext,stageOrderedAyahsContext,exerciseStages,errorNbContext,stageShuffeledAyahsContext,
+       stageShuffeledFirstAyahsContext, stageValidContext,catStages, stageGridSelected, stageHideNbContext, validContext } = useSelector((state: RootStateType) => state.stage)
+ const { setStageOrderedAyahsContext,setStageReorderedAyahsContext,setFirstStateContext, setStageSprintSelected,setStageValidContext,setStageShuffeledAyahsContext,
+  setErrorNbContext,setStageHideNbContext, setValidContext, setEvalValidContext } = stageActions
+  const {guestPrisma:{tokenId}} = useSelector((state: RootStateType) => state.guestPrisma)
         const [windowVisualisation, setWindowVisualisation] = useState(WINDOW_VISUALISATION.ALL);
         const [sprintAble, setSprintAble] = useState(false);     
+ 
  function ayahInReordered(ord: number) {
     if(typeof stageReorderedAyahsContext!= 'undefined' ) {
      console.log({ stageReorderedAyahsContext, ord, some: stageReorderedAyahsContext.some((el) => el === ord) });
      return stageReorderedAyahsContext.some((el) => el === ord)
-}    }
+}}
 
+useEffect(() => {
+  dispatch(setStageReorderedAyahsContext({reorderedAyahsContext:[-1]}))
+ } , []);
  
 useEffect(() => {
       dispatch(setStageReorderedAyahsContext({reorderedAyahsContext:[-1]})) 
@@ -100,45 +103,15 @@ _actualSprint()
          dispatch(setErrorNbContext({errorNb:0}))
          dispatch(setFirstStateContext({first:false}))
 }}
-//const [gridAyahs, setGridAyahs] = useState(() => JSON.parse(stageGridSelected.ayahs!) );
-
  useEffect(() => {
      console.log({ stageOrderedAyahsContext,stageShuffeledAyahsContext });
  // setGridAyahs(JSON.parse(stageGridSelected.ayahs!))
  }, [stageOrderedAyahsContext,stageShuffeledAyahsContext ]);
 
-//  console.log({ stageReorderedAyahsContext, stageHideNbContext });
- 
-    
- useEffect(() => {
-  dispatch(setStageReorderedAyahsContext({reorderedAyahsContext:[-1]}))
- } , []);
-// const [gridIndex, setGridIndex] = useState('0');
- 
-
-useEffect(() => {
-console.log({stageSprintSelected});
-
-if (typeof stageSprintSelected !== 'undefined' && stageSprintSelected?.souraName != '' ){
-const _actualSprint = async () =>{ 
-const _sprint =  await getStageForSprint(stageSprintSelected.stageId)
-if ( _sprint.success && typeof _sprint.stage !== 'undefined' ) {
-const _shuffeleledFirst = (JSON.parse(_sprint.stage!.ayahs)).map((ordG: Ayah, index: number) => (ordG));
-console.log({ _shuffeleledFirst });
-const _orderedAy = [..._.sortBy(_shuffeleledFirst, ['number'])].map((ordG: Ayah, index) => (ordG))
-console.log({ _orderedAy });
-//setGridIndex(stageSprintSelected.stageId.split('-')[stageSprintSelected.stageId.split('-').length - 1 ])
-dispatch(setStageOrderedAyahsContext({ ayahs: _orderedAy }))
-dispatch(setStageShuffeledAyahsContext({ ayahs: _shuffeleledFirst }))
-}}
-_actualSprint()
-}
-
-}, [stageSprintSelected]);
-
+/* 
 async function nextSouraHandler() {
   try {
-    const _sprints = _.filter(catStages , (spr:StagesSprintType)  => spr.souraNb ===stageSprintSelected.souraNb +1)
+    //const _sprints = _.filter(catStages , (spr:StagesSprintType)  => spr.souraNb ===stageSprintSelected.souraNb +1)
         dispatch(setStageSprintSelected({stage:{
             arabName:_sprints[0].arabName,
             souraName:_sprints[0].souraName,
@@ -152,31 +125,26 @@ async function nextSouraHandler() {
         toast.warning(`${error}`)
   }}
 async function prevSouraHandler() {
-  try {
-    const _sprints = _.filter(catStages , (spr:StagesSprintType)  => spr.souraNb ===stageSprintSelected.souraNb -1)
-    dispatch(setStageSprintSelected({stage:{
-            arabName:_sprints[0].arabName,
-            souraName:_sprints[0].souraName,
-            souraNb:_sprints[0].souraNb,
-            grid:_sprints[0].grid,
-            group:_sprints[0].group,
-          stageId:_sprints[0].stageId,
-   }}))
-  }catch (error) {
-        toast.warning(`${error}`)
-      }}
+  if(exerciseStages && exerciseStages.length>0 &&exerciseStages[0].souraNb>1   ){
+    try {
+     const _prevStages = await getLocalStagesByNb(stageSprintSelected.souraNb - 1 )
+     if(_prevStages && _prevStages.success && _prevStages.stages)
+    console.log({_prevStages});
+    
+      //dispatch(setStageSprintSelected({stage: }))
+    }catch (error) {
+          toast.warning(`${error}`)
+        }
+  }
+  }
+ */
 async function validateHandler() {
     try {
-     
-    //console.log({windowVisualisation});
-    setWindowVisualisation(WINDOW_VISUALISATION.HIDE_NB)
-     // drawWindow({SVG:_svgWindow, windowVisualisation:WINDOW_VISUALISATION.HIDE_NB , data:stageShuffeledAyahsContext  })
-   
+        setWindowVisualisation(WINDOW_VISUALISATION.HIDE_NB)
      } catch (error) {
          toast.warning(`${error}`)
-       }
-  
-}
+}}
+
 async function sprintHandler() {
   try {
     const _sprints = _.filter(catStages , (spr:StagesSprintType)  => spr.souraNb ===stageSprintSelected.souraNb +1)
@@ -201,15 +169,17 @@ async function duoHandler() {
               toast.warning(`${error}`)
             }  
             }
-  function prevSprintHandler() {
+  async function prevSprintHandler() {
          try {
           const _sprints = _.filter(catStages , (spr:StagesSprintType)  => spr.souraNb ===stageSprintSelected.souraNb && spr.grid ===stageSprintSelected.grid )
+          if(_sprints .length > 0 ){
+   
           const _actualSprintIndex = _.findIndex(_sprints,(elm:StagesSprintType )  => elm.stageId === stageSprintSelected.stageId )
           console.log({ _sprints, _actualSprintIndex ,});
           
-          const _actualSprint = async () =>{ 
+
            if(_actualSprintIndex >0){
-        
+         
             dispatch(setStageSprintSelected({stage:{
             arabName:stageSprintSelected.arabName,
             souraName:stageSprintSelected.souraName,
@@ -230,62 +200,85 @@ async function duoHandler() {
           //ayahs:_sprint.stage!.ayahs
         }
         }
-      ))}}
-      _actualSprint()
-       } catch (error) {
+      ))}}else {
+        toast.warning('please reselect a stage ')
+        onClose()
+      
+      }
+    }
+
+        catch (error) {
               toast.warning(`${error}`)
 }}
-       useEffect(() => {
-         console.log({stageSprintSelected});}, [stageSprintSelected]);
-       
-  function nextSprintHandler() {
-           try {
-            console.log({stageSprintSelected});
-            const _sprints = _.filter(catStages , (spr:StagesSprintType)  => spr.souraNb ===stageSprintSelected.souraNb &&
-             spr.grid ===stageSprintSelected.grid )
-            const _actualSprintIndex = _.findIndex(_sprints,(elm:StagesSprintType )  => elm.stageId === stageSprintSelected.stageId )
-            console.log({ _sprints, _actualSprintIndex });
-            
-            const _actualSprint = async () =>{ 
-             if(_actualSprintIndex < _sprints.length){
-            dispatch(setStageSprintSelected({ stage: {  arabName:stageSprintSelected.arabName,
-              souraName:stageSprintSelected.souraName,
-              souraNb:stageSprintSelected.souraNb,
-              grid:stageSprintSelected.grid,
-            group:stageSprintSelected.group,
-            stageId: typeof (_sprints[_actualSprintIndex+1]) !== 'undefined' ?
-            _sprints[_actualSprintIndex+1].stageId : 
-            stageSprintSelected.stageId, 
-            //ayahs:_sprint.stage!.ayahs
-            }}))
+         
+   function nextSprintHandler() {
+    console.log({ catStages, stageSprintSelected});
+    const _sprints = _.filter(catStages , (spr:StagesSprintType)  => spr.souraNb ===stageSprintSelected.souraNb && spr.grid ===stageSprintSelected.grid )
+    if(_sprints .length > 0 ){
+      const _actualSprintIndex = _.findIndex(_sprints,(elm:StagesSprintType )  => elm.stageId === stageSprintSelected.stageId )
+      console.log({ _sprints, _actualSprintIndex , _sprLength:  _sprints.length});
       
-            }else {
-            dispatch(setStageSprintSelected({ stage: {  arabName:stageSprintSelected.arabName,
-              souraName:stageSprintSelected.souraName,
-              souraNb:stageSprintSelected.souraNb,
-              grid:stageSprintSelected.grid,
-            group:stageSprintSelected.group,
-            stageId: typeof (_sprints[_actualSprintIndex+1]) !== 'undefined' ?
-            _sprints[_actualSprintIndex+1].stageId : 
-            stageSprintSelected.stageId, 
-            }}))
-            }
-          
-          }
-            _actualSprint()
-              } catch (error) {
-                toast.warning(`${error}`)
-              }}
-              async  function sprintItHandler() {
+     if(_actualSprintIndex < _sprints.length -1 ){
+   
+      dispatch(setStageSprintSelected({stage:{
+      arabName:stageSprintSelected.arabName,
+      souraName:stageSprintSelected.souraName,
+      souraNb:stageSprintSelected.souraNb,
+      grid:stageSprintSelected.grid,
+      group:stageSprintSelected.group,
+    stageId:_sprints[_actualSprintIndex +1].stageId,
+      }})) 
+    }else {
+  dispatch(setStageSprintSelected({stage:{
 
-              }
-              async  function stageItHandler() {
-                const resp = await addGuestToStage({
-                  stageId:stageSprintSelected?.stageId,
-                  tokenId
-                })
-               }
-  function getMax() {
+    arabName:stageSprintSelected.arabName,
+    souraName:stageSprintSelected.souraName,
+    souraNb:stageSprintSelected.souraNb,
+    grid:stageSprintSelected.grid,
+    group:stageSprintSelected.group,
+    stageId:_sprints[0].stageId,
+    //ayahs:_sprint.stage!.ayahs
+  }}))}
+  } else {
+    toast.warning('please reselect a stage ')
+    onClose()
+  }
+    }
+   
+  async  function sprintItHandler() {
+   // console.log({tokenId});
+    try {
+      const resp = await addGuestToStage({
+        stageId:stageSprintSelected?.stageId,
+        tokenId
+      })
+      if(resp && resp.success && resp.message) {
+        console.log({resp});
+        toast.success(`your sprint is  ${resp.message} is validated`)
+        
+      }else{
+        toast.warning(`warning ${resp.message}`)
+      }
+      
+    } catch (error) {
+      toast.warning(`warning ${error}`)
+      
+    }
+  }
+  async  function stageItHandler() {
+    const resp = await addGuestToStage({
+      stageId:stageSprintSelected?.stageId,
+      tokenId
+    })
+    if(resp && resp.success && resp.message) {
+      console.log({resp});
+      toast.success(`your sprint is  ${resp.message} is validated`)
+
+    }else{
+      toast.warning(`warning ${resp.message}`)
+    }
+   }
+    function getMax() {
     if (stageOrderedAyahsContext && stageOrderedAyahsContext.length > 0 && 
       stageOrderedAyahsContext[stageOrderedAyahsContext.length -1 ].numberInSurah !== -1 ) {
       return stageOrderedAyahsContext[stageOrderedAyahsContext.length -1 ].numberInSurah! 
@@ -308,37 +301,27 @@ function getMaxNb(): number {
      }else return 0
  }         
  function stageValidHandler() {
-  dispatch(setStageValidContext({ validCtxt: !stageValidContext }))
-  console.log({isOpen});
-  
-  onOpen()
-  // setEvalIndex((prev) => prev + 1)
+  dispatch(setValidContext({ validCtxt: !validContext }))
+ 
+ }
+function stageHideNbHandler() {
+  dispatch(setStageHideNbContext({ hide: !stageHideNbContext }))
 }
 function evalValidHandler() {
   dispatch(setEvalValidContext({ evalCtxt: !evalValidContext }))
  onClose()
-  // setEvalIndex((prev) => prev + 1)
-}             
-    function shuffleHandler() {
-      //dispatch(setFirstStateContext({first: false}))
+ }             
+ function shuffleHandler() {
         const shuffeledAy = _.shuffle(stageShuffeledAyahsContext)
-     console.log({ shuffeledAy });
-
-        dispatch(setStageShuffeledAyahsContext({ ayahs: shuffeledAy }))
-    }
-
-    useEffect(() => {
-  if(typeof stageShuffeledAyahsContext !== 'undefined' && stageShuffeledAyahsContext){
-    }
- }, [stageShuffeledAyahsContext, windowVisualisation]); 
- 
+     console.log({ shuffeledAy })
+       dispatch(setStageShuffeledAyahsContext({ ayahs: shuffeledAy }))
+}
  useEffect(() => {
-   console.log({stageOrderedAyahsContext, stageShuffeledAyahsContext});
-   
- }, [stageOrderedAyahsContext, stageShuffeledAyahsContext]);
+   console.log({stageOrderedAyahsContext, stageShuffeledAyahsContext, catStages});
+ }, [stageOrderedAyahsContext, stageShuffeledAyahsContext, catStages]);
  
    
-    return  <Modal backdrop={'blur'} scrollBehavior={'outside'} isOpen={isOpen} size={'full'} onClose={onClose}>
+return  <Modal backdrop={'blur'} scrollBehavior={'outside'} isOpen={isOpen} size={'full'} onClose={onClose}>
       <ModalContent className='overflow-scroll'>
         {(onClose) => (
           <>
@@ -370,8 +353,10 @@ function evalValidHandler() {
               <div className="flex-col  justify-start items-center   text-center font-sans  " >
           <div className="flex justify-evenly items-center gap-1 flex-wrap ">
               <SpaceButton handlePress={shuffleHandler} title='Shuffel Grid' />
-               {sprintAble ?
-              <SpaceButton handlePress={sprintItHandler} title='Sprint it ' />:
+              <SpaceButton handlePress={prevSprintHandler} title='Prev Stage' />
+              <SpaceButton handlePress={nextSprintHandler} title='Next Stage' />
+               {sprintAble  && stageHideNbContext?
+              <SpaceButton handlePress={sprintItHandler} title='Sprint it ' />: stageHideNbContext && 
               <SpaceButton handlePress={stageItHandler} title='Stage it ' />
                 }
             <div className="flex  justify-between items-center  p-1 border border-green-300 rounded-md text-center font-sans " >
@@ -383,8 +368,8 @@ function evalValidHandler() {
             <div className="flex  justify-center items-center border p-1  border-green-300 rounded-md text-center font-sans " >
             <input className="flex  p-2 justify-center items-center  border border-blue-800 text-green-300"
               type="checkbox"
-              id='VALID_CTXT' name='VALID_CTXT' value='HIDE_NB' 
-              checked={stageValidContext && isOpen} 
+              id='VALID_CTXT' name='VALID_CTXT' value='VALID_CTXT' 
+              checked={validContext } 
               onChange={() => stageValidHandler()} />
             <label className='px-2' htmlFor='VALID_CTXT' >Validate </label>
           </div>
@@ -410,13 +395,6 @@ function evalValidHandler() {
                 </p>
               </div>
 
-           {/*  <div className="flex justify-center items-center  ">
-                <p className=' text-center text-emerald-500'>Grid Index &nbsp;
-                </p>
-                <p className=' text-center text-blue-400'>
-                    {gridIndex}
-                </p>
-            </div> */}
             <div className="flex justify-center items-center  ">
 
                 <p className=' text-center text-emerald-500'> Ayahs &nbsp;
@@ -428,12 +406,8 @@ function evalValidHandler() {
           </div>
            {stageGridSelected &&
         <div className="flex flex-col justify-start  items-stretch w-full   ">
-          <div className=" -order-last md:order-first flex justify-stretch w-full flex-1 items-start m-1 ">
             <EvalOrderedComp />
-          </div>
-          <div className=" flex justify-stretch w-full flex-1 items-start m-1">
             <EvalSuits  />
-          </div>      
             </div>
             }
             </div>
@@ -457,7 +431,7 @@ function evalValidHandler() {
                          <Radio value={WINDOW_VISUALISATION.HIDE_NB }>Hide Nb</Radio>
                          <Radio value={WINDOW_VISUALISATION.VALID }>Valid Mode</Radio>
                </div>
-                     
+                                                                                                
                      </RadioGroup>  
                      <div className="flex justify-between p-2  rounded-md gap-1 items-center border-2 border-violet-500">
                         <SpaceButton  handlePress={validateHandler} title='Validate '  />

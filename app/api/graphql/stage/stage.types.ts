@@ -99,6 +99,7 @@ export type StageStateProps = {
   stageShuffeledFirstAyahsContext: Ayah[],
   stageGridSelected: StagePrismaType,
   stageSprintSelected: StagesSprintType,
+  exerciseStages: StagesSprintType[],
   stageSprintAy: StageSprintAyType,
   catStages: StagesSprintType[],
   localStages: StagePrismaType[],
@@ -108,7 +109,9 @@ export type StageStateProps = {
   stageGridsContext: StagePrismaType[],
   stagesSprintsContext: StagesSprintType[],
   stageHideNbContext: boolean,
-  exerciseContext: boolean,
+  dragDropContext: boolean,
+  threeContext: boolean,
+  d3Context: boolean,
   stageEvalContext: EVAL_STATE,
   sprintRandomHidden: number[],
   stageValidContext: boolean,
@@ -134,12 +137,14 @@ export type StageStateProps = {
   // space
   reorderedAyahsContext:number[],
   stageReorderedAyahsContext:number[],
+  windowVisualisationContext:WINDOW_VISUALISATION,
   orderedAyahsContext: Ayah[],
   shuffeledAyahsContext: Ayah[],
   shuffeledFirstAyahsContext: Ayah[],
   gridIndexContext: number,
   hideNbContext: boolean,
   hideOddNbContext: boolean,
+  hideEvenNbContext: boolean,
   blurContext: boolean,
   faultsNbContext: number,
   correctsNbContext: number,
@@ -187,9 +192,9 @@ export type GridMenu = {
   souraNb: number;
 }
 export enum EVAL_STATE {
-  EVAL = 'EVAL',
-  ORDER = 'ORDER',
-  CLICK = 'CLICK',
+  DISCOVER = 'DISCOVER',
+  DRAGDROP = 'DRAGDROP',
+ 
 }
 
 export type SprintPrismaType = {

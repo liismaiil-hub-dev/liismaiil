@@ -1,46 +1,28 @@
 'use client'
-import { Ayah, StagePrismaType } from '@/app/api/graphql/stage/stage.types';
-import EvalClickBoardComp from "@/components/stage/EvalClickBoard";
-import EvalDragOrderBoardComp from "@/components/stage/EvalDragOrderBoard";
-import EvalOrderedComp from "@/components/stage/EvalOrdered";
-import EvalSuits from "@/components/stage/EvalSuits";
-import RadioButtonEvalState from "@/components/stage/RadioButtonEvalState";
-import SpaceButton from "@/components/stage/SpaceButton";
-import { stageActions } from "@/store/slices/stageSlice";
-import { RootStateType } from '@/store/store';
-import _ from 'lodash';
-import { startTransition, useCallback, useEffect, useState } from 'react';
+
 import { useDispatch, useSelector } from 'react-redux';
-import { toast } from 'react-toastify';
-import { cn } from '@/lib/cn-utility'
-import * as d3 from "d3";
+
 import StagesSprintableComponent from './StagesSprintable';
 import StagesRehearsalComponent from './StagesRehearsal';
 import { useSearchParams } from 'next/navigation';
 
-export enum EVAL_STATE {
-  EVAL = 'EVAL',
-  ORDER = 'ORDER',
-  CLICK = 'CLICK',
-}
+
 const StateOpenBoard = ( ) => {
   const dispatch = useDispatch()
   const searchParams = useSearchParams()
   const stageId = searchParams.get('stageId');
   console.log({stageId});
   
-  return ( <div className=" flex-col justify-start space-y-2 h-full  items-stretch w-full ">
-      <div className="flex-col overflow-y-scroll  justify-start h-1/2 items-stretch  gap-1  text-center  text-sm font-sans">
+  return (<div className="flex-col justify-start overflow-scroll  h-full items-stretch  gap-1  text-center text-sm  font-sans">
+      <StagesRehearsalComponent />
+      </div>
+      )
+    }
+    export default StateOpenBoard
+     {/*  <div className=" flex-col justify-start gap-2 space-y-2 h-screen  items-stretch w-full ">
+     <div className="flex-col overflow-scroll  justify-start h-1/2 items-stretch  gap-1  text-center  text-sm font-sans">
 
     <StagesSprintableComponent />
       
-    </div>
-    <div className="flex-col justify-start overflow-y-scroll  h-1/2 items-stretch  gap-1  text-center text-sm  font-sans">
-      <StagesRehearsalComponent />
-      </div>
+    </div> */}
 
-      </div>
-
-  )
-}
-export default StateOpenBoard

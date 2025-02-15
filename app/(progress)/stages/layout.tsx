@@ -14,14 +14,14 @@ function Stageslayout({ children, steps }: {
     //  h-[calc(100vh-7rem)]
     return (
         <main className='container  flex-col justify-start items-stretch w-full '>
-               <div className=" flex flex-col justify-start items-stretch p-2 shadow-md    " >
+                <div className=" flex flex-col justify-start items-stretch p-1 shadow-md    " >
                     {steps}
                 </div > 
-                {/*  <div className="flex flex-col justify-start items-stretch bg-green-50/50 border-lime-100 shadow-md  h-1/3 " >
+                 {/*  <div className="flex flex-col justify-start items-stretch bg-green-50/50 border-lime-100 shadow-md  h-1/3 " >
                     {sprints}
                 </div > */}
             
-            <div className="flex flex-col justify-start  items-stretch space-y-1  h-full overflow-x-scroll " >
+            <div className="flex flex-col justify-start  items-stretch space-y-1  h-screen  " >
                 {children}
 
             </div>

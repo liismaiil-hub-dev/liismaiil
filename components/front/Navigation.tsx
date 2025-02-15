@@ -65,7 +65,7 @@ function Navigation() {
     return (
         <nav className={`container  flex  md:justify-between
             justify-center
-            bg-emerald-100/30 h-24 
+            bg-emerald-100/30 h-14 
         items-center mx-auto w-full z-10  border-2 border-blue-200/50 rounded-sm shadow-md`} >
             <section className=' hidden md:flex justify-center items-center  p-3 ' >
                 <Logo />
@@ -165,7 +165,8 @@ function Navigation() {
 
             {/* laptop nav  */}
 
-            <section className='hidden md:flex text-xl font-extralight space-x-2 space-y-1 md:justify-center  md:items-center flex-nowrap  text-gray-400' >
+            <section className='hidden md:flex text-xl font-extralight gap-1 md:justify-center  md:items-center 
+            flex-nowrap  text-gray-400' >
                 <div className={cn(isRoute('') && 'nav-selected', 'CENTER nav-element')}  >
                     <Link prefetch={true} key={`home`} href='/'  >
                         Home

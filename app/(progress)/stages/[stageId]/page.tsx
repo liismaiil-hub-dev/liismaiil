@@ -1,14 +1,5 @@
-import { redirect } from "next/navigation";
-import StateOpenBoard from "@/components/stage/StateOpenBoard";
-import SprintOpenBoard from "@/components/stage/SprintOpenBoard";
-import { getAllStageIdsForSprints, getStageForSprint } from "@/actions/stage";
-import {getSprintGuests} from "@/actions/sprint";
 
-import EvalSprintOrdered from "@/components/stage/EvalSprintOrdered";
-import EvalSprintOrderedFace from "@/components/stage/EvalSprintOrderedFace";
-import { toast } from "react-toastify";
-import SpaceButton from "@/components/insight/SpaceButton";
-import { Radio, RadioGroup } from "@heroui/radio";
+import {  getStageForSprint } from "@/actions/stage";
 import OpenBoardSprint from "@/components/stage/OpenBoardSprint";
 /* 
 export async function generateStaticParams() {
@@ -39,10 +30,10 @@ export default async function GuestStagePage({params}: {
     /* let currentGuest = await getGuestFromCookies();
     */
    const resp = await getStageForSprint(stageId)
-   console.log({resp});
+   //console.log({resp});
    if(resp && resp.success){
-      return (<div className={`flex h-full border-2 border-blue-400 rounded-md flex-col justify-start p-2  space-y-2 items-stretch w-full`} >
-     <OpenBoardSprint  />
+      return (<div className={`flex-col h-full  rounded-md  justify-start p-1  items-stretch w-full`} >
+     <OpenBoardSprint stage={resp.stage}  />
       
 </div>)}   
 } catch (error) {

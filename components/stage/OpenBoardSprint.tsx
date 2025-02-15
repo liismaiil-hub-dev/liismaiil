@@ -16,13 +16,10 @@ import { cn } from '@/lib/cn-utility'
 import { createNewSprint, setSprintSession } from '@/actions/sprint';
 import { useRouter } from 'next/navigation';
 import { addGuestToStage, getStageForSprint } from '@/actions/stage';
+import { EVAL_STATE} from "@/api/graphql/stage/stage.types";
 
-export enum EVAL_STATE {
-  EVAL = 'EVAL',
-  ORDER = 'ORDER',
-  CLICK = 'CLICK',
-}
-const OpenBoardSprint = ( ) => {
+
+const OpenBoardSprint = ( {stage}:{stage:StagePrismaType}) => {
   const dispatch = useDispatch()
   const router = useRouter()
   const {stageSprintSelected, stageGridSelected, stageEvalContext, stageReorderedAyahsContext, firstStateContext, stageEvalIndexContext, stageHideNbContext, errorNbContext,
@@ -30,18 +27,25 @@ const OpenBoardSprint = ( ) => {
   const { guestPrisma:{tokenId} } = useSelector((state: RootStateType) => state.guestPrisma)
 
   const { setStageOrderedAyahsContext, setStageShuffeledFirstAyahsContext, setStageHideNbContext, setStageGridsContext,  setStageShuffeledAyahsContext, setStageGridSelected ,
-     setStageValidContext, setStepIndexContext, setFirstStateContext,setStageReorderedAyahsContext, setErrorNbContext } = stageActions
+     setStageValidContext, setStepIndexContext, setFirstStateContext,setStageReorderedAyahsContext, setStageEvalContext } = stageActions
      
      useEffect(() => {
        dispatch(setStageReorderedAyahsContext({reorderedAyahsContext:[-1]}))
-      } , []);
-      const [gridIndex, setGridIndex] = useState('0');
+       dispatch(setStageEvalContext({eval:EVAL_STATE.DISCOVER}))
+      console.log({stage});
       
+       dispatch(setStageGridSelected({stage:stage}))
+    } , []);
+      const [gridIndex, setGridIndex] = useState('0');
+useEffect(() => {
+ if(typeof tokenId === 'undefined' || tokenId === -1){
+  toast.warning('you must connect to get to exercise')
+  router.push('/signup')
+ }
+}, [tokenId]);
   
 useEffect(() => {
-  console.log({stageSprintSelected});
-  
-  if (typeof stageSprintSelected !== 'undefined' && stageSprintSelected?.souraName != '' ){
+   if (typeof stageSprintSelected !== 'undefined' && stageSprintSelected?.souraName != '' ){
 const _actualSprint = async () =>{ 
   const _sprint =  await getStageForSprint(stageSprintSelected.stageId)
 if ( _sprint.success && typeof _sprint.stage !== 'undefined' ) {
@@ -55,10 +59,25 @@ const _orderedAy = [..._.sortBy(_shuffeleledFirst, ['number'])].map((ordG: Ayah,
 }}
 _actualSprint()
 }
-
 }, [stageSprintSelected]);
 
-  
+useEffect(() => {
+  if (typeof stageGridSelected !== 'undefined' && stageGridSelected?.souraName != '' ){
+const _actualSprint = async () =>{ 
+ const _sprint =  await getStageForSprint(stageGridSelected.stageId)
+if ( _sprint.success && typeof _sprint.stage !== 'undefined' ) {
+ const _shuffeleledFirst = (JSON.parse(_sprint.stage!.ayahs)).map((ordG: Ayah, index: number) => (ordG));
+console.log({ _shuffeleledFirst });
+const _orderedAy = [..._.sortBy(_shuffeleledFirst, ['number'])].map((ordG: Ayah, index) => (ordG))
+ console.log({ _orderedAy });
+ setGridIndex(stageGridSelected.stageId.split('-')[stageGridSelected.stageId.split('-').length - 1 ])
+ dispatch(setStageOrderedAyahsContext({ ayahs: _orderedAy }))
+ dispatch(setStageShuffeledAyahsContext({ ayahs: _shuffeleledFirst }))
+}}
+_actualSprint()
+}
+}, [stageGridSelected]);
+
   function shuffleHandler() {
       dispatch(setFirstStateContext({first: false}))
       const shuffeledAy = _.shuffle(stageShuffeledAyahsContext)
@@ -158,12 +177,12 @@ function getMaxNb(): number {
   }
   
   useEffect(() => {
- 
-    console.log({ stageHideNbContext, stageEvalContext, stageEvalIndexContext, stageGridSelected,  stageReorderedAyahsContext });
+    console.log({ stageHideNbContext,stageShuffeledAyahsContext,stageOrderedAyahsContext, stageEvalContext, stageEvalIndexContext, stageGridSelected,  stageReorderedAyahsContext });
   }, [stageHideNbContext, stageEvalIndexContext, stageValidContext, stageEvalContext, stageGridSelected, stageReorderedAyahsContext]);
   
-  const [sprintAble, setSprintAble] = useState(false);
- const [taysir, setTaysir] = useState(0);
+const [sprintAble, setSprintAble] = useState(false);
+const [taysir, setTaysir] = useState(0);
+  console.log({stageOrderedAyahsContext});
   
   useEffect(() => {
  
@@ -173,43 +192,38 @@ function getMaxNb(): number {
     const min =  getMinNb()
     const max = getMaxNb()
     console.log({max_min: max-min});
-    
     setTaysir((max- min) )
     }else {
       setSprintAble(false)
-    }
-
-  }, [stageSprintSelected]);
+    }}, [stageSprintSelected]);
   
   return (
-    <div className=" flex-col justify-start space-y-2 h-full py-2 items-center w-full ">
+    <div className=" flex-col justify-start  h-full p-1 items-center w-full ">
       <div className="flex-col   justify-start  items-center  gap-1 flex-wrap  ">
-      {sprintAble ? 
-      <div className='justify-center items-center text-center flex  '>{sprintAble ? `SprintId  : ${stageSprintSelected?.stageId}`
-          :`StageId  : ${stageSprintSelected?.stageId}` } &nbsp;&nbsp;
-        : &nbsp; :From &nbsp; : &nbsp;{getMinNb()} / ({getMin()})&nbsp;To &nbsp;{getMaxNb()} / ( {getMax()})
-        &nbsp;&nbsp; {sprintAble ? `Sprint Gifts up to <${taysir/10} TS> to use as 20% discount from hosts selections `: null}
-      </div>:
-      <div className='justify-center items-center text-center flex '>StageId &nbsp; : {stageSprintSelected?.stageId} 
-                : &nbsp; :From &nbsp; : &nbsp;{getMinNb()} / ({getMin()})&nbsp;To &nbsp;{getMaxNb()} / ( {getMax()})
-      </div> 
-       }
-      
-      <div className="flex justify-center items-center mt-2 p-3  ">
-                <p className='text-center inline-flex '>Soura &nbsp;: [&nbsp;{stageSprintSelected?.arabName ? stageSprintSelected?.arabName : stageSprintSelected?.souraName}&nbsp;]&nbsp;</p>
+         <div className="flex text-blue-500 justify-center items-center   ">
+                <p className='text-center inline-flex  '>Soura &nbsp;: [&nbsp;{stageSprintSelected?.arabName ? stageSprintSelected?.arabName : stageSprintSelected?.souraName}&nbsp;]&nbsp;</p>
                 <p className='text-center inline-flex '>&nbsp; Nb : [&nbsp;{stageSprintSelected?.souraNb}&nbsp;] </p>
                 <p className='text-center inline-flex'>&nbsp; Grid :[&nbsp;{stageSprintSelected?.grid*stageSprintSelected?.grid}&nbsp;]</p>
                 <p className='text-center inline-flex' > &nbsp; Nb of Grids:  [&nbsp;{stageSprintSelected?.group ?
                  stageSprintSelected?.group : stageSprintSelected?.stageId.split('-')[2]}] </p>
             </div>
-        <div className="flex-col  justify-start items-center  gap-3 text-center font-sans  " >
+            {sprintAble ? 
+      <div className='justify-center items-center text-center flex text-blue-800  '>{sprintAble ? `SprintId  : ${stageSprintSelected?.stageId}`
+          :`StageId  : ${stageSprintSelected?.stageId}` } &nbsp;&nbsp;
+        : &nbsp; :From &nbsp; : &nbsp;{getMinNb()} / ({getMin()})&nbsp;To &nbsp;{getMaxNb()} / ( {getMax()})
+        
+      </div>:
+      <div className='justify-center items-center text-center flex  text-blue-800 '>StageId &nbsp; : {stageSprintSelected?.stageId} 
+                : &nbsp; :From &nbsp; : &nbsp;{getMinNb()} / ({getMin()})&nbsp;To &nbsp;{getMaxNb()} / ( {getMax()})
+      </div> 
+       }
+        <div className="flex-col  justify-start items-center py-1 gap-2 text-center font-sans  " >
         <div className="flex justify-evenly items-center gap-1 flex-wrap ">
-            <SpaceButton handlePress={shuffleHandler} title='Shuffel Grid' />
+            <SpaceButton handlePress={shuffleHandler} title='Shuffel' />
              {sprintAble ?
             <SpaceButton handlePress={sprintItHandler} title='Sprint it ' />:
             <SpaceButton handlePress={stageItHandler} title='Stage it ' />
               }
-        
           
           <div className="flex  justify-between items-center p-2  border border-green-300 rounded-md text-center font-sans " >
             <input className="flex border-blue-800 text-green-300 justify-center items-center  border "
@@ -225,24 +239,16 @@ function getMaxNb(): number {
           </div>
             <div className="CENTER border border-green-300 rounded-md  p-2 text-center font-sans " >
                <RadioButtonEvalState
-                evalState={EVAL_STATE.EVAL} title='Eval board' />
+                evalState={EVAL_STATE.DISCOVER} title='Discover' />
             </div>
             <div className="CENTER  border border-blue-300 rounded-md p-2 text-center font-sans " >
               <RadioButtonEvalState
-                evalState={EVAL_STATE.ORDER} title='Order Grid' />
-            </div>
-            <div className="CENTER  border border-violet-300 rounded-md p-2 text-center font-sans " >
-              <RadioButtonEvalState
-                evalState={EVAL_STATE.CLICK} title='Click Grid' />
+                evalState={EVAL_STATE.DRAGDROP} title='Drag & Drop' />
             </div>
           </div>
           </div>
-          
-            <div className="flex justify-between items-center mt-1 p-3  ">
-           
-            <p className='text-center'>reordered suits &nbsp;{typeof stageReorderedAyahsContext != 'undefined'&& stageReorderedAyahsContext[0] != -1 && stageReorderedAyahsContext.map((e: number) => `[${e}]`).join(', ')}</p>
-            
-            
+          <div className="flex justify-between items-center p-1  ">
+            <p className='text-center'>Suits &nbsp;{typeof stageReorderedAyahsContext != 'undefined'&& stageReorderedAyahsContext[0] != -1 && stageReorderedAyahsContext.map((e: number) => `[${e}]`).join(', ')}</p>
             <div className="flex justify-center items-center  ">
               <p className={cn(errorNbContext < 1 ? 'text-green-500 !important' : errorNbContext > 2 ? 'text-red-400 !important' : 'text-red-500 !important')}>errors &nbsp;
                 </p>
@@ -250,17 +256,8 @@ function getMaxNb(): number {
                     {errorNbContext}
                 </p>
               </div>
-
-            <div className="flex justify-center items-center  ">
-                <p className=' text-center text-emerald-500'>Grid Index &nbsp;
-                </p>
-                <p className=' text-center text-blue-400'>
-                    {gridIndex}
-                </p>
-            </div>
-            <div className="flex justify-center items-center  ">
-
-                <p className=' text-center text-emerald-500'> Ayahs &nbsp;
+          <div className="flex justify-center items-center  ">
+              <p className=' text-center text-emerald-500'> Ayahs &nbsp;
                 </p>
                 <p className=' text-center text-blue-500'>
                     From {getMin()?? '' } To  {getMax()?? ''}
@@ -269,18 +266,21 @@ function getMaxNb(): number {
           </div>
       </div>
 
-      {stageGridSelected && stageEvalContext === EVAL_STATE.EVAL ?
-        <div className="flex flex-col justify-start  items-stretch w-full   ">
-          <div className=" -order-last md:order-first flex justify-stretch w-full flex-1 items-start m-1 ">
+      {stageGridSelected && stageEvalContext === EVAL_STATE.DISCOVER ?
+        <div className="grid grid-cols-3  items-stretch w-full   ">
+          <div className=" -order-last md:order-first flex col-span-1 w-full  items-start m-1 ">
+          <EvalSuits  />
+           </div>
+          <div className=" -order-last md:order-first flex col-span-1 w-full  items-start m-1 ">
             <EvalOrderedComp />
           </div>
-          <div className=" flex justify-stretch w-full flex-1 items-start m-1">
+          <div className=" flex  col-span-1  w-full   m-1">
             <EvalSuits  />
           </div> </div> :
-        stageEvalContext === EVAL_STATE.ORDER ?
+        stageEvalContext === EVAL_STATE.DRAGDROP && 
           <EvalDragOrderBoardComp />
-          : stageEvalContext === EVAL_STATE.CLICK && <EvalClickBoardComp
-          />}
+         // : stageEvalContext === EVAL_STATE.CLICK && <EvalClickBoardComp/>
+          }
     </div>
   )
 }
