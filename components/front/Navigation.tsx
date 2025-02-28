@@ -65,7 +65,7 @@ function Navigation() {
     return (
         <nav className={`container  flex  md:justify-between
             justify-center
-            bg-emerald-100/30 h-14 
+            bg-emerald-100/30 h-24 
         items-center mx-auto w-full z-10  border-2 border-blue-200/50 rounded-sm shadow-md`} >
             <section className=' hidden md:flex justify-center items-center  p-3 ' >
                 <Logo />
