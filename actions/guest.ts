@@ -259,7 +259,7 @@ export const getGuestFromCookies = memoize(async (): Promise<GuestType | undefin
 })
 
 
-export const getPrismaGuests = async (min=0, max=100) => {
+export const getPrismaGuests = async (min=0, max=1000000) => {
   try {
     //console.log({ tokenGetGuestFromToken: token });
     const _guests = await prisma.guest.findMany({
@@ -279,6 +279,7 @@ export const getPrismaGuests = async (min=0, max=100) => {
       }
 
 }
+
 export const getGuestStats = async (tokenId: number) => {
   try {
     console.log({ tokenGetGustStats: tokenId });

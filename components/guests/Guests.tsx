@@ -1,5 +1,5 @@
 'use client'
-import { memo, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { RootStateType } from '@/store/store';
 import { cn } from "@/lib/cn-utility";
 import Image from 'next/image';
@@ -12,7 +12,7 @@ import { stageActions } from "@/store/slices/stageSlice";
 import { getGuestStats } from "@/actions/guest";
 import { guestPrismaActions } from "@/store/slices/guestPrismaSlice";
 import { toast } from "react-toastify";
-import GuestStats from "./GuestStats";
+import GuestEvolution from "./GuestEvolution";
 
 const GuestsFrontComp = ({ guests, handleGuestSpace, tokenId }: { guests: GuestPrismaType[], handleGuestSpace: (arg: string) => void , tokenId: string}) => {
     return  <div className='flex flex-row border-2 gap-3 border-blue-600 items-center justify-start   
@@ -21,12 +21,12 @@ const GuestsFrontComp = ({ guests, handleGuestSpace, tokenId }: { guests: GuestP
 
     </div>
 }
-function Guests({guests}:{guests : GuestPrismaType} ): ReactElement {
+function Guests({guests}:{guests : GuestPrismaType[]} ): ReactElement {
     const dispatch = useDispatch()
     const { guestPrisma:{tokenId},  guestStats } = useSelector((state: RootStateType) => state.guestPrisma)
      const [tokenIdSearched, setTokenIdSearched] = useState(-1);
      
-     const { setGuestStats  } = guestPrismaActions
+     const { setGuestStats , setGuestsForConnexions } = guestPrismaActions
     const handleGuestSearch = async(e: Event) => {
         e.preventDefault()
         console.log({tokenIdSearched});
@@ -46,36 +46,48 @@ function Guests({guests}:{guests : GuestPrismaType} ): ReactElement {
             }
   }
 
-  return (
-        <div className="container   flex-col   items-stretch  justify-start" >
-        <div className="container   flex-col   items-center  justify-center" >
+  useEffect(() => {
+   dispatch(setGuestsForConnexions({guestsPrisma: guests}))
+}, [guests]);
+  
+  return (<div className="container   flex-col   items-stretch  justify-start" >
+            <div className="container   flex-col   items-stretch  justify-start    ">
+             
+            <div className=" flex justify-center p-1 items-center gap-1">
              <form onSubmit={(e) => handleGuestSearch(e)!} className="flex-col   items-center  h-full p-3 justify-center" >
-            <div className=" flex w-1/2 justify-between items-center gap-2">
-                <input className=" border-1 border-blue-300 p-3" type='text' onChange={(e) => setTokenIdSearched(parseInt(e.target?.value)!)}
+                <input className=" border-1 border-blue-300 p-1" type='text' 
+                onChange={(e) => setTokenIdSearched(parseInt(e.target?.value)!)}
                     placeholder='tokenId'  />
-                <button  className='btn p-3'  type="submit"> Find guest</button>
-            </div>
+                <button  className='btn w-28 p-1 '  type="submit"> 
+                    Find guest</button>
             </form>
-            <div className="flex pt-1 justify-stretch  items-stretch w-full  h-full    ">
-            {typeof guests!=='undefined' && guests && guests?.length > 1 && guests?.map((guest: GuestPrismaType, index: number) => {
-                    return (<Link key={`${guest.tokenId}_${index}`}  href={`/stage/${tokenId}`} scroll={false}>
-                    <div  className={cn(guest.tokenId !== -1  && tokenId === guest.tokenId && 
-                        'bg-green-300' ,
-                        "cursor-pointer hover:animate-zoomIn\
-                         border-2  border-green-400 hover:border-indigo-600 items-center justify-center shadow-md\
-                          shadow-black/20 rounded-full h-12 w-12")}>
-                    <Image width={70} height={70} className='flex justify-center items-center rounded-full object-cover' src={`/img/flags/${guest.flag}`} alt={'avatar flalg '}  />
             </div>
-        </Link>)    
+
+            <div className="flex p-1 justify-items-start  items-start w-full  h-36    ">
+            {typeof guests!=='undefined' && guests && guests?.length > 1 && guests?.map((guest: GuestPrismaType, index: number) => {
+                    return (<div key={`${guest.tokenId}-${index}`}  className="container  w-24 flex-col   items-center  justify-center    ">
+                        <div className={cn(guest.tokenId !== -1  && tokenId === guest.tokenId && 
+                        'bg-green-300' ,"cursor-pointer hover:animate-zoomIn border-1  border-green-400 hover:border-indigo-600  shadow-md\
+                          shadow-black/20 rounded-md h-14 w-24")}>
+                    <Image width={70} height={70} className='flex justify-center items-center rounded-md h-14 w-24 object-cover'
+                         src={`/img/flags/${guest.flag}`} alt={'avatar flalg '}  />
+                     </div>
+        <div className="container   flex-col   items-center p-1 border-1 border-blue-300  justify-start text-center" >
+                            {guest.tokenId}
+            </div>
+            </div>
+
+                )    
                 })} 
             </div>
             </div>
         <div className="container   flex-col   items-stretch  justify-start" >
 
-        <GuestStats />
+        <GuestEvolution />
         </div >
         </div >
-
+        
+        
     )
 }
 const MemoizedGuests = memo(Guests)

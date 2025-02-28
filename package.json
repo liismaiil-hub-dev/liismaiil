@@ -7,7 +7,8 @@
     "build": "next build",
     "proprei": "prisma generate && prisma migrate deploy",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "playwright test"
   },
   "dependencies": {
     "@apollo/client": "^3.11.2",
@@ -113,6 +114,7 @@
     "autoprefixer": "^10.0.1",
     "eslint": "^8",
     "eslint-config-next": "14.1.0",
+    "playwright": "^1.50.1",
     "postcss": "^8",
     "prisma": "^6.2.1",
     "tailwindcss": "^3.3.0",

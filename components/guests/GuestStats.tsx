@@ -148,47 +148,17 @@ useEffect(() => {
         toast.error(`${error} occured`)
         }
  }  
- //const badWidth = yscaleState?.bandWidth()
-     //   const  stageId = `${gridSelected.souraNb}-${gridSelected.grid}-${gridsContext.length}-${gridIndexContext}`;
 
-   
-
-/*    const _sourasFlatten = [...SECTIONS_SOURAS.TIWAL,...SECTIONS_SOURAS.MIIN, ...SECTIONS_SOURAS.MATHANI,...SECTIONS_SOURAS.MOFASAL]
-            const souraNb =  _sourasFlatten.map((souraNbName) =>souraNbName.souraNb )
-            console.log({_sourasFlatten});
-        if(insightTemplateAyahsSelected) {
-            const extents = d3.extent(insightTemplateAyahsSelected, d=>d.numberInSurah )
-            const _extents = d3.extent(insightTemplateAyahsSelected, d=>d.number )
-            console.log({extents, _extents});
-            if(typeof _extents !== 'undefined' && _extents ){
-            const xScale = d3.scaleLinear(souraNb, [0, boundedWidth])
-
-            const yScale = d3.scaleLinear([0,6236],[0, boundedHeight] )
-            const colorScale =  d3.scaleSequential([0,6236],d3.interpolateRdYlBu)
-            const __val = insightTemplateAyahsSelected.map((ay: Ayah) => {
-                return {
-                    x:xScale(insightTemplate.souraNb),
-                    y:yScale(ay.number!),
-                    height: _extents[1]! - _extents[0]!,
-                    fill: colorScale(ay.number!)
-                }
-            })
-            setData(__val)
-            console.log({__val,});
-            xmlns='http://www.w3.org/2000/svg' width={width} height={height} 
-          */   
-    
-    return <div className={`flex  border-2 border-blue-400 rounded-md flex-col justify-start p-2  space-y-2 items-stretch w-full`} >
+    return <div className={` border-1 border-blue-400 rounded-md flex-col justify-start p-1   items-stretch w-full`} >
       
                 <div className="flex justify-evenly items-center ">
             
-            <SpaceButton disabled={false} handlePress={prevGridHandler} title='Prev 100 templates' />
-            <SpaceButton disabled={false} handlePress={nextGridHandler} title='Next 100 Template' />
-            <SpaceButton disabled={pending} handlePress={getStat} title='Get Stats' />
-            
-        </div>
+            <SpaceButton  handlePress={prevGridHandler} title='Prev 100 templates' />
+            <SpaceButton  handlePress={nextGridHandler} title='Next 100 Template' />
+            <SpaceButton  handlePress={getStat} title='Get Stats' />
+            </div>
 
-        <h1 className="text-green-300"> Bismai ALLAH
+        <h1 className="text-green-300"> Guest
         </h1>
 
         <div className="flex flex-col justify-start items-stretch  space-y-2">

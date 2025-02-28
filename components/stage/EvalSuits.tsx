@@ -58,7 +58,7 @@ console.log({stageShuffeledAyahsContext});
         if (typeof stageReorderedAyahsContext!= 'undefined' && stageReorderedAyahsContext[0] == -1 && reord !== stageOrderedAyahsContext[0].numberInSurah) {
             console.log({reord,fir:stageOrderedAyahsContext[0].numberInSurah} );
             
-            toast.error(`You made a mistake on the first ayah its ${stageOrderedAyahsContext[0].numberInSurah}in the grid`)
+            toast.error(`You made a mistake on the first ayah its ${stageOrderedAyahsContext[0].text} it s in orange color `)
         }
         else if (typeof stageReorderedAyahsContext!= 'undefined' && stageReorderedAyahsContext[0] == -1) {
             dispatch(setStageReorderedAyahsContext({reorderedAyahsContext:[reord]}))
@@ -76,12 +76,20 @@ console.log({stageShuffeledAyahsContext});
             })
             dispatch(setErrorNbContext({errorNb: errorNbContext+1}))
         }        
-        if (typeof stageReorderedAyahsContext!= 'undefined' && errorNbContext < 4) {
+        if (typeof stageReorderedAyahsContext!= 'undefined' && stageSprintSelected.grid === 3 && errorNbContext < 3) {
             console.log({ stageReorderedAyahsContext, stageShuffeledAyahsContext });
             if ( stageReorderedAyahsContext.length === stageShuffeledAyahsContext.length && stageReorderedAyahsContext[0] !== -1) {
                 toast.success('it was the last ayas for that grid you can stage it')
             }
-        } else {
+        } else if (typeof stageReorderedAyahsContext!= 'undefined' && stageSprintSelected.grid === 4 && errorNbContext < 5) {
+          if ( stageReorderedAyahsContext.length === stageShuffeledAyahsContext.length && stageReorderedAyahsContext[0] !== -1) {
+                toast.success('it was the last ayas for that grid you can stage it')
+            }
+        } else if (typeof stageReorderedAyahsContext!= 'undefined' && stageSprintSelected.grid === 5 && errorNbContext < 7) {
+          if ( stageReorderedAyahsContext.length === stageShuffeledAyahsContext.length && stageReorderedAyahsContext[0] !== -1) {
+                toast.success('it was the last ayas for that grid you can stage it')
+            }
+        }else {
             toast.warning(`you must rehearsal  !!! `)
             dispatch(setStageValidContext({ validCtxt: false }))
             dispatch(setStageHideNbContext({ hide: false }))
@@ -159,7 +167,7 @@ setGridAyahs(JSON.parse(stageGridSelected.ayahs!))
                                         windowVisualisationContext === WINDOW_VISUALISATION.AKHIR ? ayahWithoutPunct(ayag.text)[ayahWithoutPunct(ayag.text).length -1]:
                                         windowVisualisationContext === WINDOW_VISUALISATION.AWAL ? ayahWithoutPunct(ayag.text)[0]: 
                                         windowVisualisationContext === WINDOW_VISUALISATION.AWSAT ? ayahWithoutPunct(ayag.text)[Math.ceil(ayahWithoutPunct(ayag.text).length/2)]:
-                                        null}
+                                        ayag.text}
                                      </div></div>}
                                 </button>
                             }
@@ -179,7 +187,8 @@ setGridAyahs(JSON.parse(stageGridSelected.ayahs!))
                                         windowVisualisationContext === WINDOW_VISUALISATION.AKHIR ? ayahWithoutPunct(ayag.text)[ayahWithoutPunct(ayag.text).length -1]:
                                         windowVisualisationContext === WINDOW_VISUALISATION.AWAL ? ayahWithoutPunct(ayag.text)[0]: 
                                         windowVisualisationContext === WINDOW_VISUALISATION.AWSAT ? ayahWithoutPunct(ayag.text)[Math.ceil(ayahWithoutPunct(ayag.text).length/2)]:
-                                        null} </button>
+                                        ayag.text
+                                        } </button>
                                     )
                             }}})}
         </div>
