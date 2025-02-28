@@ -22,6 +22,8 @@ import { CSS } from "@dnd-kit/utilities";
 import { stageActions } from '@/store/slices/stageSlice';
 import * as _ from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
+import HeaderEvalComponent from './HeaderEvalComponent';
+import { useEffect } from 'react';
 
 const SortableGrid = ({ ay, id }: { ay: Ayah, id: number }) => {
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id })
@@ -40,12 +42,13 @@ const SortableGrid = ({ ay, id }: { ay: Ayah, id: number }) => {
 export default function EvalDragOrderBoard() {
 
     const dispatch = useDispatch()
-    const { gridSelected, evalIndex, shuffeledAyahsContext, orderedAyahsContext, hideNbContext } = useSelector((state: RootStateType) => state.stage)
-    const { setShuffeledAyahsContext, setOrderedAyahsContext } = stageActions
+    const {  reorderedAyahsContext, stageShuffeledAyahsContext, orderedAyahsContext, stageOrderedAyahsContext } = useSelector((state: RootStateType) => state.stage)
+    const {setStageReorderedAyahsContext, setStageShuffeledAyahsContext, setStageOrderedAyahsContext } = stageActions
 
-    function shuffelHandler() {
-        dispatch(setShuffeledAyahsContext({ ayahs: [..._.shuffle(orderedAyahsContext)] }))
-    }
+useEffect(() => {
+    dispatch(setStageReorderedAyahsContext({reorderedAyahsContext:[-1]}))
+
+}, []);
 
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -61,75 +64,56 @@ export default function EvalDragOrderBoard() {
 
     function handleDragEnd(event: { active: any; over: any; }) {
         const { active, over } = event;
-        console.log({ active, over })
-        if (active?.id === over?.id) {
-            dispatch(setShuffeledAyahsContext({
-                ayahs: [..._.filter(shuffeledAyahsContext, function (sh: Ayah) {
-                    return sh.id !== active.id
-                })]
-            }))
-            dispatch(setOrderedAyahsContext({
-                ayahs: [..._.filter(orderedAyahsContext, function (sh: Ayah) {
-                    return sh.id !== active.id
-                })]
-            }))
+        console.log({ active, over, stageShuffeledAyahsContext, numberInSurah:active.data.current.numberInSurah })
+         if (active?.id === over?.id) {
+           if(reorderedAyahsContext[0] !== -1) {
+            dispatch(setStageReorderedAyahsContext({reorderedAyahsContext:[active.id]}))
+        }else {
+            dispatch(setStageReorderedAyahsContext({reorderedAyahsContext:[...reorderedAyahsContext, active.id]}))
+
         }
-    }
-    console.log({ evalIndex });
+            dispatch(setStageShuffeledAyahsContext({
+                ayahs: [..._.filter(stageShuffeledAyahsContext, function (sh: Ayah) {
+                    return sh.numberInSurah !== active.id
+                })]
+            }))
+            dispatch(setStageOrderedAyahsContext({
+                ayahs: [..._.filter(stageShuffeledAyahsContext, function (sh: Ayah) {
+                    
+                    return sh.numberInSurah !== over.id
+                })]}));
+              }
+        }
+    
 
 
-    function handleShuffle() {
-        const newGrid = _.shuffle(orderedAyahsContext)
-        dispatch(setShuffeledAyahsContext({ ayahs: [..._.shuffle(orderedAyahsContext)] }))
-    }
-    function handleValidate() {
-        //  const newGrid = _.shuffle(gridState)
-
-        //    setGridState(newGrid)
-    }
-    const randomColor = Math.floor(Math.random() * 16777215).toString(16);
-
-    return (<div className="flex flex-col justify-items-start items-stretch  mt-3 w-full   h-full " >
-        <div className="flex   flex-row justify-between items-center   w-full   h-32  " >
-            <div className="flex   justify-center items-center   w-full   h-full " >
-                Soura  :&nbsp;&nbsp;{gridSelected.arabName}
-            </div>
-            <div className="flex   justify-center items-center   w-full   h-full " >
-                groups  :&nbsp;&nbsp;{gridSelected.group}
-            </div>
-            <div className="flex   justify-center items-center   w-full   h-full " >Eval :&nbsp;&nbsp;{evalIndex}
-            </div>
-            <div className="flex   justify-center items-center   w-full   h-full " >grids :&nbsp;&nbsp;{gridSelected.grid * gridSelected.grid}
-            </div>
-            <div className="flex   justify-center items-center   w-full   h-full " >Nb Faults :&nbsp;&nbsp;{orderedAyahsContext?.length}
-            </div>
-            <div className="flex   justify-center items-center   w-full   h-full " >Nb Corrects :&nbsp;&nbsp;{orderedAyahsContext?.length}
-            </div>
-        </div>
+    return (
+        <div className="flex-col justify-start items-stretch  w-full gap-1 p-1   h-full " >
+      
         <DndContext sensors={sensors}
             collisionDetection={closestCenter}
-            autoScroll={true} onDragOver={handleDragOver} onDragEnd={handleDragEnd}>
-            <div className="flex flex-row justify-between items-stretch   w-full  border-blue-600 border-3 
+            autoScroll={true} onDragOver={handleDragOver}
+             onDragEnd={handleDragEnd}>
+            <div className="flex justify-between items-stretch gap-1 p-1 w-full  border-blue-400 border-1 rounded-md  
                  h-full " >
-                <div className="flex   flex-col w-full items-center justify-start  gap-2">
-                    {shuffeledAyahsContext && shuffeledAyahsContext.map((ayd: AyahWithId, index: number) => {
-                        return (<Draggable key={`${ayd.order}-${index}`} id={ayd.id} gridAyah={ayd} hideNb={hideNbContext} />)
+                <div className="flex   flex-col w-full items-stretch justify-start p-2 gap-2">
+                    { typeof stageShuffeledAyahsContext !== 'undefined' && 
+                    stageShuffeledAyahsContext.length > 0 && stageShuffeledAyahsContext.map && stageShuffeledAyahsContext?.map((ayd: Ayah, index: number) => {
+                     // console.log({ayId:ayd, nbSurah: ayd.numberInSurah, index});
+                        
+                        return (<Draggable  key={`${ayd.order}-${index}`} id={ayd?.numberInSurah!} gridAyah={ayd}  />)
                     })}
                 </div>
-                <div className="flex flex-col items-center justify-start   h-full  w-full  gap-2  border-emerald-500  " >
+                <div className="flex flex-col items-center justify-start   h-full  w-full  gap-2 p-2 border-emerald-500  " >
                     {orderedAyahsContext && orderedAyahsContext?.length > 0 &&
-                        orderedAyahsContext.map((ayd: Ayah) => {
-                            return (<Droppable key={`${ayd.id}`} id={ayd.id} ayd={ayd} />)
+                        stageOrderedAyahsContext.map((ayd: Ayah, index: number) => {
+                          //  console.log({ayd, nbA: ayd.numberInSurah});
+                            
+                            return (<Droppable key={`${ayd.order}-${index}`} id={ayd.numberInSurah!} ayd={ayd} />)
                         })}</div>
             </div>
         </DndContext>
-        <div className="flex  justify-evenly items-center w-full  border-3  bg-slate-300 font-light  border-teal-200 text-gray-600">
-            <button className=" px-5 py-3 border  rounded-md border-emerald-700" onClick={() => console.log('dismiss')}>Dismiss </button>
-            <button className=" px-5 py-3 border  rounded-md border-emerald-700" onClick={handleShuffle}> Shuffle </button>
-            <button className=" px-5 py-3 border  rounded-md border-emerald-700" onClick={handleValidate}> Validate </button>
-        </div>
-    </div>
-
-    )
+       
+    </div>)
 }
 

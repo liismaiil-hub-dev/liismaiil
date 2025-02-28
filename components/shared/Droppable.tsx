@@ -21,21 +21,11 @@ export function Droppable({ ayd, id }: { ayd: Ayah, id: number }) {
         }
      }, [active, draggedIndex]);
 
-    return (<div ref={setNodeRef} style={style}  role='button' className=" 
-        select-all flex p-2 w-full  bg-emerald-100/30 justify-between rounded-md border-1 border-orange-300
-        items-center  hover:bg-sky-700 hover:text-natWarmheader
-        hover:cursor-pointer hover:scale-110 hover:text-1xl" >
+    return (<div ref={setNodeRef} style={style}  role='button' className="select-none flex p-1 w-full 
+       bg-emerald-100/30 rounded-md border-1 border-orange-300 justify-end items-center  hover:bg-sky-700 hover:text-natWarmheader hover:cursor-not-allowed
+        hover:text-2xl" >
+       
+        <div className='select-all flex text-right  justify-end items-center w-full'>{` ${ayd.text} `}</div>
+    </div>);
 
-        { typeof hideNbContext !== 'undefined' && hideNbContext && !hideOddNbContext ?
-        <div className='flex justify-left items-center  w-7 h-7'>{ayd?.numberInSurah % 2 === 0 ? null: ayd?.numberInSurah!}</div>
-               :   (typeof hideOddNbContext !== 'undefined' && hideOddNbContext &&
-                 typeof hideNbContext !== 'undefined' && !hideNbContext) ? 
-               <div className='flex justify-left items-center w-7 h-7'>{ayd?.numberInSurah % 2 === 0 ?  ayd?.numberInSurah!: null}</div>
-        : hideNbContext && hideOddNbContext ?  <div className='flex justify-left items-center w-7 h-7 '>{null} </div>
-        :<div className='flex justify-left items-center w-7 h-7 '>{` ${ayd.numberInSurah} `}</div>
-        }
-        <div className='select-all flex text-right  justify-items-end items-center '>{` ${ayd.text} `}</div>
-        </div>
-
-);
 }

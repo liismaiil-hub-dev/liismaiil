@@ -14,12 +14,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { cn } from '@/lib/cn-utility'
 import { createNewSprint } from '@/actions/sprint';
+import {EVAL_STATE} from "@/api/graphql/stage/stage.types";
 
-export enum EVAL_STATE {
-  EVAL = 'EVAL',
-  ORDER = 'ORDER',
-  CLICK = 'CLICK',
-}
+
 
 const randomAyahsHidden = (nb: number) =>{
   let _hidenAys = [];
@@ -174,16 +171,13 @@ const SprintOpenBoard = ({stage, guests}: {stage: StagePrismaType, guests:Sprint
           </div>
             <div className="CENTER border border-green-300 rounded-md  p-2 text-center font-sans " >
                <RadioButtonEvalState
-                evalState={EVAL_STATE.EVAL} title='Eval board' />
+                evalState={EVAL_STATE.DISCOVER} title='Discover Board' />
             </div>
             <div className="CENTER  border border-blue-300 rounded-md p-2 text-center font-sans " >
               <RadioButtonEvalState
-                evalState={EVAL_STATE.ORDER} title='Order Grid' />
+                evalState={EVAL_STATE.DRAGDROP} title='Drag & Drop' />
             </div>
-            <div className="CENTER  border border-violet-300 rounded-md p-2 text-center font-sans " >
-              <RadioButtonEvalState
-                evalState={EVAL_STATE.CLICK} title='Click Grid' />
-            </div>
+           
           </div>
           </div>
           
@@ -220,7 +214,7 @@ const SprintOpenBoard = ({stage, guests}: {stage: StagePrismaType, guests:Sprint
           </div>
       </div>
 
-      {stage && stageEvalContext === EVAL_STATE.EVAL ?
+      {stage && stageEvalContext === EVAL_STATE.DISCOVER ?
         <div className="flex flex-col justify-start  items-stretch w-full   ">
           {/* <div className=" -order-last md:order-first flex justify-stretch w-full flex-1 items-start m-1 ">
             <EvalOrderedComp />
@@ -228,10 +222,10 @@ const SprintOpenBoard = ({stage, guests}: {stage: StagePrismaType, guests:Sprint
           <div className=" flex justify-stretch w-full flex-1 items-start m-1">
             <EvalSuits  />
           </div> </div> :
-        stageEvalContext === EVAL_STATE.ORDER ?
+        stageEvalContext === EVAL_STATE.DRAGDROP &&
           <EvalDragOrderBoardComp />
-          : stageEvalContext === EVAL_STATE.CLICK && <EvalClickBoardComp
-          />}
+         // : stageEvalContext === EVAL_STATE.CLICK && <EvalClickBoardComp/>
+          }
     </div>
   )
 }

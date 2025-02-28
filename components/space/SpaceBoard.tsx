@@ -14,113 +14,27 @@ import SpaceButton from './SpaceButton';
 import { getGridsByNb } from '@/actions/space';
 import { toast } from 'react-toastify';
 import { getLocalStagesByNb, getStageById } from '@/actions/stage';
+import { EVAL_STATE} from "@/api/graphql/stage/stage.types";
 
-export enum EVAL_STATE {
-  EVAL = 'EVAL',
-  ORDER = 'ORDER',
-  CLICK = 'CLICK',
-}
-/**
- * Space board PRINCIPAL Component
- */
- 
 const SpaceBoard = () => {
   const dispatch = useDispatch()
 
-  const { spaceStages, gridSelected, shuffeledAyahsContext,evalIndex, hideOddNbContext, evalContext, hideNbContext,blurContext, spaceGridsSelected,spaceStageSelected,
-    stagedContext, validContext, gridIndexContext, firstGridContext} = useSelector((state: RootStateType) => state.stage)
+  const { spaceStages, gridSelected,hideEvenNbContext, hideOddNbContext, evalContext, blurContext, spaceStageSelected,
+    stagedContext,} = useSelector((state: RootStateType) => state.stage)
   const { guestPrisma } = useSelector((state: RootStateType) => state.guestPrisma)
 
-  const { setShuffeledAyahsContext, setSpaceStages, setErrorNbContext, setSpaceStageAyahsContext , setHideOddNbContext,
-   setBlurContext, setStagedContext, setGridsContext, setHideNbContext, setGridIndexContext, setFirstGridContext, setGridsStaged } 
-   = stageActions
+  const { setShuffeledAyahsContext, setSpaceStages, setErrorNbContext, setHideEvenNbContext , setHideOddNbContext,setBlurContext,
+     setEvalContext,  setHideNbContext,  setGridsStaged } = stageActions
 
 
   useEffect(() => {
-    if (typeof spaceStageSelected !== 'undefined' && typeof spaceStageSelected.ayahs !== 'undefined' && 
-      spaceStageSelected.ayahs  != '' ) {
-        
-        //      const _grids: [[Ayah]] = gridSelected?.ayahs?.map((ay: string) => JSON.parse(ay) as [Ayah])
-        // dispatch(setGridsContext({ grids: _grids }))
-//        dispatch(setGridIndexContext({ index: spaceStageSelected.stageId?.split('-')[3] as unknown as number })) 
-  //      console.log({ grdSelected: spaceStageSelected.stageId, index :spaceStageSelected.stageId?.split('-')[3] });
       dispatch(setErrorNbContext({errorNb:0  }))
-     // dispatch(setShuffeledAyahsContext({ayahs: JSON.parse(spaceStageSelected?.ayahs)}))
-
-     // dispatch(setFirstGridContext({first:true}))
       dispatch(setGridsStaged({stageIds:['']}))
-     // console.log({ currentGuest, guestPrisma });
-    }
-  }, []);
-/* 
-  useEffect(() => {
-    if (typeof gridSelected !== 'undefined' && gridSelected.ayahs[0] != '' && typeof gridSelected.ayahs !== 'undefined') {
-      console.log({ grdSelected: gridSelected?.ayahs[0] });
-     
-      const _grids:Ayah[][]|[[Ayah]] = gridSelected.ayahs?.map((ay: string) => JSON.parse(ay) as Ayah[])
-      dispatch(setGridsContext({ grids: _grids }))
-      dispatch(setGridIndexContext({ index: 0 }))
-    }
-  }, [gridSelected]);
-
-  useEffect(() => {
-    console.log({gridIndexContext, gridSelected, firstGridContext});
-    
-    if (typeof gridSelected !== 'undefined' && typeof gridSelected.ayahs !== 'undefined' && gridSelected.ayahs[0] != '' && 
-      gridsContext.length > gridIndexContext) {
-      const shuffeleledFirst = gridsContext[gridIndexContext].map((ordG: Ayah, index: number) => ({ ...ordG, index: gridIndexContext ? ordG.number! + gridIndexContext : ordG.number! }));
-
-      const orderedAy = [..._.sortBy(gridsContext[gridIndexContext], ['numberInSurah'])].map((ordG: Ayah, index) => ({ ...ordG, index: gridIndexContext ? ordG.number! + gridIndexContext : ordG.number! }))
-      dispatch(setShuffeledFirstAyahsContext({ ayahs: shuffeleledFirst }))
-
-      dispatch(setOrderedAyahsContext({ ayahs: orderedAy }))
-
-      dispatch(setFirstGridContext({first:true}))
-
-    } else {
-      const shuffeleledFirst = gridsContext[0].map((ordG: Ayah) => ({ ...ordG, index: gridIndexContext ? ordG.number! + gridIndexContext : ordG.number }));
-
-      const orderedAy = [..._.sortBy(gridsContext[gridIndexContext ?? 0], ['numberInSurah'])].map((ordG: Ayah) => ({ ...ordG, index: gridIndexContext ? ordG.number! + gridIndexContext : ordG.number}))
-      dispatch(setGridIndexContext({ index: 0 }))
-
-      dispatch(setShuffeledFirstAyahsContext({ ayahs: shuffeleledFirst }))
-
-      dispatch(setOrderedAyahsContext({ ayahs: orderedAy }))
-
-      dispatch(setFirstGridContext({first:true}))
-    }
-  }, [gridIndexContext]);
-
-  useEffect(() => {
-    if (typeof gridSelected !== 'undefined' && gridSelected?.ayahs[0] != '' && typeof gridSelected.ayahs !== 'undefined') {
-      const _grids = gridSelected.ayahs?.map((ay: string) => JSON.parse(ay))
-
-      const shuffeleledFirst = gridsContext[gridIndexContext ?? 0]?.map((ordG: Ayah) => ({ ...ordG, index: gridIndexContext ? ordG.number! + gridIndexContext : ordG.number }));
-
-      const orderedAy = [..._.sortBy(gridsContext[gridIndexContext ?? 0], ['numberInSurah'])].map((ordG: Ayah) => ({ ...ordG, index: gridIndexContext ? ordG.number! + gridIndexContext : ordG.number   }))
-
-      dispatch(setShuffeledFirstAyahsContext({ ayahs: shuffeleledFirst }))
-
-      dispatch(setOrderedAyahsContext({ ayahs: orderedAy }))
-      dispatch(setFirstGridContext({first:true}))
-    }
-  }, [gridsContext]); */
-/* const selectGridHandler = async (arg: number) => {
-    try {
-      const gridsByNb = await getGridsByNb(arg)
-     
-      if(typeof gridsByNb !== 'undefined' &&  gridsByNb.success){
-      console.log({ grids: gridsByNb.grids });
-       dispatch(setSpaceGrids({ grids: gridsByNb.grids }))
-      }else {
-      toast.warning('can not reach the grid server, please check your internet connexion')
-    }
-    } catch (error) {
-      toast.error(`${error}`)
-    }
-} */
+      dispatch(setEvalContext({eval:EVAL_STATE.DISCOVER}))
+    }, []);
+  
   async function nextSouraHandler() {
-    if(spaceStages && spaceStages[0].souraNb !== -1 && spaceStages[0].souraNb  < 114 ){
+    if(spaceStages && spaceStages[0].souraNb !== -1 && typeof spaceStages !== 'undefined' && spaceStages[0]?.souraNb!  < 114 ){
          try {
            const stagesByNb = await getLocalStagesByNb(spaceStages[0].souraNb + 1 )
            
@@ -131,26 +45,19 @@ const SpaceBoard = () => {
            toast.warning('can not reach the grid server, please check your internet connexion')
           }
          } catch (error) {
-           //toast.warning(`${error}`)
-         }
-     }
-    
-  }
+        toast.warning(`${error} occured`) 
+        } }}
   async function prevSouraHandler() {
     if(spaceStages && spaceStages[0].souraNb !== -1 && spaceStages[0].souraNb  !== 1 ){
       try {
         const stagesByNb = await getLocalStagesByNb(spaceStages[0].souraNb! - 1 )
-        //console.log({stagesByNb});
-        
         if(typeof stagesByNb !== 'undefined' &&  stagesByNb.success){
         console.log({ grids: JSON.parse(stagesByNb.stages) });
          dispatch(setSpaceStages({ stages: JSON.parse(stagesByNb.stages) }))
         }else {
         toast.warning('can not reach the grid server, please check your internet connexion')
-  
-        }
+   }
       } catch (error) {
-        //toast.warning(`${error}`)
       }
   }
   }
@@ -176,64 +83,52 @@ useEffect(() => {
 getAyahsStageId()
 }, [spaceStageSelected]);
   
-
-  function hideNbHandler() {
-    dispatch(setHideNbContext({ hide: !hideNbContext }))
-  }
-  function hideOddNbHandler() {
+function hideOddNbHandler() {
+    console.log({hideOddNbContext});
     dispatch(setHideOddNbContext({ hide: !hideOddNbContext }))
+  }
+  function hideEvenNbHandler() {
+    console.log({hideEvenNbContext});
+        dispatch(setHideEvenNbContext({ hide: !hideEvenNbContext }))
   }
 
   function blurHandler() {
     dispatch(setBlurContext({ blur: !blurContext }))
   }
-  function stageContextHandler() {
-    dispatch(setStagedContext({ stagedContext: !stagedContext }))
-  }
-  
-  
-  /* useEffect(() => {
-//    console.log({ hideNbContext, evalContext, gridIndexContext, evalIndex, gridSelected, first });
-  }, [hideNbContext, evalIndex, gridIndexContext, evalContext, gridSelected]);
- */
+ useEffect(() => {
+  console.log({gridSelected, evalContext });
+ }, [gridSelected, evalContext]);
+ 
   return (
     <div className=" flex-col justify-start space-y-2 h-full items-center w-full ">
       <div className="flex  justify-around  items-center  py-2 ">
         <SpaceButton disabled={false} handlePress={prevSouraHandler} title='Prev Soura' />
         <SpaceButton disabled={false} handlePress={nextSouraHandler} title='Next Soura' />
-
-        <div className="flex  justify-between items-center  border border-green-400 text-center font-sans " >
+       <div className="flex  justify-between items-center  border border-green-400 text-center font-sans " >
           <input className="flex  justify-center items-center  border border-blue-800 text-green-300"
             type="checkbox"
-            id='HIDE_NB' name='HIDE_NB' value='HIDE_NB' checked={validContext || hideNbContext} onChange={() => hideNbHandler()} />
-          <label htmlFor='HIDE_NB' className='text-sm' >Hide even</label>
+            id='HIDE_EVEN' name='HIDE_EVEN' value='HIDE_EVEN' checked={hideEvenNbContext} onChange={() => hideEvenNbHandler()} />
+          <label htmlFor='HIDE_EVEN' className='text-sm' >Hide even</label>
         </div>
         <div className="flex  justify-between items-center  border border-green-400 text-center font-sans " >
           <input className="flex  justify-center items-center  border border-blue-800 text-green-300"
             type="checkbox"
-            id='HIDE_ODD_NB' name='HIDE_ODD_NB' value='HIDE_ODD_NB' checked={validContext || hideOddNbContext} onChange={() => hideOddNbHandler()} />
+            id='HIDE_ODD_NB' name='HIDE_ODD_NB' value='HIDE_ODD_NB' checked={hideOddNbContext } onChange={() => hideOddNbHandler()} />
           <label htmlFor='HIDE_ODD_NB' className='text-sm' >Hide Odd</label>
         </div>
         
           <div className="flex  justify-between items-center  border border-green-400 text-center font-sans " >
           <input className="flex  justify-center items-center  border border-blue-800 text-green-300"
             type="checkbox"
-            id='VALID_CTXT' name='VALID_CTXT' value='HIDE_NB' checked={blurContext} onChange={() => blurHandler()} />
-          <label htmlFor='HIDE_NB' className='text-sm' >Blur</label>
+            id=' BLUR_CTXT' name='BLUR_CTXT' value='BLUR_CTXT' checked={blurContext} onChange={() => blurHandler()} />
+          <label htmlFor='BLUR_CTXT' className='text-sm' >Blur</label>
         </div>
-        
-        <div className="flex  justify-between items-center  border border-green-400 text-center font-sans " >
-          <input className="flex  justify-center items-center  border border-blue-800 text-green-300"
-            type="checkbox"
-            id='STAGED_CTXT' name='STAGED_CTXT' value='STAGED_CTXT' checked={stagedContext} onChange={() => stageContextHandler()} />
-          <label htmlFor='STAGED_CTXT' className='text-sm' >Stageable</label>
-        </div> 
         <RadioButtonEvalState
-          evalState={EVAL_STATE.EVAL} title='Eval board' />
+          evalState={EVAL_STATE.DISCOVER} title='Discover' />
         <RadioButtonEvalState
-          evalState={EVAL_STATE.ORDER} title='Order Grid' />
+          evalState={EVAL_STATE.DRAGDROP} title='Drag & Drop' />
         </div>
-      {gridSelected && evalContext === EVAL_STATE.EVAL ?
+      { evalContext === EVAL_STATE.DISCOVER ?
         <div className="grid  grid-cols-1 md:grid-cols-2 w-full ">
           <div className=" md:order-first  flex justify-stretch w-full flex-1 items-start m-1 ">
             <EvalOrderedComp />
@@ -242,18 +137,11 @@ getAyahsStageId()
             <EvalSuits  />
           </div> 
           </div> :
-        evalContext === EVAL_STATE.ORDER &&
+        evalContext === EVAL_STATE.DRAGDROP &&
           <EvalDragOrderBoardComp />
-          /* : evalContext === EVAL_STATE.CLICK && <EvalClickBoardComp 
-          />
-          */
           }
     </div>
   )
 }
 
 export default SpaceBoard
-
-function setSpaceGrids(arg0: { grids: GridTypeData[]; }): any {
-  throw new Error('Function not implemented.');
-}

@@ -254,14 +254,14 @@ export const addGuestToStage = async ({
   stageId: string,
   tokenId: number,
   
-}) => {
+}) => { 
   console.log({
     stageId,
     
     tokenId
   });
   try {
-      const _stToken =  await prisma.guestStage.upsert({
+       const _stToken =  await prisma.guestStage.upsert({
         where: {
           tokenId_stageId:{
             tokenId: tokenId,
@@ -274,13 +274,13 @@ export const addGuestToStage = async ({
           update: {
             stageId,
             tokenId,
-          }
-        }) 
+          }}) 
         revalidateTag('stages')
-        revalidateTag('space')
-        return { success: true, message: JSON.stringify(_stToken) }
-
-    
+        revalidateTag('space') 
+        console.log({_stToken});
+        
+        return { success: true, message:  JSON.stringify(_stToken) 
+        }
 } catch (error: unknown) {
     return { success: false, message: JSON.stringify(error) }
   }
@@ -362,12 +362,16 @@ return {success: true, templates: JSON.stringify(templates)}
 }
 )
 export const getLocalStagesByNb = async (souraNb: number) => {
-
-  try {
-    
-  const stages = await prisma.stage.findMany({
+try {
+    const stages = await prisma.stage.findMany({
     where: {souraNb: souraNb}, select:{
-stageId:true, souraNb: true,      grid: true,group:true, arabName:true, souraName: true
+    stageId:true, 
+    souraNb: true,   
+       grid: true,
+       group:true, 
+       arabName:true, 
+       souraName: true,
+       ayahs: true
     }})
  console.log({souraNb, stages });
   return {success: true,stages:  JSON.stringify(stages) };
@@ -389,5 +393,20 @@ ayahs: true
   } catch (err) {
     console.log({ err });
     return {success: false,stage:  JSON.stringify(error) };
+  }
+}
+export const getStagesByTokenId = async (tokenId: number) => {
+
+  try {
+    
+  const stages = await prisma.guestStage.findMany({
+    where: {tokenId}, select:{
+guest: true
+    }})
+ //console.log({stageAyahs });
+  return {success: true,stages:  stages as unknown as string };
+  } catch (err) {
+    console.log({ err });
+    return {success: false,stages:  JSON.stringify(error) };
   }
 }

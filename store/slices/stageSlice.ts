@@ -1,4 +1,4 @@
-import { INSIGHT_STATE } from '@/api/graphql/stage/stage.types';
+import { INSIGHT_STATE, WINDOW_VISUALISATION } from '@/api/graphql/stage/stage.types';
 
 // third-party
 import { Ayah, EVAL_STATE, GiftType, GridMenu, GridTypeData, GuestPrismaType, PRODUCT_STATUS_ENUM, SprintGuest, SprintPrismaType, StagePrismaType, StagesSprintType, StageStateProps, StatsTemplateType, statsTemplateType, TemplateTypeData } from '@/api/graphql/stage/stage.types';
@@ -170,6 +170,7 @@ const initialState: StageStateProps = {
   draggedIndex: 0,
   errorNbContext: 0,
   firstStateContext: false,
+  exerciseContext: false,
   showStepsContext: false,
   gridsStaged:[''],
   selectedGifts:[{
@@ -191,17 +192,23 @@ const initialState: StageStateProps = {
   stepIndexContext:0,
   stageEvalIndexContext: 0,
   hideNbContext: false,
+  hideEvenNbContext:false,
+  hideOddNbContext: false,
   blurContext: false,
   firstGridContext: false,
   stageHideNbContext: false,
   faultsNbContext: 0,
   correctsNbContext: 0,
-  evalContext: EVAL_STATE.ORDER,
+  evalContext: EVAL_STATE.DISCOVER,
   insightContext: INSIGHT_STATE.SOURA,
-  stageEvalContext: EVAL_STATE.ORDER,
+  stageEvalContext: EVAL_STATE.DISCOVER,
+  windowVisualisationContext:WINDOW_VISUALISATION.ALL,
   validContext: false,
   stageValidContext: false,
   evalValidContext: false,
+  dragDropContext:false,
+  threeContext:false,
+  d3Context:false,
   menuSouraNb: [{ souraName: '', souraNb: -1 }],
   windowContext: -1,
   spaceStageAyahsContext:[
@@ -340,7 +347,9 @@ const stageSlice = createSlice({
     setStageReorderedAyahsContext(state: StageStateProps, action: PayloadAction<{ reorderedAyahsContext: number[] }>) {
       state.stageReorderedAyahsContext = action.payload.reorderedAyahsContext
     },
-
+    setWindowVisualisationContext(state: StageStateProps, action: PayloadAction<{ windVisu: WINDOW_VISUALISATION }>) {
+      state.windowVisualisationContext = action.payload.windVisu
+    },
     setShuffeledAyahsContext(state: StageStateProps, action: PayloadAction<{ ayahs: Ayah[] }>) {
       state.shuffeledAyahsContext = action.payload.ayahs
     },
@@ -398,7 +407,7 @@ const stageSlice = createSlice({
     },
     setCategoryContext(state: StageStateProps,
       action: PayloadAction<{ cat: GRIDS_NAME }>) {
-      console.log({ categoryContext: action.payload.cat })
+ 
       state.categoryContext = action.payload.cat
       state.showStepsContext = true
     },
@@ -429,6 +438,23 @@ const stageSlice = createSlice({
           console.log({ stageSprintSelected: action.payload.stage});
       state.stageSprintSelected = action.payload.stage;
       state.showStepsContext = false;
+       state.errorNbContext = initialState.errorNbContext;
+       state.reorderedAyahsContext =  initialState.reorderedAyahsContext;
+       state.gridSelected =  initialState.gridSelected;
+       state.gridsContext =  initialState.gridsContext;
+       state.orderedAyahsContext =  initialState.orderedAyahsContext;
+       state.shuffeledFirstAyahsContext =  initialState.shuffeledFirstAyahsContext;
+       state.shuffeledAyahsContext =  initialState.shuffeledAyahsContext;
+       state.d3Context = initialState.d3Context;
+       state.windowContext = initialState.windowContext
+       state.threeContext=initialState.threeContext
+       state.dragDropContext=initialState.dragDropContext
+    
+      },
+    setExerciseStages(state: StageStateProps,
+      action: PayloadAction<{ stages: StagesSprintType[] }>) {
+          //console.log({ stageSprintSelected: action.payload.stage});
+      state.exerciseStages = action.payload.stages;
        state.errorNbContext = initialState.errorNbContext;
        state.reorderedAyahsContext =  initialState.reorderedAyahsContext;
        state.gridSelected =  initialState.gridSelected;
@@ -480,11 +506,9 @@ const stageSlice = createSlice({
     },
 
     setStageShuffeledAyahsContext(state: StageStateProps, action: PayloadAction<{ ayahs: Ayah[] }>) {
-      console.log({
-        shuffeledAyahs: action.payload.ayahs
-      });
-      
       state.stageShuffeledAyahsContext = action.payload.ayahs
+      state.stageReorderedAyahsContext = initialState.stageReorderedAyahsContext
+     // state.exerciseContext = initialState.exerciseContext
     },
     setStageShuffeledFirstAyahsContext(state: StageStateProps, action: PayloadAction<{ ayahs: Ayah[] }>) {
       state.stageShuffeledFirstAyahsContext = action.payload.ayahs
@@ -507,6 +531,24 @@ const stageSlice = createSlice({
     setStageHideNbContext(state: StageStateProps,
       action: PayloadAction<{ hide: boolean }>) {
       state.stageHideNbContext = action.payload.hide
+    },
+    setDragDropContext(state: StageStateProps,
+      action: PayloadAction<{ dragDrop: boolean }>) {
+        state.dragDropContext = action.payload.dragDrop
+        state.d3Context = initialState.d3Context
+        state.threeContext = initialState.threeContext
+    },
+    setD3Context(state: StageStateProps,
+      action: PayloadAction<{ d3: boolean }>) {
+      state.d3Context = action.payload.d3
+      state.dragDropContext = initialState.dragDropContext
+      state.threeContext = initialState.threeContext
+    },
+    setThreeContext(state: StageStateProps,
+      action: PayloadAction<{ three: boolean }>) {
+      state.threeContext = action.payload.three
+      state.dragDropContext = initialState.dragDropContext
+      state.d3Context = initialState.dragDropContext
     },
     setStageValidContext(state: StageStateProps,
       action: PayloadAction<{ validCtxt: boolean }>) {
@@ -566,8 +608,17 @@ const stageSlice = createSlice({
     },
     setHideOddNbContext(state: StageStateProps,
       action: PayloadAction<{ hide: boolean }>) {
+        console.log({hideOddNbContext:  action.payload.hide});
+        
       state.hideOddNbContext = action.payload.hide
     },
+     setHideEvenNbContext(state: StageStateProps,
+      action: PayloadAction<{ hide: boolean }>) {
+        console.log({hideEvenNbContext:  action.payload.hide});
+
+      state.hideEvenNbContext = action.payload.hide
+    },
+
     setBlurContext(state: StageStateProps,
       action: PayloadAction<{ blur: boolean }>) {
       state.blurContext = action.payload.blur

@@ -11,6 +11,8 @@ declare global {
         }
     }
 }
+
+
 if (process.env.APP_ENV === 'LOC') {
     if (process.env.NODE_ENV === 'production') {
         prisma = new PrismaClient();

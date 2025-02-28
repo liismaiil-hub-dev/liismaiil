@@ -13,7 +13,25 @@
 }
 
 @layer components {
-
+  .ay-display  {
+    @apply  text-medium cursor-pointer;
+  }
+  .ay-hover {
+    @apply  hover:-translate-y-1 hover:-translate-x-1 border-2 border-green-400   duration-200 rounded-sm 
+     shadow-sm hover:text-2xl cursor-pointer;
+  }
+  .window-ay-click  {
+    @apply  duration-200 rounded-sm  shadow-sm font-semibold  ;
+  }
+  .stage-hover {
+    @apply hover:bg-emerald-600 hover:text-yellow-200 hover:text-2xl hover:-translate-x-5 hover:-translate-y-1 ease-in;
+  }
+  .first-ay {
+    @apply    duration-200 rounded-sm shadow-sm text-3xl;
+  }
+  .ay-border {
+    @apply    border-2 border-green-400 rounded-sm shadow-sm text-3xl;
+  }
   .grid-ayah {
     @apply  hover:-translate-y-1 duration-200 rounded-sm  shadow-sm;
   }
@@ -63,7 +81,8 @@
     @apply right-2 ring-blue-300 ring-opacity-50;
   }
   .btn {
-    @apply cursor-pointer rounded-sm bg-sky-400 py-2 px-4 transition-colors hover:bg-sky-600 hover:shadow-lg text-white tracking-wider w-full;
+    @apply cursor-pointer rounded-md bg-sky-400 py-2 px-4 transition-colors hover:bg-sky-600 hover:shadow-lg text-white tracking-wider
+     w-full;
   }
   .input {
     @apply rounded-r-sm text-sky-800 

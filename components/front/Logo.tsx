@@ -13,8 +13,8 @@ function Logo() {
         
         <div className='cursor-pointer p-3' >
             <Link href='/' >
-                <Image src="/liismLogo.svg" alt="liismaiil s logo"
-                    className='object-contain' width={150} height={70} />
+                <Image src="/logo.svg" alt="liismaiil s logo"
+                    className='object-contain p-1' width={150} height={150} />
             </Link>
         </div>
         <div className="flex w-11 justify-center items-center " >

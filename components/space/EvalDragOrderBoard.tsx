@@ -45,34 +45,14 @@ export default function EvalDragOrderBoard() {
 
     const dispatch = useDispatch()
 
-    const { spaceStageSelected, firstStateContext,errorNbContext, reorderedAyahsContext,isDraggedContext, isDroppedContext, gridSelected, orderedAyahsContext, shuffeledAyahsContext, gridsContext, validContext, hideNbContext, shuffeledFirstAyahsContext, gridIndexContext, evalIndex } = useSelector((state: RootStateType) => state.stage)
+    const {  firstStateContext,errorNbContext, reorderedAyahsContext, orderedAyahsContext, shuffeledAyahsContext,
+         shuffeledFirstAyahsContext,  } = useSelector((state: RootStateType) => state.stage)
     const { guestPrisma } = useSelector((state: RootStateType) => state.guestPrisma)
     const { setDraggedIndex, setOrderedAyahsContext, setErrorNbContext, setReorderedAyahsContext,
-        setShuffeledAyahsContext, setEvalIndex, setValidContext,  setShuffeledFirstAyahsContext, setFirstStateContext, setGridIndexContext, setHideNbContext } = stageActions
+        setShuffeledAyahsContext, setValidContext,   setHideNbContext } = stageActions
 
     const [firstState, setFirstState] = useState(() => true);
     const [reorderedAyahs, setReorderedAyahs] = useState([-1]);
-/*     useEffect(() => {
-        if(typeof spaceStageSelected != 'undefined' ){
-       console.log({spaceStageSelected, ayahs:JSON.parse(spaceStageSelected.ayahs)});
-       JSON.parse(spaceStageSelected.ayahs).forEach((ay: Ayah) => {
-        console.log({ay});
-        
-       });
-          dispatch(setShuffeledAyahsContext({ayahs: spaceStageSelected?.ayahs}))
-     
-             const orderedAy = _.sortBy(JSON.parse(spaceStageSelected?.ayahs), ['numberInSurah']) 
-             console.log({orderedAy, });
-             console.log({ orderedAyahsContext, shuffeledAyahsContext});
-             
-         dispatch(setOrderedAyahsContext({ ayahs: orderedAy }))
-             
-        } }, [spaceStageSelected]);
-      
-     */
-    function shuffelHandler() {
-        dispatch(setShuffeledAyahsContext({ ayahs: [..._.shuffle(orderedAyahsContext)] }))
-    }
     const sensors = useSensors(
         useSensor(PointerSensor),
         useSensor(TouchSensor),
@@ -178,7 +158,7 @@ useEffect(() => {
 
     }, [reorderedAyahs]);
 
-    function validAyahHandler(reord: number) {
+  /*   function validAyahHandler(reord: number) {
         console.log({ reord, reorderedAyahs });
 
         if (firstState && reorderedAyahs.length + 1 === shuffeledFirstAyahsContext.length) {
@@ -224,7 +204,7 @@ useEffect(() => {
             setFirstState(true)
 
         }
-    }
+    } */
 
     function handleValidate() {
         console.log('validate');
@@ -258,11 +238,7 @@ useEffect(() => {
                         })}</div>
             </div>
         </DndContext>
-        <div className="flex  justify-evenly items-center w-full  border-3  bg-slate-300 font-light  border-teal-200 text-gray-600">
-            <button className=" px-5 py-3 border  rounded-md border-emerald-700/10" onClick={() => console.log('dismiss')}>Dismiss </button>
-            <button className=" px-5 py-3 border  rounded-md border-emerald-700/50" onClick={handleShuffle}> Shuffle </button>
-            <button className=" px-5 py-3 border  rounded-md border-emerald-700/70" onClick={handleValidate}> Validate </button>
-        </div>
+        
     </div>
 
     )

@@ -2,11 +2,10 @@
 import { GuestType } from "@/app/api/graphql/profile/profile.types";
 import {  Pagination } from "@heroui/pagination";
 import {cn} from "@/lib/cn-utility";
-
 import Image from "next/image";
 import Link from 'next/link';
 import {COUNTRY_CODES} from "@/store/constants/flagArray";
-import { ReactNode } from "react";
+
 
 
 const HostsComponent = ({ hosts }: { hosts: GuestType[] }) => {

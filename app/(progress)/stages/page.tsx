@@ -13,10 +13,10 @@ try {
    */
 
     return (<div className="grid grid-cols-3">
-      <div className="flex-col justify-start items-stretch col-span-1  h-screen overflow-x-scroll">
+      <div className="flex-col justify-start items-stretch col-span-1  h-screen ">
       <StateOpenBoard  />
       </div>
-      <div className="flex justify-center items-center col-span-2 px-3 h-screen  overflow-x-scroll"> 
+      <div className="flex-col justify-start items-stretch col-span-2 h-screen  "> 
       <OpenBoard  />
        </div>
        </div>

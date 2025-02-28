@@ -21,8 +21,9 @@ const StageSteps = ({stages}:{stages: StagesSprintType[]}) => {
  //console.log({stages});
   
 const [isPending, startTransition] = useTransition()
-  const { setStagesSprintsContext, setStageGridSelected, setCatStages, setCategoryContext } = stageActions
-  const { stagesSprintsContext, catStages, categoryContext, showStepsContext} = useSelector((state: RootStateType) => state.stage)
+  const { setStagesSprintsContext,  setCatStages, setCategoryContext } = stageActions
+  const { stagesSprintsContext, categoryContext,catStages } = useSelector((state: RootStateType) => state.stage)
+
 
   // creating chunks 
   const newTiwal: StagesSprintType[] = useMemo(() => stagesSprintsContext?.filter((gr: StagesSprintType) => {
@@ -42,12 +43,14 @@ const [isPending, startTransition] = useTransition()
 
   useEffect(() => {
     startTransition(()  =>{
-
       dispatch(setStagesSprintsContext({stages:stages}))
     }
     )
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stages]);
+useEffect(() => {
+  dispatch(setCategoryContext({cat:GRIDS_NAME.MOFASAL}))
+}, []);
   
 const categoryHandler = (cat:GRIDS_NAME ) => {
  console.log({cat});
@@ -76,16 +79,15 @@ const categoryHandler = (cat:GRIDS_NAME ) => {
       break;
     }
   };}
+console.log({categoryContext, catStages});
 
-  return (
-    <div className="flex-col items-stretch justify-center gap-3">
-    <section  className="container  overflow-scroll w-svw gap-3  grid grid-cols-4 items-center p-1 
-    border-3 border-gray-500 rounded-md space-x-3">
+  return (<section  className="container  overflow-scroll w-full gap-1  grid grid-cols-4 items-center p-1 
+    border-1 border-blue-200 rounded-md ">
               <div className={"flex justify-center py-3 w-full col-span-1 items-center text-center  "} >
             <Button className={cn(categoryContext === GRIDS_NAME[GRIDS_TLD.TIWAL] && "border-3 shadow-md shadow-green-300  border-green-200 \
                 " ,"flex justify-center py-1 w-full  rounded-md items-center bg-blue-300 \
                text-green-700 ")}
-             onClick={() => { categoryHandler(GRIDS_NAME[GRIDS_TLD.TIWAL]) }} 
+             onPress={() => { categoryHandler(GRIDS_NAME[GRIDS_TLD.TIWAL]) }} 
              aria-label=  {`${GRIDS_NAME[GRIDS_TLD.TIWAL]}`} 
              title=  {`${GRIDS_NAME[GRIDS_TLD.TIWAL]}   `}>
           {`${GRIDS_NAME[GRIDS_TLD.TIWAL]} [ 2 - 7 ]`}
@@ -94,7 +96,7 @@ const categoryHandler = (cat:GRIDS_NAME ) => {
         <div className="flex justify-center w-full col-span-1 items-center text-center  ">
         <Button className={cn(categoryContext === GRIDS_NAME[GRIDS_TLD.MIIN] && "border-3 shadow-md shadow-green-300  border-green-200 \
                 " ,"flex justify-center py-1 w-full  rounded-md items-center bg-blue-300 \
-               text-green-700 ")} onClick={() => { categoryHandler(GRIDS_NAME[GRIDS_TLD.MIIN]) }} 
+               text-green-700 ")} onPress={() => { categoryHandler(GRIDS_NAME[GRIDS_TLD.MIIN]) }} 
             aria-label=  {`${GRIDS_NAME[GRIDS_TLD.MIIN]}`} title=  {`${GRIDS_NAME[GRIDS_TLD.MIIN]} `}>
          {`${GRIDS_NAME[GRIDS_TLD.MIIN]} [ 8 - 18 ]`}
        </Button>
@@ -103,7 +105,7 @@ const categoryHandler = (cat:GRIDS_NAME ) => {
        <Button className={cn(categoryContext === GRIDS_NAME[GRIDS_TLD.MATHANI] 
        && "border-3 shadow-md shadow-green-300  border-green-200 \
                 " ,"flex justify-center py-1 w-full  rounded-md items-center bg-blue-300 \
-               text-green-700 ")} onClick={() => { categoryHandler(GRIDS_NAME[GRIDS_TLD.MATHANI]) }} 
+               text-green-700 ")} onPress={() => { categoryHandler(GRIDS_NAME[GRIDS_TLD.MATHANI]) }} 
          aria-label=  {`${GRIDS_NAME[GRIDS_TLD.MATHANI]}`} title=  {`${GRIDS_NAME[GRIDS_TLD.MATHANI]} `}>
       {`${GRIDS_NAME[GRIDS_TLD.MATHANI]} [ 19 - 48 ]`}
     </Button>
@@ -111,32 +113,13 @@ const categoryHandler = (cat:GRIDS_NAME ) => {
     <div className="flex justify-center w-full col-span-1 items-center text-center  ">
     <Button className={cn(categoryContext === GRIDS_NAME[GRIDS_TLD.MOFASAL] && "border-3 shadow-md shadow-green-300  border-green-200 \
                 " ,"flex justify-center py-1 w-full  rounded-md items-center bg-blue-300 \
-               text-green-700 ")} onClick={() => { categoryHandler(GRIDS_NAME[GRIDS_TLD.MOFASAL]) }} 
+               text-green-700 ")} onPress={() => { categoryHandler(GRIDS_NAME[GRIDS_TLD.MOFASAL]) }} 
        aria-label=  {`${GRIDS_NAME[GRIDS_TLD.MOFASAL]}`} title=  {`${GRIDS_NAME[GRIDS_TLD.MOFASAL]}  `}>
     {`${GRIDS_NAME[GRIDS_TLD.MOFASAL]} [ 49 - 114 ]`}
     </Button>
   </div>
   </section>
-    {/* <section  className=" rounded-md ">
-      
-      {categoryContext === GRIDS_NAME[GRIDS_TLD.TIWAL] && newTiwal && newTiwal.length > 1 && showStepsContext &&
-            <StageStepsIn stageCat= {`${GRIDS_NAME[GRIDS_TLD.TIWAL]}`} grids={newTiwal} handleSelectedStage={(arg) => selectStageHandler(arg)} />
-        }
-      {categoryContext === GRIDS_NAME[GRIDS_TLD.MIIN] && newMiin && newMiin.length > 1 && showStepsContext &&
-            <StageStepsIn stageCat= {`${GRIDS_NAME[GRIDS_TLD.MIIN]}`} grids={newMiin} handleSelectedStage={(arg) => selectStageHandler(arg)} />
-        }   
-     {categoryContext === GRIDS_NAME[GRIDS_TLD.MATHANI] &&newMathani && newMathani.length > 1 && showStepsContext &&
-        <StageStepsIn stageCat= {`${GRIDS_NAME[GRIDS_TLD.MIIN]}`} grids={newMathani} handleSelectedStage={(arg) => selectStageHandler(arg)} />
-        }
- {categoryContext === GRIDS_NAME[GRIDS_TLD.MOFASAL] &&newMofasal && newMofasal.length > 1 && showStepsContext &&
-     <StageStepsIn stageCat= {`${GRIDS_NAME[GRIDS_TLD.MOFASAL]}`} grids={newMofasal} handleSelectedStage={(arg) => selectStageHandler(arg)} />
-  }
-</section> */}
-</div>
-
-    );
-
-
+);
 }
 
 export default StageSteps

@@ -51,7 +51,7 @@ function RootLayout({ children }: { children: ReactNode }) {
                 <div className='container' >
                   <Navigation />
                 </div>
-                <div className='container border-2   scrollbar-hide rounded-r-md border-green-300 flex flex-col  justify-start items-center w-full h-full '>
+                <div className='container    overflow-scroll  flex flex-col  justify-start items-stretch w-full h-full '>
                   {children}
                 </div>
 

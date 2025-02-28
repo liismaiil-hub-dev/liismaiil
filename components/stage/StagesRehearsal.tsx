@@ -33,26 +33,17 @@ const StagesRehearsal = ( ) => {
     console.log(error);
   }
  }
- const [rehearsalStages, setRehearsalStages] = useState(() => _.filter(catStages , (spr:StagesSprintType)  => spr.grid != 5 ));
- 
-   
- useEffect(() => {
-   const _rehearsal = _.filter(catStages , (spr:StagesSprintType)  => spr.grid != 5)
-   setRehearsalStages(_rehearsal)
- }, [catStages]);
- 
- 
  
   return (
       <ScrollShadow >
         {typeof catStages !== 'undefined' && catStages && catStages.length > 0 &&
-          <section className="flex flex-col justify-start items-stretch text-blue-800 space-y-1 h-full border-1 border-green-200 shadow-sm overflow-x-scroll  ">
+          <section className="flex flex-col justify-start items-stretch text-blue-800 space-y-1 h-full border-1 border-green-200 shadow-sm overflow-scroll  ">
             <div className="flex justify-center items-center bg-orange-200/90 rounded-sm w-full ">  
             &nbsp; {categoryContext} Stages &nbsp; </div>
           <div   className="grid grid-cols-3 gap-2 p-2 w-full flex-wrap ">
-            {rehearsalStages && rehearsalStages?.map((grid: StagesSprintType, index: number) => {
-//console.log({ grid });
-              return( <div key={`${grid.stageId}_${index}`} className="flex items-center justify-center rounded-md col-span-1 ">
+            {catStages && catStages?.map((grid: StagesSprintType, index: number) => {
+
+              return( grid.arabName && grid.grid !== -1 && <div key={`${grid.stageId}_${index}`} className="flex items-center justify-center rounded-md col-span-1 ">
              <Button className=" text-center bg-emerald-300/80 text-pretty text-sm rounded-md w-full" 
              onPress={() => { selectRehearsalHandler(grid); } } 
              key={`${grid.souraName}-${grid.souraNb}`} aria-label={`${grid.souraName}`} title={`${grid.souraName}`}>

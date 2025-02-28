@@ -1,4 +1,4 @@
-import { EVAL_STATE } from "./SpaceBoard";
+import { EVAL_STATE } from "@/api/graphql/stage/stage.types";
 
 
 export default function CheckEvalState({handleRadioCheck, title, evalState, actualState}: {handleRadioCheck: any, 

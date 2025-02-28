@@ -131,7 +131,46 @@ export const getStatTaysir = async ({
             
         }
 }
-   
+export const addGuestToSprint = async ({
+    sprintId,
+    tokenId,
+  }: {
+    sprintId: string,
+    tokenId: number,
+    
+  }) => { 
+    console.log({
+      sprintId,
+      tokenId
+    });
+    try {
+         const _stToken =  await prisma.guestSprint.upsert({
+          where: {
+            sprintId_tokenId:{
+              tokenId: tokenId,
+              sprintId: sprintId,
+              }},
+            create: {
+              sprintId,
+              tokenId,
+              addedAt:new Date().toISOString(),
+            },
+            update: {
+              sprintId,
+              tokenId,
+              addedAt:new Date().toISOString(),
+            
+            }}) 
+          revalidateTag('stages')
+          revalidateTag('space') 
+          console.log({_stToken});
+          
+          return { success: true, message:  JSON.stringify(_stToken) 
+          }
+  } catch (error: unknown) {
+      return { success: false, message: JSON.stringify(error) }
+    }
+  }   
 
 export const sprintActivate = async (sprintId: string) => {
     console.log({ sprintId });
@@ -164,7 +203,7 @@ export const getPublishedSprints = memoize(async ({ page, limit }: { page: numbe
             createdById: true,
         },
         skip: page ?? 0,
-        take: limit ?? 50,
+        take: limit ?? 100,
     });
     console.log({ sprintPublished: sprintPublished });
     return sprintPublished

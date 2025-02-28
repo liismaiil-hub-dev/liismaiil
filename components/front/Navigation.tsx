@@ -165,7 +165,8 @@ function Navigation() {
 
             {/* laptop nav  */}
 
-            <section className='hidden md:flex text-xl font-extralight space-x-2 space-y-1 md:justify-center  md:items-center flex-nowrap  text-gray-400' >
+            <section className='hidden md:flex text-xl font-extralight gap-1 md:justify-center  md:items-center 
+            flex-nowrap  text-gray-400' >
                 <div className={cn(isRoute('') && 'nav-selected', 'CENTER nav-element')}  >
                     <Link prefetch={true} key={`home`} href='/'  >
                         Home

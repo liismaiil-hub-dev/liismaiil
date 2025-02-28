@@ -1,7 +1,7 @@
 'use client'
-
-import { createNewSprint } from "@/actions/sprint";
-import { Ayah } from '@/app/api/graphql/stage/stage.types';
+import { getStageForSprint } from '@/actions/stage';
+import { Ayah, WINDOW_VISUALISATION } from '@/app/api/graphql/stage/stage.types';
+import { ayahWithoutPunct } from '@/lib/tools';
 import { stageActions } from "@/store/slices/stageSlice";
 import { RootStateType } from '@/store/store';
 
@@ -13,10 +13,10 @@ import { toast } from 'react-toastify';
 function EvalSuits() {
     const dispatch = useDispatch()
     
-    const {firstStateContext, stageReorderedAyahsContext,stageOrderedAyahsContext,
+    const {windowVisualisationContext, firstStateContext, stageReorderedAyahsContext,stageOrderedAyahsContext,stageSprintSelected,
          errorNbContext,stageShuffeledAyahsContext, stageGridsContext,  stageHideNbContext, stageShuffeledFirstAyahsContext, 
          stepIndexContext, stageGridSelected } = useSelector((state: RootStateType) => state.stage)
-    const { setStageReorderedAyahsContext,setFirstStateContext, setStageGridSelected,setStageValidContext, setErrorNbContext,setStageHideNbContext } = stageActions
+    const { setStageReorderedAyahsContext,setFirstStateContext, setStageGridSelected,setStageValidContext, setStageOrderedAyahsContext, setStageShuffeledAyahsContext, setErrorNbContext,setStageHideNbContext } = stageActions
     
     function ayahInReordered(ord: number) {
        if(typeof stageReorderedAyahsContext!= 'undefined' ) {
@@ -27,30 +27,47 @@ function EvalSuits() {
 useEffect(() => {
 dispatch(setStageReorderedAyahsContext({reorderedAyahsContext:[-1]})) 
 }, []);
-   
-    function validAyahHandler(reord: number) {
-        console.log({ reord, stageReorderedAyahsContext });
   
-        if (typeof firstStateContext!== 'undefined' && firstStateContext && typeof stageReorderedAyahsContext!= 'undefined' && stageReorderedAyahsContext.length + 1 === stageShuffeledFirstAyahsContext.length) {
+  useEffect(() => {
+    console.log({stageSprintSelected});
+    if (typeof stageSprintSelected !== 'undefined' && stageSprintSelected?.souraName != '' ){
+  const _actualSprint = async () =>{ 
+    const _sprint =  await getStageForSprint(stageSprintSelected.stageId)
+  if ( _sprint.success && typeof _sprint.stage !== 'undefined' ) {
+    const _shuffeleledFirst = (JSON.parse(_sprint.stage!.ayahs)).map((ordG: Ayah, index: number) => (ordG));
+   console.log({ _shuffeleledFirst });
+  const _orderedAy = [..._.sortBy(_shuffeleledFirst, ['number'])].map((ordG: Ayah, index) => (ordG))
+    console.log({ _orderedAy });
+  
+    dispatch(setStageOrderedAyahsContext({ ayahs: _orderedAy }))
+    dispatch(setStageShuffeledAyahsContext({ ayahs: _shuffeleledFirst }))
+  }}
+  _actualSprint()}
+  }, [stageSprintSelected]);
+   
+  useEffect(() => {
+console.log({stageShuffeledAyahsContext});
+
+  }, [stageShuffeledAyahsContext]);
+   
+  function validAyahHandler(reord: number) {
+        console.log({ reord, stageReorderedAyahsContext });
+          if (typeof firstStateContext!== 'undefined' && firstStateContext && typeof stageReorderedAyahsContext!= 'undefined' && stageReorderedAyahsContext.length + 1 === stageShuffeledFirstAyahsContext.length) {
             toast.success(`It s  your last ayah on that grid of  ${stageShuffeledFirstAyahsContext.length} values`)
         }
-  
         if (typeof stageReorderedAyahsContext!= 'undefined' && stageReorderedAyahsContext[0] == -1 && reord !== stageOrderedAyahsContext[0].numberInSurah) {
-            toast.error(`You made a mistake on the first ayah its ${stageOrderedAyahsContext[0].numberInSurah}in the grid`)
-  
+            console.log({reord,fir:stageOrderedAyahsContext[0].numberInSurah} );
+            
+            toast.error(`You made a mistake on the first ayah its ${stageOrderedAyahsContext[0].text} it s in orange color `)
         }
         else if (typeof stageReorderedAyahsContext!= 'undefined' && stageReorderedAyahsContext[0] == -1) {
-  
-            //console.log({ firstReord: stageReorderedAyahsContext[0] });
             dispatch(setStageReorderedAyahsContext({reorderedAyahsContext:[reord]}))
 
         } else if (ayahInReordered(reord)) {
             toast.success(`You already selected ayah ${reord}`)
         } else if (typeof stageReorderedAyahsContext!= 'undefined' && reord === stageReorderedAyahsContext[stageReorderedAyahsContext.length - 1] + 1) {
-  
-            dispatch(setStageReorderedAyahsContext({reorderedAyahsContext:[...stageReorderedAyahsContext, reord]}))
-        } else {
-            if(typeof stageReorderedAyahsContext!= 'undefined' ){
+              dispatch(setStageReorderedAyahsContext({reorderedAyahsContext:[...stageReorderedAyahsContext, reord]}))
+        } else if(typeof stageReorderedAyahsContext!= 'undefined' ){
             toast.warning(`you must select 
                  ${stageOrderedAyahsContext[stageReorderedAyahsContext.length].text} 
                  is next ayah `, {
@@ -58,27 +75,45 @@ dispatch(setStageReorderedAyahsContext({reorderedAyahsContext:[-1]}))
                 autoClose: false
             })
             dispatch(setErrorNbContext({errorNb: errorNbContext+1}))
-}        }
-        if (typeof stageReorderedAyahsContext!= 'undefined' && errorNbContext < 4) {
+        }        
+        if (typeof stageReorderedAyahsContext!= 'undefined' && stageSprintSelected.grid === 3 && errorNbContext < 3) {
             console.log({ stageReorderedAyahsContext, stageShuffeledAyahsContext });
-  
-            if ((firstStateContext && stageReorderedAyahsContext.length === stageShuffeledFirstAyahsContext.length && stageReorderedAyahsContext[0] !== -1) || (!firstStateContext && stageReorderedAyahsContext.length === stageShuffeledAyahsContext.length && stageReorderedAyahsContext[0] !== -1)) {
+            if ( stageReorderedAyahsContext.length === stageShuffeledAyahsContext.length && stageReorderedAyahsContext[0] !== -1) {
                 toast.success('it was the last ayas for that grid you can stage it')
-                }
-  
-        } else {
+            }
+        } else if (typeof stageReorderedAyahsContext!= 'undefined' && stageSprintSelected.grid === 4 && errorNbContext < 5) {
+          if ( stageReorderedAyahsContext.length === stageShuffeledAyahsContext.length && stageReorderedAyahsContext[0] !== -1) {
+                toast.success('it was the last ayas for that grid you can stage it')
+            }
+        } else if (typeof stageReorderedAyahsContext!= 'undefined' && stageSprintSelected.grid === 5 && errorNbContext < 7) {
+          if ( stageReorderedAyahsContext.length === stageShuffeledAyahsContext.length && stageReorderedAyahsContext[0] !== -1) {
+                toast.success('it was the last ayas for that grid you can stage it')
+            }
+        }else {
             toast.warning(`you must rehearsal  !!! `)
             dispatch(setStageValidContext({ validCtxt: false }))
             dispatch(setStageHideNbContext({ hide: false }))
             dispatch(setErrorNbContext({errorNb:0}))
             dispatch(setFirstStateContext({first:false}))
   }}
-  const [gridAyahs, setGridAyahs] = useState(() => JSON.parse(stageGridSelected.ayahs!) );
   
-    useEffect(() => {
-        console.log({  });
+  const [gridAyahs, setGridAyahs] = useState(() => {
+    if(typeof stageGridSelected.ayahs !== 'undefined' && stageGridSelected && stageGridSelected.souraNb !== -1){
+         return JSON?.parse(stageGridSelected?.ayahs!)} }
+        );
+  useEffect(() => {
+    console.log({ stageReorderedAyahsContext, stageShuffeledAyahsContext });
+    if ( stageReorderedAyahsContext.length === stageShuffeledAyahsContext.length && stageReorderedAyahsContext[0] !== -1) {
+        toast.success('it was the last ayas for that grid you can stage it')
+    }
+  }, [stageReorderedAyahsContext]);
+  
+useEffect(() => {
+        console.log({stageGridSelected});
+        
+if(typeof stageGridSelected !== 'undefined' && stageGridSelected && typeof stageGridSelected.ayahs !== 'undefined' && stageGridSelected.ayahs !== ''){        
 setGridAyahs(JSON.parse(stageGridSelected.ayahs!))
-    }, [stageReorderedAyahsContext, stageGridSelected]);
+}    }, [stageReorderedAyahsContext, stageGridSelected]);
     
     useEffect(() => {
         console.log({ stepIndexContext });
@@ -100,8 +135,7 @@ setGridAyahs(JSON.parse(stageGridSelected.ayahs!))
        0 
     }
 
-    return <div className={`flex  border-2 border-blue-400 rounded-md flex-col justify-start p-2  space-y-2 items-stretch w-full`} >
-        <div className="flex flex-col justify-start items-stretch  space-y-2">
+    return <div className="flex flex-col justify-start items-stretch w-full h-full  rounded-md space-y-2 border-2  border-orange-400">
             { stageShuffeledAyahsContext && typeof stageReorderedAyahsContext !== 'undefined' && 
             stageShuffeledAyahsContext?.map((ayag: Ayah) => {
                 //console.log({ stageReorderedAyahsContext, ayag });
@@ -110,37 +144,55 @@ setGridAyahs(JSON.parse(stageGridSelected.ayahs!))
                 if (typeof stageHideNbContext !== 'undefined' && !stageHideNbContext) {
                     return <button onClick={() => { validAyahHandler(ayag.numberInSurah!) }}
                      key={`${ayag.numberInSurah}_${ayag.juz}`} 
-                     className=" flex p-2 bg-emerald-100/30 justify-between px-2
-                    items-center space-x-2 border-b-1 border-green-300/25 ">
+                     className=" flex p-1 bg-emerald-100/30 items-center gap-1 border-1 border-green-300/25 ">
                                     { getMin() ==  ayag.numberInSurah ?
-                                  <>  <div className='flex justify-center border-2 border-red-500 items-center'>{` [ ${ ayag.numberInSurah}- ${ ayag.number}] `}
+                                  <div className=" flex p-1border-2 rounded-md bg-orange-400/70 border-red-500 
+                                  justify-between w-full h-full items-center gap-1 border-1 ">  
+                                  <div className='flex-none w-24 justify-start  '>{` [ ${ ayag.numberInSurah}- ${ ayag.number}] `}
                                     </div>
-                                    <div className=' flex text-right justify-end items-center
-                                    hover:bg-emerald-800 hover:text-yellow-200 hover:scale-125 hover:-translate-x-3 hover:-translate-y-1 ease-in 
-                                    hover:cursor-pointer  bg-red-500/15'>{ayag.text}</div>
-                                    </> 
-                                    :<>
-                                   <div className='flex justify-center  items-center'>{` [ ${ ayag.numberInSurah}- ${ ayag.number}] `}
-                                    <div className=' flex text-right justify-end items-center
-                                     hover:bg-emerald-800 hover:text-yellow-200 hover:scale-125 hover:-translate-x-3 hover:-translate-y-1 ease-in 
-                                     hover:cursor-pointer  active:border-red-500'>{ayag.text}</div>
+                                    <div className=' flex flex-grow   text-center justify-end
+                                    hover:bg-emerald-600 hover:text-yellow-200  hover:text-2xl hover:-translate-x-5 hover:-translate-y-1 ease-in 
+                                    hover:cursor-pointer '>{ayag.text}
                                     </div>
-                                    </> 
-                                    }
+                                    </div> 
+                                    :
+                                    <div className=" flex p-1 bg-emerald-100/30 justify-stretch w-full h-full
+                                                 items-center gap-1 border-b-1 border-green-300/25">  
+                                  <div className='flex-none w-24  justify-start border-2  items-center'>{` [ ${ ayag.numberInSurah}- ${ ayag.number}] `}
+                                    </div>
+                                    <div className=' flex-grow flex text-right justify-end items-center w-full
+                                     hover:bg-emerald-600 hover:text-yellow-200 hover:text-2xl  hover:-translate-x-5 hover:-translate-y-1 ease-in 
+                                     hover:cursor-pointer  '>{windowVisualisationContext === WINDOW_VISUALISATION.ODD && ayag.numberInSurah %2 !==0 ?ayag.text :
+                                        windowVisualisationContext === WINDOW_VISUALISATION.EVEN && ayag.numberInSurah %2 ===0 ? ayag.text:
+                                        windowVisualisationContext === WINDOW_VISUALISATION.AKHIR ? ayahWithoutPunct(ayag.text)[ayahWithoutPunct(ayag.text).length -1]:
+                                        windowVisualisationContext === WINDOW_VISUALISATION.AWAL ? ayahWithoutPunct(ayag.text)[0]: 
+                                        windowVisualisationContext === WINDOW_VISUALISATION.AWSAT ? ayahWithoutPunct(ayag.text)[Math.ceil(ayahWithoutPunct(ayag.text).length/2)]:
+                                        ayag.text}
+                                     </div></div>}
                                 </button>
                             }
                             else {
-                                return (
-                                    <button onClick={() => { validAyahHandler(ayag.number!) }} 
+                                return (getMin() ==  ayag.numberInSurah ?
+                                    <button onClick={() => { validAyahHandler(ayag.numberInSurah!) }} 
                                     key={`${ayag.number!}_${ayag.juz}`} 
-                                    className=' flex text-right justify-end items-center
-                                     p-2 bg-emerald-100/30  px-2 space-x-2 border-b-1 border-green-300/25 
-                                    hover:bg-emerald-800 hover:text-yellow-200 hover:scale-110
-                                    hover:-translate-x-5 hover:-translate-y-1 ease-in 
-                                    hover:cursor-pointer '>{ayag.text}</button>)
+                                    className=' border-2 rounded-md bg-orange-400/70 border-red-500 flex text-right justify-end items-center p-2 w-full h-full px-1 gap-1 border-b-1 border-green-300/25 
+                                          hover:stage-hover  hover:cursor-pointer '>
+                                        {ayag.text}</button>:
+                                        <button onClick={() => { validAyahHandler(ayag.numberInSurah!) }} 
+                                        key={`${ayag.number!}_${ayag.juz}`} 
+                                        className='  flex text-right justify-end items-center p-2 bg-emerald-100/30 w-full h-full px-1 gap-1 border-1 rounded-md 
+                                        border-green-300/25  hover:stage-hover  hover:cursor-pointer '>
+                                           {windowVisualisationContext === WINDOW_VISUALISATION.ODD && ayag.numberInSurah %2 !==0 ?ayag.text :
+                                        windowVisualisationContext === WINDOW_VISUALISATION.EVEN && ayag.numberInSurah %2 ===0 ? ayag.text:
+                                        windowVisualisationContext === WINDOW_VISUALISATION.AKHIR ? ayahWithoutPunct(ayag.text)[ayahWithoutPunct(ayag.text).length -1]:
+                                        windowVisualisationContext === WINDOW_VISUALISATION.AWAL ? ayahWithoutPunct(ayag.text)[0]: 
+                                        windowVisualisationContext === WINDOW_VISUALISATION.AWSAT ? ayahWithoutPunct(ayag.text)[Math.ceil(ayahWithoutPunct(ayag.text).length/2)]:
+                                        ayag.text
+                                        } </button>
+                                    )
                             }}})}
         </div>
-    </div>
+  
 
 }
 
