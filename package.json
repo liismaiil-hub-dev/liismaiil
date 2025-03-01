@@ -36,6 +36,7 @@
     "@react-three/drei": "^9.99.4",
     "@react-three/fiber": "^8.15.16",
     "@reduxjs/toolkit": "^2.2.1",
+    "@sqlitecloud/drivers": "^1.0.422",
     "@types/redux-logger": "^3.0.13",
     "@types/three": "^0.161.2",
     "@vis.gl/react-google-maps": "^1.0.2",
