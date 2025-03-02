@@ -380,6 +380,26 @@ try {
     return
   }
 }
+
+export const getLocalStagesByNbAndGrid = async ({souraNb, grid}:{souraNb: number, grid:number}) => {
+  try {
+      const stages = await prisma.stage.findMany({
+      where: {AND: {souraNb: souraNb, grid:grid}}, select:{
+      stageId:true, 
+      souraNb: true,   
+         grid: true,
+         group:true, 
+         arabName:true, 
+         souraName: true,
+         ayahs: true
+      }})
+   console.log({souraNb, stages });
+    return {success: true,stages:  JSON.stringify(stages) };
+    } catch (err) {
+      console.log({ err });
+      return
+    }
+  }
 export const getStageById = async (stageId: string) => {
 
   try {

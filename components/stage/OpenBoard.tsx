@@ -12,25 +12,24 @@ import { cn } from '@/lib/cn-utility'
 import { useRouter } from 'next/navigation';
 import { addGuestToStage, getStageForSprint } from '@/actions/stage';
 import { useDisclosure } from '@heroui/modal';
-import WindowSprintDialog from './DragDropDialog';
-import StageExerciseDialog from "@/components/stage/StageExerciseDialog";
 import { Button } from '@heroui/button';
-import WindowSprintDialogD3 from './D3DialogD3';
+
 import ThreeGridDialog from './ThreeGridDialog';
 import DragDropDialog from './DragDropDialog';
 import D3Dialog from './D3DialogD3';
 import { Radio, RadioGroup } from '@heroui/radio';
+import SprintDialog from './SprintDialog';
 
 
 const OpenBoard = ( ) => {
   const dispatch = useDispatch()
   const router = useRouter()
-  const {stageSprintSelected, stageGridSelected, stageReorderedAyahsContext,dragDropContext, threeContext, stageHideNbContext, errorNbContext,catStages,
+  const {stageSprintSelected, stageGridSelected, stageReorderedAyahsContext,dragDropContext, threeContext, stageHideNbContext,sprintContext, errorNbContext,catStages,
     stageValidContext,  d3Context,  stageOrderedAyahsContext, stageShuffeledAyahsContext,   } = useSelector((state: RootStateType) => state.stage)
   const { guestPrisma:{tokenId} } = useSelector((state: RootStateType) => state.guestPrisma)
   const [windowVisualisation, setWindowVisualisation] = useState(WINDOW_VISUALISATION.ALL);
   
-  const { setStageOrderedAyahsContext,  setStageHideNbContext,   setStageShuffeledAyahsContext,setThreeContext, 
+  const { setStageOrderedAyahsContext,  setStageHideNbContext,   setStageShuffeledAyahsContext,setThreeContext, setSprintContext,
     setDragDropContext,setStageReorderedAyahsContext,  setStageSprintSelected, setD3Context, setWindowVisualisationContext } = stageActions
     
     const {isOpen, onOpen, onClose} = useDisclosure();
@@ -66,6 +65,10 @@ function shuffleHandler() {
       console.log({ shuffeledAy });
       dispatch(setStageShuffeledAyahsContext({ ayahs: shuffeledAy }))
   }
+  function orderHandler() {
+    
+     dispatch(setStageShuffeledAyahsContext({ ayahs: stageOrderedAyahsContext }))
+ }
  
   function getMax() {
     if (stageOrderedAyahsContext && stageOrderedAyahsContext.length > 0 && 
@@ -194,6 +197,11 @@ useEffect(() => {
     console.log({isOpen});
     onOpen()
   }
+  function sprintHandler() {
+    dispatch(setSprintContext({ sprint: !sprintContext }))
+    console.log({isOpen});
+    onOpen()
+  }
 
   useEffect(() => {
   /* if(typeof  stageSprintSelected !== 'undefined' &&  stageSprintSelected?.grid === 5) {
@@ -250,13 +258,17 @@ useEffect(() => {
           <div className="flex  justify-between items-center  p-1 border border-green-300 rounded-md text-center font-sans " >
             <input className="flex border-blue-800 text-green-300 justify-center items-center  border "
               type="checkbox"
-              id='Three' name='Three' disabled={stageSprintSelected.grid !== 3} value='Three' checked={d3Context && stageSprintSelected.grid === 3} onChange={() => threeHandler()} />
-            <label className='px-1' htmlFor='Three'  >Three</label>
+              id='Three' name='Three'  value='Three' checked={sprintContext } onChange={() => sprintHandler()} />
+            <label className='px-1' htmlFor='Three'  >Sprint</label>
             </div>
             </div>
    
         <div className="flex-col  justify-start items-center   text-center font-sans  " >
         <div className="flex justify-evenly items-center gap-1 flex-wrap ">
+        <Button  onPress={orderHandler}   color="secondary" 
+            variant="shadow" className= "border-2 border-blue-600 rounded-md" >
+            Order  
+            </Button>
         <Button  onPress={shuffleHandler}   color="secondary" 
             variant="shadow" className= "border-2 border-blue-600 rounded-md" >
             Shuffel  
@@ -275,21 +287,49 @@ useEffect(() => {
             variant="shadow" className= "border-2 border-blue-600 rounded-md" >
               Next Grid
             </Button>
-            <RadioGroup
+            <div className="flex-col  p-2  rounded-md justify-start items-center border-2 border-violet-200  space-y-2">
+
+            <RadioGroup defaultValue={WINDOW_VISUALISATION.ALL } 
+            label="Select Ayahs Display "
                            orientation="horizontal"
                            value={windowVisualisation}
                            onValueChange={setWindowVisualisation}
                            >
                <div className="flex  p-2  rounded-md justify-center items-center border-2 border-violet-500  space-x-2">
-                         <Radio value={WINDOW_VISUALISATION.AWAL }>Awal</Radio>
-                         <Radio value={WINDOW_VISUALISATION.AWSAT }>Awsat</Radio>
-                         <Radio value={WINDOW_VISUALISATION.AKHIR }>Akhir</Radio>
-                         <Radio value={WINDOW_VISUALISATION.ODD }>Odd</Radio>
-                         <Radio value={WINDOW_VISUALISATION.EVEN }>Even</Radio>
-                         <Radio value={WINDOW_VISUALISATION.ALL }>All</Radio>
+                         <Radio value={WINDOW_VISUALISATION.AWAL } >
+                          <div className="flex justify-center items-center p-2 w-10 h-10">
+                            Awal
+                            </div> 
+                          </Radio>
+                         <Radio value={WINDOW_VISUALISATION.AWSAT }>
+                         <div className="flex justify-center items-center p-2 w-10 h-10">
+                         Awsat
+                      </div>
+                           </Radio>
+                           <Radio value={WINDOW_VISUALISATION.AKHIR }>
+                           <div className="flex justify-center items-center p-2 w-10 h-10">
+                           Akhir
+                      </div>
+                            </Radio>
+                            <Radio value={WINDOW_VISUALISATION.ODD }>
+                            <div className="flex justify-center items-center p-2 w-10 h-10">
+                            Odd
+                      </div>
+                            </Radio>
+                            <Radio value={WINDOW_VISUALISATION.EVEN }>
+                            <div className="flex justify-center items-center p-2 w-10 h-10">
+                            Even
+                      </div>
+                           </Radio>
+                           <Radio value={WINDOW_VISUALISATION.ALL }>
+                           <div className="flex justify-center items-center p-2 w-10 h-10">
+                           All
+                      </div>
+                         </Radio>
                </div>
                                                                                                 
                      </RadioGroup>
+          </div>
           </div>
           
           </div>
@@ -323,9 +363,9 @@ useEffect(() => {
           </div>: d3Context && isOpen  ?
                  <div className=" flex justify-center w-screen h-screen items-center p-2 overflow-scroll ">
                  <D3Dialog isOpen={isOpen}  onOpen={onOpen} onClose={onClose}/>
-               </div> :threeContext  && isOpen?
+               </div> :sprintContext  && isOpen?
                   <div className=" flex justify-center w-screen h-screen items-center p-2 overflow-scroll ">
-                  <ThreeGridDialog isOpen={isOpen}  onOpen={onOpen} onClose={onClose}/>
+                  <SprintDialog isOpen={isOpen}  onOpen={onOpen} onClose={onClose}/>
                 </div>:
                 dragDropContext && isOpen  ?
                <div className=" flex justify-center w-screen h-screen items-center p-2 overflow-scroll ">
