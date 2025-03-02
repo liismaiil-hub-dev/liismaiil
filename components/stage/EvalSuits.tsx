@@ -97,10 +97,7 @@ console.log({stageShuffeledAyahsContext});
             dispatch(setFirstStateContext({first:false}))
   }}
   
-  const [gridAyahs, setGridAyahs] = useState(() => {
-    if(typeof stageGridSelected.ayahs !== 'undefined' && stageGridSelected && stageGridSelected.souraNb !== -1){
-         return JSON?.parse(stageGridSelected?.ayahs!)} }
-        );
+ 
   useEffect(() => {
     console.log({ stageReorderedAyahsContext, stageShuffeledAyahsContext });
     if ( stageReorderedAyahsContext.length === stageShuffeledAyahsContext.length && stageReorderedAyahsContext[0] !== -1) {
@@ -109,22 +106,20 @@ console.log({stageShuffeledAyahsContext});
   }, [stageReorderedAyahsContext]);
   
 useEffect(() => {
-        console.log({stageGridSelected});
+        console.log({stageGridSelected, stageSprintSelected});
         
-if(typeof stageGridSelected !== 'undefined' && stageGridSelected && typeof stageGridSelected.ayahs !== 'undefined' && stageGridSelected.ayahs !== ''){        
-setGridAyahs(JSON.parse(stageGridSelected.ayahs!))
-}    }, [stageReorderedAyahsContext, stageGridSelected]);
+    }, [stageReorderedAyahsContext, stageGridSelected, stageSprintSelected]);
     
     useEffect(() => {
         console.log({ stepIndexContext });
-        if (stepIndexContext < stageGridsContext.length) {
+      /*   if (stepIndexContext < stageGridsContext.length) {
             dispatch(setStageGridSelected({ stage: stageGridsContext[stepIndexContext] }))
         } else {
             dispatch(setStageGridSelected({ stage: stageGridsContext[0] }))
-        }
+        } */
     }, [stepIndexContext]);
+    function getMin() {
   //  console.log({ stageReorderedAyahsContext, stageHideNbContext });
-  function getMin() {
     if (stageOrderedAyahsContext && 
         stageOrderedAyahsContext.length > 0 && stageOrderedAyahsContext[0].numberInSurah 
         !== -1 ) {
@@ -152,7 +147,12 @@ setGridAyahs(JSON.parse(stageGridSelected.ayahs!))
                                     </div>
                                     <div className=' flex flex-grow   text-center justify-end
                                     hover:bg-emerald-600 hover:text-yellow-200  hover:text-2xl hover:-translate-x-5 hover:-translate-y-1 ease-in 
-                                    hover:cursor-pointer '>{ayag.text}
+                                    hover:cursor-pointer '>{windowVisualisationContext === WINDOW_VISUALISATION.ODD && ayag.numberInSurah %2 !==0 ?ayag.text :
+                                      windowVisualisationContext === WINDOW_VISUALISATION.EVEN && ayag.numberInSurah %2 ===0 ? ayag.text:
+                                      windowVisualisationContext === WINDOW_VISUALISATION.AKHIR ? ayahWithoutPunct(ayag.text)[ayahWithoutPunct(ayag.text).length -1]:
+                                      windowVisualisationContext === WINDOW_VISUALISATION.AWAL ? ayahWithoutPunct(ayag.text)[0]: 
+                                      windowVisualisationContext === WINDOW_VISUALISATION.AWSAT ? ayahWithoutPunct(ayag.text)[Math.ceil(ayahWithoutPunct(ayag.text).length/2)]:
+                                      windowVisualisationContext === WINDOW_VISUALISATION.ALL  ?ayag.text : ayag.text}
                                     </div>
                                     </div> 
                                     :
@@ -162,12 +162,14 @@ setGridAyahs(JSON.parse(stageGridSelected.ayahs!))
                                     </div>
                                     <div className=' flex-grow flex text-right justify-end items-center w-full
                                      hover:bg-emerald-600 hover:text-yellow-200 hover:text-2xl  hover:-translate-x-5 hover:-translate-y-1 ease-in 
-                                     hover:cursor-pointer  '>{windowVisualisationContext === WINDOW_VISUALISATION.ODD && ayag.numberInSurah %2 !==0 ?ayag.text :
+                                     hover:cursor-pointer  '>{
+                                      windowVisualisationContext === WINDOW_VISUALISATION.ODD && 
+                                      ayag.numberInSurah %2 !==0 ?ayag.text :
                                         windowVisualisationContext === WINDOW_VISUALISATION.EVEN && ayag.numberInSurah %2 ===0 ? ayag.text:
                                         windowVisualisationContext === WINDOW_VISUALISATION.AKHIR ? ayahWithoutPunct(ayag.text)[ayahWithoutPunct(ayag.text).length -1]:
                                         windowVisualisationContext === WINDOW_VISUALISATION.AWAL ? ayahWithoutPunct(ayag.text)[0]: 
                                         windowVisualisationContext === WINDOW_VISUALISATION.AWSAT ? ayahWithoutPunct(ayag.text)[Math.ceil(ayahWithoutPunct(ayag.text).length/2)]:
-                                        ayag.text}
+                                        windowVisualisationContext === WINDOW_VISUALISATION.ALL  ?ayag.text : null }
                                      </div></div>}
                                 </button>
                             }
@@ -177,7 +179,13 @@ setGridAyahs(JSON.parse(stageGridSelected.ayahs!))
                                     key={`${ayag.number!}_${ayag.juz}`} 
                                     className=' border-2 rounded-md bg-orange-400/70 border-red-500 flex text-right justify-end items-center p-2 w-full h-full px-1 gap-1 border-b-1 border-green-300/25 
                                           hover:stage-hover  hover:cursor-pointer '>
-                                        {ayag.text}</button>:
+                                        {windowVisualisationContext === WINDOW_VISUALISATION.ODD && ayag.numberInSurah %2 !==0 ?ayag.text :
+                                      windowVisualisationContext === WINDOW_VISUALISATION.EVEN && ayag.numberInSurah %2 ===0 ? ayag.text:
+                                      windowVisualisationContext === WINDOW_VISUALISATION.AKHIR ? ayahWithoutPunct(ayag.text)[ayahWithoutPunct(ayag.text).length -1]:
+                                      windowVisualisationContext === WINDOW_VISUALISATION.AWAL ? ayahWithoutPunct(ayag.text)[0]: 
+                                      windowVisualisationContext === WINDOW_VISUALISATION.AWSAT ? ayahWithoutPunct(ayag.text)[Math.ceil(ayahWithoutPunct(ayag.text).length/2)]:
+                                      windowVisualisationContext === WINDOW_VISUALISATION.ALL  ?ayag.text : ayag.text
+                                      }</button>:
                                         <button onClick={() => { validAyahHandler(ayag.numberInSurah!) }} 
                                         key={`${ayag.number!}_${ayag.juz}`} 
                                         className='  flex text-right justify-end items-center p-2 bg-emerald-100/30 w-full h-full px-1 gap-1 border-1 rounded-md 
@@ -187,7 +195,7 @@ setGridAyahs(JSON.parse(stageGridSelected.ayahs!))
                                         windowVisualisationContext === WINDOW_VISUALISATION.AKHIR ? ayahWithoutPunct(ayag.text)[ayahWithoutPunct(ayag.text).length -1]:
                                         windowVisualisationContext === WINDOW_VISUALISATION.AWAL ? ayahWithoutPunct(ayag.text)[0]: 
                                         windowVisualisationContext === WINDOW_VISUALISATION.AWSAT ? ayahWithoutPunct(ayag.text)[Math.ceil(ayahWithoutPunct(ayag.text).length/2)]:
-                                        ayag.text
+                                        windowVisualisationContext === WINDOW_VISUALISATION.ALL  ?ayag.text : null
                                         } </button>
                                     )
                             }}})}

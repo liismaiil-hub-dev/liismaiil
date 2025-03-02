@@ -14,24 +14,27 @@ declare global {
 
 
 if (process.env.APP_ENV === 'LOC') {
+
     if (process.env.NODE_ENV === 'production') {
         prisma = new PrismaClient();
 
     } else {
         if (!global.prisma) {
-            global.prisma = new PrismaClient()
+            global.prisma = new PrismaClient();
         }
         prisma = global.prisma;
     }
 
 } else if (process.env.APP_ENV === 'WEB') {
+   // console.log({sqlCoud:process.env.SQLITE_CLOUD});
+ const libsql = createClient({
+  url: `${process.env.TURSO_DATABASE_URL}`,
+  authToken: `${process.env.TURSO_AUTH_TOKEN}`,
+})
 
-    const libsql = createClient({
-        url: process.env.TURSO_DATABASE_URL,
-        authToken: process.env.TURSO_AUTH_TOKEN,
-    });
-    const adapter = new PrismaLibSQL(libsql);
-    prisma = new PrismaClient({adapter});
+const adapter = new PrismaLibSQL(libsql)
+const prisma = new PrismaClient({ adapter }) 
+
 }
 
 //const adapter = new PrismaLibSQL(turso)//

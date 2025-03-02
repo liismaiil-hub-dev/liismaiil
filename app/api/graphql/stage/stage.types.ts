@@ -111,6 +111,7 @@ export type StageStateProps = {
   stageHideNbContext: boolean,
   dragDropContext: boolean,
   threeContext: boolean,
+  sprintContext: boolean,
   d3Context: boolean,
   stageEvalContext: EVAL_STATE,
   sprintRandomHidden: number[],

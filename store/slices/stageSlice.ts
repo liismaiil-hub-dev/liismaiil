@@ -209,6 +209,7 @@ const initialState: StageStateProps = {
   dragDropContext:false,
   threeContext:false,
   d3Context:false,
+  sprintContext:false,
   menuSouraNb: [{ souraName: '', souraNb: -1 }],
   windowContext: -1,
   spaceStageAyahsContext:[
@@ -537,18 +538,28 @@ const stageSlice = createSlice({
         state.dragDropContext = action.payload.dragDrop
         state.d3Context = initialState.d3Context
         state.threeContext = initialState.threeContext
+        state.sprintContext = initialState.sprintContext
     },
     setD3Context(state: StageStateProps,
       action: PayloadAction<{ d3: boolean }>) {
       state.d3Context = action.payload.d3
       state.dragDropContext = initialState.dragDropContext
       state.threeContext = initialState.threeContext
+      state.sprintContext = initialState.sprintContext
     },
     setThreeContext(state: StageStateProps,
       action: PayloadAction<{ three: boolean }>) {
       state.threeContext = action.payload.three
       state.dragDropContext = initialState.dragDropContext
       state.d3Context = initialState.dragDropContext
+      state.sprintContext = initialState.sprintContext
+    },
+    setSprintContext(state: StageStateProps,
+      action: PayloadAction<{ sprint: boolean }>) {
+      state.sprintContext = action.payload.sprint
+      state.dragDropContext = initialState.dragDropContext
+      state.d3Context = initialState.dragDropContext
+      state.threeContext = initialState.dragDropContext
     },
     setStageValidContext(state: StageStateProps,
       action: PayloadAction<{ validCtxt: boolean }>) {
